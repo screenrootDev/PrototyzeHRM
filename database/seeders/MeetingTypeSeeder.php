@@ -15,12 +15,12 @@ class MeetingTypeSeeder extends Seeder
     {
         // Get all companies
         $companies = User::where('type', 'company')->get();
-        
+
         if ($companies->isEmpty()) {
             $this->command->warn('No company users found. Please run DefaultCompanySeeder first.');
             return;
         }
-        
+
         // Fixed meeting types for consistent data
         $meetingTypes = [
             [
@@ -33,7 +33,7 @@ class MeetingTypeSeeder extends Seeder
             [
                 'name' => 'One-on-One',
                 'description' => 'Individual meetings between manager and team member for performance discussions and feedback',
-                'color' => '#10b77f',
+                'color' => '#0075BD',
                 'default_duration' => 30,
                 'status' => 'active'
             ],
@@ -94,14 +94,14 @@ class MeetingTypeSeeder extends Seeder
                 'status' => 'active'
             ]
         ];
-        
+
         foreach ($companies as $company) {
             foreach ($meetingTypes as $typeData) {
                 // Check if meeting type already exists for this company
                 if (MeetingType::where('name', $typeData['name'])->where('created_by', $company->id)->exists()) {
                     continue;
                 }
-                
+
                 try {
                     MeetingType::create([
                         'name' => $typeData['name'],
@@ -117,7 +117,7 @@ class MeetingTypeSeeder extends Seeder
                 }
             }
         }
-        
+
         $this->command->info('MeetingType seeder completed successfully!');
     }
 }

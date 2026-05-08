@@ -15,12 +15,12 @@ class LeaveTypeSeeder extends Seeder
     {
         // Get all companies
         $companies = User::where('type', 'company')->get();
-        
+
         if ($companies->isEmpty()) {
             $this->command->warn('No company users found. Please run DefaultCompanySeeder first.');
             return;
         }
-        
+
         // Fixed leave types for consistent data
         $leaveTypes = [
             [
@@ -28,7 +28,7 @@ class LeaveTypeSeeder extends Seeder
                 'description' => 'Yearly vacation leave for rest and recreation',
                 'max_days_per_year' => 21,
                 'is_paid' => true,
-                'color' => '#10b77f',
+                'color' => '#0075BD',
                 'status' => 'active'
             ],
             [
@@ -104,14 +104,14 @@ class LeaveTypeSeeder extends Seeder
                 'status' => 'active'
             ]
         ];
-        
+
         foreach ($companies as $company) {
             foreach ($leaveTypes as $typeData) {
                 // Check if leave type already exists for this company
                 if (LeaveType::where('name', $typeData['name'])->where('created_by', $company->id)->exists()) {
                     continue;
                 }
-                
+
                 try {
                     LeaveType::create([
                         'name' => $typeData['name'],
@@ -128,7 +128,7 @@ class LeaveTypeSeeder extends Seeder
                 }
             }
         }
-        
+
         $this->command->info('LeaveType seeder completed successfully!');
     }
 }

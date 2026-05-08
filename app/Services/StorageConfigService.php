@@ -162,7 +162,7 @@ class StorageConfigService
 
             return [
                 'disk' => $diskName,
-                'allowed_file_types' => $superAdminSettings['storage_file_types'] ?? 'jpg,jpeg,png,webp,gif,pdf,doc,docx,csv,txt,zip,mp4,mp3',
+                'allowed_file_types' => $superAdminSettings['storage_file_types'] ?? 'jpg,jpeg,png,webp,gif,pdf,doc,docx,csv,txt,zip,mp4,mp3,svg',
                 'max_file_size_mb' => (int)($superAdminSettings['storage_max_upload_size'] ?? 2),
                 's3' => [
                     'key' => $settings['aws_access_key_id'] ?? '',
@@ -194,7 +194,7 @@ class StorageConfigService
     {
         return [
             'disk' => 'public',
-            'allowed_file_types' => 'jpg,png,webp,gif,png',
+            'allowed_file_types' => 'jpg,png,webp,gif,svg',
             'max_file_size_mb' => 2,
             's3' => [],
             'wasabi' => []

@@ -921,7 +921,7 @@ if (!function_exists('defaultSettings')) {
             'dateFormat' => 'Y-m-d',
             'timeFormat' => 'H:i',
             'calendarStartDay' => 'sunday',
-            'defaultTimezone' => 'UTC',
+            'defaultTimezone' => 'Asia/Kolkata',
             'emailVerification' => false,
             'landingPageEnabled' => true,
 
@@ -932,7 +932,7 @@ if (!function_exists('defaultSettings')) {
             'titleText' => isSaas() ? 'HRM SaaS' : 'HRM',
             'footerText' => isSaas() ? '© 2026 HRM SaaS. All rights reserved.' : '© 2026 HRM. All rights reserved.',
             'themeColor' => 'green',
-            'customColor' => '#10b77f',
+            'customColor' => '#0075BD',
             'sidebarVariant' => 'inset',
             'sidebarStyle' => 'plain',
             'layoutDirection' => 'left',
@@ -1388,8 +1388,8 @@ if (!function_exists('formatCurrency')) {
 
                 while (
                     User::where('slug', $slug)
-                        ->where('id', '!=', $user->id)
-                        ->exists()
+                    ->where('id', '!=', $user->id)
+                    ->exists()
                 ) {
                     $slug = $baseSlug . '-' . $counter;
                     $counter++;
@@ -1562,5 +1562,3 @@ if (!function_exists('upload_file')) {
         }
     }
 }
-
-

@@ -121,7 +121,7 @@ class TrainingSessionController extends Controller
             $statusColors = [
                 'scheduled' => '#3788d8',
                 'in_progress' => '#f59e0b',
-                'completed' => '#10b77f',
+                'completed' => '#0075BD',
                 'cancelled' => '#ef4444',
             ];
 
@@ -343,10 +343,10 @@ class TrainingSessionController extends Controller
 
         // Delete attendance records
         $trainingSession->attendance()->delete();
-        
+
         // Detach trainers
         $trainingSession->trainers()->detach();
-        
+
         // Delete the training session
         $trainingSession->delete();
 
@@ -409,7 +409,7 @@ class TrainingSessionController extends Controller
         $startDate = $originalSession->start_date;
         $endDate = $originalSession->end_date;
         $duration = $startDate->diffInSeconds($endDate);
-        
+
         for ($i = 1; $i <= $originalSession->recurrence_count; $i++) {
             // Calculate new dates based on recurrence pattern
             switch ($originalSession->recurrence_pattern) {
@@ -425,9 +425,9 @@ class TrainingSessionController extends Controller
                 default:
                     continue 2; // Skip this iteration if pattern is invalid
             }
-            
+
             $newEndDate = $newStartDate->copy()->addSeconds($duration);
-            
+
             // Create new session
             $newSession = TrainingSession::create([
                 'training_program_id' => $originalSession->training_program_id,
@@ -442,7 +442,7 @@ class TrainingSessionController extends Controller
                 'is_recurring' => false, // Child sessions are not recurring
                 'created_by' => $originalSession->created_by,
             ]);
-            
+
             // Attach trainers
             if (!empty($trainerIds)) {
                 $newSession->trainers()->attach($trainerIds);

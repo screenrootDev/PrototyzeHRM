@@ -1,8 +1,8 @@
-import React from 'react';
-import { usePage, Head } from '@inertiajs/react';
-import Header from './components/Header';
-import Footer from './components/Footer';
-import { useFavicon } from '@/hooks/use-favicon';
+import React from "react";
+import { usePage, Head } from "@inertiajs/react";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { useFavicon } from "@/hooks/use-favicon";
 
 interface CustomPage {
   id: number;
@@ -46,42 +46,42 @@ export default function CustomPage() {
   // RTL Support for custom pages
   React.useEffect(() => {
     const isDemo = globalSettings?.is_demo || false;
-    let storedPosition = 'left';
-    
+    let storedPosition = "left";
+
     if (isDemo) {
       // In demo mode, use cookies
       const getCookie = (name: string): string | null => {
-        if (typeof document === 'undefined') return null;
+        if (typeof document === "undefined") return null;
         const value = `; ${document.cookie}`;
         const parts = value.split(`; ${name}=`);
         if (parts.length === 2) {
-          const cookieValue = parts.pop()?.split(';').shift();
+          const cookieValue = parts.pop()?.split(";").shift();
           return cookieValue ? decodeURIComponent(cookieValue) : null;
         }
         return null;
       };
-      const stored = getCookie('layoutPosition');
-      if (stored === 'left' || stored === 'right') {
+      const stored = getCookie("layoutPosition");
+      if (stored === "left" || stored === "right") {
         storedPosition = stored;
       }
     } else {
       // In normal mode, get from database via globalSettings
       const stored = globalSettings?.layoutDirection;
-      if (stored === 'left' || stored === 'right') {
+      if (stored === "left" || stored === "right") {
         storedPosition = stored;
       }
     }
-    
-    const dir = storedPosition === 'right' ? 'rtl' : 'ltr';
+
+    const dir = storedPosition === "right" ? "rtl" : "ltr";
     document.documentElement.dir = dir;
-    document.documentElement.setAttribute('dir', dir);
-    
+    document.documentElement.setAttribute("dir", dir);
+
     // Check if it was actually set
     setTimeout(() => {
-      const actualDir = document.documentElement.getAttribute('dir');
+      const actualDir = document.documentElement.getAttribute("dir");
       if (actualDir !== dir) {
         document.documentElement.dir = dir;
-        document.documentElement.setAttribute('dir', dir);
+        document.documentElement.setAttribute("dir", dir);
       }
     }, 1);
   }, []);
@@ -134,9 +134,12 @@ export default function CustomPage() {
       margin: 1.5rem 0;
     }
   `;
-  const primaryColor = settings?.config_sections?.theme?.primary_color || '#3b82f6';
-  const secondaryColor = settings?.config_sections?.theme?.secondary_color || '#8b5cf6';
-  const accentColor = settings?.config_sections?.theme?.accent_color || '#10b77f';
+  const primaryColor =
+    settings?.config_sections?.theme?.primary_color || "#3b82f6";
+  const secondaryColor =
+    settings?.config_sections?.theme?.secondary_color || "#8b5cf6";
+  const accentColor =
+    settings?.config_sections?.theme?.accent_color || "#0075BD";
   useFavicon();
   return (
     <>
@@ -146,46 +149,76 @@ export default function CustomPage() {
         )}
         <style>{customCSS}</style>
       </Head>
-      
-      <div 
-        className="min-h-screen bg-white" 
-        style={{ 
-          '--primary-color': primaryColor,
-          '--secondary-color': secondaryColor,
-          '--accent-color': accentColor,
-          '--primary-color-rgb': primaryColor.replace('#', '').match(/.{2}/g)?.map(x => parseInt(x, 16)).join(', ') || '59, 130, 246',
-          '--secondary-color-rgb': secondaryColor.replace('#', '').match(/.{2}/g)?.map(x => parseInt(x, 16)).join(', ') || '139, 92, 246',
-          '--accent-color-rgb': accentColor.replace('#', '').match(/.{2}/g)?.map(x => parseInt(x, 16)).join(', ') || '16, 185, 129'
-        } as React.CSSProperties}
+
+      <div
+        className="min-h-screen bg-white"
+        style={
+          {
+            "--primary-color": primaryColor,
+            "--secondary-color": secondaryColor,
+            "--accent-color": accentColor,
+            "--primary-color-rgb":
+              primaryColor
+                .replace("#", "")
+                .match(/.{2}/g)
+                ?.map((x) => parseInt(x, 16))
+                .join(", ") || "59, 130, 246",
+            "--secondary-color-rgb":
+              secondaryColor
+                .replace("#", "")
+                .match(/.{2}/g)
+                ?.map((x) => parseInt(x, 16))
+                .join(", ") || "139, 92, 246",
+            "--accent-color-rgb":
+              accentColor
+                .replace("#", "")
+                .match(/.{2}/g)
+                ?.map((x) => parseInt(x, 16))
+                .join(", ") || "16, 185, 129",
+          } as React.CSSProperties
+        }
       >
-        <Header max-w-7xl mx-auto p
-          settings={settings} 
+        <Header
+          max-w-7xl
+          mx-auto
+          p
+          settings={settings}
           customPages={customPages}
-          sectionData={settings?.config_sections?.sections?.find(s => s.key === 'header') || {}}
+          sectionData={
+            settings?.config_sections?.sections?.find(
+              (s) => s.key === "header",
+            ) || {}
+          }
           brandColor={primaryColor}
         />
-        
+
         <main className="pt-16">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div className="max-w-4xl mx-auto">
               <header className="text-center mb-12">
-                <h1 className="text-4xl font-bold text-gray-900 mb-4">{page.title}</h1>
+                <h1 className="text-4xl font-bold text-gray-900 mb-4">
+                  {page.title}
+                </h1>
                 <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-600 mx-auto rounded-full"></div>
               </header>
-              
+
               <article className="prose prose-lg max-w-none">
-                <div 
+                <div
                   className="text-gray-700 leading-relaxed"
-                  dangerouslySetInnerHTML={{ __html: page.content }} 
+                  dangerouslySetInnerHTML={{ __html: page.content }}
                 />
               </article>
             </div>
           </div>
         </main>
-        
-        <Footer 
-          settings={settings} 
-          sectionData={settings?.config_sections?.sections?.find(s => s.key === 'footer') || {}} 
+
+        <Footer
+          settings={settings}
+          sectionData={
+            settings?.config_sections?.sections?.find(
+              (s) => s.key === "footer",
+            ) || {}
+          }
           brandColor={primaryColor}
         />
       </div>

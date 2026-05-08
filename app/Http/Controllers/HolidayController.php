@@ -420,7 +420,7 @@ class HolidayController extends Controller
         $colors = [
             'national' => '#3b82f6',
             'religious' => '#8b5cf6',
-            'company-specific' => '#10b77f',
+            'company-specific' => '#0075BD',
             'regional' => '#f59e0b'
         ];
 

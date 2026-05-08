@@ -222,10 +222,10 @@ export default function SystemSettings({
                     </SelectItem>
                   )) : (
                     <>
-                      <SelectItem value="M j, Y">Jan 1, 2025</SelectItem>
-                      <SelectItem value="d-m-Y">01-01-2025</SelectItem>
-                      <SelectItem value="Y-m-d">2025-01-01</SelectItem>
-                      <SelectItem value="F j, Y">January 1, 2025</SelectItem>
+                      <SelectItem value="M j, Y">Jan 1, 2026</SelectItem>
+                      <SelectItem value="d-m-Y">01-01-2026</SelectItem>
+                      <SelectItem value="Y-m-d">2026-01-01</SelectItem>
+                      <SelectItem value="F j, Y">January 1, 2026</SelectItem>
                     </>
                   )
                 }

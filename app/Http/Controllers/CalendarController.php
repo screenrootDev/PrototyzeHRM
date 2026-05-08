@@ -32,9 +32,9 @@ class CalendarController extends Controller
         $meetings = Meeting::query()
             ->when($user->hasRole('employee'), function ($query) use ($user) {
                 $query->where('organizer_id', $user->id)
-                      ->orWhereHas('attendees', function ($q) use ($user) {
-                          $q->where('user_id', $user->id);
-                      });
+                    ->orWhereHas('attendees', function ($q) use ($user) {
+                        $q->where('user_id', $user->id);
+                    });
             }, function ($query) use ($companyUserIds) {
                 $query->whereIn('created_by', $companyUserIds);
             })
@@ -63,8 +63,8 @@ class CalendarController extends Controller
                     'end' => $holiday->end_date ?: $holiday->start_date,
                     'type' => 'holiday',
                     'allDay' => true,
-                    'backgroundColor' => '#10b77f',
-                    'borderColor' => '#10b77f'
+                    'backgroundColor' => '#0075BD',
+                    'borderColor' => '#0075BD'
                 ];
             });
 

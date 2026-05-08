@@ -31,7 +31,7 @@ class LandingPageSetting extends Model
 
         if (!$settings) {
             $defaultConfig = isSaas() ? self::getSaasConfig() : self::getNonSaasConfig();
-            $companyName = isSaas() ? 'HRM SaaS' : 'HRM';            
+            $companyName = isSaas() ? 'HRM SaaS' : 'HRM';
 
             $settings = self::create([
                 'company_name' => $companyName,
@@ -246,7 +246,7 @@ class LandingPageSetting extends Model
                 ]
             ],
             'theme' => [
-                'primary_color' => '#10b77f',
+                'primary_color' => '#0075BD',
                 'secondary_color' => '#ffffff',
                 'accent_color' => '#f7f7f7',
                 'logo_light' => '',
@@ -481,7 +481,7 @@ class LandingPageSetting extends Model
                 ]
             ],
             'theme' => [
-                'primary_color' => '#10b77f',
+                'primary_color' => '#0075BD',
                 'secondary_color' => '#ffffff',
                 'accent_color' => '#f7f7f7',
                 'logo_light' => '',

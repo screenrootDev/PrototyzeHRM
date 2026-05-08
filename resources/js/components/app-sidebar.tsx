@@ -1015,20 +1015,20 @@ export function AppSidebar() {
                         {/* Icon for collapsed sidebar */}
                         <div className="h-8 w-8 hidden group-data-[collapsible=icon]:block">
                             {(() => {
-                                const displayFavicon = favicon ? getImagePath(favicon) : '';
+                                const displayCollapsibleLogo = getImagePath('logo/collapsible-logo.svg');
 
-                                return displayFavicon ? (
+                                return (
                                     <img
-                                        key={`${favicon}-${Date.now()}`}
-                                        src={displayFavicon}
+                                        src={displayCollapsibleLogo}
                                         alt="Icon"
                                         className="h-8 w-8 transition-all duration-200"
-                                        onError={() => updateBrandSettings({ favicon: '' })}
+                                        onError={(e) => {
+                                            // Fallback to favicon if collapsible logo fails
+                                            if (favicon) {
+                                                (e.target as HTMLImageElement).src = getImagePath(favicon);
+                                            }
+                                        }}
                                     />
-                                ) : (
-                                    <div className="h-8 w-8 bg-primary text-white rounded flex items-center justify-center font-bold shadow-sm">
-                                        W
-                                    </div>
                                 );
                             })()}
                         </div>

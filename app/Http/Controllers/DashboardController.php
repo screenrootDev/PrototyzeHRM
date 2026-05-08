@@ -196,7 +196,7 @@ class DashboardController extends Controller
         $totalCandidates = Candidate::whereIn('created_by', $companyUserIds)->count();
 
         // Department Distribution for Chart
-        $predefinedColors = ['#4F46E5', '#10b77f', '#F59E0B', '#EF4444', '#3B82F6', '#D946EF'];
+        $predefinedColors = ['#4F46E5', '#0075BD', '#F59E0B', '#EF4444', '#3B82F6', '#D946EF'];
 
         $departmentStats = Department::whereIn('created_by', $companyUserIds)
             ->withCount('employees')
@@ -243,7 +243,7 @@ class DashboardController extends Controller
                     'Screening' => '#06B6D4',
                     'Interview' => '#6366F1',
                     'Offer' => '#F59E0B',
-                    'Hired' => '#10b77f',
+                    'Hired' => '#0075BD',
                     'Rejected' => '#EF4444'
                 ];
                 return [

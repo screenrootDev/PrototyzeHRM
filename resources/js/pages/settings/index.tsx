@@ -2,6 +2,7 @@ import { PageTemplate } from '@/components/page-template';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
+import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
 import { Settings as SettingsIcon, Building, DollarSign, Users, RefreshCw, Palette, BookOpen, Award, FileText, Mail, Bell, Link2, CreditCard, Calendar, HardDrive, Shield, Bot, Cookie, Search, Webhook, Wallet, Clock, Fingerprint, Network } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -189,67 +190,42 @@ export default function Settings() {
 
 
   // Smart scroll functionality
+  const isManualScroll = useRef(false);
+
+  const handleNavClick = (href: string) => {
+    const id = href.replace('#', '');
+    const element = document.getElementById(id);
+    if (element) {
+      isManualScroll.current = true;
+      setActiveSection(id);
+      element.scrollIntoView({ behavior: 'smooth' });
+      
+      // Re-enable scroll detection after the smooth scroll finishes
+      setTimeout(() => {
+        isManualScroll.current = false;
+      }, 1000);
+    }
+  };
+
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 100; // Add offset for better UX
-
-      // Get positions of each section
-      const systemSettingsPosition = systemSettingsRef.current?.offsetTop || 0;
-      const brandSettingsPosition = brandSettingsRef.current?.offsetTop || 0;
-
-      const currencySettingsPosition = currencySettingsRef.current?.offsetTop || 0;
-      const workingDaysSettingsPosition = workingDaysSettingsRef.current?.offsetTop || 0;
-      const emailSettingsPosition = emailSettingsRef.current?.offsetTop || 0;
-      const paymentSettingsPosition = paymentSettingsRef.current?.offsetTop || 0;
-      const storageSettingsPosition = storageSettingsRef.current?.offsetTop || 0;
-      const recaptchaSettingsPosition = recaptchaSettingsRef.current?.offsetTop || 0;
-      const chatgptSettingsPosition = chatgptSettingsRef.current?.offsetTop || 0;
-      const cookieSettingsPosition = cookieSettingsRef.current?.offsetTop || 0;
-      const seoSettingsPosition = seoSettingsRef.current?.offsetTop || 0;
-      const cacheSettingsPosition = cacheSettingsRef.current?.offsetTop || 0;
-      const webhookSettingsPosition = webhookSettingsRef.current?.offsetTop || 0;
-      const googleCalendarSettingsPosition = googleCalendarSettingsRef.current?.offsetTop || 0;
-      const googleWalletSettingsPosition = googleWalletSettingsRef.current?.offsetTop || 0;
-      const zektoSettingsPosition = zektoSettingsRef.current?.offsetTop || 0;
-      const ipRestrictionSettingsPosition = ipRestrictionSettingsRef.current?.offsetTop || 0;
-
-      // Determine active section based on scroll position
-      // if (scrollPosition >= googleCalendarSettingsPosition) {
-      //   setActiveSection('google-calendar-settings');
-      // } 
-      //  if (scrollPosition >= webhookSettingsPosition) {
-      //   setActiveSection('webhook-settings');
-      // } 
-      if (scrollPosition >= zektoSettingsPosition) {
-        setActiveSection('zekto-settings');
-      } else if (scrollPosition >= ipRestrictionSettingsPosition) {
-        setActiveSection('ip-restriction-settings');
-      } else if (scrollPosition >= cacheSettingsPosition) {
-        setActiveSection('cache-settings');
-      } else if (scrollPosition >= seoSettingsPosition) {
-        setActiveSection('seo-settings');
-      } else if (scrollPosition >= cookieSettingsPosition) {
-        setActiveSection('cookie-settings');
-      } else if (scrollPosition >= chatgptSettingsPosition) {
-        setActiveSection('chatgpt-settings');
-      } else if (scrollPosition >= recaptchaSettingsPosition) {
-        setActiveSection('recaptcha-settings');
-      } else if (scrollPosition >= storageSettingsPosition) {
-        setActiveSection('storage-settings');
-      } else if (scrollPosition >= paymentSettingsPosition) {
-        setActiveSection('payment-settings');
-      } else if (scrollPosition >= workingDaysSettingsPosition) {
-        setActiveSection('working-days-settings');
-      } else if (scrollPosition >= emailSettingsPosition) {
-        setActiveSection('email-settings');
-      } else if (scrollPosition >= currencySettingsPosition) {
-        setActiveSection('currency-settings');
-
-      } else if (scrollPosition >= brandSettingsPosition) {
-        setActiveSection('brand-settings');
-      } else {
-        setActiveSection('system-settings');
+      if (isManualScroll.current) return;
+      
+      // Dynamic detection: Loop through all nav items and find the active one
+      const ids = sidebarNavItems.map(item => item.href.replace('#', ''));
+      let current = ids[0];
+      
+      for (const id of ids) {
+        const element = document.getElementById(id);
+        if (element) {
+          // If the section's top is near the top of the viewport (with 150px buffer)
+          if (window.scrollY + 150 >= element.offsetTop) {
+            current = id;
+          }
+        }
       }
+      
+      setActiveSection(current);
     };
 
     // Add scroll event listener
@@ -271,14 +247,6 @@ export default function Settings() {
   }, []);
 
   // Handle navigation click
-  const handleNavClick = (href: string) => {
-    const id = href.replace('#', '');
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(id);
-    }
-  };
 
   return (
     <PageTemplate
@@ -295,21 +263,36 @@ export default function Settings() {
         <div className="md:w-64 flex-shrink-0">
           <div className="sticky top-20">
             <ScrollArea className="h-[calc(100vh-5rem)]">
-              <div className={`space-y-1 ${position === 'rtl' ? 'pl-4' : 'pr-4'}`}>
-                {sidebarNavItems.map((item) => (
-                  <Button
-                    key={item.href}
-                    variant="ghost"
-                    className={cn('w-full justify-start', {
-                      'bg-muted font-medium': activeSection === item.href.replace('#', ''),
-                    })}
-                    onClick={() => handleNavClick(item.href)}
-                  >
-                    {item.icon}
-                    {item.title}
-                  </Button>
-                ))}
-              </div>
+                <div className={`space-y-1 ${position === 'rtl' ? 'pl-4' : 'pr-4'}`}>
+                  {sidebarNavItems.map((item) => {
+                    const itemId = item.href.replace('#', '');
+                    const isActive = activeSection === itemId;
+                    
+                    return (
+                      <Button
+                        key={item.href}
+                        variant="ghost"
+                        onClick={() => handleNavClick(item.href)}
+                        className={cn(
+                          'w-full justify-start h-10 mb-1 px-3 relative group transition-all duration-200 rounded-lg',
+                          isActive 
+                            ? 'text-primary font-bold bg-primary/10 border border-primary/30 shadow-sm' 
+                            : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent'
+                        )}
+                      >
+                        {React.cloneElement(item.icon as React.ReactElement, {
+                          className: cn(
+                            "h-4 w-4 mr-3 transition-colors duration-200",
+                            isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"
+                          )
+                        })}
+                        <span className="truncate">
+                          {item.title}
+                        </span>
+                      </Button>
+                    );
+                  })}
+                </div>
             </ScrollArea>
           </div>
         </div>

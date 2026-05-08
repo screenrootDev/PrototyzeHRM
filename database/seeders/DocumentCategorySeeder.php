@@ -15,12 +15,12 @@ class DocumentCategorySeeder extends Seeder
     {
         // Get all companies
         $companies = User::where('type', 'company')->get();
-        
+
         if ($companies->isEmpty()) {
             $this->command->warn('No company users found. Please run DefaultCompanySeeder first.');
             return;
         }
-        
+
         // Fixed document categories for consistent data
         $documentCategories = [
             [
@@ -35,7 +35,7 @@ class DocumentCategorySeeder extends Seeder
             [
                 'name' => 'Educational Certificates',
                 'description' => 'Academic qualifications, degrees, diplomas, and professional certifications',
-                'color' => '#10b77f',
+                'color' => '#0075BD',
                 'icon' => 'GraduationCap',
                 'sort_order' => 2,
                 'is_mandatory' => true,
@@ -114,14 +114,14 @@ class DocumentCategorySeeder extends Seeder
                 'status' => 'active'
             ]
         ];
-        
+
         foreach ($companies as $company) {
             foreach ($documentCategories as $categoryData) {
                 // Check if document category already exists for this company
                 if (DocumentCategory::where('name', $categoryData['name'])->where('created_by', $company->id)->exists()) {
                     continue;
                 }
-                
+
                 try {
                     DocumentCategory::create([
                         'name' => $categoryData['name'],
@@ -139,7 +139,7 @@ class DocumentCategorySeeder extends Seeder
                 }
             }
         }
-        
+
         $this->command->info('DocumentCategory seeder completed successfully!');
     }
 }
