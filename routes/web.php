@@ -17,7 +17,6 @@ use App\Http\Controllers\CoinGatePaymentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CookieConsentController;
-use App\Http\Controllers\CouponController;
 use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
@@ -60,7 +59,6 @@ use App\Http\Controllers\PlanOrderController;
 use App\Http\Controllers\PlanRequestController;
 use App\Http\Controllers\PromotionController;
 use App\Http\Controllers\RazorpayController;
-use App\Http\Controllers\ReferralController;
 use App\Http\Controllers\ResignationController;
 use App\Http\Controllers\ReviewCycleController;
 use App\Http\Controllers\RoleController;
@@ -171,7 +169,6 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         Route::post('plans/request', [PlanController::class, 'requestPlan'])->name('plans.request');
         Route::post('plans/trial', [PlanController::class, 'startTrial'])->name('plans.trial');
         Route::post('plans/subscribe', [PlanController::class, 'subscribe'])->name('plans.subscribe');
-        Route::post('plans/coupons/validate', [CouponController::class, 'validate'])->name('coupons.validate');
 
         // Payment routes - accessible without plan check
         Route::post('payments/stripe', [StripePaymentController::class, 'processPayment'])->name('stripe.payment');
@@ -1117,15 +1114,6 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::put('companies/{company}/upgrade-plan', [CompanyController::class, 'upgradePlan'])->middleware('permission:upgrade-plan-companies')->name('companies.upgrade-plan');
         });
 
-        // Coupons routes
-        Route::middleware(['checksaas', 'permission:manage-coupons'])->group(function () {
-            Route::get('coupons', [CouponController::class, 'index'])->middleware('permission:manage-coupons')->name('coupons.index');
-            Route::get('coupons/{coupon}', [CouponController::class, 'show'])->middleware('permission:view-coupons')->name('coupons.show');
-            Route::post('coupons', [CouponController::class, 'store'])->middleware('permission:create-coupons')->name('coupons.store');
-            Route::put('coupons/{coupon}', [CouponController::class, 'update'])->middleware('permission:edit-coupons')->name('coupons.update');
-            Route::put('coupons/{coupon}/toggle-status', [CouponController::class, 'toggleStatus'])->middleware('permission:toggle-status-coupons')->name('coupons.toggle-status');
-            Route::delete('coupons/{coupon}', [CouponController::class, 'destroy'])->middleware('permission:delete-coupons')->name('coupons.destroy');
-        });
 
         // Plan Requests routes
         Route::middleware(['checksaas', 'permission:manage-plan-requests'])->group(function () {
@@ -1134,15 +1122,6 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::post('plan-requests/{planRequest}/reject', [PlanRequestController::class, 'reject'])->middleware('permission:reject-plan-requests')->name('plan-requests.reject');
         });
 
-        // Referral routes
-        Route::middleware(['checksaas', 'permission:manage-referral'])->group(function () {
-            Route::get('referral', [ReferralController::class, 'index'])->middleware('permission:manage-referral')->name('referral.index');
-            Route::get('referral/referred-users', [ReferralController::class, 'getReferredUsers'])->middleware('permission:manage-users-referral')->name('referral.referred-users');
-            Route::post('referral/settings', [ReferralController::class, 'updateSettings'])->middleware('permission:manage-setting-referral')->name('referral.settings.update');
-            Route::post('referral/payout-request', [ReferralController::class, 'createPayoutRequest'])->middleware('permission:manage-payout-referral')->name('referral.payout-request.create');
-            Route::post('referral/payout-request/{payoutRequest}/approve', [ReferralController::class, 'approvePayoutRequest'])->middleware('permission:approve-payout-referral')->name('referral.payout-request.approve');
-            Route::post('referral/payout-request/{payoutRequest}/reject', [ReferralController::class, 'rejectPayoutRequest'])->middleware('permission:reject-payout-referral')->name('referral.payout-request.reject');
-        });
 
         // Currencies routes
         Route::middleware('permission:manage-currencies')->group(function () {

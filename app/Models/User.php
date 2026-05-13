@@ -47,12 +47,11 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
                 'requested_plan',
                 'plan_is_active',
                 'storage_limit',
-                'referral_code',
-                'used_referral_code',
+
                 'is_trial',
                 'trial_day',
                 'trial_expire_date',
-                'commission_amount',
+
             ]);
         }
 
@@ -268,29 +267,9 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         return $this->isSuperAdmin();
     }
 
-    /**
-     * Get referrals made by this company
-     */
-    public function referrals()
-    {
-        if (! isSaas()) {
-            return $this->hasMany(Referral::class, 'user_id')->whereRaw('1 = 0'); // Empty relation in non-SaaS
-        }
 
-        return $this->hasMany(Referral::class, 'user_id');
-    }
 
-    /**
-     * Get payout requests made by this company
-     */
-    public function payoutRequests()
-    {
-        if (! isSaas()) {
-            return $this->hasMany(PayoutRequest::class, 'company_id')->whereRaw('1 = 0'); // Empty relation in non-SaaS
-        }
 
-        return $this->hasMany(PayoutRequest::class, 'company_id');
-    }
 
     /**
      * Get the user who created this user
@@ -308,20 +287,7 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         return $this->hasOne(Employee::class, 'user_id');
     }
 
-    /**
-     * Get referral balance for company
-     */
-    public function getReferralBalance()
-    {
-        if (! isSaas()) {
-            return 0; // No referrals in non-SaaS
-        }
 
-        $totalEarned = $this->referrals()->sum('amount');
-        $totalRequested = $this->payoutRequests()->whereIn('status', ['pending', 'approved'])->sum('amount');
-
-        return $totalEarned - $totalRequested;
-    }
 
     /**
      * Send the email verification notification with dynamic config.
@@ -352,17 +318,7 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
     {
         parent::boot();
 
-        static::creating(function ($user) {
-            if (isSaas() && $user->type === 'company' && ! $user->referral_code) {
-                // Generate referral code after the user is saved to get the ID
-                static::created(function ($createdUser) {
-                    if (! $createdUser->referral_code) {
-                        $createdUser->referral_code = 'REF'.str_pad($createdUser->id, 6, '0', STR_PAD_LEFT);
-                        $createdUser->save();
-                    }
-                });
-            }
-        });
+
 
         static::created(function ($user) {
             // Assign default plan to company users only in SaaS mode

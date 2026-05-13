@@ -26,8 +26,8 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Super admin always gets dashboard
-        if ($user->type === 'superadmin' || $user->type === 'super admin') {
+        // Super admin, company, and employee always get dashboard
+        if ($user->type === 'superadmin' || $user->type === 'super admin' || $user->type === 'company' || $user->type === 'employee') {
             return $this->renderDashboard();
         }
 
@@ -55,7 +55,6 @@ class DashboardController extends Controller
             ['route' => 'roles.index', 'permission' => 'manage-roles'],
 
             ['route' => 'plans.index', 'permission' => 'manage-plans'],
-            ['route' => 'referral.index', 'permission' => 'manage-referral'],
             ['route' => 'settings.index', 'permission' => 'manage-settings'],
         ];
 

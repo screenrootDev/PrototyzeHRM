@@ -160,7 +160,7 @@ export default function Companies() {
     
     switch (action) {
       case 'login-as':
-        router.get(route("impersonate.start", company.id));
+        window.location.href = route("impersonate.start", company.id);
         break;
       case 'company-info':
         setFormMode('view');
@@ -721,7 +721,7 @@ export default function Companies() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 z-50" sideOffset={5}>
-                        <DropdownMenuItem onClick={() => handleAction('login-as', company)}>
+                        <DropdownMenuItem onClick={() => window.location.href = route("impersonate.start", company.id)}>
                           <ArrowUpRight className="h-4 w-4 mr-2" />
                           <span>{"Login as Company"}</span>
                         </DropdownMenuItem>

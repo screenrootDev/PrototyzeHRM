@@ -11,7 +11,6 @@ export const getModulesFromNavigation = (userRole: string): string[] => {
     'plan_orders',
     'domain_requests',
     'currencies',
-    'referral',
     'settings'
   ];
 
@@ -24,7 +23,6 @@ export const getModulesFromNavigation = (userRole: string): string[] => {
     'nfc_cards',
     'campaigns',
     'plans',
-    'referral',
     'settings'
   ];
 

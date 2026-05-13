@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\Coupon;
 use App\Models\Currency;
 use App\Models\PaymentSetting;
 use App\Models\Plan;
@@ -790,21 +789,6 @@ if (!function_exists('calculatePlanPricing')) {
         $finalPrice = $originalPrice;
         $couponId = null;
 
-        if ($couponCode) {
-            $coupon = Coupon::where('code', $couponCode)
-                ->where('status', 1)
-                ->first();
-
-            if ($coupon) {
-                if ($coupon->type === 'percentage') {
-                    $discountAmount = ($originalPrice * $coupon->discount_amount) / 100;
-                } else {
-                    $discountAmount = min($coupon->discount_amount, $originalPrice);
-                }
-                $finalPrice = max(0, $originalPrice - $discountAmount);
-                $couponId = $coupon->id;
-            }
-        }
 
         return [
             'original_price' => $originalPrice,
@@ -867,8 +851,6 @@ if (!function_exists('processPaymentSuccess')) {
         // Verify the plan was assigned
         $user->refresh();
 
-        // Create referral record if user was referred
-        \App\Http\Controllers\ReferralController::createReferralRecord($user);
 
         return $planOrder;
     }

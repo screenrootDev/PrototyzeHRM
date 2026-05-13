@@ -8,7 +8,7 @@
                 <i class="fas fa-check text-3xl text-green-600"></i>
             </div>
             <h2 class="text-2xl font-semibold text-gray-900 mb-2">Update Completed Successfully!</h2>
-            <p class="text-gray-600">{{ session('message')['message'] }}</p>
+            <p class="text-gray-600">{{ is_array(session('message')) ? session('message')['message'] : '' }}</p>
         </div>
 
         <div class="bg-green-50 border border-green-200 rounded-lg p-6 mb-6">

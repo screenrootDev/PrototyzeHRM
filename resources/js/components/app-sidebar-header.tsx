@@ -4,7 +4,7 @@ import { useLayout } from '@/contexts/LayoutContext';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { ProfileMenu } from '@/components/profile-menu';
 
-import { usePage, router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
@@ -21,12 +21,19 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                 </div>
                 <div className="flex items-center gap-2">
                     {(usePage().props as any).isImpersonating && (
-                        <button 
-                            onClick={() => router.post(route('impersonate.leave'))}
-                            className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 cursor-pointer"
+                        <form
+                            method="POST"
+                            action={route('impersonate.leave')}
+                            style={{ display: 'inline' }}
                         >
-                            {"Return Back"}
-                        </button>
+                            <input type="hidden" name="_token" value={(usePage().props as any).csrf_token} />
+                            <button 
+                                type="submit"
+                                className="bg-red-500 text-white px-2 py-1 rounded text-xs hover:bg-red-600 cursor-pointer"
+                            >
+                                {"Return Back"}
+                            </button>
+                        </form>
                     )}
 
                     <ProfileMenu />

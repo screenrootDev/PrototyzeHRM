@@ -68,21 +68,11 @@ export function AppSidebar() {
                 }
             ]
         },
-        {
-            title: 'Coupons',
-            href: route('coupons.index'),
-            icon: Settings,
-        },
 
         {
             title: 'Currencies',
             href: route('currencies.index'),
             icon: DollarSign,
-        },
-        {
-            title: 'Referral Program',
-            href: route('referral.index'),
-            icon: Gift,
         },
         {
             title: 'Landing Page',
@@ -895,13 +885,7 @@ export function AppSidebar() {
             });
         }
 
-        if (hasPermission(permissions, 'manage-referral')) {
-            items.push({
-                title: 'Referral Program',
-                href: route('referral.index'),
-                icon: Gift,
-            });
-        }
+
 
         // Currencies - only show in non-SaaS mode for company users
         if (!isSaas && hasPermission(permissions, 'manage-currencies')) {

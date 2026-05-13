@@ -693,9 +693,6 @@ class RoleSeeder extends Seeder
                 'request-plans',
                 'trial-plans',
                 'subscribe-plans',
-                'manage-referral',
-                'manage-users-referral',
-                'manage-payout-referral',
                 'manage-analytics'
             ];
             $basePermissions = array_merge($basePermissions, $saasPermissions);

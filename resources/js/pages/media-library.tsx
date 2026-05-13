@@ -63,7 +63,7 @@ export default function MediaLibraryDemo() {
         toast.success(result.message || 'Directory created successfully');
         setNewDirectoryName('');
         setShowCreateDirectory(false);
-        fetchMedia();
+        fetchMedia(currentDirectory);
       } else {
         if (result.errors && Array.isArray(result.errors)) {
           result.errors.forEach((error: string) => toast.error(error));
@@ -76,12 +76,12 @@ export default function MediaLibraryDemo() {
     }
   };
 
-  const fetchMedia = useCallback(async () => {
+  const fetchMedia = useCallback(async (directoryId: number | null) => {
     setLoading(true);
     try {
       const params = new URLSearchParams();
-      if (currentDirectory) {
-        params.append('directory_id', currentDirectory.toString());
+      if (directoryId) {
+        params.append('directory_id', directoryId.toString());
       }
 
       const response = await fetch(`${route('api.media.index')}?${params}`, {
@@ -107,11 +107,11 @@ export default function MediaLibraryDemo() {
     } finally {
       setLoading(false);
     }
-  }, [currentDirectory]);
+  }, []);
 
   useEffect(() => {
-    fetchMedia();
-  }, [fetchMedia]);
+    fetchMedia(currentDirectory);
+  }, [fetchMedia, currentDirectory]);
 
 
 

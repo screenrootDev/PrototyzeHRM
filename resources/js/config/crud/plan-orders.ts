@@ -39,11 +39,6 @@ export const planOrdersConfig: CrudConfig = {
         render: (value) => `${window.appSettings.formatCurrency(value)}`
       },
       { 
-        key: 'coupon_code', 
-        label: 'Coupon Code', 
-        render: (value) => value || '-'
-      },
-      { 
         key: 'discount_amount', 
         label: 'Discount', 
         render: (value) => value > 0 ? `-${window.appSettings.formatCurrency(value)}` : '-'
@@ -86,7 +81,7 @@ export const planOrdersConfig: CrudConfig = {
   search: {
     enabled: true,
     placeholder: 'Search orders...',
-    fields: ['order_number', 'user.name', 'plan.name', 'coupon_code']
+    fields: ['order_number', 'user.name', 'plan.name']
   },
   filters: [
     {

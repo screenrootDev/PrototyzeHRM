@@ -32,9 +32,6 @@ class DatabaseSeeder extends Seeder
                 CouponSeeder::class,
                 PlanOrderSeeder::class,
                 PlanRequestSeeder::class,
-                ReferralSettingSeeder::class,
-                ReferralSeeder::class,
-                PayoutRequestSeeder::class,
                 WebhookSeeder::class,
                 MediaItemSeeder::class,
 
@@ -152,10 +149,6 @@ class DatabaseSeeder extends Seeder
                 //CouponSeeder::class,
                 //PlanOrderSeeder::class,
                 //PlanRequestSeeder::class,
-                //ReferralSettingSeeder::class,
-                // New seeders
-                //ReferralSeeder::class,
-                //PayoutRequestSeeder::class,
                 //WebhookSeeder::class,
             ]);
         } else {

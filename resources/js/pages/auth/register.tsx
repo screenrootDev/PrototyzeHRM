@@ -22,10 +22,9 @@ type RegisterForm = {
     terms: boolean;
     recaptcha_token?: string;
     plan_id?: string;
-    referral_code?: string;
 };
 
-export default function Register({ referralCode, planId }: { referralCode?: string; planId?: string }) {
+export default function Register({ planId }: { planId?: string }) {
     
     const { globalSettings } = usePage().props as any;
     const termsConditionsUrl = globalSettings?.termsConditionsUrl;
@@ -39,7 +38,6 @@ export default function Register({ referralCode, planId }: { referralCode?: stri
         password_confirmation: '',
         terms: false,
         plan_id: planId,
-        referral_code: referralCode,
     });
 
     const submit: FormEventHandler = (e) => {

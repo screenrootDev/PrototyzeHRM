@@ -84,8 +84,7 @@ class PlanOrder extends Model
             'plan_is_active' => 1,
         ]);
 
-        // Create referral record if user was referred, passing billing cycle information
-        \App\Http\Controllers\ReferralController::createReferralRecord($this->user->fresh(), $this->billing_cycle);
+
     }
 
     public function reject($processedBy = null, $notes = null)

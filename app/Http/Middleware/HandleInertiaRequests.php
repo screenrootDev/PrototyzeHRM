@@ -28,7 +28,9 @@ class HandleInertiaRequests extends Middleware
      */
     public function version(Request $request): ?string
     {
-        return parent::version($request);
+        // Return null to disable Inertia version checking in development
+        // This prevents the infinite reload loop when assets are rebuilt
+        return null;
     }
 
     /**
