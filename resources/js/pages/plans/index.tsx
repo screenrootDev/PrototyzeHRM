@@ -68,11 +68,10 @@ interface Props {
   currentPlan?: any;
   userTrialUsed?: boolean;
   paymentMethods?: any[];
-  currency?: string;
-  currencySymbol?: string;
+  paymentMethods?: any[];
 }
 
-export default function Plans({ plans: initialPlans, billingCycle: initialBillingCycle = 'monthly', hasDefaultPlan, isAdmin = false, currentPlan, userTrialUsed, paymentMethods = [], currency, currencySymbol }: Props) {
+export default function Plans({ plans: initialPlans, billingCycle: initialBillingCycle = 'monthly', hasDefaultPlan, isAdmin = false, currentPlan, userTrialUsed, paymentMethods = [] }: Props) {
   
   const { flash } = usePage().props as any;
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
@@ -85,16 +84,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
   const { post, processing } = useForm();
 
 
-  // Helper function to safely format currency
-  const formatCurrency = (amount: string | number) => {
-    if (typeof window !== 'undefined' && window.appSettings?.formatCurrency) {
-      // Use numeric value if available, otherwise parse the string
-      const numericAmount = typeof amount === 'number' ? amount : parseFloat(amount);
-      return window.appSettings.formatCurrency(numericAmount, { showSymbol: true });
-    }
-    // Fallback if appSettings is not available
-    return amount;
-  };
+
 
    const breadcrumbs = [
     { title: 'Dashboard', href: route('dashboard') },
@@ -756,7 +746,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                       text-3xl font-extrabold 
                       ${plan.recommended ? 'text-primary' : ''}
                     `}>
-                      {currencySymbol}{plan.price}
+                      {plan.price}
                     </span>
                     <span className="text-muted-foreground text-sm">
                       /{plan.duration.toLowerCase()}
@@ -931,7 +921,6 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
             plan={selectedPlan}
             billingCycle={billingCycle}
             paymentMethods={formatPaymentMethods(selectedPlan.paymentMethods)}
-            currencySymbol={currencySymbol}
           />
         )}
       </div>

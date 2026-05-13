@@ -18,7 +18,7 @@ class PayTRPaymentController extends Controller
             'merchant_id' => $settings['payment_settings']['paytr_merchant_id'] ?? null,
             'merchant_key' => $settings['payment_settings']['paytr_merchant_key'] ?? null,
             'merchant_salt' => $settings['payment_settings']['paytr_merchant_salt'] ?? null,
-            'currency' => $settings['general_settings']['defaultCurrency'] ?? 'TRY'
+            'currency' => 'USD'
         ];
     }
 
@@ -140,6 +140,11 @@ class PayTRPaymentController extends Controller
             $calculatedHash = base64_encode(hash_hmac('sha256', $hashStr, $credentials['merchant_key'], true));
                         
             if ($hash === $calculatedHash && $status === 'success') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response('INVALID_CURRENCY', 400);
+                }
+
                 $planOrder = \App\Models\PlanOrder::where('payment_id', $merchant_oid)->first();
                 
                 if ($planOrder && $planOrder->status === 'pending') {

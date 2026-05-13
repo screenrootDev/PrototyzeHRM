@@ -30,12 +30,10 @@ class AuthorizeNetPaymentController extends Controller
             }
 
             // Get currency from settings or default to USD
-            $currency = $settings['general_settings']['currency'] ?? 'USD';
+            $currency = 'USD';
             
             // Validate currency support
-            if (!in_array($currency, self::SUPPORTED_CURRENCIES)) {
                 $currency = 'USD';
-            }
 
             return response()->json([
                 'success' => true,

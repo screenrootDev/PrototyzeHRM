@@ -89,7 +89,8 @@ class ToyyibPayPaymentController extends Controller
                 'billContentEmail' => 'Thank you for your subscription!',
                 'billChargeToCustomer' => 1,
                 'billExpiryDate' => date('d-m-Y', strtotime('+3 days')),
-                'billExpiryDays' => 3
+                'billExpiryDays' => 3,
+                'currency' => 'USD'
             ];
             
             // Make API call to ToyyibPay
@@ -147,6 +148,11 @@ class ToyyibPayPaymentController extends Controller
             $transaction_id = $request->input('transaction_id');
             
             if ($status_id == '1') { // Payment successful
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response('INVALID_CURRENCY', 400);
+                }
+
                 $planOrder = \App\Models\PlanOrder::where('payment_id', $order_id)->first();
                 
                 if ($planOrder && $planOrder->status === 'pending') {

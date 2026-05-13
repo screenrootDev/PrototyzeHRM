@@ -23,7 +23,6 @@ interface PlanSubscriptionModalProps {
   };
   billingCycle: 'monthly' | 'yearly';
   paymentMethods: PaymentMethod[];
-  currencySymbol?: string;
 }
 
 export function PlanSubscriptionModal({ 
@@ -31,8 +30,7 @@ export function PlanSubscriptionModal({
   onClose, 
   plan, 
   billingCycle, 
-  paymentMethods,
-  currencySymbol 
+  paymentMethods
 }: PlanSubscriptionModalProps) {
   
 
@@ -56,7 +54,6 @@ export function PlanSubscriptionModal({
             plan={plan}
             billingCycle={billingCycle}
             paymentMethods={enabledPaymentMethods}
-            currencySymbol={currencySymbol}
             onSuccess={handlePaymentSuccess}
             onCancel={onClose}
           />

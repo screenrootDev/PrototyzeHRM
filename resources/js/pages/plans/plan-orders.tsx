@@ -17,7 +17,7 @@ import { Textarea } from '@/components/ui/textarea';
 
 export default function PlanOrdersPage() {
   
-  const { flash, planOrders, filters: pageFilters = {}, auth, currencySymbol, globalSettings } = usePage().props as any;
+  const { flash, planOrders, filters: pageFilters = {}, auth, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
   const [searchTerm, setSearchTerm] = useState(pageFilters.search || '');
@@ -215,7 +215,7 @@ export default function PlanOrdersPage() {
           columns={planOrdersConfig.table.columns.map(col => ({
             ...col,
             label: col.label,
-            render: col.key === 'original_price' || col.key === 'final_price' ? (value: any) => `${currencySymbol}${value}` : col.key === 'discount_amount' ? (value: any) => value > 0 ? `-${currencySymbol}${value}` : '-' : col.render
+            render: col.key === 'original_price' || col.key === 'final_price' ? (value: any) => value : col.key === 'discount_amount' ? (value: any) => value > 0 ? `-${value}` : '-' : col.render
           }))}
           actions={filteredActions}
           data={planOrders?.data || []}

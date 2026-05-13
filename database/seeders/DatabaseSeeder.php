@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 DefaultSuperAdminSeeder::class,
                 DefaultCompanySeeder::class,
                 DefaultCompanyUserSeeder::class,
-                CurrencySeeder::class,
+
                 EmailTemplateSeeder::class,
                 LandingPageCustomPageSeeder::class,
 
@@ -159,7 +159,7 @@ class DatabaseSeeder extends Seeder
                 DefaultSuperAdminSeeder::class,
                 DefaultCompanySeeder::class,
                 DefaultCompanyUserSeeder::class,
-                CurrencySeeder::class,
+
                 EmailTemplateSeeder::class,
                 LandingPageCustomPageSeeder::class,
             ]);

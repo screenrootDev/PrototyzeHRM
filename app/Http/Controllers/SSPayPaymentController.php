@@ -78,6 +78,7 @@ class SSPayPaymentController extends Controller
                 'billCity' => 'Kuala Lumpur',
                 'billState' => 'Selangor',
                 'billCountry' => 'MY',
+                'currency' => 'USD',
             ];
 
             return response()->json([
@@ -104,6 +105,11 @@ class SSPayPaymentController extends Controller
             $statusId = $request->input('status_id');
             
             if ($orderId && $statusId === '1') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $orderId);
                 
                 if (count($parts) >= 3) {

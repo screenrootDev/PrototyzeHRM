@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import SystemSettings from './components/system-settings';
 import { usePage } from '@inertiajs/react';
 
-import CurrencySettings from './components/currency-settings';
+
 
 import BrandSettings from './components/brand-settings';
 import EmailSettings from './components/email-settings';
@@ -52,12 +52,7 @@ export default function Settings() {
       icon: <Palette className="h-4 w-4 mr-2" />,
       permission: 'manage-brand-settings'
     },
-    {
-      title: 'Currency Settings',
-      href: '#currency-settings',
-      icon: <DollarSign className="h-4 w-4 mr-2" />,
-      permission: 'manage-currency-settings'
-    },
+
     {
       title: 'Email Settings',
       href: '#email-settings',
@@ -172,7 +167,7 @@ export default function Settings() {
   const systemSettingsRef = useRef<HTMLDivElement>(null);
   const brandSettingsRef = useRef<HTMLDivElement>(null);
 
-  const currencySettingsRef = useRef<HTMLDivElement>(null);
+
   const workingDaysSettingsRef = useRef<HTMLDivElement>(null);
   const emailSettingsRef = useRef<HTMLDivElement>(null);
   const paymentSettingsRef = useRef<HTMLDivElement>(null);
@@ -321,12 +316,7 @@ export default function Settings() {
 
 
 
-          {/* Currency Settings Section */}
-          {(auth.permissions?.includes('manage-currency-settings') || auth.user?.type === 'superadmin' || auth.user?.type === 'company') && (
-            <section id="currency-settings" ref={currencySettingsRef} className="mb-8">
-              <CurrencySettings />
-            </section>
-          )}
+
 
           {/* Email Settings Section */}
           {(auth.permissions?.includes('manage-email-settings') || auth.user?.type === 'superadmin') && (

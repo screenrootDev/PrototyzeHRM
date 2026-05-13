@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-use App\Models\Currency;
+
 use App\Models\PaymentSetting;
 use App\Models\Webhook;
 use App\Models\IpRestriction;
@@ -22,7 +22,7 @@ class SettingsController extends Controller
     {
         // Get system settings using helper function
         $systemSettings = settings();
-        $currencies = Currency::all();
+
         $paymentSettings = PaymentSetting::getUserSettings(auth()->id());
         $webhooks = Webhook::where('user_id', auth()->id())->get();
         $ipRestrictions = IpRestriction::whereIn('created_by', getCompanyAndUsersId())->orderBy('id','desc')->get();
@@ -41,7 +41,7 @@ class SettingsController extends Controller
             'systemSettings' => $systemSettings,
             'settings' => $systemSettings, // For helper functions
             'cacheSize' => getCacheSize(),
-            'currencies' => $currencies,
+
             'timezones' => config('timezones'),
             'dateFormats' => config('dateformat'),
             'timeFormats' => config('timeformat'),

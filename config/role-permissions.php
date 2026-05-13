@@ -11,7 +11,7 @@ return [
         'plan_requests',
         'plan_orders',
         'domain_requests',
-        'currencies',
+
         'referral',
         'coupons',
         'appointments',

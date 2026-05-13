@@ -17,7 +17,7 @@ class MolliePaymentController extends Controller
                 
         return [
             'api_key' => $settings['payment_settings']['mollie_api_key'] ?? null,
-            'currency' => $settings['general_settings']['defaultCurrency'] ?? 'EUR'
+            'currency' => 'USD'
         ];
     }
 
@@ -207,6 +207,10 @@ class MolliePaymentController extends Controller
                         $payment = $mollie->payments->get($planOrder->payment_id);
                         
                         if ($payment->isPaid()) {
+                            // Verify currency
+                            if ($payment->amount->currency !== 'USD') {
+                                return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+                            }
                             $planOrder->update(['status' => 'approved']);
                             $planOrder->activateSubscription();
                             
@@ -241,6 +245,10 @@ class MolliePaymentController extends Controller
             $payment = $mollie->payments->get($paymentId);
                         
             if ($payment->isPaid()) {
+                // Verify currency
+                if ($payment->amount->currency !== 'USD') {
+                    return response('INVALID_CURRENCY', 400);
+                }
                 $planOrder = PlanOrder::where('payment_id', $paymentId)->first();
                 
                 if ($planOrder && $planOrder->status === 'pending') {

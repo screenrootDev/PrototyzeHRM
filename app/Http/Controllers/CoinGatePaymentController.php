@@ -62,8 +62,8 @@ class CoinGatePaymentController extends Controller
             $orderParams = [
                 'order_id' => $orderId,
                 'price_amount' => $price,
-                'price_currency' => $settings['general_settings']['defaultCurrency'] ?? 'USD',
-                'receive_currency' => $settings['general_settings']['defaultCurrency'] ?? 'USD',
+                'price_currency' => 'USD',
+                'receive_currency' => 'USD',
                 'callback_url' => route('coingate.callback'),
                 'cancel_url' => route('plans.index'),
                 'success_url' => route('coingate.callback'),
@@ -94,6 +94,11 @@ class CoinGatePaymentController extends Controller
     public function callback(Request $request)
     {
         try {
+            // Verify currency if provided in IPN/Callback
+            if ($request->has('price_currency') && $request->input('price_currency') !== 'USD') {
+                return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+            }
+
             $user = auth()->user();
             $coingateData = session('coingate_data');
             

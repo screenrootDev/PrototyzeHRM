@@ -66,6 +66,7 @@ class NepalstePaymentController extends Controller
 
             $paymentData = [
                 'amount' => $pricing['final_price'],
+                'currency' => 'USD',
                 'purchase_order_id' => $orderId,
                 'purchase_order_name' => $plan->name,
                 'return_url' => route('nepalste.success', ['order_id' => $orderId, 'plan_id' => $plan->id, 'billing_cycle' => $validated['billing_cycle']]),
@@ -138,6 +139,11 @@ class NepalstePaymentController extends Controller
             $status = $request->input('status');
             
             if ($orderId && $status === 'completed') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $orderId);
                 
                 if (count($parts) >= 3) {

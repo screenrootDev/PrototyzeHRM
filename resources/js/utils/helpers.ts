@@ -135,160 +135,70 @@ const getImagePath = (path: string, pageProps?: any): string => {
   }
 }
 
-
 /**
- * Format currency based on saved settings
+ * Get current company ID from page props
  */
-// const formatCurrency = (amount: number | string): string => {
-//   try {
-//     const num = Number(amount) || 0;
-//     const decimalPlaces = parseInt(getCompanySetting('decimalFormat') || '2');
-//     const decimalSeparator = getCompanySetting('decimalSeparator') || '.';
-//     const thousandsSeparator = getCompanySetting('thousandsSeparator') || ',';
-//     const floatNumber = getCompanySetting('floatNumber') !== '0';
-//     const currencySymbolSpace = getCompanySetting('currencySymbolSpace') === '1';
-//     const currencySymbolPosition = getCompanySetting('currencySymbolPosition') || 'before';
-
-//     let finalAmount = floatNumber ? num : Math.floor(num);
-//     const parts = Number(finalAmount).toFixed(decimalPlaces).split('.');
-
-//     if (thousandsSeparator !== 'none') {
-//       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSeparator);
-//     }
-
-//     const formattedNumber = parts.join(decimalSeparator);
-//     const symbol = getCurrencySymbol();
-//     const space = currencySymbolSpace ? ' ' : '';
-
-//     return currencySymbolPosition === 'before' 
-//       ? `${symbol}${space}${formattedNumber}`
-//       : `${formattedNumber}${space}${symbol}`;
-//   } catch {
-//     return `$${Number(amount).toFixed(2)}`;
-//   }
-// };
-
-// const formatAdminCurrency = (amount: number | string): string => {
-//   try {
-//     const num = Number(amount) || 0;
-//     const decimalPlaces = parseInt(getAdminSetting('decimalFormat') || '2');
-//     const decimalSeparator = getAdminSetting('decimalSeparator') || '.';
-//     const thousandsSeparator = getAdminSetting('thousandsSeparator') || ',';
-//     const floatNumber = getAdminSetting('floatNumber') !== '0';
-//     const currencySymbolSpace = getAdminSetting('currencySymbolSpace') === '1';
-//     const currencySymbolPosition = getAdminSetting('currencySymbolPosition') || 'before';
-
-//     let finalAmount = floatNumber ? num : Math.floor(num);
-//     const parts = Number(finalAmount).toFixed(decimalPlaces).split('.');
-
-//     if (thousandsSeparator !== 'none') {
-//       parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousandsSeparator);
-//     }
-
-//     const formattedNumber = parts.join(decimalSeparator);
-//     const symbol = getAdminSetting('currencySymbol') || '$';
-//     const space = currencySymbolSpace ? ' ' : '';
-
-//     return currencySymbolPosition === 'before' 
-//       ? `${symbol}${space}${formattedNumber}`
-//       : `${formattedNumber}${space}${symbol}`;
-//   } catch {
-//     return `$${Number(amount).toFixed(2)}`;
-//   }
-// };
-
-/**
- * Get currency symbol from settings
- */
-// const getCurrencySymbol = (): string => {
-//   try {
-//     return getCompanySetting('currencySymbol') || '$';
-//   } catch {
-//     return '$';
-//   }
-// };
-
-// const getAdminCurrencySymbol = (): string => {
-//   try {
-//     return getAdminSetting('currencySymbol') || '$';
-//   } catch {
-//     return '$';
-//   }
-// };
-
-/**
- * Get company ID based on user type
- */
-const getCompanyId = (auth: any): number => {
-  if (!auth?.user) return 0;
-  
-  const userType = auth.user.type || auth.user.role;
-  
-  if (userType === 'superadmin' || userType === 'company') {
-    return auth.user.id;
-  }
-  
-  return auth.user.created_by || 0;
-};
-
-/**
- * Check if application is in demo mode
- */
-const isDemoMode = (props?: any): boolean => {
+const getCompanyId = () => {
   try {
-    const pageProps = props || (typeof window !== 'undefined' && (window as any).page?.props);
-    const isDemo = pageProps?.globalSettings?.is_demo;
-    return isDemo === true || isDemo === '1' || isDemo === 1;
+    const { props } = usePage();
+    return (props as any).auth?.user?.company_id || (props as any).companyId;
   } catch {
-    return false;
+    return null;
   }
 };
 
-const isSaaS = (props?: any): boolean => {
+/**
+ * Check if the application is in demo mode
+ */
+const isDemoMode = () => {
   try {
-    const pageProps = props || (typeof window !== 'undefined' && (window as any).page?.props);
-    const isSaasValue = pageProps?.globalSettings?.is_saas;
-    return isSaasValue === true || isSaasValue === '1' || isSaasValue === 1;
+    const { props } = usePage();
+    return (props as any).globalSettings?.is_demo || false;
   } catch {
     return false;
   }
 };
 
 /**
- * Set cookie
+ * Check if the application is in SaaS mode
  */
-const setCookie = (name: string, value: string, days: number = 365): void => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+const isSaaS = () => {
+  try {
+    const { props } = usePage();
+    return (props as any).globalSettings?.is_saas || false;
+  } catch {
+    return false;
+  }
 };
 
 /**
- * Get cookie
+ * Set a browser cookie
+ */
+const setCookie = (name: string, value: string, days = 365) => {
+  if (typeof document === 'undefined') return;
+  const maxAge = days * 24 * 60 * 60;
+  document.cookie = `${name}=${value};path=/;max-age=${maxAge};SameSite=Lax`;
+};
+
+/**
+ * Get a browser cookie
  */
 const getCookie = (name: string): string | null => {
-  const nameEQ = name + '=';
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+  if (typeof document === 'undefined') return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    const cookieValue = parts.pop()?.split(';').shift();
+    return cookieValue ? decodeURIComponent(cookieValue) : null;
   }
   return null;
 };
 
 export {
-  // formatDate,
-  // formatTime,
-  // formatDateTime,
-  // formatCurrency,
-  // formatAdminCurrency,
-  // getCurrencySymbol,
-  // getAdminCurrencySymbol
   getImagePath,
   getCompanyId,
   isDemoMode,
   isSaaS,
   setCookie,
   getCookie,
-}
+};

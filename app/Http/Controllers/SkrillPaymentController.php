@@ -68,6 +68,11 @@ class SkrillPaymentController extends Controller
         $status = $request->input('status');
         
         if ($status == '2') { // Payment processed
+            // Verify currency if provided
+            if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                return response(__('Invalid currency. Only USD is allowed.'), 400);
+            }
+
             $planOrder = PlanOrder::where('payment_id', $transactionId)->first();
             
             if ($planOrder && $planOrder->status === 'pending') {

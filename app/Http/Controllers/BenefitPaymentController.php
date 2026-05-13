@@ -73,7 +73,7 @@ class BenefitPaymentController extends Controller
 
             $userData = [
                 "amount" => $pricing['final_price'],
-                "currency" => "BHD",
+                "currency" => "USD",
                 "customer_initiated" => true,
                 "threeDSecure" => true,
                 "save_card" => false,
@@ -141,6 +141,11 @@ class BenefitPaymentController extends Controller
             $paymentResult = $this->retrieveBenefitPayment($paymentId, $settings['payment_settings']);
             
             if ($paymentResult && $paymentResult['status'] === 'completed') {
+                // Verify currency
+                if (isset($paymentResult['currency']) && $paymentResult['currency'] !== 'USD') {
+                    return redirect()->route('plans.index')->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
+
                 // Extract transaction ID to find the plan and user
                 $parts = explode('_', $transactionId);
                 
@@ -290,7 +295,7 @@ class BenefitPaymentController extends Controller
             'status' => 'completed',
             'payment_id' => $paymentId,
             'amount' => '10.000',
-            'currency' => 'BHD'
+            'currency' => 'USD'
         ];
     }
 

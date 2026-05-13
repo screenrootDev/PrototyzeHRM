@@ -24,6 +24,10 @@ class AamarpayPaymentController extends Controller
             }
 
             if ($validated['pay_status'] === 'Successful') {
+                // Verify currency
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -58,7 +62,7 @@ class AamarpayPaymentController extends Controller
 
             $user = auth()->user();
             $orderID = strtoupper(str_replace('.', '', uniqid('', true)));
-            $currency = $settings['payment_settings']['currency'] ?? 'BDT';
+            $currency = 'USD';
             $url = 'https://sandbox.aamarpay.com/request.php';
 
             // Use proper test store_id for sandbox
@@ -145,6 +149,11 @@ class AamarpayPaymentController extends Controller
             $orderId = $request->input('order_id');
             
             if ($response === 'success' && $planId && $userId) {
+                // Verify currency if provided in request
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+                }
+
                 $plan = Plan::find($planId);
                 $user = User::find($userId);
                 
@@ -181,6 +190,10 @@ class AamarpayPaymentController extends Controller
             $status = $request->input('pay_status');
             
             if ($transactionId && $status === 'Successful') {
+                // Verify currency
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
                 $parts = explode('_', $transactionId);
                 
                 if (count($parts) >= 3) {

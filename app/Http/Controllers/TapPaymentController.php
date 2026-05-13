@@ -92,6 +92,11 @@ class TapPaymentController extends Controller
                     $chargeDetails = $tap->getCharge($chargeId);
                     
                     if ($chargeDetails && isset($chargeDetails->status) && $chargeDetails->status === 'CAPTURED') {
+                        // Verify currency
+                        if (isset($chargeDetails->currency) && $chargeDetails->currency !== 'USD') {
+                            return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+                        }
+
                         processPaymentSuccess([
                             'user_id' => $user->id,
                             'plan_id' => $plan->id,

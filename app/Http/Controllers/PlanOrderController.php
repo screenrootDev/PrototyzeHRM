@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Currency;
 use App\Models\PlanOrder;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -48,21 +47,12 @@ class PlanOrderController extends BaseController
         $perPage = $request->get('per_page', 10);
         $planOrders = $query->paginate($perPage);
 
-        // Always use super admin currency for plan pricing
-        $superAdmin = User::where('type', 'superadmin')->first();
-        $superAdminSettings = settings($superAdmin->id);
-        $currency = $superAdminSettings ? ($superAdminSettings['defaultCurrency'] ?? 'USD') : 'USD';
+        $currency = 'USD';
         $currencySymbol = '$';
-        if (!empty($currency)) {
-            $currencyData = Currency::where('code', $currency)->first();
-            $currencySymbol = $currencyData ? $currencyData->symbol : '$';
-        }
 
         return Inertia::render('plans/plan-orders', [
             'planOrders' => $planOrders,
             'filters' => $request->only(['search', 'status', 'sort_by', 'sort_order', 'per_page']),
-            'currency' => $currency,
-            'currencySymbol' => $currencySymbol
         ]);
     }
 

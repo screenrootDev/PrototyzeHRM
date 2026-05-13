@@ -31,10 +31,6 @@ class PaymentSettingController extends Controller
         // Filter out sensitive credentials and only return safe configuration
         $safeSettings = $this->filterSensitiveData($paymentSettings);
         
-        // Add default currency to payment settings
-        $settings = settings($superAdminId);
-        $safeSettings['defaultCurrency'] = $settings['defaultCurrency'] ?? 'usd';
-        
         return response()->json($safeSettings);
     }
     public function store(Request $request)

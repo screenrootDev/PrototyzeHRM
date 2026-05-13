@@ -49,7 +49,7 @@ class PayTabsPaymentController extends Controller
                 'paytabs.profile_id' => $settings['profile_id'],
                 'paytabs.server_key' => $settings['server_key'],
                 'paytabs.region' => $settings['region'],
-                'paytabs.currency' => 'INR'
+                'paytabs.currency' => 'USD'
             ]);
             
             $pay = paypage::sendPaymentCode('all')
@@ -115,6 +115,11 @@ class PayTabsPaymentController extends Controller
             }
             
             if ($respStatus === 'A') {
+                // Verify currency if provided
+                if ($request->has('cartCurrency') && $request->input('cartCurrency') !== 'USD') {
+                    return response(__('Invalid currency. Only USD is allowed.'), 400);
+                }
+
                 if ($planOrder->status === 'pending') {
                     $updateData = ['status' => 'approved'];
                     if ($tranRef) {
@@ -163,7 +168,7 @@ class PayTabsPaymentController extends Controller
                             'paytabs.profile_id' => $settings['profile_id'],
                             'paytabs.server_key' => $settings['server_key'],
                             'paytabs.region' => $settings['region'],
-                            'paytabs.currency' => 'INR'
+                            'paytabs.currency' => 'USD'
                         ]);
                         
                         // PayTabs only redirects to success URL on successful payment

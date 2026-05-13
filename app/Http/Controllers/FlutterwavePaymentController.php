@@ -55,6 +55,10 @@ class FlutterwavePaymentController extends Controller
                 if (abs($paidAmount - $expectedAmount) > 0.01) {
                     return back()->withErrors(['error' => __('Payment amount verification failed')]);
                 }
+
+                if ($result['data']['currency'] !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 
                 processPaymentSuccess([
                     'user_id' => auth()->id(),

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Currency;
 use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -27,15 +26,8 @@ class PlanController extends Controller
         $settings = settings();
 
 
-        // Always use super admin currency for plan pricing
-        $superAdmin = User::where('type', 'superadmin')->first();
-        $superAdminSettings = settings($superAdmin->id);
-        $currency = $superAdminSettings ? ($superAdminSettings['defaultCurrency'] ?? 'USD') : 'USD';
+        $currency = 'USD';
         $currencySymbol = '$';
-        if (!empty($currency)) {
-            $currencyData = Currency::where('code', $currency)->first();
-            $currencySymbol = $currencyData ? $currencyData->symbol : '$';
-        }
 
         $plans = $dbPlans->map(function ($plan) use ($billingCycle) {
             // Determine features based on plan attributes
@@ -93,8 +85,6 @@ class PlanController extends Controller
             'billingCycle' => $billingCycle,
             'hasDefaultPlan' => $hasDefaultPlan,
             'isAdmin' => true,
-            'currency' => $currency,
-            'currencySymbol' => $currencySymbol
         ]);
     }
 
@@ -246,15 +236,8 @@ class PlanController extends Controller
         $dbPlans = Plan::where('is_plan_enable', 'on')->get();
 
 
-        // Always use super admin currency for plan pricing
-        $superAdmin = User::where('type', 'superadmin')->first();
-        $superAdminSettings = settings($superAdmin->id);
-        $currency = $superAdminSettings ? ($superAdminSettings['defaultCurrency'] ?? 'USD') : 'USD';
+        $currency = 'USD';
         $currencySymbol = '$';
-        if (!empty($currency)) {
-            $currencyData = Currency::where('code', $currency)->first();
-            $currencySymbol = $currencyData ? $currencyData->symbol : '$';
-        }
 
         $plans = $dbPlans->map(function ($plan) use ($billingCycle, $user) {
             $price = $billingCycle === 'yearly' ? $plan->yearly_price : $plan->price;
@@ -302,8 +285,6 @@ class PlanController extends Controller
             'billingCycle' => $billingCycle,
             'currentPlan' => $user->plan,
             'userTrialUsed' => $user->is_trial,
-            'currency' => $currency,
-            'currencySymbol' => $currencySymbol
         ]);
     }
 

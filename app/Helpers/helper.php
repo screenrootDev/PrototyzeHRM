@@ -1330,9 +1330,8 @@ if (!function_exists('formatCurrency')) {
         $settings = settings($user_id);
         $currencyCode = $settings['defaultCurrency'] ?? 'USD';
 
-        // Get currency symbol from database
-        $currency = Currency::where('code', $currencyCode)->first();
-        $symbol = $currency ? $currency->symbol : $currencyCode;
+        // Get currency symbol from settings or default to $
+        $symbol = $settings['currencySymbol'] ?? '$';
 
         $decimalPlaces = (int) ($settings['decimalFormat'] ?? 2);
         $decimalSeparator = $settings['decimalSeparator'] ?? '.';

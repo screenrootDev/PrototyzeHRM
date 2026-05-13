@@ -30,7 +30,7 @@ class YooKassaPaymentController extends Controller
             $payment = $client->createPayment([
                 'amount' => [
                     'value' => number_format($pricing['final_price'], 2, '.', ''),
-                    'currency' => 'RUB',
+                    'currency' => 'USD',
                 ],
                 'confirmation' => [
                     'type' => 'redirect',
@@ -125,6 +125,11 @@ class YooKassaPaymentController extends Controller
             $metadata = $request->input('object.metadata');
             
             if ($paymentId && $status === 'succeeded' && $metadata) {
+                // Verify currency
+                if ($request->input('object.amount.currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $planId = $metadata['plan_id'];
                 $userId = $metadata['user_id'];
                 

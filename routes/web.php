@@ -17,7 +17,7 @@ use App\Http\Controllers\CoinGatePaymentController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ComplaintController;
 use App\Http\Controllers\CookieConsentController;
-use App\Http\Controllers\CurrencyController;
+
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\EasebuzzPaymentController;
@@ -1123,13 +1123,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
 
-        // Currencies routes
-        Route::middleware('permission:manage-currencies')->group(function () {
-            Route::get('currencies', [CurrencyController::class, 'index'])->middleware('permission:manage-currencies')->name('currencies.index');
-            Route::post('currencies', [CurrencyController::class, 'store'])->middleware('permission:create-currencies')->name('currencies.store');
-            Route::put('currencies/{currency}', [CurrencyController::class, 'update'])->middleware('permission:edit-currencies')->name('currencies.update');
-            Route::delete('currencies/{currency}', [CurrencyController::class, 'destroy'])->middleware('permission:delete-currencies')->name('currencies.destroy');
-        });
+
 
         // ChatGPT routes
         Route::post('api/chatgpt/generate', [\App\Http\Controllers\ChatGptController::class, 'generate'])->name('chatgpt.generate');

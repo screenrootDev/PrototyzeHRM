@@ -29,7 +29,7 @@ class XenditPaymentController extends Controller
                 'amount' => $pricing['final_price'],
                 'description' => 'Plan Subscription: ' . $plan->name,
                 'invoice_duration' => 86400,
-                'currency' => 'PHP',
+                'currency' => 'USD',
                 'customer' => [
                     'given_names' => $user->name ?? 'Customer',
                     'email' => $user->email
@@ -178,6 +178,10 @@ class XenditPaymentController extends Controller
         $status = $request->input('status');
         
         if ($status === 'PAID') {
+            // Verify currency if provided
+            if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                return response(__('Invalid currency. Only USD is allowed.'), 400);
+            }
             $planOrder = PlanOrder::where('payment_id', $externalId)->first();
             
             if ($planOrder && $planOrder->status === 'pending') {

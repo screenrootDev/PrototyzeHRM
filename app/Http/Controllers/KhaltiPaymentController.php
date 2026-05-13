@@ -65,6 +65,7 @@ class KhaltiPaymentController extends Controller
                 'product_identity' => 'plan_' . $plan->id,
                 'product_name' => $plan->name,
                 'product_url' => route('plans.index'),
+                'currency' => 'USD',
             ]);
 
         } catch (\Exception $e) {
@@ -98,6 +99,11 @@ class KhaltiPaymentController extends Controller
             curl_close($ch);
 
             $result = json_decode($response, true);
+            
+            // Verify currency if provided
+            if (isset($result['currency']) && $result['currency'] !== 'USD') {
+                return false;
+            }
             
             return isset($result['state']['name']) && $result['state']['name'] === 'Completed';
 

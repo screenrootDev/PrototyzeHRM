@@ -41,13 +41,12 @@ import { SSPayPaymentForm } from './sspay-payment-form';
 import { TapPaymentForm } from './tap-payment-form';
 import { XenditPaymentForm } from './xendit-payment-form';
 
+
 interface PaymentMethod {
   id: string;
   name: string;
   icon: React.ReactNode;
   enabled: boolean;
-  currency?: string;
-  currencySymbol?: string;
 }
 
 interface PaymentProcessorProps {
@@ -60,7 +59,6 @@ interface PaymentProcessorProps {
   };
   billingCycle: 'monthly' | 'yearly';
   paymentMethods: PaymentMethod[];
-  currencySymbol?: string;
   onSuccess: () => void;
   onCancel: () => void;
 }
@@ -69,20 +67,12 @@ export function PaymentProcessor({
   plan, 
   billingCycle, 
   paymentMethods, 
-  currencySymbol = '$',
   onSuccess, 
   onCancel 
 }: PaymentProcessorProps) {
   
   
-  // Helper function to safely format currency
-  const formatCurrency = (amount: string | number) => {
-    if (typeof window !== 'undefined' && window.appSettings?.formatCurrency) {
-      const numericAmount = typeof amount === 'number' ? amount : parseFloat(amount);
-      return window.appSettings.formatCurrency(numericAmount, { showSymbol: true });
-    }
-    return amount;
-  };
+
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>('');
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
@@ -174,7 +164,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paypalClientId={plan.paymentMethods?.paypal_client_id || ''}
-            currency={plan.paymentMethods?.defaultCurrency || 'usd'}
+            currency="USD"
           />
         );
       case 'bank':
@@ -191,7 +181,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             razorpayKey={plan.paymentMethods?.razorpay_key || ''}
-            currency={plan.paymentMethods?.currency || 'INR'}
+            currency="USD"
           />
         );
       case 'mercadopago':
@@ -200,7 +190,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             accessToken={plan.paymentMethods?.mercadopago_access_token || ''}
-            currency={plan.paymentMethods?.currency || 'BRL'}
+            currency="USD"
           />
         );
       case 'paystack':
@@ -209,7 +199,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paystackKey={plan.paymentMethods?.paystack_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'NGN'}
+            currency="USD"
           />
         );
       case 'flutterwave':
@@ -218,7 +208,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             flutterwaveKey={plan.paymentMethods?.flutterwave_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'NGN'}
+            currency="USD"
           />
         );
       case 'paytabs':
@@ -227,7 +217,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paytabsClientKey={''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'skrill':
@@ -236,7 +226,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             skrillMerchantId={plan.paymentMethods?.skrill_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'coingate':
@@ -245,7 +235,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             coinGateApiToken={plan.paymentMethods?.coingate_api_token || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'payfast':
@@ -254,7 +244,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             payfastMerchantId={plan.paymentMethods?.payfast_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'ZAR'}
+            currency="USD"
           />
         );
       case 'toyyibpay':
@@ -263,7 +253,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             toyyibpayCategoryCode={plan.paymentMethods?.toyyibpay_category_code || ''}
-            currency={plan.paymentMethods?.currency || 'MYR'}
+            currency="USD"
           />
         );
       case 'paytr':
@@ -272,7 +262,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paytrMerchantId={plan.paymentMethods?.paytr_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'TRY'}
+            currency="USD"
           />
         );
       case 'mollie':
@@ -281,7 +271,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             mollieApiKey={plan.paymentMethods?.mollie_api_key || ''}
-            currency={plan.paymentMethods?.currency || 'EUR'}
+            currency="USD"
           />
         );
       case 'cashfree':
@@ -291,7 +281,7 @@ export function PaymentProcessor({
             planPrice={Number(plan.price)}
             cashfreeAppId={plan.paymentMethods?.cashfree_public_key || ''}
             mode={plan.paymentMethods?.cashfree_mode || 'sandbox'}
-            currency={plan.paymentMethods?.currency || 'INR'}
+            currency="USD"
           />
         );
       case 'iyzipay':
@@ -300,7 +290,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             iyzipayPublicKey={plan.paymentMethods?.iyzipay_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'benefit':
@@ -309,7 +299,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             benefitPublicKey={plan.paymentMethods?.benefit_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'BHD'}
+            currency="USD"
           />
         );
       case 'ozow':
@@ -318,7 +308,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             ozowSiteKey={plan.paymentMethods?.ozow_site_key || ''}
-            currency={plan.paymentMethods?.currency || 'ZAR'}
+            currency="USD"
           />
         );
       case 'easebuzz':
@@ -327,7 +317,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             easebuzzMerchantKey={plan.paymentMethods?.easebuzz_merchant_key || ''}
-            currency={plan.paymentMethods?.currency || 'INR'}
+            currency="USD"
           />
         );
       case 'khalti':
@@ -336,7 +326,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             khaltiPublicKey={plan.paymentMethods?.khalti_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'NPR'}
+            currency="USD"
           />
         );
       case 'authorizenet':
@@ -345,7 +335,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             authorizenetMerchantId={plan.paymentMethods?.authorizenet_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'fedapay':
@@ -354,7 +344,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             fedapayPublicKey={plan.paymentMethods?.fedapay_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'XOF'}
+            currency="USD"
           />
         );
       case 'payhere':
@@ -363,7 +353,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             payhereMerchantId={plan.paymentMethods?.payhere_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'LKR'}
+            currency="USD"
           />
         );
       case 'cinetpay':
@@ -372,7 +362,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             cinetpaySiteId={plan.paymentMethods?.cinetpay_site_id || ''}
-            currency={plan.paymentMethods?.currency || 'XOF'}
+            currency="USD"
           />
         );
       case 'paiement':
@@ -381,7 +371,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paiementMerchantId={plan.paymentMethods?.paiement_merchant_id || ''}
-            currency={plan.paymentMethods?.currency || 'XOF'}
+            currency="USD"
           />
         );
       case 'nepalste':
@@ -390,7 +380,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             nepalstePublicKey={plan.paymentMethods?.nepalste_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'NPR'}
+            currency="USD"
           />
         );
       case 'yookassa':
@@ -399,7 +389,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             yookassaShopId={plan.paymentMethods?.yookassa_shop_id || ''}
-            currency={plan.paymentMethods?.currency || 'RUB'}
+            currency="USD"
           />
         );
       case 'aamarpay':
@@ -408,7 +398,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             aamarpayStoreId={plan.paymentMethods?.aamarpay_store_id || ''}
-            currency={plan.paymentMethods?.currency || 'BDT'}
+            currency="USD"
           />
         );
       case 'midtrans':
@@ -417,7 +407,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             midtransSecretKey={plan.paymentMethods?.midtrans_secret_key || ''}
-            currency={plan.paymentMethods?.currency || 'IDR'}
+            currency="USD"
           />
         );
       case 'paymentwall':
@@ -426,7 +416,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             paymentwallPublicKey={plan.paymentMethods?.paymentwall_public_key || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'sspay':
@@ -435,7 +425,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             sspaySecretKey={plan.paymentMethods?.sspay_secret_key || ''}
-            currency={plan.paymentMethods?.currency || 'MYR'}
+            currency="USD"
           />
         );
       case 'tap':
@@ -444,7 +434,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             tapSecretKey={plan.paymentMethods?.tap_secret_key || ''}
-            currency={plan.paymentMethods?.currency || 'USD'}
+            currency="USD"
           />
         );
       case 'xendit':
@@ -453,7 +443,7 @@ export function PaymentProcessor({
             {...commonProps}
             planPrice={Number(plan.price)}
             xenditApiKey={plan.paymentMethods?.xendit_api_key || ''}
-            currency={plan.paymentMethods?.currency || 'PHP'}
+            currency="USD"
           />
         );
       default:
@@ -488,7 +478,7 @@ export function PaymentProcessor({
               </p>
             </div>
             <div className="text-right">
-              <div className="text-lg font-bold">{currencySymbol} {plan.price}</div>
+              <div className="text-lg font-bold">{plan.price}</div>
               <div className="text-sm text-muted-foreground">
                 /{plan.duration.toLowerCase()}
               </div>
@@ -579,7 +569,7 @@ export function PaymentProcessor({
                 {'Coupon Applied'}: {appliedCoupon.code}
               </span>
               <span className="text-green-600">
-                -{appliedCoupon.type === 'percentage' ? `${appliedCoupon.value}%` : `${currencySymbol}${appliedCoupon.value}`}
+                -{appliedCoupon.type === 'percentage' ? `${appliedCoupon.value}%` : appliedCoupon.value}
               </span>
             </div>
           </div>
@@ -592,18 +582,18 @@ export function PaymentProcessor({
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>{'Subtotal'}</span>
-              <span>{currencySymbol}{originalPrice}</span>
+              <span>{originalPrice}</span>
             </div>
             {appliedCoupon && (
               <div className="flex justify-between text-sm text-green-600">
                 <span>{'Discount'}</span>
-                <span>-{currencySymbol}{discountAmount}</span>
+                <span>-{discountAmount}</span>
               </div>
             )}
             <div className="border-t pt-2">
               <div className="flex justify-between font-medium">
                 <span>{'Total'}</span>
-                <span>{currencySymbol}{finalPrice.toFixed(2)}</span>
+                <span>{finalPrice.toFixed(2)}</span>
               </div>
             </div>
           </div>
@@ -620,7 +610,7 @@ export function PaymentProcessor({
           disabled={enabledPaymentMethods.length === 0}
           className="flex-1"
         >
-          {'Pay'} {currencySymbol} {finalPrice}
+          {'Pay'} {finalPrice}
         </Button>
       </div>
     </div>

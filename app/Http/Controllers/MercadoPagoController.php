@@ -29,7 +29,7 @@ class MercadoPagoController extends Controller
         return [
             'access_token' => $accessToken,
             'mode' => $settings['payment_settings']['mercadopago_mode'] ?? 'sandbox',
-            'currency' => $settings['general_settings']['defaultCurrency'] ?? 'BRL'
+            'currency' => 'USD'
         ];
     }
 
@@ -202,6 +202,11 @@ class MercadoPagoController extends Controller
             $status = $request->status ?? $flag;
             $externalReference = $request->external_reference;
             $preferenceId = $request->preference_id;
+            
+            // Verify currency if provided
+            if ($request->has('currency_id') && $request->input('currency_id') !== 'USD') {
+                return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+            }
             
             // Handle plan.mercado.callback route
             if ($plan_id && $request->routeIs('plan.mercado.callback')) {

@@ -58,13 +58,15 @@ class MidtransPaymentController extends Controller
             $user = auth()->user();
             $orderId = 'plan_' . $plan->id . '_' . $user->id . '_' . time();
 
-            // Convert to IDR (whole numbers only, no cents)
-            $amount = intval($pricing['final_price']);
+            // Enforce USD currency
+            $currency = 'USD';
+            $amount = $pricing['final_price'];
             
             $paymentData = [
                 'transaction_details' => [
                     'order_id' => $orderId,
-                    'gross_amount' => $amount
+                    'gross_amount' => $amount,
+                    'currency' => $currency
                 ],
                 'credit_card' => [
                     'secure' => true
@@ -112,6 +114,11 @@ class MidtransPaymentController extends Controller
             $transactionStatus = $request->input('transaction_status');
             
             if ($orderId && in_array($transactionStatus, ['capture', 'settlement'])) {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $orderId);
                 
                 if (count($parts) >= 3) {

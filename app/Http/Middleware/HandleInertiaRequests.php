@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Currency;
+
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,21 +57,11 @@ class HandleInertiaRequests extends Middleware
 
         // Get system settings
         $settings = settings();
-        // Get currency symbol
-        $currencyCode = $settings['defaultCurrency'] ?? 'USD';
-        $currency = Currency::where('code', $currencyCode)->first();
-        $currencySettings = [];
-        if ($currency) {
-            $currencySettings = [
-                'currencySymbol' => $currency->symbol,
-                'currencyNname' => $currency->name,
-            ];
-        } else {
-            $currencySettings = [
-                'currencySymbol' => '$',
-                'currencyNname' => 'US Dollar',
-            ];
-        }
+        // Get currency symbol (simplified as Currencies module is removed)
+        $currencySettings = [
+            'currencySymbol' => $settings['currencySymbol'] ?? '$',
+            'currencyName' => $settings['currencyName'] ?? 'US Dollar',
+        ];
 
         $availableLanguages = [];
 

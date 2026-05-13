@@ -27,7 +27,7 @@ class PaymentWallPaymentController extends Controller
             }
 
             $user = auth()->user();
-            $currency = $settings['general_settings']['currency'] ?? 'USD';
+            $currency = 'USD';
             $isTestMode = ($settings['payment_settings']['paymentwall_mode'] ?? 'sandbox') === 'sandbox';
 
             // Prepare charge data for PaymentWall Brick API
@@ -82,7 +82,7 @@ class PaymentWallPaymentController extends Controller
             }
 
             $user = auth()->user();
-            $currency = $settings['general_settings']['currency'] ?? 'USD';
+            $currency = 'USD';
 
             $isTestMode = ($settings['payment_settings']['paymentwall_mode'] ?? 'sandbox') === 'sandbox';
             
@@ -131,6 +131,11 @@ class PaymentWallPaymentController extends Controller
             
             // Type 0 = payment successful, Type 1 = payment pending, Type 2 = payment failed
             if ($userId && $type === '0') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response('Invalid currency', 400);
+                }
+
                 $user = \App\Models\User::find($userId);
                 
                 if ($user && $externalId) {

@@ -66,7 +66,7 @@ class OzowPaymentController extends Controller
             $bankReference = time() . 'FKU';
             $transactionReference = time();
             $countryCode = 'ZA';
-            $currency = 'ZAR';
+            $currency = 'USD';
             
             $inputString = $siteCode . $countryCode . $currency . $amount . $transactionReference . $bankReference . $cancelUrl . $successUrl . $successUrl . $successUrl . $isTest . $privateKey;
             $hashCheck = hash('sha512', strtolower($inputString));
@@ -135,6 +135,11 @@ class OzowPaymentController extends Controller
             $status = $request->input('Status');
             
             if ($transactionId && $status === 'Complete') {
+                // Verify currency if provided
+                if ($request->has('CurrencyCode') && $request->input('CurrencyCode') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $transactionId);
                 
                 if (count($parts) >= 3) {

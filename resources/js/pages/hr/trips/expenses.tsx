@@ -157,7 +157,7 @@ export default function TripExpenses() {
     { 
       key: 'amount', 
       label: 'Amount',
-      render: (value, row) => value ? window.appSettings.formatCurrency(value) : '-'
+      render: (value) => value || '-'
     },
     { 
       key: 'description', 
@@ -296,15 +296,15 @@ export default function TripExpenses() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-blue-50 p-4 rounded-lg">
               <div className="text-sm font-medium text-blue-700">{'Total Expenses'}</div>
-              <div className="text-2xl font-bold text-blue-900">{window.appSettings.formatCurrency(totalExpenses)}</div>
+              <div className="text-2xl font-bold text-blue-900">{totalExpenses.toFixed(2)}</div>
             </div>
             <div className="bg-green-50 p-4 rounded-lg">
               <div className="text-sm font-medium text-green-700">{'Reimbursable'}</div>
-              <div className="text-2xl font-bold text-green-900">{window.appSettings.formatCurrency(totalReimbursable)}</div>
+              <div className="text-2xl font-bold text-green-900">{totalReimbursable.toFixed(2)}</div>
             </div>
             <div className="bg-purple-50 p-4 rounded-lg">
               <div className="text-sm font-medium text-purple-700">{'Advance Amount'}</div>
-              <div className="text-2xl font-bold text-purple-900">{window.appSettings.formatCurrency(trip.advance_amount || 0)}</div>
+              <div className="text-2xl font-bold text-purple-900">{(trip.advance_amount || 0)}</div>
             </div>
           </div>
         </CardContent>
@@ -370,24 +370,7 @@ export default function TripExpenses() {
               min: 0,
               step: 0.01
             },
-            { 
-              name: 'currency', 
-              label: 'Currency', 
-              type: 'select',
-              required: true,
-              options: [
-                { value: 'USD', label: 'USD' },
-                { value: 'EUR', label: 'EUR' },
-                { value: 'GBP', label: 'GBP' },
-                { value: 'JPY', label: 'JPY' },
-                { value: 'AUD', label: 'AUD' },
-                { value: 'CAD', label: 'CAD' },
-                { value: 'SGD', label: 'SGD' },
-                { value: 'AED', label: 'AED' },
-                { value: 'INR', label: 'INR' }
-              ],
-              defaultValue: 'USD'
-            },
+
             { 
               name: 'description', 
               label: 'Description', 

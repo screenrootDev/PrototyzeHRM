@@ -59,6 +59,7 @@ class PayfastPaymentController extends Controller
                 'm_payment_id' => $paymentId,
                 'amount' => number_format($pricing['final_price'], 2, '.', ''),
                 'item_name' => $plan->name,
+                'currency' => 'USD',
             ];
             
             $passphrase = $settings['passphrase'] ?? '';
@@ -111,6 +112,11 @@ class PayfastPaymentController extends Controller
             $pfData = $request->all();
             $paymentId = $pfData['m_payment_id'] ?? null;
             $paymentStatus = $pfData['payment_status'] ?? null;
+
+            // Verify currency if provided
+            if (isset($pfData['currency']) && $pfData['currency'] !== 'USD') {
+                return response(__('Invalid currency. Only USD is allowed.'), 400);
+            }
             
             if (!$paymentId) {
                 return response(__('Missing payment ID'), 400);

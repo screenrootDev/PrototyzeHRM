@@ -38,6 +38,9 @@ class PaystackPaymentController extends Controller
             $result = json_decode($response, true);
 
             if ($result['status'] && $result['data']['status'] === 'success') {
+                if ($result['data']['currency'] !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,

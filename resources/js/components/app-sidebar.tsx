@@ -69,11 +69,7 @@ export function AppSidebar() {
             ]
         },
 
-        {
-            title: 'Currencies',
-            href: route('currencies.index'),
-            icon: DollarSign,
-        },
+
         {
             title: 'Landing Page',
             icon: Palette,
@@ -887,14 +883,7 @@ export function AppSidebar() {
 
 
 
-        // Currencies - only show in non-SaaS mode for company users
-        if (!isSaas && hasPermission(permissions, 'manage-currencies')) {
-            items.push({
-                title: 'Currencies',
-                href: route('currencies.index'),
-                icon: Coins,
-            });
-        }
+
 
 
         // Landing Page - only show in non-SaaS mode for company users

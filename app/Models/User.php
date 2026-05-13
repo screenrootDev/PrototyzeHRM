@@ -24,7 +24,6 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         'password',
         'type',
         'avatar',
-        'lang',
         'delete_status',
         'is_enable_login',
         'mode',

@@ -24,6 +24,10 @@ class EasebuzzPaymentController extends Controller
             }
 
             if ($validated['status'] === 'success') {
+                // Verify currency
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -130,6 +134,11 @@ class EasebuzzPaymentController extends Controller
             $resultArray = json_decode($result, true);
             
             if ($resultArray && $resultArray['status'] == 1 && $request->input('status') === 'success') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+                }
+
                 $txnid = $request->input('txnid');
                 $parts = explode('_', $txnid);
                 
@@ -173,6 +182,10 @@ class EasebuzzPaymentController extends Controller
             $status = $request->input('status');
             
             if ($txnid && $status === 'success') {
+                // Verify currency
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
                 $parts = explode('_', $txnid);
                 
                 if (count($parts) >= 3) {

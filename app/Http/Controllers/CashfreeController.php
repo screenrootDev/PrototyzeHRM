@@ -34,7 +34,7 @@ class CashfreeController extends Controller
             'secret_key' => $settings['payment_settings']['cashfree_secret_key'] ?? null,
             'mode' => $mode,
             'base_url' => $baseUrl,
-            'currency' => $settings['general_settings']['defaultCurrency'] ?? 'INR'
+            'currency' => 'USD'
         ];
     }
 
@@ -147,6 +147,11 @@ class CashfreeController extends Controller
             if ($orderResponse[0]->getOrderStatus() !== 'PAID') {
                 throw new \Exception(__('Payment not completed successfully'));
             }
+
+            // Verify currency
+            if ($orderResponse[0]->getOrderCurrency() !== 'USD') {
+                throw new \Exception(__('Invalid currency. Only USD is allowed.'));
+            }
             
             // Get payment details - response is array with payment objects
             $paymentsResponse = $cashfree->PGOrderFetchPayments($validated['order_id']);
@@ -214,6 +219,12 @@ class CashfreeController extends Controller
             
             if ($data['type'] === 'PAYMENT_SUCCESS_WEBHOOK') {
                 $paymentData = $data['data'];
+                
+                // Verify currency
+                if (($paymentData['order']['order_currency'] ?? '') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+                
                 
                 // Extract plan and user info from order tags
                 $orderTags = $paymentData['order']['order_tags'] ?? [];

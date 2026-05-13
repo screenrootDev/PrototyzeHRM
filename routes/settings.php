@@ -6,7 +6,7 @@ use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\EmailSettingController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\SystemSettingsController;
-use App\Http\Controllers\Settings\CurrencySettingController;
+
 use App\Http\Controllers\PlanOrderController;
 use App\Http\Controllers\Settings\PaymentSettingController;
 use App\Http\Controllers\Settings\WebhookController;
@@ -71,8 +71,7 @@ Route::middleware(['auth', 'verified', 'plan.access'])->group(function () {
     Route::post('settings/seo', [SystemSettingsController::class, 'updateSeo'])->name('settings.seo.update');
     Route::post('settings/cache/clear', [SystemSettingsController::class, 'clearCache'])->name('settings.cache.clear');
 
-    // Currency Settings routes
-    Route::post('settings/currency', [CurrencySettingController::class, 'update'])->name('settings.currency.update');
+
 
     // Working Days Settings routes
     Route::get('settings/working-days/get', [WorkingDaysSettingController::class, 'getWorkingDaysSettings'])->name('settings.working-days.get');

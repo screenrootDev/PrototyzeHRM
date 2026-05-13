@@ -24,6 +24,10 @@ class CinetPayPaymentController extends Controller
             }
 
             if ($validated['cpm_result'] === '00') { // Success status
+                // Verify currency
+                if ($request->has('cpm_currency') && $request->input('cpm_currency') !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -63,7 +67,7 @@ class CinetPayPaymentController extends Controller
                 'cpm_site_id' => $settings['payment_settings']['cinetpay_site_id'],
                 'cpm_trans_id' => $transactionId,
                 'cpm_amount' => $pricing['final_price'],
-                'cpm_currency' => 'XOF', // West African CFA franc
+                'cpm_currency' => 'USD', // Standardized to USD
                 'cpm_designation' => $plan->name,
                 'cpm_custom' => json_encode([
                     'plan_id' => $plan->id,
@@ -104,6 +108,11 @@ class CinetPayPaymentController extends Controller
             $result = $request->input('cpm_result');
             
             if ($transactionId && $result === '00') {
+                // Verify currency if provided
+                if ($request->has('cpm_currency') && $request->input('cpm_currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $transactionId);
                 
                 if (count($parts) >= 3) {

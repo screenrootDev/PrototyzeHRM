@@ -24,6 +24,10 @@ class PayHerePaymentController extends Controller
             }
 
             if ($validated['status_code'] === '2') { // Success status
+                // Verify currency
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -66,7 +70,7 @@ class PayHerePaymentController extends Controller
                 'notify_url' => route('payhere.callback'),
                 'order_id' => $orderId,
                 'items' => $plan->name,
-                'currency' => 'LKR',
+                'currency' => 'USD',
                 'amount' => number_format($pricing['final_price'], 2, '.', ''),
                 'first_name' => $user->name ?? 'Customer',
                 'last_name' => 'User',
@@ -117,6 +121,11 @@ class PayHerePaymentController extends Controller
             $statusCode = $request->input('status_code');
             
             if ($orderId && $statusCode === '2') {
+                // Verify currency if provided
+                if ($request->has('currency') && $request->input('currency') !== 'USD') {
+                    return response()->json(['error' => __('Invalid currency. Only USD is allowed.')], 400);
+                }
+
                 $parts = explode('_', $orderId);
                 
                 if (count($parts) >= 3) {

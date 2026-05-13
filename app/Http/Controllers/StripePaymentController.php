@@ -41,7 +41,7 @@ class StripePaymentController extends Controller
             $user = auth()->user();
             $paymentIntent = PaymentIntent::create([
                 'amount' => $pricing['final_price'] * 100,
-                'currency' => $settings['general_settings']['defaultCurrency'] ?? 'usd',
+                'currency' => 'usd',
                 'payment_method' => $validated['payment_method_id'],
                 'confirmation_method' => 'manual',
                 'confirm' => true,
@@ -60,6 +60,10 @@ class StripePaymentController extends Controller
             ]);
 
             if ($paymentIntent->status === 'succeeded') {
+                // Verify currency
+                if (strtolower($paymentIntent->currency) !== 'usd') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,

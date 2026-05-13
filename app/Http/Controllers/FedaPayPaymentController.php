@@ -28,6 +28,10 @@ class FedaPayPaymentController extends Controller
             $transaction = Transaction::retrieve($validated['transaction_id']);
             
             if ($transaction->status === 'approved') {
+                // Verify currency
+                if ($transaction->currency->iso !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -67,7 +71,7 @@ class FedaPayPaymentController extends Controller
             $transaction = Transaction::create([
                 'description' => 'Plan: ' . $plan->name,
                 'amount' => $pricing['final_price'] * 100, // Amount in cents
-                'currency' => ['iso' => 'XOF'],
+                'currency' => ['iso' => 'USD'],
                 'callback_url' => route('fedapay.callback'),
                 'customer' => [
                     'firstname' => $user->name ?? 'Customer',
@@ -105,6 +109,11 @@ class FedaPayPaymentController extends Controller
             $transaction = Transaction::retrieve($transactionId);
             
             if ($transaction->status === 'approved') {
+                // Verify currency
+                if ($transaction->currency->iso !== 'USD') {
+                    return redirect()->route('plans.index')->with('error', __('Invalid currency. Only USD is allowed.'));
+                }
+
                 $metadata = $transaction->custom_metadata;
                 
                 processPaymentSuccess([

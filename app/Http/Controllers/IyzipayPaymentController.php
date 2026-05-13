@@ -55,6 +55,10 @@ class IyzipayPaymentController extends Controller
             $paymentResult = $this->retrieveIyzipayPayment($validated['token'], $settings['payment_settings']);
 
             if ($paymentResult && $paymentResult->getPaymentStatus() === 'SUCCESS') {
+                // Verify currency
+                if ($paymentResult->getCurrency() !== 'USD') {
+                    return back()->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
                 processPaymentSuccess([
                     'user_id' => auth()->id(),
                     'plan_id' => $plan->id,
@@ -180,6 +184,11 @@ class IyzipayPaymentController extends Controller
             $paymentResult = $this->retrieveIyzipayPayment($token, $settings['payment_settings']);
             
             if ($paymentResult && $paymentResult->getPaymentStatus() === 'SUCCESS') {
+                // Verify currency
+                if ($paymentResult->getCurrency() !== 'USD') {
+                    return redirect()->route('plans.index')->withErrors(['error' => __('Invalid currency. Only USD is allowed.')]);
+                }
+
                 // Extract conversation ID to find the plan and user
                 $conversationId = $paymentResult->getConversationId();
                 $parts = explode('_', $conversationId);
