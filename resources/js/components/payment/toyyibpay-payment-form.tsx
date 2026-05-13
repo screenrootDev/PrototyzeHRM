@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,7 +30,7 @@ export function ToyyibPayPaymentForm({
   onSuccess,
   onCancel
 }: ToyyibPayPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     name: '',
@@ -43,19 +43,19 @@ export function ToyyibPayPaymentForm({
     const newErrors: {[key: string]: string} = {};
     
     if (!customerDetails.name.trim()) {
-      newErrors.name = t('Full name is required');
+      newErrors.name = 'Full name is required';
     }
     
     if (!customerDetails.email.trim()) {
-      newErrors.email = t('Email address is required');
+      newErrors.email = 'Email address is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerDetails.email)) {
-      newErrors.email = t('Please enter a valid email address');
+      newErrors.email = 'Please enter a valid email address';
     }
     
     if (!customerDetails.phone.trim()) {
-      newErrors.phone = t('Phone number is required');
+      newErrors.phone = 'Phone number is required';
     } else if (customerDetails.phone.length < 10) {
-      newErrors.phone = t('Please enter a valid Malaysian phone number');
+      newErrors.phone = 'Please enter a valid Malaysian phone number';
     }
     
     setErrors(newErrors);
@@ -66,7 +66,7 @@ export function ToyyibPayPaymentForm({
     e.preventDefault();
     
     if (!validateForm()) {
-      toast.error(t('Please fix the form errors'));
+      toast.error('Please fix the form errors');
       return;
     }
 
@@ -111,7 +111,7 @@ export function ToyyibPayPaymentForm({
       form.submit();
     } catch (error) {
       console.error('ToyyibPay payment error:', error);
-      toast.error(t('Payment failed. Please try again.'));
+      toast.error('Payment failed. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -139,20 +139,20 @@ export function ToyyibPayPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('toyyibPay Payment')}
+          {'toyyibPay Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Alert className="mb-4">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {t('You will be redirected to toyyibPay to complete your payment securely via FPX (Malaysian Online Banking)')}
+            {'You will be redirected to toyyibPay to complete your payment securely via FPX (Malaysian Online Banking)'}
           </AlertDescription>
         </Alert>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">{t('Full Name')} *</Label>
+            <Label htmlFor="name">{'Full Name'} *</Label>
             <Input
               id="name"
               value={customerDetails.name}
@@ -160,7 +160,7 @@ export function ToyyibPayPaymentForm({
                 setCustomerDetails(prev => ({ ...prev, name: e.target.value }));
                 if (errors.name) setErrors(prev => ({ ...prev, name: '' }));
               }}
-              placeholder={t('Enter your full name')}
+              placeholder={'Enter your full name'}
               className={errors.name ? 'border-red-500' : ''}
               required
             />
@@ -170,7 +170,7 @@ export function ToyyibPayPaymentForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('Email Address')} *</Label>
+            <Label htmlFor="email">{'Email Address'} *</Label>
             <Input
               id="email"
               type="email"
@@ -179,7 +179,7 @@ export function ToyyibPayPaymentForm({
                 setCustomerDetails(prev => ({ ...prev, email: e.target.value }));
                 if (errors.email) setErrors(prev => ({ ...prev, email: '' }));
               }}
-              placeholder={t('Enter your email address')}
+              placeholder={'Enter your email address'}
               className={errors.email ? 'border-red-500' : ''}
               required
             />
@@ -189,7 +189,7 @@ export function ToyyibPayPaymentForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">{t('Phone Number')} *</Label>
+            <Label htmlFor="phone">{'Phone Number'} *</Label>
             <Input
               id="phone"
               value={customerDetails.phone}
@@ -204,7 +204,7 @@ export function ToyyibPayPaymentForm({
               required
             />
             <p className="text-xs text-muted-foreground">
-              {t('Malaysian format: 60123456789 (numbers only)')}
+              {'Malaysian format: 60123456789 (numbers only)'}
             </p>
             {errors.phone && (
               <p className="text-sm text-red-500">{errors.phone}</p>
@@ -214,33 +214,33 @@ export function ToyyibPayPaymentForm({
           <div className="bg-muted p-4 rounded-lg">
             <div className="flex items-center gap-2 mb-2">
               <CreditCard className="h-4 w-4 text-primary" />
-              <p className="text-sm font-medium">{t('Payment Method: FPX (Online Banking)')}</p>
+              <p className="text-sm font-medium">{'Payment Method: FPX (Online Banking)'}</p>
             </div>
             <p className="text-xs text-muted-foreground">
-              {t('Secure payment via Malaysian banks including Maybank, CIMB, Public Bank, RHB, and more')}
+              {'Secure payment via Malaysian banks including Maybank, CIMB, Public Bank, RHB, and more'}
             </p>
           </div>
 
           <div className="border-t pt-4">
             <div className="flex justify-between items-center mb-4">
-              <span className="text-sm text-muted-foreground">{t('Total Amount')}:</span>
+              <span className="text-sm text-muted-foreground">{'Total Amount'}:</span>
               <span className="text-lg font-bold">{currency} {planPrice.toFixed(2)}</span>
             </div>
             
             <div className="flex gap-3">
               <Button type="button" variant="outline" onClick={onCancel} className="flex-1" disabled={isProcessing}>
-                {t('Cancel')}
+                {'Cancel'}
               </Button>
               <Button type="submit" disabled={isProcessing} className="flex-1">
                 {isProcessing ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('Processing...')}
+                    {'Processing...'}
                   </>
                 ) : (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    {t('Pay Now')}
+                    {'Pay Now'}
                   </>
                 )}
               </Button>

@@ -7,7 +7,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -15,7 +15,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Complaints() {
-  const { t } = useTranslation();
+  
   const { auth, complaints, complainants, againstEmployees, hrPersonnel, complaintTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -139,18 +139,16 @@ export default function Complaints() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Creating complaint...'));
+      toast.loading('Creating complaint...');
 
       router.post(route('hr.complaints.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Complaint created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Complaint created successfully');
           }
         },
         onError: (errors) => {
@@ -158,23 +156,21 @@ export default function Complaints() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to create complaint: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to create complaint: ${Object.values(errors).join(', ')}`);
           }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating complaint...'));
+      toast.loading('Updating complaint...');
       
       router.put(route('hr.complaints.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Complaint updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Complaint updated successfully');
           }
         },
         onError: (errors) => {
@@ -182,7 +178,7 @@ export default function Complaints() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to update complaint: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to update complaint: ${Object.values(errors).join(', ')}`);
           }
         }
       });
@@ -190,18 +186,16 @@ export default function Complaints() {
   };
   
   const handleStatusChange = (formData: any) => {
-    toast.loading(t('Updating complaint status...'));
+    toast.loading('Updating complaint status...');
     
     router.put(route('hr.complaints.change-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Complaint status updated successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Complaint status updated successfully');
         }
       },
       onError: (errors) => {
@@ -209,14 +203,14 @@ export default function Complaints() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to update complaint status: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to update complaint status: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleAssign = (formData: any) => {
-    toast.loading(t('Assigning complaint...'));
+    toast.loading('Assigning complaint...');
     
     // Convert '_none_' to empty string
     if (formData.assigned_to === '_none_') {
@@ -228,11 +222,9 @@ export default function Complaints() {
         setIsAssignModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Complaint assigned successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Complaint assigned successfully');
         }
       },
       onError: (errors) => {
@@ -240,25 +232,23 @@ export default function Complaints() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to assign complaint: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to assign complaint: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleResolve = (formData: any) => {
-    toast.loading(t('Resolving complaint...'));
+    toast.loading('Resolving complaint...');
     
     router.put(route('hr.complaints.resolve', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsResolveModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Complaint resolved successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Complaint resolved successfully');
         }
       },
       onError: (errors) => {
@@ -266,25 +256,23 @@ export default function Complaints() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to resolve complaint: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to resolve complaint: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleFollowUp = (formData: any) => {
-    toast.loading(t('Updating follow-up information...'));
+    toast.loading('Updating follow-up information...');
     
     router.put(route('hr.complaints.follow-up', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsFollowUpModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Follow-up information updated successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Follow-up information updated successfully');
         }
       },
       onError: (errors) => {
@@ -292,25 +280,23 @@ export default function Complaints() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to update follow-up information: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to update follow-up information: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting complaint...'));
+    toast.loading('Deleting complaint...');
     
     router.delete(route('hr.complaints.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Complaint deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Complaint deleted successfully');
         }
       },
       onError: (errors) => {
@@ -318,7 +304,7 @@ export default function Complaints() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to delete complaint: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to delete complaint: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -346,7 +332,7 @@ export default function Complaints() {
   // Add the "Add New Complaint" button if user has permission
   if (hasPermission(permissions, 'create-complaints')) {
     pageActions.push({
-      label: t('Add Complaint'),
+      label: 'Add Complaint',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -354,23 +340,23 @@ export default function Complaints() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.complaints.index') },
-    { title: t('Complaints') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.complaints.index') },
+    { title: 'Complaints' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee.name', 
-      label: t('Complainant'), 
+      label: 'Complainant', 
       render: (_, row) => {
         if (row.is_anonymous) {
           return (
             <div>
-              <div className="font-medium">{t('Anonymous')}</div>
+              <div className="font-medium">{'Anonymous'}</div>
               <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">
-                {t('Anonymous')}
+                {'Anonymous'}
               </span>
             </div>
           );
@@ -385,7 +371,7 @@ export default function Complaints() {
     },
     { 
       key: 'against_employee.name', 
-      label: t('Against'),
+      label: 'Against',
       render: (_, row) => {
         if (!row.against_employee_id) return '-';
         return (
@@ -398,23 +384,23 @@ export default function Complaints() {
     },
     { 
       key: 'complaint_type', 
-      label: t('Type'),
+      label: 'Type',
       render: (value) => value || '-'
     },
     { 
       key: 'subject', 
-      label: t('Subject'),
+      label: 'Subject',
       render: (value) => value || '-'
     },
     { 
       key: 'complaint_date', 
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           'submitted': 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -432,12 +418,12 @@ export default function Complaints() {
     },
     { 
       key: 'assigned_user.name', 
-      label: t('Assigned To'),
+      label: 'Assigned To',
       render: (_, row) => row.assigned_user?.name || '-'
     },
     { 
       key: 'documents', 
-      label: t('Documents'),
+      label: 'Documents',
       render: (value, row) => value && value.trim() !== '' ? (
         <Button
           variant="outline"
@@ -448,7 +434,7 @@ export default function Complaints() {
             handleAction('download-document', row);
           }}
         >
-          {t('View Document')}
+          {'View Document'}
         </Button>
       ) : '-'
     }
@@ -457,28 +443,28 @@ export default function Complaints() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-complaints'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-complaints'
     },
     { 
-      label: t('Change Status'), 
+      label: 'Change Status', 
       icon: 'RefreshCw', 
       action: 'change-status', 
       className: 'text-green-500',
       requiredPermission: 'edit-complaints'
     },
     { 
-      label: t('Assign'), 
+      label: 'Assign', 
       icon: 'UserPlus', 
       action: 'assign', 
       className: 'text-purple-500',
@@ -486,7 +472,7 @@ export default function Complaints() {
       showWhen: (item) => item.status !== 'resolved' && item.status !== 'dismissed'
     },
     { 
-      label: t('Resolve'), 
+      label: 'Resolve', 
       icon: 'CheckCircle', 
       action: 'resolve', 
       className: 'text-indigo-500',
@@ -494,7 +480,7 @@ export default function Complaints() {
       showWhen: (item) => item.status !== 'resolved' && item.status !== 'dismissed'
     },
     { 
-      label: t('Follow-up'), 
+      label: 'Follow-up', 
       icon: 'Calendar', 
       action: 'follow-up', 
       className: 'text-teal-500',
@@ -502,7 +488,7 @@ export default function Complaints() {
       showWhen: (item) => item.status === 'resolved'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -512,7 +498,7 @@ export default function Complaints() {
 
   // Prepare complainant options for filter
   const complainantOptions = [
-    { value: '', label: t('All Employees'), disabled: true },
+    { value: '', label: 'All Employees', disabled: true },
     ...(complainants || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -521,7 +507,7 @@ export default function Complaints() {
 
   // Prepare against employee options for filter
   const againstEmployeeOptions = [
-    { value: '', label: t('All Employees'), disabled: true },
+    { value: '', label: 'All Employees', disabled: true },
     ...(againstEmployees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -530,7 +516,7 @@ export default function Complaints() {
 
   // Prepare complaint type options for filter
   const complaintTypeOptions = [
-    { value: '', label: t('All Types'), disabled: true },
+    { value: '', label: 'All Types', disabled: true },
     ...(complaintTypes || []).map((type: string) => ({
       value: type,
       label: type
@@ -539,30 +525,30 @@ export default function Complaints() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'submitted', label: t('Submitted') },
-    { value: 'under investigation', label: t('Under Investigation') },
-    { value: 'resolved', label: t('Resolved') },
-    { value: 'dismissed', label: t('Dismissed') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'submitted', label: 'Submitted' },
+    { value: 'under investigation', label: 'Under Investigation' },
+    { value: 'resolved', label: 'Resolved' },
+    { value: 'dismissed', label: 'Dismissed' }
   ];
 
   // Prepare complaint type options for form
   const complaintTypeFormOptions = [
-    { value: 'Harassment', label: t('Harassment') },
-    { value: 'Discrimination', label: t('Discrimination') },
-    { value: 'Workplace Conditions', label: t('Workplace Conditions') },
-    { value: 'Bullying', label: t('Bullying') },
-    { value: 'Unfair Treatment', label: t('Unfair Treatment') },
-    { value: 'Compensation Issues', label: t('Compensation Issues') },
-    { value: 'Work Schedule', label: t('Work Schedule') },
-    { value: 'Safety Concerns', label: t('Safety Concerns') },
-    { value: 'Ethics Violation', label: t('Ethics Violation') },
-    { value: 'Management Issues', label: t('Management Issues') }
+    { value: 'Harassment', label: 'Harassment' },
+    { value: 'Discrimination', label: 'Discrimination' },
+    { value: 'Workplace Conditions', label: 'Workplace Conditions' },
+    { value: 'Bullying', label: 'Bullying' },
+    { value: 'Unfair Treatment', label: 'Unfair Treatment' },
+    { value: 'Compensation Issues', label: 'Compensation Issues' },
+    { value: 'Work Schedule', label: 'Work Schedule' },
+    { value: 'Safety Concerns', label: 'Safety Concerns' },
+    { value: 'Ethics Violation', label: 'Ethics Violation' },
+    { value: 'Management Issues', label: 'Management Issues' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Complaints")} 
+      title={"Complaints"} 
       url="/hr/complaints"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -577,7 +563,7 @@ export default function Complaints() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Complainant'),
+              label: 'Complainant',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -586,7 +572,7 @@ export default function Complaints() {
             },
             {
               name: 'against_employee_id',
-              label: t('Against'),
+              label: 'Against',
               type: 'select',
               value: selectedAgainstEmployee,
               onChange: setSelectedAgainstEmployee,
@@ -595,7 +581,7 @@ export default function Complaints() {
             },
             {
               name: 'complaint_type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: selectedComplaintType,
               onChange: setSelectedComplaintType,
@@ -604,7 +590,7 @@ export default function Complaints() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -612,14 +598,14 @@ export default function Complaints() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -674,7 +660,7 @@ export default function Complaints() {
           to={complaints?.to || 0}
           total={complaints?.total || 0}
           links={complaints?.links}
-          entityName={t("complaints")}
+          entityName={"complaints"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -688,7 +674,7 @@ export default function Complaints() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Complainant'), 
+              label: 'Complainant', 
               type: 'select', 
               required: true,
               options: complainantOptions.filter(opt => opt.value !== ''),
@@ -696,9 +682,9 @@ export default function Complaints() {
             },
             { 
               name: 'against_employee_id', 
-              label: t('Against'), 
+              label: 'Against', 
               type: 'select',
-              options: [{ value: '_none_', label: t('Not Specified') }, ...againstEmployeeOptions.filter(opt => opt.value !== '')],
+              options: [{ value: '_none_', label: 'Not Specified' }, ...againstEmployeeOptions.filter(opt => opt.value !== '')],
               searchable: true,
               conditional: (mode, formData) => {
                 // Filter out the selected complainant from against employee options
@@ -706,7 +692,7 @@ export default function Complaints() {
                 return true;
               },
               render: (field, formData, handleChange) => {
-                const filteredOptions = [{ value: '_none_', label: t('Not Specified') }, ...againstEmployeeOptions.filter(opt => opt.value !== formData.employee_id && opt.value !== '')];
+                const filteredOptions = [{ value: '_none_', label: 'Not Specified' }, ...againstEmployeeOptions.filter(opt => opt.value !== formData.employee_id && opt.value !== '')];
                 return (
                   <select
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background"
@@ -724,7 +710,7 @@ export default function Complaints() {
             },
             { 
               name: 'complaint_type', 
-              label: t('Complaint Type'), 
+              label: 'Complaint Type', 
               type: 'select', 
               required: true,
               options: complaintTypeFormOptions,
@@ -732,42 +718,42 @@ export default function Complaints() {
             },
             { 
               name: 'subject', 
-              label: t('Subject'), 
+              label: 'Subject', 
               type: 'text',
               required: true
             },
             { 
               name: 'complaint_date', 
-              label: t('Complaint Date'), 
+              label: 'Complaint Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'documents', 
-              label: t('Documents'), 
+              label: 'Documents', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             { 
               name: 'is_anonymous', 
-              label: t('Submit Anonymously'), 
+              label: 'Submit Anonymously', 
               type: 'checkbox'
             },
             ...(formMode === 'edit' ? [
               { 
                 name: 'status', 
-                label: t('Status'), 
+                label: 'Status', 
                 type: 'select',
                 options: [
                   { value: 'submitted', label: 'Submitted' },
@@ -778,51 +764,51 @@ export default function Complaints() {
               },
               { 
                 name: 'assigned_to', 
-                label: t('Assigned To'), 
+                label: 'Assigned To', 
                 type: 'select',
-                options: [{ value: '_none_', label: t('Not Assigned') }, ...hrPersonnel?.map((user: any) => ({
+                options: [{ value: '_none_', label: 'Not Assigned' }, ...hrPersonnel?.map((user: any) => ({
                   value: user.id.toString(),
                   label: user.name
                 })) || []]
               },
               { 
                 name: 'resolution_deadline', 
-                label: t('Resolution Deadline'), 
+                label: 'Resolution Deadline', 
                 type: 'date'
               },
               { 
                 name: 'investigation_notes', 
-                label: t('Investigation Notes'), 
+                label: 'Investigation Notes', 
                 type: 'textarea',
                 showWhen: (formData) => ['under investigation', 'resolved', 'dismissed'].includes(formData.status)
               },
               { 
                 name: 'resolution_action', 
-                label: t('Resolution Action'), 
+                label: 'Resolution Action', 
                 type: 'textarea',
                 showWhen: (formData) => ['resolved', 'dismissed'].includes(formData.status)
               },
               { 
                 name: 'resolution_date', 
-                label: t('Resolution Date'), 
+                label: 'Resolution Date', 
                 type: 'date',
                 showWhen: (formData) => ['resolved', 'dismissed'].includes(formData.status)
               },
               { 
                 name: 'follow_up_action', 
-                label: t('Follow-up Action'), 
+                label: 'Follow-up Action', 
                 type: 'textarea',
                 showWhen: (formData) => formData.status === 'resolved'
               },
               { 
                 name: 'follow_up_date', 
-                label: t('Follow-up Date'), 
+                label: 'Follow-up Date', 
                 type: 'date',
                 showWhen: (formData) => formData.status === 'resolved'
               },
               { 
                 name: 'feedback', 
-                label: t('Feedback'), 
+                label: 'Feedback', 
                 type: 'textarea',
                 showWhen: (formData) => formData.status === 'resolved'
               }
@@ -836,10 +822,10 @@ export default function Complaints() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Complaint')
+            ? 'Add New Complaint'
             : formMode === 'edit'
-              ? t('Edit Complaint')
-              : t('View Complaint')
+              ? 'Edit Complaint'
+              : 'View Complaint'
         }
         mode={formMode}
       />
@@ -853,7 +839,7 @@ export default function Complaints() {
           fields: [
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
@@ -868,7 +854,7 @@ export default function Complaints() {
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Change Complaint Status')}
+        title={'Change Complaint Status'}
         mode="edit"
       />
 
@@ -881,7 +867,7 @@ export default function Complaints() {
           fields: [
             { 
               name: 'assigned_to', 
-              label: t('Assign To'), 
+              label: 'Assign To', 
               type: 'select',
               required: true,
               options: hrPersonnel?.map((user: any) => ({
@@ -892,7 +878,7 @@ export default function Complaints() {
             },
             { 
               name: 'resolution_deadline', 
-              label: t('Resolution Deadline'), 
+              label: 'Resolution Deadline', 
               type: 'date',
               defaultValue: currentItem?.resolution_deadline
             }
@@ -900,7 +886,7 @@ export default function Complaints() {
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Assign Complaint')}
+        title={'Assign Complaint'}
         mode="edit"
       />
 
@@ -913,7 +899,7 @@ export default function Complaints() {
           fields: [
             { 
               name: 'status', 
-              label: t('Resolution Type'), 
+              label: 'Resolution Type', 
               type: 'select',
               required: true,
               options: [
@@ -924,32 +910,32 @@ export default function Complaints() {
             },
             { 
               name: 'investigation_notes', 
-              label: t('Investigation Notes'), 
+              label: 'Investigation Notes', 
               type: 'textarea',
               required: true
             },
             { 
               name: 'resolution_action', 
-              label: t('Resolution Action'), 
+              label: 'Resolution Action', 
               type: 'textarea',
               required: true
             },
             { 
               name: 'resolution_date', 
-              label: t('Resolution Date'), 
+              label: 'Resolution Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'follow_up_action', 
-              label: t('Follow-up Action'), 
+              label: 'Follow-up Action', 
               type: 'textarea',
               showWhen: (formData) => formData.status === 'resolved'
             },
             { 
               name: 'follow_up_date', 
-              label: t('Follow-up Date'), 
+              label: 'Follow-up Date', 
               type: 'date',
               showWhen: (formData) => formData.status === 'resolved' && formData.follow_up_action
             }
@@ -957,7 +943,7 @@ export default function Complaints() {
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Resolve Complaint')}
+        title={'Resolve Complaint'}
         mode="edit"
       />
 
@@ -970,21 +956,21 @@ export default function Complaints() {
           fields: [
             { 
               name: 'follow_up_action', 
-              label: t('Follow-up Action'), 
+              label: 'Follow-up Action', 
               type: 'textarea',
               required: true,
               defaultValue: currentItem?.follow_up_action
             },
             { 
               name: 'follow_up_date', 
-              label: t('Follow-up Date'), 
+              label: 'Follow-up Date', 
               type: 'date',
               required: true,
               defaultValue: currentItem?.follow_up_date || new Date().toISOString().split('T')[0]
             },
             { 
               name: 'feedback', 
-              label: t('Feedback'), 
+              label: 'Feedback', 
               type: 'textarea',
               defaultValue: currentItem?.feedback
             }
@@ -992,7 +978,7 @@ export default function Complaints() {
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Update Follow-up Information')}
+        title={'Update Follow-up Information'}
         mode="edit"
       />
 

@@ -8,13 +8,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function ReviewCycles() {
-  const { t } = useTranslation();
+  
   const { auth, reviewCycles, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -98,96 +98,80 @@ export default function ReviewCycles() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating review cycle...'));
+      toast.loading('Creating review cycle...');
 
       router.post(route('hr.performance.review-cycles.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create review cycle: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create review cycle: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating review cycle...'));
+      toast.loading('Updating review cycle...');
 
       router.put(route('hr.performance.review-cycles.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update review cycle: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update review cycle: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting review cycle...'));
+    toast.loading('Deleting review cycle...');
     
     router.delete(route('hr.performance.review-cycles.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete review cycle: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete review cycle: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleToggleStatus = (reviewCycle: any) => {
     const newStatus = reviewCycle.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} review cycle...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} review cycle...`);
     
     router.put(route('hr.performance.review-cycles.toggle-status', reviewCycle.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update review cycle status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update review cycle status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -210,7 +194,7 @@ export default function ReviewCycles() {
   // Add the "Add New Review Cycle" button if user has permission
   if (hasPermission(permissions, 'create-review-cycles')) {
     pageActions.push({
-      label: t('Add Review Cycle'),
+      label: 'Add Review Cycle',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -218,32 +202,32 @@ export default function ReviewCycles() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Review Cycles') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Review Cycles' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true
     },
     { 
       key: 'frequency', 
-      label: t('Frequency'),
+      label: 'Frequency',
       sortable: true
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value: string) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -251,14 +235,14 @@ export default function ReviewCycles() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Created At'), 
+      label: 'Created At', 
       sortable: true,
       render: (value: string) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     }
@@ -267,28 +251,28 @@ export default function ReviewCycles() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-review-cycles'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-review-cycles'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-review-cycles'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -298,24 +282,24 @@ export default function ReviewCycles() {
 
   // Prepare filter options
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   // Prepare frequency options
   const frequencyOptions = [
-    { value: 'all', label: t('All Frequencies') },
-    { value: 'Monthly', label: t('Monthly') },
-    { value: 'Quarterly', label: t('Quarterly') },
-    { value: 'Semi-Annual', label: t('Semi-Annual') },
-    { value: 'Annual', label: t('Annual') },
-    { value: 'One-time', label: t('One-time') }
+    { value: 'all', label: 'All Frequencies' },
+    { value: 'Monthly', label: 'Monthly' },
+    { value: 'Quarterly', label: 'Quarterly' },
+    { value: 'Semi-Annual', label: 'Semi-Annual' },
+    { value: 'Annual', label: 'Annual' },
+    { value: 'One-time', label: 'One-time' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Review Cycles")} 
+      title={"Review Cycles"} 
       url="/hr/performance/review-cycles"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -330,7 +314,7 @@ export default function ReviewCycles() {
           filters={[
             {
               name: 'frequency',
-              label: t('Frequency'),
+              label: 'Frequency',
               type: 'select',
               value: selectedFrequency,
               onChange: setSelectedFrequency,
@@ -338,7 +322,7 @@ export default function ReviewCycles() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -390,7 +374,7 @@ export default function ReviewCycles() {
           to={reviewCycles?.to || 0}
           total={reviewCycles?.total || 0}
           links={reviewCycles?.links}
-          entityName={t("review cycles")}
+          entityName={"review cycles"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -402,29 +386,29 @@ export default function ReviewCycles() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Review Cycle Name'), type: 'text', required: true },
+            { name: 'name', label: 'Review Cycle Name', type: 'text', required: true },
             { 
               name: 'frequency', 
-              label: t('Frequency'), 
+              label: 'Frequency', 
               type: 'select', 
               required: true,
               searchable: true,
               options: [
-                { value: 'Monthly', label: t('Monthly') },
-                { value: 'Quarterly', label: t('Quarterly') },
-                { value: 'Semi-Annual', label: t('Semi-Annual') },
-                { value: 'Annual', label: t('Annual') },
-                { value: 'One-time', label: t('One-time') }
+                { value: 'Monthly', label: 'Monthly' },
+                { value: 'Quarterly', label: 'Quarterly' },
+                { value: 'Semi-Annual', label: 'Semi-Annual' },
+                { value: 'Annual', label: 'Annual' },
+                { value: 'One-time', label: 'One-time' }
               ]
             },
-            { name: 'description', label: t('Description'), type: 'textarea' },
+            { name: 'description', label: 'Description', type: 'textarea' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ],
               defaultValue: 'active'
             }
@@ -434,10 +418,10 @@ export default function ReviewCycles() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Review Cycle')
+            ? 'Add New Review Cycle'
             : formMode === 'edit'
-              ? t('Edit Review Cycle')
-              : t('View Review Cycle')
+              ? 'Edit Review Cycle'
+              : 'View Review Cycle'
         }
         mode={formMode}
       />

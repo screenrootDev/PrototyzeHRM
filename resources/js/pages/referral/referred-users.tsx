@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
-import { useTranslation } from 'react-i18next';
+
 import { usePage, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Users, Calendar, DollarSign, CheckCircle, XCircle } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -52,7 +52,7 @@ interface PageProps {
 }
 
 export default function ReferredUsers() {
-  const { t } = useTranslation();
+  
   const { props } = usePage<PageProps>();
   const { referredUsers, userType, currencySymbol } = props;
 
@@ -88,14 +88,14 @@ export default function ReferredUsers() {
   };
 
     const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Referral Program'), href: route('referral.index') },
-    { title: t('Referral Users') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Referral Program', href: route('referral.index') },
+    { title: 'Referral Users' }
   ];
 
   return (
     <PageTemplate 
-      title={t('Referred Users')} 
+      title={'Referred Users'} 
       url="/referral/referred-users"
       breadcrumbs = {breadcrumbs}
     >
@@ -105,15 +105,15 @@ export default function ReferredUsers() {
             <Link href={route("referral.index")}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('Back to Referral Dashboard')}
+                {'Back to Referral Dashboard'}
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">{t('Referred Users')}</h1>
+              <h1 className="text-2xl font-bold">{'Referred Users'}</h1>
               <p className="text-muted-foreground">
                 {userType === 'superadmin' 
-                  ? t('All users who registered using referral codes')
-                  : t('Users who registered using your referral code')
+                  ? 'All users who registered using referral codes'
+                  : 'Users who registered using your referral code'
                 }
               </p>
             </div>
@@ -125,7 +125,7 @@ export default function ReferredUsers() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Total Referred Users')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Total Referred Users'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{referredUsers.total}</h3>
               </div>
               <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
@@ -139,7 +139,7 @@ export default function ReferredUsers() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Users with Plans')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Users with Plans'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{referredUsers.data.filter(user => user.plan).length}</h3>
               </div>
               <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -153,7 +153,7 @@ export default function ReferredUsers() {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Total Commission Earned')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Total Commission Earned'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{currencySymbol}{(referredUsers.data.reduce((total, user) => total + getTotalCommission(user), 0) || 0).toFixed(2)}</h3>
               </div>
               <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
@@ -166,17 +166,17 @@ export default function ReferredUsers() {
 
         <Card>  
           <CardHeader>
-            <CardTitle>{t('Referred Users List')}</CardTitle>
+            <CardTitle>{'Referred Users List'}</CardTitle>
           </CardHeader>
           <CardContent>
             {referredUsers.data.length === 0 ? (
               <div className="text-center py-8">
                 <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">{t('No referred users yet')}</h3>
+                <h3 className="text-lg font-medium mb-2">{'No referred users yet'}</h3>
                 <p className="text-muted-foreground">
                   {userType === 'superadmin' 
-                    ? t('No users have registered using referral codes yet.')
-                    : t('Share your referral link to start earning commissions.')
+                    ? 'No users have registered using referral codes yet.'
+                    : 'Share your referral link to start earning commissions.'
                   }
                 </p>
               </div>
@@ -197,7 +197,7 @@ export default function ReferredUsers() {
                           <div className="flex items-center space-x-2 mt-1">
                             <Calendar className="h-3 w-3 text-muted-foreground" />
                             <span className="text-xs text-muted-foreground">
-                              {t('Registered')} {formatDate(user.created_at)}
+                              {'Registered'} {formatDate(user.created_at)}
                             </span>
                           </div>
                         </div>
@@ -213,12 +213,12 @@ export default function ReferredUsers() {
                                   {planInfo.name}
                                 </Badge>
                                 <p className="text-sm text-muted-foreground">
-                                  {currencySymbol}{planInfo.price}/{t(planInfo.cycle)}
+                                  {currencySymbol}{planInfo.price}/{planInfo.cycle}
                                 </p>
                               </div>
                             ) : (
                               <Badge variant="secondary">
-                                {t('No Plan')}
+                                {'No Plan'}
                               </Badge>
                             );
                           })()} 
@@ -230,7 +230,7 @@ export default function ReferredUsers() {
                               +{currencySymbol}{getTotalCommission(user)}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              {t('Commission')}
+                              {'Commission'}
                             </p>
                           </div>
                         )}
@@ -239,7 +239,7 @@ export default function ReferredUsers() {
                     
                     {user.referrals && user.referrals.length > 0 && (
                       <div className="mt-3 pt-3 border-t">
-                        <h5 className="text-sm font-medium mb-2">{t('Commission History')}</h5>
+                        <h5 className="text-sm font-medium mb-2">{'Commission History'}</h5>
                         <div className="space-y-1">
                           {user.referrals.map((referral) => (
                             <div key={referral.id} className="flex justify-between text-sm">
@@ -269,7 +269,7 @@ export default function ReferredUsers() {
             links={referredUsers.links}
             currentPage={referredUsers.current_page}
             lastPage={referredUsers.last_page}
-            entityName={t('users')}
+            entityName={'users'}
             onPageChange={(url) => {
               router.visit(url, {
                 preserveState: true,

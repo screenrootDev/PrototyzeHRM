@@ -7,7 +7,7 @@ import { Save, Key, AlertCircle } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
 import { Card, CardContent } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTranslation } from 'react-i18next';
+
 import { router, usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 import { hasPermission } from '@/utils/permissions';
@@ -17,7 +17,7 @@ interface ZektoSettingsProps {
 }
 
 export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
-  const { t } = useTranslation();
+  
   const { globalSettings } = usePage().props as any;
   const canManageBiometric = hasPermission('manage-biomatric-attedance-settings');
 
@@ -50,7 +50,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
     e.preventDefault();
 
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Saving Zekto settings...'));
+      toast.loading('Saving Zekto settings...');
     }
 
     router.post(route('settings.zekto.update'), zektoSettings, {
@@ -67,14 +67,14 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
         } else if (errorMessage) {
           toast.error(errorMessage);
         } else {
-          toast.success(t('Zekto settings saved successfully'));
+          toast.success('Zekto settings saved successfully');
         }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to save Zekto settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to save Zekto settings';
         toast.error(errorMessage);
       }
     });
@@ -82,13 +82,13 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
 
   const handleGenerateToken = () => {
     if (!zektoSettings.zkteco_api_url || !zektoSettings.zkteco_username || !zektoSettings.zkteco_password) {
-      toast.error(t('Please fill in API URL, Username, and Password before generating token'));
+      toast.error('Please fill in API URL, Username, and Password before generating token');
       return;
     }
 
     setIsGeneratingToken(true);
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Generating auth token...'));
+      toast.loading('Generating auth token...');
     }
 
     router.post(route('settings.zekto.generate-token'), {
@@ -122,7 +122,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to generate auth token');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to generate auth token';
         toast.error(errorMessage);
       }
     });
@@ -130,12 +130,12 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
 
   return (
     <SettingsSection
-      title={t("Zekto Settings")}
-      description={t("Configure ZKTeco biometric attendance system integration")}
+      title={"Zekto Settings"}
+      description={"Configure ZKTeco biometric attendance system integration"}
       action={
         <Button type="submit" form="zekto-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
@@ -144,8 +144,8 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
           <Alert className="mb-6 border-blue-200 bg-blue-50 text-blue-800">
             <AlertCircle className="h-4 w-4 text-blue-600 self-center" />
             <AlertDescription className="font-medium space-y-2 flex-1">
-              <div>{t("Note that you can use the biometric attendance system only if you are using the ZKTeco machine for biometric attendance.")}</div>
-              <div>{t("If an employee has multiple entries in a single day, the first entry will be considered as clock-in time and the last entry will be considered as clock-out time.")}</div>
+              <div>{"Note that you can use the biometric attendance system only if you are using the ZKTeco machine for biometric attendance."}</div>
+              <div>{"If an employee has multiple entries in a single day, the first entry will be considered as clock-in time and the last entry will be considered as clock-out time."}</div>
             </AlertDescription>
           </Alert>
 
@@ -153,7 +153,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
             <div className="grid grid-cols-1 gap-6">
               <div className="grid gap-2">
                 <Label htmlFor="zkteco_api_url">
-                  {t("ZKTeco Api URL")} <span className="text-red-500">*</span>
+                  {"ZKTeco Api URL"} <span className="text-red-500">*</span>
                 </Label>
                 <Input
                   id="zkteco_api_url"
@@ -164,14 +164,14 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
                   required
                 />
                 <p className="text-sm text-muted-foreground">
-                  {t("Example")}: http://110.78.645.123:8080
+                  {"Example"}: http://110.78.645.123:8080
                 </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="zkteco_username">
-                    {t("Username")} <span className="text-red-500">*</span>
+                    {"Username"} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="zkteco_username"
@@ -185,7 +185,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
 
                 <div className="grid gap-2">
                   <Label htmlFor="zkteco_password">
-                    {t("Password")} <span className="text-red-500">*</span>
+                    {"Password"} <span className="text-red-500">*</span>
                   </Label>
                   <Input
                     id="zkteco_password"
@@ -199,7 +199,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="zkteco_auth_token">{t("Auth Token")}</Label>
+                <Label htmlFor="zkteco_auth_token">{"Auth Token"}</Label>
                 <Textarea
                   id="zkteco_auth_token"
                   placeholder="Token will be generated automatically using API credentials"
@@ -210,7 +210,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
                   className="resize-none bg-muted"
                 />
                 <p className="text-sm text-muted-foreground">
-                  {t("This token is automatically generated using your API credentials above.")}
+                  {"This token is automatically generated using your API credentials above."}
                 </p>
               </div>
 
@@ -222,7 +222,7 @@ export default function ZektoSettings({ settings = {} }: ZektoSettingsProps) {
                   className="bg-green-600 hover:bg-green-700"
                 >
                   <Key className="h-4 w-4 mr-2" />
-                  {isGeneratingToken ? t("Generating...") : t("Generate Token")}
+                  {isGeneratingToken ? "Generating..." : "Generate Token"}
                 </Button>
               </div>
             </div>

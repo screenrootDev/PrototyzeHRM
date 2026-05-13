@@ -7,7 +7,7 @@ import TextLink from '@/components/text-link';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useTranslation } from 'react-i18next';
+
 import AuthLayout from '@/layouts/auth-layout';
 import AuthButton from '@/components/auth/auth-button';
 import Recaptcha from '@/components/recaptcha';
@@ -36,7 +36,7 @@ interface LoginProps {
 }
 
 export default function Login({ status, canResetPassword, demoBusinesses = [] }: LoginProps) {
-    const { t } = useTranslation();
+    
     const [recaptchaToken, setRecaptchaToken] = useState<string>('');
     const { themeColor, customColor } = useBrand();
     const primaryColor = themeColor === 'custom' ? customColor : THEME_COLORS[themeColor as keyof typeof THEME_COLORS];
@@ -65,8 +65,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
         e.preventDefault();
         const formData = { ...data, recaptcha_token: recaptchaToken };
         post(route('login'), formData, {
-            onFinish: () => reset('password'),
-        });
+            onFinish: () => reset('password')        });
     };
 
     // No longer needed as we're using router.post directly in the button handlers
@@ -83,15 +82,16 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
 
     return (
         <AuthLayout
-            title={t("Log in to your account")}
-            description={t("Enter your credentials to access your account")}
+            title={"Log in to your account"}
+            description={"Enter your credentials to access your account"}
             status={status}
         >
             <form className="space-y-5" onSubmit={submit}>
                 <div className="mb-4">
-                    <Label htmlFor="email" className="block text-sm font-medium text-gray-900">{t("Email address")}</Label>
+                    <Label htmlFor="email" className="block text-sm font-medium text-gray-900">{"Email address"}</Label>
                     <Input
                         id="email"
+                        name="email"
                         type="email"
                         required
                         autoFocus
@@ -109,7 +109,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
 
                 <div className="mb-4">
                     <div className="flex justify-between items-center mb-2">
-                        <Label htmlFor="password" className="block text-sm font-medium text-gray-900">{t("Password")}</Label>
+                        <Label htmlFor="password" className="block text-sm font-medium text-gray-900">{"Password"}</Label>
                         {canResetPassword && (
                             <TextLink
                                 href={route('password.request')}
@@ -117,12 +117,13 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                 style={{ color: primaryColor }}
                                 tabIndex={5}
                             >
-                                {t("Forgot password?")}
+                                {"Forgot password?"}
                             </TextLink>
                         )}
                     </div>
                     <Input
                         id="password"
+                        name="password"
                         type="password"
                         required
                         tabIndex={2}
@@ -146,7 +147,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                         tabIndex={3}
                         className="w-[14px] h-[14px] border border-gray-300 rounded"
                     />
-                    <Label htmlFor="remember" className="ml-2 text-sm text-gray-600">{t("Remember me")}</Label>
+                    <Label htmlFor="remember" className="ml-2 text-sm text-gray-600">{"Remember me"}</Label>
                 </div>
 
                 <Recaptcha
@@ -162,20 +163,20 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                     className="w-full text-white py-2.5 text-sm font-medium tracking-wide transition-all duration-200 rounded-md shadow-md hover:shadow-lg transform hover:scale-[1.02] disabled:opacity-50"
                     style={{ backgroundColor: primaryColor }}
                 >
-                    {processing ? t("Signing in...") : t("Login")}
+                    {processing ? "Signing in..." : "Login"}
                 </button>
 
                 {isSaas && (
                     <div className="text-center">
                         <p className="text-sm text-gray-500">
-                            {t("Don't have an account?")}{' '}
+                            {"Don't have an account?"}{' '}
                             <TextLink
                                 href={route('register')}
                                 className="font-medium hover:underline"
                                 style={{ color: primaryColor }}
                                 tabIndex={6}
                             >
-                                {t("Sign up")}
+                                {"Sign up"}
                             </TextLink>
                         </p>
                     </div>
@@ -193,7 +194,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                         </div>
 
                         <div>
-                            <h3 className="text-sm font-medium text-gray-900 tracking-wider mb-4 text-center">{t("Quick Access")}</h3>
+                            <h3 className="text-sm font-medium text-gray-900 tracking-wider mb-4 text-center">{"Quick Access"}</h3>
                             <div className="grid grid-cols-2 gap-3">
                                 {isSaas ? (
                                     <>
@@ -210,7 +211,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login as Super Admin")}
+                                            {"Login as Super Admin"}
                                         </button>
                                         <button
                                             type="button"
@@ -225,7 +226,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login as Company")}
+                                            {"Login as Company"}
                                         </button>
                                         <button
                                             type="button"
@@ -240,7 +241,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login As HR")}
+                                            {"Login As HR"}
                                         </button>
                                         <button
                                             type="button"
@@ -255,7 +256,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login As Employee")}
+                                            {"Login As Employee"}
                                         </button>
                                     </>
                                 ) : (
@@ -273,7 +274,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login As Company")}
+                                            {"Login As Company"}
                                         </button>
                                         <button
                                             type="button"
@@ -288,7 +289,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login As HR")}
+                                            {"Login As HR"}
                                         </button>
                                         <button
                                             type="button"
@@ -303,7 +304,7 @@ export default function Login({ status, canResetPassword, demoBusinesses = [] }:
                                             className="col-span-2 py-2 px-4 border text-[13px] font-medium text-white transition-all duration-200 rounded-md shadow-sm hover:shadow-md transform hover:scale-[1.02]"
                                             style={{ backgroundColor: primaryColor, borderColor: primaryColor }}
                                         >
-                                            {t("Login As Employee")}
+                                            {"Login As Employee"}
                                         </button>
                                     </>
                                 )}

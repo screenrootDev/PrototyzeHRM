@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -30,7 +30,7 @@ export function PayfastPaymentForm({
   onSuccess,
   onCancel
 }: PayfastPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     firstName: '',
@@ -44,17 +44,17 @@ export function PayfastPaymentForm({
     const newErrors: {[key: string]: string} = {};
     
     if (!customerDetails.firstName.trim()) {
-      newErrors.firstName = t('First name is required');
+      newErrors.firstName = 'First name is required';
     }
     
     if (!customerDetails.lastName.trim()) {
-      newErrors.lastName = t('Last name is required');
+      newErrors.lastName = 'Last name is required';
     }
     
     if (!customerDetails.email.trim()) {
-      newErrors.email = t('Email is required');
+      newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerDetails.email)) {
-      newErrors.email = t('Please enter a valid email address');
+      newErrors.email = 'Please enter a valid email address';
     }
     
     return newErrors;
@@ -67,12 +67,12 @@ export function PayfastPaymentForm({
     setErrors(formErrors);
     
     if (Object.keys(formErrors).length > 0) {
-      toast.error(t('Please fix the errors below'));
+      toast.error('Please fix the errors below');
       return;
     }
     
     if (planPrice < 5) {
-      toast.error(t('Minimum payment amount is R5.00'));
+      toast.error('Minimum payment amount is R5.00');
       return;
     }
     
@@ -104,13 +104,13 @@ export function PayfastPaymentForm({
         document.body.appendChild(form);
         form.submit();
       } else {
-        toast.error(data.error || t('Payment failed'));
+        toast.error(data.error || 'Payment failed');
         setIsProcessing(false);
       }
       
     } catch (error) {
       console.error('PayFast payment error:', error);
-      toast.error(t('Payment failed. Please try again.'));
+      toast.error('Payment failed. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -120,7 +120,7 @@ export function PayfastPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Payfast Payment')}
+          {'Payfast Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -131,7 +131,7 @@ export function PayfastPaymentForm({
           <input type="hidden" name="coupon_code" value={couponCode || ''} />
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('First Name')}</Label>
+              <Label htmlFor="firstName">{'First Name'}</Label>
               <Input
                 id="firstName"
                 name="customer_details[firstName]"
@@ -142,7 +142,7 @@ export function PayfastPaymentForm({
                     setErrors(prev => ({ ...prev, firstName: '' }));
                   }
                 }}
-                placeholder={t('Enter first name')}
+                placeholder={'Enter first name'}
                 className={errors.firstName ? 'border-red-500' : ''}
                 required
               />
@@ -151,7 +151,7 @@ export function PayfastPaymentForm({
               )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">{t('Last Name')}</Label>
+              <Label htmlFor="lastName">{'Last Name'}</Label>
               <Input
                 id="lastName"
                 name="customer_details[lastName]"
@@ -162,7 +162,7 @@ export function PayfastPaymentForm({
                     setErrors(prev => ({ ...prev, lastName: '' }));
                   }
                 }}
-                placeholder={t('Enter last name')}
+                placeholder={'Enter last name'}
                 className={errors.lastName ? 'border-red-500' : ''}
                 required
               />
@@ -173,7 +173,7 @@ export function PayfastPaymentForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('Email Address')}</Label>
+            <Label htmlFor="email">{'Email Address'}</Label>
             <Input
               id="email"
               name="customer_details[email]"
@@ -185,7 +185,7 @@ export function PayfastPaymentForm({
                   setErrors(prev => ({ ...prev, email: '' }));
                 }
               }}
-              placeholder={t('Enter email address')}
+              placeholder={'Enter email address'}
               className={errors.email ? 'border-red-500' : ''}
               required
             />
@@ -193,7 +193,7 @@ export function PayfastPaymentForm({
               <p className="text-sm text-red-500 mt-1">{errors.email}</p>
             )}
             <p className="text-xs text-muted-foreground">
-              {t('You will be redirected to Payfast to complete the payment')}
+              {'You will be redirected to Payfast to complete the payment'}
             </p>
           </div>
 
@@ -201,27 +201,24 @@ export function PayfastPaymentForm({
             <Alert variant="destructive">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {t('PayFast requires a minimum payment of R5.00. Current amount: {{currency}} {{amount}}', {
-                  currency,
-                  amount: planPrice
-                })}
+                {`PayFast requires a minimum payment of R5.00. Current amount: ${currency} ${planPrice}`}
               </AlertDescription>
             </Alert>
           )}
 
           <div className="bg-muted p-3 rounded-lg">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">{t('Amount')}</span>
+              <span className="text-sm font-medium">{'Amount'}</span>
               <span className="text-sm font-bold">{currency} {planPrice}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-1">
-              {t('Secure payment processing via PayFast')}
+              {'Secure payment processing via PayFast'}
             </p>
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button 
               type="submit" 
@@ -231,10 +228,10 @@ export function PayfastPaymentForm({
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('Processing...')}
+                  {'Processing...'}
                 </>
               ) : (
-                t('Pay {{amount}}', { amount: `${currency} ${planPrice}` })
+                `Pay ${currency} ${planPrice}`
               )}
             </Button>
           </div>

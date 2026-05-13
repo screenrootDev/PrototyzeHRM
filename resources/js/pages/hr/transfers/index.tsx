@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Transfers() {
-  const { t } = useTranslation();
+  
   const { auth, transfers, employees, branches, departments, designations, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -166,120 +166,100 @@ export default function Transfers() {
     const data = formData;
 
     if (formMode === 'create') {
-      toast.loading(t('Creating transfer...'));
+      toast.loading('Creating transfer...');
 
       router.post(route('hr.transfers.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create transfer: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create transfer: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating transfer...'));
+      toast.loading('Updating transfer...');
 
       router.put(route('hr.transfers.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update transfer: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update transfer: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
 
   const handleApprove = (formData: any) => {
-    toast.loading(t('Approving transfer...'));
+    toast.loading('Approving transfer...');
 
     router.put(route('hr.transfers.approve', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsApproveModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to approve transfer: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to approve transfer: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleReject = (formData: any) => {
-    toast.loading(t('Rejecting transfer...'));
+    toast.loading('Rejecting transfer...');
 
     router.put(route('hr.transfers.reject', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsRejectModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to reject transfer: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to reject transfer: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting transfer...'));
+    toast.loading('Deleting transfer...');
 
     router.delete(route('hr.transfers.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete transfer: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete transfer: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -306,7 +286,7 @@ export default function Transfers() {
   // Add the "Add New Transfer" button if user has permission
   if (hasPermission(permissions, 'create-employee-transfers')) {
     pageActions.push({
-      label: t('Add Transfer'),
+      label: 'Add Transfer',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -314,16 +294,16 @@ export default function Transfers() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.transfers.index') },
-    { title: t('Employee Transfers') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.transfers.index') },
+    { title: 'Employee Transfers' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee.name',
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -333,7 +313,7 @@ export default function Transfers() {
     },
     {
       key: 'transfer_type',
-      label: t('Transfer Type'),
+      label: 'Transfer Type',
       render: (_, row) => {
         const types = [];
         if (row.from_branch_id && row.to_branch_id) types.push('Branch');
@@ -344,7 +324,7 @@ export default function Transfers() {
     },
     {
       key: 'from_to',
-      label: t('From → To'),
+      label: 'From → To',
       render: (_, row) => {
         const fromTo = [];
 
@@ -371,19 +351,19 @@ export default function Transfers() {
     },
     {
       key: 'transfer_date',
-      label: t('Transfer Date'),
+      label: 'Transfer Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'effective_date',
-      label: t('Effective Date'),
+      label: 'Effective Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           'pending': 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -400,7 +380,7 @@ export default function Transfers() {
     },
     {
       key: 'documents',
-      label: t('Documents'),
+      label: 'Documents',
       render: (value, row) => value && value.trim() !== '' ? (
         <Button
           variant="outline"
@@ -411,7 +391,7 @@ export default function Transfers() {
             handleAction('download-document', row);
           }}
         >
-          {t('View Document')}
+          {'View Document'}
         </Button>
       ) : '-'
     }
@@ -420,14 +400,14 @@ export default function Transfers() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-employee-transfers'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -435,7 +415,7 @@ export default function Transfers() {
       condition: (item) => item.status === 'pending'
     },
     {
-      label: t('Approve'),
+      label: 'Approve',
       icon: 'CheckCircle',
       action: 'approve',
       className: 'text-green-500',
@@ -443,7 +423,7 @@ export default function Transfers() {
       condition: (item) => item.status === 'pending'
     },
     {
-      label: t('Reject'),
+      label: 'Reject',
       icon: 'XCircle',
       action: 'reject',
       className: 'text-red-500',
@@ -451,7 +431,7 @@ export default function Transfers() {
       condition: (item) => item.status === 'pending'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -462,7 +442,7 @@ export default function Transfers() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '_none_', label: t('All Employees'), disabled: true },
+    { value: '_none_', label: 'All Employees', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -471,7 +451,7 @@ export default function Transfers() {
 
   // Prepare branch options for filter
   const branchOptions = [
-    { value: '_none_', label: t('All Branches'), disabled: true },
+    { value: '_none_', label: 'All Branches', disabled: true },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -480,7 +460,7 @@ export default function Transfers() {
 
   // Prepare department options for filter
   const departmentOptions = [
-    { value: '_none_', label: t('All Departments'), disabled: true },
+    { value: '_none_', label: 'All Departments', disabled: true },
     ...(departments || []).map((dept: any) => ({
       value: dept.id.toString(),
       label: dept.name
@@ -489,15 +469,15 @@ export default function Transfers() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
   ];
 
   return (
     <PageTemplate
-      title={t("Employee Transfers")}
+      title={"Employee Transfers"}
       url="/hr/transfers"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -512,7 +492,7 @@ export default function Transfers() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -521,7 +501,7 @@ export default function Transfers() {
             },
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -530,7 +510,7 @@ export default function Transfers() {
             },
             {
               name: 'department_id',
-              label: t('Department'),
+              label: 'Department',
               type: 'select',
               value: selectedDepartment,
               onChange: setSelectedDepartment,
@@ -539,7 +519,7 @@ export default function Transfers() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -547,14 +527,14 @@ export default function Transfers() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -609,7 +589,7 @@ export default function Transfers() {
           to={transfers?.to || 0}
           total={transfers?.total || 0}
           links={transfers?.links}
-          entityName={t("transfers")}
+          entityName={"transfers"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -623,7 +603,7 @@ export default function Transfers() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '_none_'),
@@ -637,7 +617,7 @@ export default function Transfers() {
               dependentConfig: [
                 {
                   name: 'to_branch_id',
-                  label: t('To Branch'),
+                  label: 'To Branch',
                   required: true,
                   options: branchOptions ? branchOptions
                     .filter(opt => opt.value !== '_none_')
@@ -648,13 +628,13 @@ export default function Transfers() {
                 },
                 {
                   name: 'to_department_id',
-                  label: t('To Department'),
+                  label: 'To Department',
                   apiEndpoint: '/hr/transfers/get-department/{to_branch_id}',
                   showCurrentValue: true
                 },
                 {
                   name: 'to_designation_id',
-                  label: t('To Designation'),
+                  label: 'To Designation',
                   apiEndpoint: '/hr/transfers/get-designation/{to_department_id}',
                   showCurrentValue: true
                 }
@@ -662,23 +642,23 @@ export default function Transfers() {
             },
             // {
             //   name: 'to_branch_id',
-            //   label: t('To Branch'),
+            //   label: 'To Branch',
             //   type: 'select',
-            //   options: [{ value: '_none_', label: t('No Change') }, ...branchOptions.filter(opt => opt.value !== '_none_')]
+            //   options: [{ value: '_none_', label: 'No Change' }, ...branchOptions.filter(opt => opt.value !== '_none_')]
             // },
             // {
             //   name: 'to_department_id',
-            //   label: t('To Department'),
+            //   label: 'To Department',
             //   type: 'select',
-            //   options: [{ value: '_none_', label: t('No Change') }, ...departmentOptions.filter(opt => opt.value !== '_none_')]
+            //   options: [{ value: '_none_', label: 'No Change' }, ...departmentOptions.filter(opt => opt.value !== '_none_')]
             // },   
 
             // { 
             //   name: 'to_designation_id', 
-            //   label: t('To Designation'), 
+            //   label: 'To Designation', 
             //   type: 'select',
             //   options: [
-            //     { value: '_none_', label: t('No Change') },
+            //     { value: '_none_', label: 'No Change' },
             //     ...(designations || []).map((desig: any) => ({
             //       value: desig.id.toString(),
             //       label: desig.name
@@ -687,47 +667,47 @@ export default function Transfers() {
             // },
             {
               name: 'transfer_date',
-              label: t('Transfer Date'),
+              label: 'Transfer Date',
               type: 'date',
               required: true
             },
             {
               name: 'effective_date',
-              label: t('Effective Date'),
+              label: 'Effective Date',
               type: 'date',
               required: true
             },
             {
               name: 'reason',
-              label: t('Reason'),
+              label: 'Reason',
               type: 'textarea'
             },
             {
               name: 'documents',
-              label: t('Documents'),
+              label: 'Documents',
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             ...(formMode === 'edit' ? [
               {
                 name: 'status',
-                label: t('Status'),
+                label: 'Status',
                 type: 'select',
                 options: [
-                  { value: 'pending', label: t('Pending') },
-                  { value: 'approved', label: t('Approved') },
-                  { value: 'rejected', label: t('Rejected') }
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'approved', label: 'Approved' },
+                  { value: 'rejected', label: 'Rejected' }
                 ]
               },
               {
                 name: 'notes',
-                label: t('Notes'),
+                label: 'Notes',
                 type: 'textarea'
               }
             ] : [])
@@ -741,10 +721,10 @@ export default function Transfers() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Transfer')
+            ? 'Add New Transfer'
             : formMode === 'edit'
-              ? t('Edit Transfer')
-              : t('View Transfer')
+              ? 'Edit Transfer'
+              : 'View Transfer'
         }
         mode={formMode}
       />
@@ -758,15 +738,15 @@ export default function Transfers() {
           fields: [
             {
               name: 'notes',
-              label: t('Notes'),
+              label: 'Notes',
               type: 'textarea',
-              placeholder: t('Add any notes about this approval (optional)')
+              placeholder: 'Add any notes about this approval (optional)'
             }
           ],
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Approve Transfer')}
+        title={'Approve Transfer'}
         mode="edit"
       />
 
@@ -779,16 +759,16 @@ export default function Transfers() {
           fields: [
             {
               name: 'notes',
-              label: t('Rejection Reason'),
+              label: 'Rejection Reason',
               type: 'textarea',
               required: true,
-              placeholder: t('Please provide a reason for rejecting this transfer')
+              placeholder: 'Please provide a reason for rejecting this transfer'
             }
           ],
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Reject Transfer')}
+        title={'Reject Transfer'}
         mode="edit"
       />
 

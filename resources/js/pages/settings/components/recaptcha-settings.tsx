@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
-import { useTranslation } from 'react-i18next';
+
 import { router, usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 
@@ -15,7 +15,7 @@ interface RecaptchaSettingsProps {
 }
 
 export default function RecaptchaSettings({ settings = {} }: RecaptchaSettingsProps) {
-  const { t } = useTranslation();
+  
   const pageProps = usePage().props as any;
   
   // Default settings
@@ -65,7 +65,7 @@ export default function RecaptchaSettings({ settings = {} }: RecaptchaSettingsPr
         }
       },
       onError: (errors) => {
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to update ReCaptcha settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to update ReCaptcha settings';
         toast.error(errorMessage);
       }
     });
@@ -73,26 +73,26 @@ export default function RecaptchaSettings({ settings = {} }: RecaptchaSettingsPr
 
   return (
     <SettingsSection
-      title={t("ReCaptcha Settings")}
-      description={t("Configure Google ReCaptcha settings for form protection")}
+      title={"ReCaptcha Settings"}
+      description={"Configure Google ReCaptcha settings for form protection"}
       action={
         <Button type="submit" form="recaptcha-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
       <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md text-sm text-blue-800 dark:bg-blue-950 dark:border-blue-800 dark:text-blue-200">
-        <strong>{t("Note")}:</strong> <a href="https://phppot.com/php/how-to-get-google-recaptcha-site-and-secret-key/" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">{t("How to Get Google reCaptcha Site and Secret key")}</a>
+        <strong>{"Note"}:</strong> <a href="https://phppot.com/php/how-to-get-google-recaptcha-site-and-secret-key/" target="_blank" rel="noopener noreferrer" className="underline hover:no-underline">{"How to Get Google reCaptcha Site and Secret key"}</a>
       </div>
       
       <form id="recaptcha-settings-form" onSubmit={submitRecaptchaSettings} className="space-y-6">
         <div className="grid gap-2 md:col-span-2">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="recaptchaEnabled">{t("Enable ReCaptcha")}</Label>
+              <Label htmlFor="recaptchaEnabled">{"Enable ReCaptcha"}</Label>
               <p className="text-sm text-muted-foreground">
-                {t("Show ReCaptcha on authentication pages")}
+                {"Show ReCaptcha on authentication pages"}
               </p>
             </div>
             <Switch
@@ -105,13 +105,13 @@ export default function RecaptchaSettings({ settings = {} }: RecaptchaSettingsPr
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="grid gap-2">
-            <Label htmlFor="recaptchaVersion">{t("Google Recaptcha Version")}</Label>
+            <Label htmlFor="recaptchaVersion">{"Google Recaptcha Version"}</Label>
             <Select 
               value={recaptchaSettings.recaptchaVersion} 
               onValueChange={(value) => handleSettingsChange('recaptchaVersion', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("Select version")} />
+                <SelectValue placeholder={"Select version"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="v2">v2</SelectItem>
@@ -121,26 +121,26 @@ export default function RecaptchaSettings({ settings = {} }: RecaptchaSettingsPr
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="recaptchaSiteKey">{t("Site Key")}</Label>
+            <Label htmlFor="recaptchaSiteKey">{"Site Key"}</Label>
             <Input
               id="recaptchaSiteKey"
               name="recaptchaSiteKey"
               type="text"
               value={recaptchaSettings.recaptchaSiteKey}
               onChange={(e) => handleSettingsChange('recaptchaSiteKey', e.target.value)}
-              placeholder={t("Enter your Google ReCaptcha site key")}
+              placeholder={"Enter your Google ReCaptcha site key"}
             />
           </div>
 
           <div className="grid gap-2 md:col-span-2">
-            <Label htmlFor="recaptchaSecretKey">{t("Secret Key")}</Label>
+            <Label htmlFor="recaptchaSecretKey">{"Secret Key"}</Label>
             <Input
               id="recaptchaSecretKey"
               name="recaptchaSecretKey"
               type="password"
               value={recaptchaSettings.recaptchaSecretKey}
               onChange={(e) => handleSettingsChange('recaptchaSecretKey', e.target.value)}
-              placeholder={t("Enter your Google ReCaptcha secret key")}
+              placeholder={"Enter your Google ReCaptcha secret key"}
             />
           </div>
         </div>

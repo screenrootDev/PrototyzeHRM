@@ -44,87 +44,58 @@ class HandleInertiaRequests extends Middleware
 
         // Skip database queries during installation
         if ($request->is('install/*') || $request->is('update/*') || !file_exists(storage_path('installed'))) {
-            // Get available languages even during installation
-            $languagesFile = resource_path('lang/language.json');
-            $availableLanguages = [];
-            if (file_exists($languagesFile)) {
-                $availableLanguages = json_decode(file_get_contents($languagesFile), true) ?? [];
-            }
-            $globalSettings = [
+            return [
+                ...parent::share($request),
+                'availableLanguages' => [],
+                'quote' => ['message' => trim($message), 'author' => trim($author)],
+                'globalSettings' => ['availableLanguages' => []],
+                'companySlug' => '',
+            ];
+        }
+
+        // Get system settings
+        $settings = settings();
+        // Get currency symbol
+        $currencyCode = $settings['defaultCurrency'] ?? 'USD';
+        $currency = Currency::where('code', $currencyCode)->first();
+        $currencySettings = [];
+        if ($currency) {
+            $currencySettings = [
+                'currencySymbol' => $currency->symbol,
+                'currencyNname' => $currency->name,
+            ];
+        } else {
+            $currencySettings = [
                 'currencySymbol' => '$',
                 'currencyNname' => 'US Dollar',
-                'base_url' => config('app.url'),
-                'image_url' => config('app.url'),
-                'is_demo' => config('app.is_demo', false),
-                'is_saas' => isSaas(),
-                'availableLanguages' => $availableLanguages,
             ];
+        }
 
-            $companySlug = '';
-            $checkUser = Auth::user();
-            if ($checkUser && $checkUser->hasRole('company')) {
-                $companySlug = Auth::user()->slug ?? '';
-            } else {
-                $authUser = Auth::user();
-                if ($authUser) {
-                    $getCompanyId = getCompanyId($authUser->id);
-                    $getUser = Auth::user()->where('id', $getCompanyId)->first();
-                    if ($getUser) {
-                        $companySlug = $getUser->slug;
-                    }
-                }
+        $availableLanguages = [];
 
-            }
+        // Merge currency settings with other settings
+        $globalSettings = array_merge($settings, $currencySettings);
+        $globalSettings['base_url'] = config('app.url');
+        $globalSettings['image_url'] = config('app.url');
+        $globalSettings['is_demo'] = config('app.is_demo');
+        $globalSettings['is_saas'] = isSaas();
+        $globalSettings['availableLanguages'] = $availableLanguages;
+
+        $companySlug = '';
+        $checkUser = Auth::user();
+        if ($checkUser && $checkUser->hasRole('company')) {
+            $companySlug = Auth::user()->slug ?? '';
         } else {
-            // Get system settings
-            $settings = settings();
-            // Get currency symbol
-            $currencyCode = $settings['defaultCurrency'] ?? 'USD';
-            $currency = Currency::where('code', $currencyCode)->first();
-            $currencySettings = [];
-            if ($currency) {
-                $currencySettings = [
-                    'currencySymbol' => $currency->symbol,
-                    'currencyNname' => $currency->name,
-                ];
-            } else {
-                $currencySettings = [
-                    'currencySymbol' => '$',
-                    'currencyNname' => 'US Dollar',
-                ];
-            }
-
-            // Get available languages
-            $languagesFile = resource_path('lang/language.json');
-            $availableLanguages = [];
-            if (file_exists($languagesFile)) {
-                $availableLanguages = json_decode(file_get_contents($languagesFile), true) ?? [];
-            }
-
-            // Merge currency settings with other settings
-            $globalSettings = array_merge($settings, $currencySettings);
-            $globalSettings['base_url'] = config('app.url');
-            $globalSettings['image_url'] = config('app.url');
-            $globalSettings['is_demo'] = config('app.is_demo');
-            $globalSettings['is_saas'] = isSaas();
-            $globalSettings['availableLanguages'] = $availableLanguages;
-
-            $companySlug = '';
-            $checkUser = Auth::user();
-            if ($checkUser && $checkUser->hasRole('company')) {
-                $companySlug = Auth::user()->slug ?? '';
-            } else {
-                $authUser = Auth::user();
-                if ($authUser) {
-                    $getCompanyId = getCompanyId($authUser->id);
-                    $getUser = Auth::user()->where('id', $getCompanyId)->first();
-                    if ($getUser) {
-                        $companySlug = $getUser->slug;
-                    }
+            $authUser = Auth::user();
+            if ($authUser) {
+                $getCompanyId = getCompanyId($authUser->id);
+                $getUser = Auth::user()->where('id', $getCompanyId)->first();
+                if ($getUser) {
+                    $companySlug = $getUser->slug;
                 }
-
             }
         }
+
 
         return [
             ...parent::share($request),
@@ -138,10 +109,7 @@ class HandleInertiaRequests extends Middleware
                 'roles' => fn() => $request->user()?->roles->pluck('name'),
                 'permissions' => fn() => $request->user()?->getAllPermissions()->pluck('name'),
             ],
-            // 'userLanguage' => $request->user()?->lang ?? 'en',
-            'userLanguage' => config('app.is_demo')
-                ? $request->cookie('app_language')
-                : ($request->user()?->lang ?? $globalSettings['defaultLanguage'] ?? 'en'),
+            'userLanguage' => 'en',
             'isImpersonating' => session('impersonated_by') ? true : false,
             'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),

@@ -37,12 +37,12 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
               <Layout className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{t("Features Layout")}</h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400">{t("Configure features section layout and columns")}</p>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{"Features Layout"}</h3>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{"Configure features section layout and columns"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Label className="text-sm">{t("Enable Section")}</Label>
+            <Label className="text-sm">{"Enable Section"}</Label>
             <Switch
               checked={data.config_sections?.section_visibility?.features !== false}
               onCheckedChange={(checked) => updateSectionVisibility('features', checked)}
@@ -52,7 +52,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="features_layout">{t("Layout Style")}</Label>
+            <Label htmlFor="features_layout">{"Layout Style"}</Label>
             <select
               id="features_layout"
               name="features_layout"
@@ -68,7 +68,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="features_columns">{t("Columns")}</Label>
+            <Label htmlFor="features_columns">{"Columns"}</Label>
             <select
               id="features_columns"
               name="features_columns"
@@ -91,14 +91,14 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
             <Type className="h-5 w-5 text-green-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("Features Content")}</h3>
-            <p className="text-sm text-gray-500">{t("Features section title and description")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"Features Content"}</h3>
+            <p className="text-sm text-gray-500">{"Features section title and description"}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="features_title">{t("Features Title")}</Label>
+            <Label htmlFor="features_title">{"Features Title"}</Label>
             <Input
               id="features_title"
               name="features_title"
@@ -112,20 +112,20 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="features_description">{t("Features Description")}</Label>
+            <Label htmlFor="features_description">{"Features Description"}</Label>
             <Textarea
               id="features_description"
               name="features_description"
               value={getSectionData('features').description || ''}
               onChange={(e) => updateSectionData('features', { description: e.target.value })}
-              placeholder={t("Description text for features section")}
+              placeholder={"Description text for features section"}
               rows={3}
             />
           </div>
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="features_show_icons">{t("Show Icons")}</Label>
+              <Label htmlFor="features_show_icons">{"Show Icons"}</Label>
               <Switch
                 id="features_show_icons"
                 name="features_show_icons"
@@ -134,7 +134,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              {t("Display icons with features")}
+              {"Display icons with features"}
             </p>
           </div>
         </div>
@@ -146,14 +146,14 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
             <Palette className="h-5 w-5 text-purple-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("Features Style")}</h3>
-            <p className="text-sm text-gray-500">{t("Background colors and section image")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"Features Style"}</h3>
+            <p className="text-sm text-gray-500">{"Background colors and section image"}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="features_background_color">{t("Background Color")}</Label>
+            <Label htmlFor="features_background_color">{"Background Color"}</Label>
             <div className="flex gap-2">
               <Input
                 id="features_background_color"
@@ -178,7 +178,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
               onChange={(value) => {
                 updateSectionData('features', { image: convertToRelativePath(value) });
               }}
-              placeholder={t("Select features section image...")}
+              placeholder={"Select features section image..."}
             />
           </div>
         </div>
@@ -190,8 +190,8 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
             <Star className="h-5 w-5 text-orange-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("Feature Boxes")}</h3>
-            <p className="text-sm text-gray-500">{t("Individual feature items with icons")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"Feature Boxes"}</h3>
+            <p className="text-sm text-gray-500">{"Individual feature items with icons"}</p>
           </div>
         </div>
         
@@ -201,7 +201,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
               <div className="flex items-center justify-between mb-4">
                 <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                   <span className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</span>
-                  {t("Feature")} {index + 1}
+                  {"Feature"} {index + 1}
                 </h4>
                 <Button
                   type="button"
@@ -219,7 +219,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor={`feature_${index}_title`}>{t("Title")}</Label>
+                  <Label htmlFor={`feature_${index}_title`}>{"Title"}</Label>
                   <Input
                     id={`feature_${index}_title`}
                     value={feature.title || ''}
@@ -233,7 +233,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
                 </div>
                 
                 <div className="space-y-3">
-                  <Label htmlFor={`feature_${index}_icon`}>{t("Icon")}</Label>
+                  <Label htmlFor={`feature_${index}_icon`}>{"Icon"}</Label>
                   <select
                     id={`feature_${index}_icon`}
                     value={feature.icon || 'qr-code'}
@@ -265,7 +265,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
                 </div>
                 
                 <div className="space-y-3 md:col-span-1">
-                  <Label htmlFor={`feature_${index}_description`}>{t("Description")}</Label>
+                  <Label htmlFor={`feature_${index}_description`}>{"Description"}</Label>
                   <Textarea
                     id={`feature_${index}_description`}
                     value={feature.description || ''}
@@ -274,7 +274,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
                       newFeatures[index] = { ...newFeatures[index], description: e.target.value };
                       updateSectionData('features', { features_list: newFeatures });
                     }}
-                    placeholder={t("Feature description")}
+                    placeholder={"Feature description"}
                     rows={3}
                   />
                 </div>
@@ -293,7 +293,7 @@ export default function FeaturesSection({ data, setData, errors, handleInputChan
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {t('Add Feature Box')}
+            {'Add Feature Box'}
           </Button>
         </div>
       </div>

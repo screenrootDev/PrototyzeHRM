@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function AttendanceRegularizations() {
-  const { t } = useTranslation();
+  
   const { auth, regularizations, employees, attendanceRecords, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -104,17 +104,15 @@ export default function AttendanceRegularizations() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating regularization request...'));
+      toast.loading('Creating regularization request...');
 
       router.post(route('hr.attendance-regularizations.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -126,17 +124,15 @@ export default function AttendanceRegularizations() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating regularization request...'));
+      toast.loading('Updating regularization request...');
 
       router.put(route('hr.attendance-regularizations.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -151,17 +147,15 @@ export default function AttendanceRegularizations() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting regularization request...'));
+    toast.loading('Deleting regularization request...');
 
     router.delete(route('hr.attendance-regularizations.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -175,7 +169,7 @@ export default function AttendanceRegularizations() {
   };
 
   const handleStatusUpdate = (regularization: any, status: string) => {
-    const statusText = status === 'approved' ? t('Approving') : t('Rejecting');
+    const statusText = status === 'approved' ? 'Approving' : 'Rejecting';
     toast.loading(`${statusText} regularization request...`);
 
     router.put(route('hr.attendance-regularizations.update-status', regularization.id), {
@@ -185,10 +179,8 @@ export default function AttendanceRegularizations() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -221,7 +213,7 @@ export default function AttendanceRegularizations() {
   // Add the "Add New Request" button if user has permission
   if (hasPermission(permissions, 'create-attendance-regularizations')) {
     pageActions.push({
-      label: t('Add Request'),
+      label: 'Add Request',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -229,27 +221,27 @@ export default function AttendanceRegularizations() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Shift Management'), href: route('hr.attendance-regularizations.index') },
-    { title: t('Attendance Regularizations') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Shift Management', href: route('hr.attendance-regularizations.index') },
+    { title: 'Attendance Regularizations' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'date',
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'original_times',
-      label: t('Original Times'),
+      label: 'Original Times',
       render: (value: any, row: any) => (
         <div className="text-sm">
           <div className="text-red-600">In: {window.appSettings.formatTime(row.original_clock_in )|| '-'}</div>
@@ -259,7 +251,7 @@ export default function AttendanceRegularizations() {
     },
     {
       key: 'requested_times',
-      label: t('Requested Times'),
+      label: 'Requested Times',
       render: (value: any, row: any) => (
         <div className="text-sm">
           <div className="text-green-600">In: {window.appSettings.formatTime(row.requested_clock_in) || '-'}</div>
@@ -269,7 +261,7 @@ export default function AttendanceRegularizations() {
     },
     {
       key: 'reason',
-      label: t('Reason'),
+      label: 'Reason',
       render: (value: string) => (
         <div className="max-w-xs truncate" title={value}>
           {value}
@@ -278,7 +270,7 @@ export default function AttendanceRegularizations() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         const statusColors = {
           pending: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -294,7 +286,7 @@ export default function AttendanceRegularizations() {
     },
     {
       key: 'created_at',
-      label: t('Requested On'),
+      label: 'Requested On',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -303,14 +295,14 @@ export default function AttendanceRegularizations() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-attendance-regularizations'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -318,7 +310,7 @@ export default function AttendanceRegularizations() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Approve'),
+      label: 'Approve',
       icon: 'CheckCircle',
       action: 'approve',
       className: 'text-green-500',
@@ -326,7 +318,7 @@ export default function AttendanceRegularizations() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Reject'),
+      label: 'Reject',
       icon: 'XCircle',
       action: 'reject',
       className: 'text-red-500',
@@ -334,7 +326,7 @@ export default function AttendanceRegularizations() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -345,7 +337,7 @@ export default function AttendanceRegularizations() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees') , disabled : true},
+    { value: 'all', label: 'All Employees' , disabled : true},
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -353,10 +345,10 @@ export default function AttendanceRegularizations() {
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') , disabled : true},
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') }
+    { value: 'all', label: 'All Statuses' , disabled : true},
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
   ];
 
   const attendanceRecordOptions = (attendanceRecords || []).map((record: any) => ({
@@ -366,7 +358,7 @@ export default function AttendanceRegularizations() {
 
   return (
     <PageTemplate
-      title={t("Attendance Regularizations")}
+      title={"Attendance Regularizations"}
       url="/hr/attendance-regularizations"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -381,7 +373,7 @@ export default function AttendanceRegularizations() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -390,7 +382,7 @@ export default function AttendanceRegularizations() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -398,14 +390,14 @@ export default function AttendanceRegularizations() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -458,7 +450,7 @@ export default function AttendanceRegularizations() {
           to={regularizations?.to || 0}
           total={regularizations?.total || 0}
           links={regularizations?.links}
-          entityName={t("regularization requests")}
+          entityName={"regularization requests"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -472,7 +464,7 @@ export default function AttendanceRegularizations() {
           fields: [
             // {
             //   name: 'employee_id',
-            //   label: t('Employee'),
+            //   label: 'Employee',
             //   type: 'select',
             //   required: true,
             //   options: employees ? employees.map((emp: any) => ({
@@ -482,7 +474,7 @@ export default function AttendanceRegularizations() {
             // },
             // {
             //   name: 'attendance_record_id',
-            //   label: t('Attendance Record'),
+            //   label: 'Attendance Record',
             //   type: 'select',
             //   required: true,
             //   options: attendanceRecordOptions
@@ -494,7 +486,7 @@ export default function AttendanceRegularizations() {
               dependentConfig: [
                 {
                   name: 'employee_id',
-                  label: t('Employee'),
+                  label: 'Employee',
                   required: true,
                   searchable: true,
                   options: employees ? employees.map((emp: any) => ({
@@ -504,26 +496,26 @@ export default function AttendanceRegularizations() {
                 },
                 {
                   name: 'attendance_record_id',
-                  label: t('Attendance Record'),
+                  label: 'Attendance Record',
                   apiEndpoint: '/hr/attendance-regularizations/get-employee-attendance/{employee_id}',
                   showCurrentValue: true,
                   searchable: true
                 }
               ]
             },
-            { name: 'requested_clock_in', label: t('Requested Clock In'), type: 'time' },
-            { name: 'requested_clock_out', label: t('Requested Clock Out'), type: 'time' },
-            { name: 'reason', label: t('Reason'), type: 'textarea', required: true }
+            { name: 'requested_clock_in', label: 'Requested Clock In', type: 'time' },
+            { name: 'requested_clock_out', label: 'Requested Clock Out', type: 'time' },
+            { name: 'reason', label: 'Reason', type: 'textarea', required: true }
           ],
           modalSize: 'lg'
         }}
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Regularization Request')
+            ? 'Add New Regularization Request'
             : formMode === 'edit'
-              ? t('Edit Regularization Request')
-              : t('View Regularization Request')
+              ? 'Edit Regularization Request'
+              : 'View Regularization Request'
         }
         mode={formMode}
       />

@@ -13,7 +13,6 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { useBrand } from "@/contexts/BrandContext";
 import { THEME_COLORS } from "@/hooks/use-appearance";
-import { useTranslation } from "react-i18next";
 
 interface LivePreviewProps {
   data: any;
@@ -21,7 +20,7 @@ interface LivePreviewProps {
 }
 
 export default function LivePreview({ data, activeSection }: LivePreviewProps) {
-  const { t } = useTranslation();
+  
   const { themeColor, customColor } = useBrand();
   const brandColor =
     themeColor === "custom"
@@ -40,17 +39,17 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
       {
         key: "company_name",
         value: data.company_name,
-        label: t("Company Name"),
+        label: "Company Name",
       },
       {
         key: "hero_title",
         value: getSectionData("hero").title,
-        label: t("Hero Title"),
+        label: "Hero Title",
       },
       {
         key: "contact_email",
         value: data.contact_email,
-        label: t("Contact Email"),
+        label: "Contact Email",
       },
     ];
 
@@ -70,7 +69,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
         return (
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("Hero Section")}
+              {"Hero Section"}
             </div>
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border dark:border-gray-600">
               <div className="text-xs font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -103,7 +102,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
         return (
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("Features Section")}
+              {"Features Section"}
             </div>
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border dark:border-gray-600">
               <div className="text-xs font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -133,7 +132,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
         return (
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              {t("About Section")}
+              {"About Section"}
             </div>
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border dark:border-gray-600">
               <div className="text-xs font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -150,11 +149,11 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
         return (
           <div className="space-y-3">
             <div className="text-sm font-medium text-gray-700">
-              {t("Section Preview")}
+              {"Section Preview"}
             </div>
             <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg border dark:border-gray-600 text-center">
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                {t("Select a section to see live preview")}
+                {"Select a section to see live preview"}
               </div>
             </div>
           </div>
@@ -180,14 +179,14 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
             <Eye className="h-5 w-5" style={{ color: brandColor }} />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {t("Setup Progress")}
+            {"Setup Progress"}
           </h3>
         </div>
 
         <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
             <span className="text-sm text-gray-600 dark:text-gray-400">
-              {t("Completion")}
+              {"Completion"}
             </span>
             <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
               {completionPercentage}%
@@ -227,7 +226,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
             <Layout className="h-5 w-5 text-purple-600" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {t("Live Preview")}
+            {"Live Preview"}
           </h3>
         </div>
 
@@ -241,7 +240,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
             <Palette className="h-5 w-5 text-pink-600" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {t("Color Scheme")}
+            {"Color Scheme"}
           </h3>
         </div>
 
@@ -255,7 +254,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
               }}
             ></div>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {t("Primary")}
+              {"Primary"}
             </span>
           </div>
           <div className="flex flex-col items-center gap-1">
@@ -267,7 +266,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
               }}
             ></div>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {t("Secondary")}
+              {"Secondary"}
             </span>
           </div>
           <div className="flex flex-col items-center gap-1">
@@ -279,7 +278,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
               }}
             ></div>
             <span className="text-xs text-gray-500 dark:text-gray-400">
-              {t("Accent")}
+              {"Accent"}
             </span>
           </div>
         </div>
@@ -292,7 +291,7 @@ export default function LivePreview({ data, activeSection }: LivePreviewProps) {
             <Phone className="h-5 w-5 text-green-600" />
           </div>
           <h3 className="font-semibold text-gray-900 dark:text-gray-100">
-            {t("Contact Info")}
+            {"Contact Info"}
           </h3>
         </div>
 

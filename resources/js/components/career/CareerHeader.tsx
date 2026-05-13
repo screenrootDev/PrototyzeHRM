@@ -1,6 +1,6 @@
 import { Link } from '@inertiajs/react';
 import { getImagePath } from '@/utils/helpers';
-import { useTranslation } from 'react-i18next';
+
 
 interface CareerHeaderProps {
   title?: string;
@@ -10,7 +10,7 @@ interface CareerHeaderProps {
 }
 
 export default function CareerHeader({ title, showBackToHome, logoOnly = false, companySettings }: CareerHeaderProps) {
-  const { t } = useTranslation();
+  
   
   // Get theme color from company settings
   const getThemeColor = () => {
@@ -75,10 +75,10 @@ export default function CareerHeader({ title, showBackToHome, logoOnly = false, 
             </div>
           </div>
           <nav className="hidden sm:flex space-x-4 lg:space-x-8">
-            <Link href="/" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{t("Home")}</Link>
-            <Link href="/about" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{t("About")}</Link>
-            <Link href="/career" className="text-primary font-medium text-sm lg:text-base">{t("Careers")}</Link>
-            <Link href="/contact" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{t("Contact")}</Link>
+            <Link href="/" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{"Home"}</Link>
+            <Link href="/about" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{"About"}</Link>
+            <Link href="/career" className="text-primary font-medium text-sm lg:text-base">{"Careers"}</Link>
+            <Link href="/contact" className="text-gray-600 hover:text-gray-900 text-sm lg:text-base">{"Contact"}</Link>
           </nav>
         </div>
       </div>

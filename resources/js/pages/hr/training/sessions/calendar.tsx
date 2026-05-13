@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 import { List } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import FullCalendar from '@fullcalendar/react';
@@ -14,7 +14,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function TrainingSessionsCalendar() {
-  const { t } = useTranslation();
+  
   const { calendarEvents, trainingPrograms, filters: pageFilters = {} } = usePage().props as any;
   
   // State
@@ -41,7 +41,7 @@ export default function TrainingSessionsCalendar() {
   // Define page actions
   const pageActions = [
     {
-      label: t('List View'),
+      label: 'List View',
       icon: <List className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewList
@@ -49,16 +49,16 @@ export default function TrainingSessionsCalendar() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Sessions'), href: route('hr.training-sessions.index') },
-    { title: t('Calendar') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Sessions', href: route('hr.training-sessions.index') },
+    { title: 'Calendar' }
   ];
 
   // Prepare training program options for filter
   const trainingProgramOptions = [
-    { value: 'all', label: t('All Programs') },
+    { value: 'all', label: 'All Programs' },
     ...(trainingPrograms || []).map((program: any) => ({
       value: program.id.toString(),
       label: program.name
@@ -67,16 +67,16 @@ export default function TrainingSessionsCalendar() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'scheduled', label: t('Scheduled') },
-    { value: 'in_progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'cancelled', label: t('Cancelled') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'scheduled', label: 'Scheduled' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Training Sessions Calendar")} 
+      title={"Training Sessions Calendar"} 
       url="/hr/training/sessions/calendar"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -84,7 +84,7 @@ export default function TrainingSessionsCalendar() {
       {/* Filters */}
       <div className="flex flex-wrap gap-4 mb-4">
         <div className="w-full md:w-64">
-          <label className="block text-sm font-medium mb-1">{t('Program')}</label>
+          <label className="block text-sm font-medium mb-1">{'Program'}</label>
           <Select
             value={selectedProgram}
             onValueChange={(value) => {
@@ -93,7 +93,7 @@ export default function TrainingSessionsCalendar() {
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t('All Programs')} />
+              <SelectValue placeholder={'All Programs'} />
             </SelectTrigger>
             <SelectContent>
               {trainingProgramOptions.map((option) => (
@@ -106,7 +106,7 @@ export default function TrainingSessionsCalendar() {
         </div>
         
         <div className="w-full md:w-64">
-          <label className="block text-sm font-medium mb-1">{t('Status')}</label>
+          <label className="block text-sm font-medium mb-1">{'Status'}</label>
           <Select
             value={selectedStatus}
             onValueChange={(value) => {
@@ -115,7 +115,7 @@ export default function TrainingSessionsCalendar() {
             }}
           >
             <SelectTrigger>
-              <SelectValue placeholder={t('All Statuses')} />
+              <SelectValue placeholder={'All Statuses'} />
             </SelectTrigger>
             <SelectContent>
               {statusOptions.map((option) => (

@@ -82,7 +82,7 @@ const RichTextEditor = forwardRef<RichTextEditorRef, RichTextEditorProps>(({
   }
 
   const addLink = () => {
-    const url = window.prompt('Enter URL:')
+    const url = window.prompt('Enter URL:');
     if (url) {
       editor.chain().focus().setLink({ href: url }).run()
     }

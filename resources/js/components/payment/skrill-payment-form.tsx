@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -29,7 +29,7 @@ export function SkrillPaymentForm({
   onSuccess,
   onCancel
 }: SkrillPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -37,7 +37,7 @@ export function SkrillPaymentForm({
     e.preventDefault();
     
     if (!email) {
-      toast.error(t('Please enter your email address'));
+      toast.error('Please enter your email address');
       return;
     }
 
@@ -56,12 +56,12 @@ export function SkrillPaymentForm({
 
       router.post(route('skrill.payment'), paymentData, {
         onSuccess: () => {
-          toast.success(t('Payment successful!'));
+          toast.success('Payment successful!');
           onSuccess();
         },
         onError: (errors) => {
           console.error('Skrill payment error:', errors);
-          toast.error(t('Payment failed. Please try again.'));
+          toast.error('Payment failed. Please try again.');
         },
         onFinish: () => {
           setIsProcessing(false);
@@ -69,7 +69,7 @@ export function SkrillPaymentForm({
       });
     } catch (error) {
       console.error('Skrill payment error:', error);
-      toast.error(t('Payment failed. Please try again.'));
+      toast.error('Payment failed. Please try again.');
       setIsProcessing(false);
     }
   };
@@ -79,38 +79,38 @@ export function SkrillPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Wallet className="h-5 w-5" />
-          {t('Skrill Payment')}
+          {'Skrill Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">{t('Email Address')}</Label>
+            <Label htmlFor="email">{'Email Address'}</Label>
             <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder={t('Enter your email address')}
+              placeholder={'Enter your email address'}
               required
             />
             <p className="text-xs text-muted-foreground">
-              {t('You will be redirected to Skrill to complete the payment')}
+              {'You will be redirected to Skrill to complete the payment'}
             </p>
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button type="submit" disabled={isProcessing} className="flex-1">
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('Processing...')}
+                  {'Processing...'}
                 </>
               ) : (
-                t('Pay {{amount}}', { amount: `${currency} ${planPrice}` })
+                `Pay ${currency} ${planPrice}`
               )}
             </Button>
           </div>

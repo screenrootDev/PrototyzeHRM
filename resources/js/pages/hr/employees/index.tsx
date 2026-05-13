@@ -11,14 +11,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 import { useInitials } from '@/hooks/use-initials';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import {CrudFormModal} from '@/components/CrudFormModal';
 import { getImagePath } from '@/utils/helpers';
 
 export default function Employees() {
-  const { t } = useTranslation();
+  
   const { auth, employees, branches, planLimits,departments, designations, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const getInitials = useInitials();
@@ -109,25 +109,21 @@ export default function Employees() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee...'));
+    toast.loading('Deleting employee...');
     
     router.delete(route('hr.employees.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete employee: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete employee: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -135,48 +131,40 @@ export default function Employees() {
   const handleToggleStatus = (employee: any) => {
     const currentStatus = employee.status || 'inactive';
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} employee...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} employee...`);
     
     router.put(route('hr.employees.toggle-status', employee.employee?.id || employee.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update employee status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update employee status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handlePasswordChange = (formData: any) => {
-    toast.loading(t('Changing password...'));
+    toast.loading('Changing password...');
     
     router.put(route('hr.employees.change-password', currentItem.employee?.id || currentItem.id), formData, {
       onSuccess: (page) => {
         setIsPasswordModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to change password: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to change password: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -202,25 +190,25 @@ export default function Employees() {
   if (hasPermission(permissions, 'create-employees')) {
     const canCreate = !planLimits || planLimits.can_create;
     pageActions.push({
-      label: planLimits && !canCreate ? t('Employee Create Limit Reached ({{current}}/{{max}})', { current: planLimits.current_users, max: planLimits.max_users }) : t('Add Employee'),
+      label: planLimits && !canCreate ? `Employee Create Limit Reached (${planLimits.current_users}/${planLimits.max_users})` : 'Add Employee',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: canCreate ? 'default' : 'outline',
-      onClick: canCreate ? () => handleAddNew() : () => toast.error(t('Employee limit exceeded. Your plan allows maximum {{max}} users. Please upgrade your plan.', { max: planLimits.max_users })),
+      onClick: canCreate ? () => handleAddNew() : () => toast.error(`Employee limit exceeded. Your plan allows maximum ${planLimits.max_users} users. Please upgrade your plan.`),
       disabled: !canCreate
     });
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.employees.index') },
-    { title: t('Employees') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.employees.index') },
+    { title: 'Employees' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value: any, row: any) => {
         return (
@@ -242,7 +230,7 @@ export default function Employees() {
     },
     { 
       key: 'employee_id', 
-      label: t('Employee ID'),
+      label: 'Employee ID',
       sortable: false,
       render: (value: any, row: any) => {
         return row.employee?.employee_id || '-';
@@ -250,21 +238,21 @@ export default function Employees() {
     },
     { 
       key: 'department', 
-      label: t('Department'),
+      label: 'Department',
       render: (value: any, row: any) => {
         return row.employee?.department?.name || '-';
       }
     },
     { 
       key: 'designation', 
-      label: t('Designation'),
+      label: 'Designation',
       render: (value: any, row: any) => {
         return row.employee?.designation?.name || '-';
       }
     },
     { 
       key: 'employee_status', 
-      label: t('Employee Status'),
+      label: 'Employee Status',
       render: (value: any, row: any) => {
         const status = row.employee?.employee_status || 'active';
         return (
@@ -279,17 +267,17 @@ export default function Employees() {
                     ? 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                     : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
           }`}>
-            {status === 'active' && t('Active')}
-            {status === 'inactive' && t('Inactive')}
-            {status === 'probation' && t('Probation')}
-            {status === 'terminated' && t('Terminated')}
+            {status === 'active' && 'Active'}
+            {status === 'inactive' && 'Inactive'}
+            {status === 'probation' && 'Probation'}
+            {status === 'terminated' && 'Terminated'}
           </span>
         );
       }
     },
     { 
       key: 'date_of_joining', 
-      label: t('Joined'), 
+      label: 'Joined', 
       sortable: false,
       render: (value: any, row: any) => {
         const joinDate = row.employee?.date_of_joining;
@@ -301,35 +289,35 @@ export default function Employees() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-employees'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-employees'
     },
     { 
-      label: t('Change Password'), 
+      label: 'Change Password', 
       icon: 'Key', 
       action: 'change-password', 
       className: 'text-green-500',
       requiredPermission: 'edit-employees'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-employees'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -339,7 +327,7 @@ export default function Employees() {
 
   // Prepare filter options
   const branchOptions = [
-    { value: 'all', label: t('All Branches') },
+    { value: 'all', label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -347,32 +335,32 @@ export default function Employees() {
   ];
 
   const departmentOptions = [
-    { value: 'all', label: t('All Departments') },
+    { value: 'all', label: 'All Departments' },
     ...(departments || []).map((department: any) => ({
       value: department.id.toString(),
-      label: `${department.name} (${department.branch?.name || t('No Branch')})`
+      label: `${department.name} (${department.branch?.name || 'No Branch'})`
     }))
   ];
 
   const designationOptions = [
-    { value: 'all', label: t('All Designations') },
+    { value: 'all', label: 'All Designations' },
     ...(designations || []).map((designation: any) => ({
       value: designation.id.toString(),
-      label: `${designation.name} (${designation.department?.name || t('No Department')})`
+      label: `${designation.name} (${designation.department?.name || 'No Department'})`
     }))
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') },
-    { value: 'probation', label: t('Probation') },
-    { value: 'terminated', label: t('Terminated') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+    { value: 'probation', label: 'Probation' },
+    { value: 'terminated', label: 'Terminated' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Employees")} 
+      title={"Employees"} 
       url="/hr/employees"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -387,7 +375,7 @@ export default function Employees() {
           filters={[
             {
               name: 'branch',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -396,7 +384,7 @@ export default function Employees() {
             },
             {
               name: 'department',
-              label: t('Department'),
+              label: 'Department',
               type: 'select',
               value: selectedDepartment,
               onChange: setSelectedDepartment,
@@ -405,7 +393,7 @@ export default function Employees() {
             },
             {
               name: 'designation',
-              label: t('Designation'),
+              label: 'Designation',
               type: 'select',
               value: selectedDesignation,
               onChange: setSelectedDesignation,
@@ -414,7 +402,7 @@ export default function Employees() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -472,7 +460,7 @@ export default function Employees() {
             to={employees?.to || 0}
             total={employees?.total || 0}
             links={employees?.links}
-            entityName={t("employees")}
+            entityName={"employees"}
             onPageChange={(url) => router.get(url)}
           />
         </div>
@@ -508,11 +496,11 @@ export default function Employees() {
                                   ? 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                                   : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                         }`}>
-                          {employee.employee?.employee_status === 'active' && t('Active')}
-                          {employee.employee?.employee_status === 'inactive' && t('Inactive')}
-                          {employee.employee?.employee_status === 'probation' && t('Probation')}
-                          {employee.employee?.employee_status === 'terminated' && t('Terminated')}
-                          {!employee.employee?.employee_status && t('Active')}
+                          {employee.employee?.employee_status === 'active' && 'Active'}
+                          {employee.employee?.employee_status === 'inactive' && 'Inactive'}
+                          {employee.employee?.employee_status === 'probation' && 'Probation'}
+                          {employee.employee?.employee_status === 'terminated' && 'Terminated'}
+                          {!employee.employee?.employee_status && 'Active'}
                         </div>
                       </div>
                     </div>
@@ -528,13 +516,13 @@ export default function Employees() {
                         {hasPermission(permissions, 'view-employees') && (
                           <DropdownMenuItem onClick={() => handleAction('view', employee)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            <span>{t("View Employee")}</span>
+                            <span>{"View Employee"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'edit-employees') && (
                           <DropdownMenuItem onClick={() => handleAction('change-password', employee)}>
                             <Key className="h-4 w-4 mr-2" />
-                            <span>{t("Change Password")}</span>
+                            <span>{"Change Password"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'edit-employees') && (
@@ -543,20 +531,20 @@ export default function Employees() {
                               <Lock className="h-4 w-4 mr-2" /> : 
                               <Unlock className="h-4 w-4 mr-2" />
                             }
-                            <span>{employee.status === 'active' ? t("Deactivate") : t("Activate")}</span>
+                            <span>{employee.status === 'active' ? "Deactivate" : "Activate"}</span>
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
                         {hasPermission(permissions, 'edit-employees') && (
                           <DropdownMenuItem onClick={() => handleAction('edit', employee)} className="text-amber-600">
                             <Edit className="h-4 w-4 mr-2" />
-                            <span>{t("Edit")}</span>
+                            <span>{"Edit"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'delete-employees') && (
                           <DropdownMenuItem onClick={() => handleAction('delete', employee)} className="text-rose-600">
                             <Trash2 className="h-4 w-4 mr-2" />
-                            <span>{t("Delete")}</span>
+                            <span>{"Delete"}</span>
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -566,16 +554,16 @@ export default function Employees() {
                   {/* Department & Designation info */}
                   <div className="border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-4">
                     <div className="text-sm mb-1">
-                      <span className="font-medium">{t("Department")}:</span> {employee.employee?.department?.name || '-'}
+                      <span className="font-medium">{"Department"}:</span> {employee.employee?.department?.name || '-'}
                     </div>
                     <div className="text-sm">
-                      <span className="font-medium">{t("Designation")}:</span> {employee.employee?.designation?.name || '-'}
+                      <span className="font-medium">{"Designation"}:</span> {employee.employee?.designation?.name || '-'}
                     </div>
                   </div>
                 
                   {/* Joined date */}
                   <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    {t("Joined:")} {employee.employee?.date_of_joining ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()) : '-'}
+                    {"Joined:"} {employee.employee?.date_of_joining ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()) : '-'}
                   </div>
                 
                   {/* Action buttons */}
@@ -588,7 +576,7 @@ export default function Employees() {
                         className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        {t("Edit")}
+                        {"Edit"}
                       </Button>
                     )}
                     
@@ -600,7 +588,7 @@ export default function Employees() {
                         className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Eye className="h-4 w-4 mr-2" />
-                        {t("View")}
+                        {"View"}
                       </Button>
                     )}
                     
@@ -612,7 +600,7 @@ export default function Employees() {
                         className="flex-1 h-9 text-sm text-gray-700 border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        {t("Delete")}
+                        {"Delete"}
                       </Button>
                     )}
                   </div>
@@ -628,7 +616,7 @@ export default function Employees() {
               to={employees?.to || 0}
               total={employees?.total || 0}
               links={employees?.links}
-              entityName={t("employees")}
+              entityName={"employees"}
               onPageChange={(url) => router.get(url)}
             />
           </div>
@@ -653,13 +641,13 @@ export default function Employees() {
           fields: [
             { 
               name: 'password', 
-              label: t('New Password'), 
+              label: 'New Password', 
               type: 'password', 
               required: true 
             },
             { 
               name: 'password_confirmation', 
-              label: t('Confirm Password'), 
+              label: 'Confirm Password', 
               type: 'password', 
               required: true 
             }
@@ -667,7 +655,7 @@ export default function Employees() {
           modalSize: 'md'
         }}
         initialData={{}}
-        title={t('Change Employee Password')}
+        title={'Change Employee Password'}
         mode='edit'
       />
     </PageTemplate>

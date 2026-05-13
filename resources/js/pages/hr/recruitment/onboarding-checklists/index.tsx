@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function OnboardingChecklists() {
-  const { t } = useTranslation();
+  
   const { auth, onboardingChecklists, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -92,17 +92,15 @@ export default function OnboardingChecklists() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating onboarding checklist...'));
+      toast.loading('Creating onboarding checklist...');
 
       router.post(route('hr.recruitment.onboarding-checklists.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -114,17 +112,15 @@ export default function OnboardingChecklists() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating onboarding checklist...'));
+      toast.loading('Updating onboarding checklist...');
 
       router.put(route('hr.recruitment.onboarding-checklists.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -139,17 +135,15 @@ export default function OnboardingChecklists() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting onboarding checklist...'));
+    toast.loading('Deleting onboarding checklist...');
 
     router.delete(route('hr.recruitment.onboarding-checklists.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -164,16 +158,14 @@ export default function OnboardingChecklists() {
 
   const handleToggleStatus = (item: any) => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} onboarding checklist...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} onboarding checklist...`);
 
     router.put(route('hr.recruitment.onboarding-checklists.toggle-status', item.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -202,7 +194,7 @@ export default function OnboardingChecklists() {
 
   if (hasPermission(permissions, 'create-onboarding-checklists')) {
     pageActions.push({
-      label: t('Add Checklist'),
+      label: 'Add Checklist',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -210,22 +202,22 @@ export default function OnboardingChecklists() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.onboarding-checklists.index') },
-    { title: t('Onboarding Checklists') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.onboarding-checklists.index') },
+    { title: 'Onboarding Checklists' }
   ];
 
   const columns = [
     {
       key: 'name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value, row) => (
         <div>
           <div className="font-medium">{value}</div>
           {row.is_default && (
             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-              {t('Default')}
+              {'Default'}
             </span>
           )}
         </div>
@@ -233,28 +225,28 @@ export default function OnboardingChecklists() {
     },
     {
       key: 'checklist_items_count',
-      label: t('Items'),
+      label: 'Items',
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          {value || 0} {t('items')}
+          {value || 0} {'items'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-red-600/20'
           }`}>
-          {t(value === 'active' ? 'Active' : 'Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -262,28 +254,28 @@ export default function OnboardingChecklists() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-onboarding-checklists'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-onboarding-checklists'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-onboarding-checklists'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -292,20 +284,20 @@ export default function OnboardingChecklists() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const defaultOptions = [
-    { value: '_empty_', label: t('All'), disabled: true },
-    { value: 'true', label: t('Default') },
-    { value: 'false', label: t('Custom') }
+    { value: '_empty_', label: 'All', disabled: true },
+    { value: 'true', label: 'Default' },
+    { value: 'false', label: 'Custom' }
   ];
 
   return (
     <PageTemplate
-      title={t("Onboarding Checklists")}
+      title={"Onboarding Checklists"}
       url="/hr/recruitment/onboarding-checklists"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -319,7 +311,7 @@ export default function OnboardingChecklists() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -328,7 +320,7 @@ export default function OnboardingChecklists() {
             },
             {
               name: 'is_default',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: defaultFilter,
               onChange: setDefaultFilter,
@@ -379,7 +371,7 @@ export default function OnboardingChecklists() {
           to={onboardingChecklists?.to || 0}
           total={onboardingChecklists?.total || 0}
           links={onboardingChecklists?.links}
-          entityName={t("onboarding checklists")}
+          entityName={"onboarding checklists"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -392,24 +384,24 @@ export default function OnboardingChecklists() {
           fields: [
             {
               name: 'name',
-              label: t('Checklist Name'),
+              label: 'Checklist Name',
               type: 'text',
               required: true
             },
             {
               name: 'description',
-              label: t('Description'),
+              label: 'Description',
               type: 'textarea'
             },
             {
               name: 'is_default',
-              label: t('Set as Default'),
+              label: 'Set as Default',
               type: 'checkbox',
-              helpText: t('Only one checklist can be set as default')
+              helpText: 'Only one checklist can be set as default'
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -419,10 +411,10 @@ export default function OnboardingChecklists() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Onboarding Checklist')
+            ? 'Add New Onboarding Checklist'
             : formMode === 'edit'
-              ? t('Edit Onboarding Checklist')
-              : t('View Onboarding Checklist')
+              ? 'Edit Onboarding Checklist'
+              : 'View Onboarding Checklist'
         }
         mode={formMode}
       />

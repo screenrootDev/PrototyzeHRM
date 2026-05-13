@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function TimeEntries() {
-  const { t } = useTranslation();
+  
   const { auth, timeEntries, employees, projects, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -107,17 +107,15 @@ export default function TimeEntries() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating time entry...'));
+      toast.loading('Creating time entry...');
 
       router.post(route('hr.time-entries.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -129,17 +127,15 @@ export default function TimeEntries() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating time entry...'));
+      toast.loading('Updating time entry...');
 
       router.put(route('hr.time-entries.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -154,17 +150,15 @@ export default function TimeEntries() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting time entry...'));
+    toast.loading('Deleting time entry...');
 
     router.delete(route('hr.time-entries.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -178,7 +172,7 @@ export default function TimeEntries() {
   };
 
   const handleStatusUpdate = (timeEntry: any, status: string) => {
-    const statusText = status === 'approved' ? t('Approving') : t('Rejecting');
+    const statusText = status === 'approved' ? 'Approving' : 'Rejecting';
     toast.loading(`${statusText} time entry...`);
 
     router.put(route('hr.time-entries.update-status', timeEntry.id), { 
@@ -188,10 +182,8 @@ export default function TimeEntries() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -225,7 +217,7 @@ export default function TimeEntries() {
   // Add the "Add New Entry" button if user has permission
   if (hasPermission(permissions, 'create-time-entries')) {
     pageActions.push({
-      label: t('Add Time Entry'),
+      label: 'Add Time Entry',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -233,46 +225,46 @@ export default function TimeEntries() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Time Tracking'), href: route('hr.time-entries.index') },
-    { title: t('Time Entries') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Time Tracking', href: route('hr.time-entries.index') },
+    { title: 'Time Entries' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'date',
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'hours',
-      label: t('Hours'),
+      label: 'Hours',
       render: (value: number) => (
         <span className="font-mono text-blue-600">{value}h</span>
       )
     },
     {
       key: 'project',
-      label: t('Project'),
+      label: 'Project',
       render: (value: string) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value 
           ? 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
           : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
         }`}>
-          {value || t('No Project')}
+          {value || 'No Project'}
         </span>
       )
     },
     {
       key: 'description',
-      label: t('Description'),
+      label: 'Description',
       render: (value: string) => (
         <div className="max-w-xs truncate" title={value}>
           {value}
@@ -281,7 +273,7 @@ export default function TimeEntries() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         const statusColors = {
           pending: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -297,7 +289,7 @@ export default function TimeEntries() {
     },
     {
       key: 'created_at',
-      label: t('Submitted On'),
+      label: 'Submitted On',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -306,14 +298,14 @@ export default function TimeEntries() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-time-entries'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -321,7 +313,7 @@ export default function TimeEntries() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Approve'),
+      label: 'Approve',
       icon: 'CheckCircle',
       action: 'approve',
       className: 'text-green-500',
@@ -329,7 +321,7 @@ export default function TimeEntries() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Reject'),
+      label: 'Reject',
       icon: 'XCircle',
       action: 'reject',
       className: 'text-red-500',
@@ -337,7 +329,7 @@ export default function TimeEntries() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -348,7 +340,7 @@ export default function TimeEntries() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees') },
+    { value: 'all', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -356,14 +348,14 @@ export default function TimeEntries() {
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
   ];
 
   const projectOptions = [
-    { value: 'all', label: t('All Projects') },
+    { value: 'all', label: 'All Projects' },
     ...(projects || []).map((project: string) => ({
       value: project,
       label: project
@@ -372,7 +364,7 @@ export default function TimeEntries() {
 
   return (
     <PageTemplate
-      title={t("Time Entry Management")}
+      title={"Time Entry Management"}
       url="/hr/time-entries"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -387,7 +379,7 @@ export default function TimeEntries() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -395,7 +387,7 @@ export default function TimeEntries() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -403,7 +395,7 @@ export default function TimeEntries() {
             },
             {
               name: 'project',
-              label: t('Project'),
+              label: 'Project',
               type: 'select',
               value: selectedProject,
               onChange: setSelectedProject,
@@ -411,14 +403,14 @@ export default function TimeEntries() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -472,7 +464,7 @@ export default function TimeEntries() {
           to={timeEntries?.to || 0}
           total={timeEntries?.total || 0}
           links={timeEntries?.links}
-          entityName={t("time entries")}
+          entityName={"time entries"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -486,7 +478,7 @@ export default function TimeEntries() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employees ? employees.map((emp: any) => ({
@@ -494,10 +486,10 @@ export default function TimeEntries() {
                 label: emp.name
               })) : []
             },
-            { name: 'date', label: t('Date'), type: 'date', required: true },
-            { name: 'hours', label: t('Hours'), type: 'number', required: true, min: 0.5, max: 24, step: 0.5 },
-            { name: 'project', label: t('Project'), type: 'text' },
-            { name: 'description', label: t('Description'), type: 'textarea', required: true }
+            { name: 'date', label: 'Date', type: 'date', required: true },
+            { name: 'hours', label: 'Hours', type: 'number', required: true, min: 0.5, max: 24, step: 0.5 },
+            { name: 'project', label: 'Project', type: 'text' },
+            { name: 'description', label: 'Description', type: 'textarea', required: true }
           ],
           modalSize: 'lg'
         }}
@@ -507,10 +499,10 @@ export default function TimeEntries() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Time Entry')
+            ? 'Add New Time Entry'
             : formMode === 'edit'
-              ? t('Edit Time Entry')
-              : t('View Time Entry')
+              ? 'Edit Time Entry'
+              : 'View Time Entry'
         }
         mode={formMode}
       />

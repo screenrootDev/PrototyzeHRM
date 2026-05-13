@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function Departments() {
-  const { t } = useTranslation();
+  
   const { auth, departments, branches, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -96,7 +96,7 @@ export default function Departments() {
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating department...'));
+        toast.loading('Creating department...');
       }
 
       router.post(route('hr.departments.store'), formData, {
@@ -106,25 +106,21 @@ export default function Departments() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create department: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create department: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating department...'));
+        toast.loading('Updating department...');
       }
 
       router.put(route('hr.departments.update', currentItem.id), formData, {
@@ -134,20 +130,16 @@ export default function Departments() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update department: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update department: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -155,7 +147,7 @@ export default function Departments() {
 
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting department...'));
+      toast.loading('Deleting department...');
     }
 
     router.delete(route('hr.departments.destroy', currentItem.id), {
@@ -165,20 +157,16 @@ export default function Departments() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete department: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete department: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -186,7 +174,7 @@ export default function Departments() {
   const handleToggleStatus = (department: any) => {
     const newStatus = department.status === 'active' ? 'inactive' : 'active';
     if (!globalSettings?.is_demo) {
-      toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} department...`);
+      toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} department...`);
     }
 
     router.put(route('hr.departments.toggle-status', department.id), {}, {
@@ -195,20 +183,16 @@ export default function Departments() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update department status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update department status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -231,7 +215,7 @@ export default function Departments() {
   // Add the "Add New Department" button if user has permission
   if (hasPermission(permissions, 'create-departments')) {
     pageActions.push({
-      label: t('Add Department'),
+      label: 'Add Department',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -239,49 +223,49 @@ export default function Departments() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.departments.index') },
-    { title: t('Departments') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.departments.index') },
+    { title: 'Departments' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true
     },
     {
       key: 'branch',
-      label: t('Branch'),
+      label: 'Branch',
       render: (value: any, row: any) => {
         return row.branch?.name || '-';
       }
     },
     {
       key: 'description',
-      label: t('Description'),
+      label: 'Description',
       render: (value: string) => {
         return value || '-';
       }
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -290,28 +274,28 @@ export default function Departments() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-departments'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-departments'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-departments'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -321,7 +305,7 @@ export default function Departments() {
 
   // Prepare branch options for filter and form
   const branchOptions = [
-    { value: 'all', label: t('All Branches') },
+    { value: 'all', label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -330,14 +314,14 @@ export default function Departments() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('Select Status'), disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'Select Status', disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate
-      title={t("Departments")}
+      title={"Departments"}
       url="/hr/departments"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -352,7 +336,7 @@ export default function Departments() {
           filters={[
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -361,7 +345,7 @@ export default function Departments() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -413,7 +397,7 @@ export default function Departments() {
           to={departments?.to || 0}
           total={departments?.total || 0}
           links={departments?.links}
-          entityName={t("departments")}
+          entityName={"departments"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -425,10 +409,10 @@ export default function Departments() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Department Name'), type: 'text', required: true },
+            { name: 'name', label: 'Department Name', type: 'text', required: true },
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               required: true,
               searchable: true,
@@ -437,14 +421,14 @@ export default function Departments() {
                 label: branch.name
               })) : []
             },
-            { name: 'description', label: t('Description'), type: 'textarea' },
+            { name: 'description', label: 'Description', type: 'textarea' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ],
               defaultValue: 'active'
             }
@@ -454,10 +438,10 @@ export default function Departments() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Department')
+            ? 'Add New Department'
             : formMode === 'edit'
-              ? t('Edit Department')
-              : t('View Department')
+              ? 'Edit Department'
+              : 'View Department'
         }
         mode={formMode}
       />

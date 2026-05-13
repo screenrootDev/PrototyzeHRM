@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { Save, Clock } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
 import { Card, CardContent } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { router, usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 
@@ -14,7 +14,7 @@ interface WorkingDaysSettingsProps {
 }
 
 export default function WorkingDaysSettings({ settings = {} }: WorkingDaysSettingsProps) {
-  const { t } = useTranslation();
+  
   const { globalSettings } = usePage().props as any;
 
 
@@ -67,7 +67,7 @@ export default function WorkingDaysSettings({ settings = {} }: WorkingDaysSettin
     e.preventDefault();
 
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Saving working days settings...'));
+      toast.loading('Saving working days settings...');
     }
 
     const selectedDays = Object.entries(workingDays)
@@ -90,37 +90,37 @@ export default function WorkingDaysSettings({ settings = {} }: WorkingDaysSettin
         } else if (errorMessage) {
           toast.error(errorMessage);
         } else {
-          toast.success(t('Working days settings saved successfully'));
+          toast.success('Working days settings saved successfully');
         }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to save working days settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to save working days settings';
         toast.error(errorMessage);
       }
     });
   };
 
   const days = [
-    { key: 'monday', label: t('Monday') },
-    { key: 'tuesday', label: t('Tuesday') },
-    { key: 'wednesday', label: t('Wednesday') },
-    { key: 'thursday', label: t('Thursday') },
-    { key: 'friday', label: t('Friday') },
-    { key: 'saturday', label: t('Saturday') },
-    { key: 'sunday', label: t('Sunday') },
+    { key: 'monday', label: 'Monday' },
+    { key: 'tuesday', label: 'Tuesday' },
+    { key: 'wednesday', label: 'Wednesday' },
+    { key: 'thursday', label: 'Thursday' },
+    { key: 'friday', label: 'Friday' },
+    { key: 'saturday', label: 'Saturday' },
+    { key: 'sunday', label: 'Sunday' },
   ];
 
   return (
     <SettingsSection
-      title={t("Working Days Settings")}
-      description={t("Configure which days are working days for your organization")}
+      title={"Working Days Settings"}
+      description={"Configure which days are working days for your organization"}
       action={
         <Button type="submit" form="working-days-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >

@@ -16,7 +16,7 @@ import { CrudDeleteModal } from './CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 import { CrudConfig } from '@/types/crud';
 import { BreadcrumbItem } from '@/types';
-import { useTranslation } from 'react-i18next';
+
 
 export interface CrudButton {
   label: string;
@@ -43,7 +43,7 @@ export function PageCrudWrapper({
   buttons = [],
   breadcrumbs
 }: PageCrudWrapperProps) {
-  const { t } = useTranslation();
+  
   const { entity, table, filters = [], form, hooks } = config;
   const { auth, globalSettings, ...pageProps } = usePage().props as any;
   const permissions = auth?.permissions || [];
@@ -265,7 +265,7 @@ export function PageCrudWrapper({
       if (formMode === 'create') {
         // Show loading toast
         if (!globalSettings?.is_demo) {
-          toast.loading(t('Creating...'));
+          toast.loading('Creating...');
         }
         
         router.post(entity.endpoint, formDataObj, {
@@ -275,10 +275,8 @@ export function PageCrudWrapper({
               toast.dismiss();
             }
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
             if (hooks?.afterCreate) {
               hooks.afterCreate(formData, page.props[entity.name]);
             }
@@ -288,16 +286,14 @@ export function PageCrudWrapper({
               toast.dismiss();
             }
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t(`Failed to create ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to create ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') });            }
           }
         });
       } else if (formMode === 'edit') {
         // Show loading toast
         if (!globalSettings?.is_demo) {
-          toast.loading(t('Updating...'));
+          toast.loading('Updating...');
         }
         
         router.post(`${entity.endpoint}/${currentItem.id}?_method=PUT`, formDataObj, {
@@ -307,10 +303,8 @@ export function PageCrudWrapper({
               toast.dismiss();
             }
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
             if (hooks?.afterUpdate) {
               hooks.afterUpdate(formData, page.props[entity.name]);
             }
@@ -320,10 +314,8 @@ export function PageCrudWrapper({
               toast.dismiss();
             }
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t(`Failed to update ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to update ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') });            }
           }
         });
       }
@@ -333,7 +325,7 @@ export function PageCrudWrapper({
     if (formMode === 'create') {
       // Show loading toast
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating...'));
+        toast.loading('Creating...');
       }
       
       router.post(entity.endpoint, processedFormData, {
@@ -343,10 +335,8 @@ export function PageCrudWrapper({
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
           if (hooks?.afterCreate) {
             hooks.afterCreate(formData, page.props[entity.name]);
           }
@@ -356,16 +346,14 @@ export function PageCrudWrapper({
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t(`Failed to create ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') });          }
         }
       });
     } else if (formMode === 'edit') {
       // Show loading toast
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating...'));
+        toast.loading('Updating...');
       }
       
       router.put(`${entity.endpoint}/${currentItem.id}`, processedFormData, {
@@ -375,10 +363,8 @@ export function PageCrudWrapper({
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
           if (hooks?.afterUpdate) {
             hooks.afterUpdate(formData, page.props[entity.name]);
           }
@@ -388,10 +374,8 @@ export function PageCrudWrapper({
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t(`Failed to update ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') });          }
         }
       });
     }
@@ -400,7 +384,7 @@ export function PageCrudWrapper({
   const handleDeleteConfirm = () => {
     // Show loading toast
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting...'));
+      toast.loading('Deleting...');
     }
     
     router.delete(`${entity.endpoint}/${currentItem.id}`, {
@@ -410,10 +394,8 @@ export function PageCrudWrapper({
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
         if (hooks?.afterDelete) {
           hooks.afterDelete(currentItem.id);
         }
@@ -423,10 +405,8 @@ export function PageCrudWrapper({
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t(`Failed to delete ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete ${entity.name.slice(0, -1)}: {{errors}}`, { errors: Object.values(errors).join(', ') });        }
       }
     });
   };
@@ -480,7 +460,7 @@ export function PageCrudWrapper({
 
   // Generate default breadcrumbs if not provided
   const defaultBreadcrumbs: BreadcrumbItem[] = [
-    { title: t('Dashboard'), href: route('dashboard') },
+    { title: 'Dashboard', href: route('dashboard') },
     { title: pageTitle }
   ];
 
@@ -511,7 +491,7 @@ export function PageCrudWrapper({
                 </div>
                 <Button type="submit" size="sm">
                   <Search className="h-4 w-4 mr-1.5" />
-                  {t("Search")}
+                  {"Search"}
                 </Button>
               </form>
               
@@ -536,7 +516,7 @@ export function PageCrudWrapper({
             </div>
             
             <div className="flex items-center gap-2">
-              <Label className="text-xs text-muted-foreground">{t("Per Page")}:</Label>
+              <Label className="text-xs text-muted-foreground">{"Per Page"}:</Label>
               <Select 
                 value={pageFilters.per_page?.toString() || "10"} 
                 onValueChange={(value) => {
@@ -604,7 +584,7 @@ export function PageCrudWrapper({
                   onClick={handleResetFilters}
                   disabled={!hasActiveFilters()}
                 >
-                  {t("Reset Filters")}
+                  {"Reset Filters"}
                 </Button>
               </div>
             </div>

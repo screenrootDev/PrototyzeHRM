@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Check, ArrowRight, Sparkles } from 'lucide-react';
 import { Link } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 // Simple encryption function for plan ID
@@ -39,19 +39,13 @@ interface PlansSectionProps {
 }
 
 function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: PlansSectionProps) {
-  const { t, i18n } = useTranslation();
+  
   const [, forceUpdate] = React.useReducer(x => x + 1, 0);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly');
   const { ref, isVisible } = useScrollAnimation();
 
-  // Force re-render when language changes
-  React.useEffect(() => {
-    const handleLanguageChange = () => {
-      forceUpdate();
-    };
-    i18n.on('languageChanged', handleLanguageChange);
-    return () => i18n.off('languageChanged', handleLanguageChange);
-  }, [i18n]);
+
+  // Filter enabled plans
 
   // Filter enabled plans
   const enabledPlans = plans.filter(plan => plan.is_plan_enable === 'on');
@@ -141,16 +135,16 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('Choose Your HRM Plan')}
+            {sectionData?.title || 'Choose Your HRM Plan'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto mb-8 leading-relaxed font-medium">
-            {sectionData?.subtitle || t('Start with our free plan and upgrade as your team grows.')}
+            {sectionData?.subtitle || 'Start with our free plan and upgrade as your team grows.'}
           </p>
 
           {/* Billing Toggle */}
           <div className="flex items-center justify-center gap-4">
             <span className={`text-sm ${billingCycle === 'monthly' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
-              {t('Monthly')}
+              {'Monthly'}
             </span>
             <button
               onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'yearly' : 'monthly')}
@@ -163,7 +157,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
               />
             </button>
             <span className={`text-sm ${billingCycle === 'yearly' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
-              {t('Yearly')}
+              {'Yearly'}
             </span>
             {/* {billingCycle === 'yearly' && (
               <span className="bg-gray-100 text-gray-700 text-xs font-semibold px-2.5 py-0.5 rounded-full border">
@@ -211,7 +205,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                     style={{ backgroundColor: brandColor }}
                   >
                     <Check className="h-4 w-4" />
-                    {t('Recommended')}
+                    {'Recommended'}
                   </div>
                 </div>
               )}
@@ -234,7 +228,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                       {getPrice(plan) === 0 ? '$0' : formatCurrency(getPrice(plan))}
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      /{billingCycle === 'yearly' ? t('year') : t('month')}
+                      /{billingCycle === 'yearly' ? 'year' : 'month'}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-3">
@@ -243,7 +237,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                   {billingCycle === 'yearly' && getPrice(plan) > 0 && (
                     <div className="flex items-center gap-1.5 text-sm" style={{ color: brandColor }}>
                       <Check className="h-3.5 w-3.5" />
-                      {t('Save')} {formatCurrency(Math.round((plan.price * 12 - getPrice(plan)) * 100) / 100)} {t('annually')}
+                      {'Save'} {formatCurrency(Math.round((plan.price * 12 - getPrice(plan)) * 100) / 100)} {'annually'}
                     </div>
                   )}
                 </div>
@@ -263,20 +257,20 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                 {/* Usage limits */}
                 <div className="mb-4">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    {t('Usage Limits')}
+                    {'Usage Limits'}
                   </h4>
                   <div className="grid grid-cols-2 gap-2">
                     <div className="bg-white/50 rounded-lg p-2 text-center">
                       <div className="text-lg font-bold" style={{ color: brandColor }}>{plan.stats?.users || 'N/A'}</div>
-                      <div className="text-xs text-muted-foreground">{t('Users')}</div>
+                      <div className="text-xs text-muted-foreground">{'Users'}</div>
                     </div>
                     <div className="bg-white/50 rounded-lg p-2 text-center">
                       <div className="text-lg font-bold" style={{ color: brandColor }}>{plan.stats?.employees || 'N/A'}</div>
-                      <div className="text-xs text-muted-foreground">{t('Employees')}</div>
+                      <div className="text-xs text-muted-foreground">{'Employees'}</div>
                     </div>
                     <div className="bg-white/50 rounded-lg p-2 text-center">
                       <div className="text-lg font-bold" style={{ color: brandColor }}>{plan.stats?.storage || 'N/A'}</div>
-                      <div className="text-xs text-muted-foreground">{t('Storage')}</div>
+                      <div className="text-xs text-muted-foreground">{'Storage'}</div>
                     </div>
                   </div>
                 </div>
@@ -286,7 +280,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                 {plan.features?.length > 0 && (
                   <div className="mb-6 flex-1">
                     <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                      {t('Features')}
+                      {'Features'}
                     </h4>
                     <ul className="space-y-2.5">
                       {plan.features.map((feature, index) => (
@@ -315,7 +309,7 @@ function PlansSection({ plans, settings, sectionData, brandColor = '#3b82f6' }: 
                       color: plan.is_popular ? 'white' : '#111827'
                     }}
                   >
-                    {plan.price === 0 ? t('Start Free') : t('Get Started')}
+                    {plan.price === 0 ? 'Start Free' : 'Get Started'}
                     <ArrowRight className="w-4 h-4 inline-block ml-2" />
                   </Link>
                 </div>

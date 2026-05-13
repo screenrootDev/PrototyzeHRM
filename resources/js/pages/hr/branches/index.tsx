@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function Branches() {
-  const { t } = useTranslation();
+  
   const { auth, branches, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -90,7 +90,7 @@ export default function Branches() {
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating branch...'));
+        toast.loading('Creating branch...');
       }
 
       router.post(route('hr.branches.store'), formData, {
@@ -100,25 +100,21 @@ export default function Branches() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create branch: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create branch: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating branch...'));
+        toast.loading('Updating branch...');
       }
 
       router.put(route('hr.branches.update', currentItem.id), formData, {
@@ -128,20 +124,16 @@ export default function Branches() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update branch: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update branch: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -149,7 +141,7 @@ export default function Branches() {
 
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting branch...'));
+      toast.loading('Deleting branch...');
     }
 
     router.delete(route('hr.branches.destroy', currentItem.id), {
@@ -159,20 +151,16 @@ export default function Branches() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete branch: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete branch: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -180,25 +168,21 @@ export default function Branches() {
   const handleToggleStatus = (branch: any) => {
     const newStatus = branch.status === 'active' ? 'inactive' : 'active';
     if (!globalSettings?.is_demo) {
-      toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} branch...`);
+      toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} branch...`);
     }
 
     router.put(route('hr.branches.toggle-status', branch.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update branch status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update branch status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -219,7 +203,7 @@ export default function Branches() {
   // Add the "Add New Branch" button if user has permission
   if (hasPermission(permissions, 'create-branches')) {
     pageActions.push({
-      label: t('Add Branch'),
+      label: 'Add Branch',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -227,21 +211,21 @@ export default function Branches() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.branches.index') },
-    { title: t('Branches') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.branches.index') },
+    { title: 'Branches' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true
     },
     {
       key: 'address',
-      label: t('Address'),
+      label: 'Address',
       render: (value: string, row: any) => {
         const address = [];
         if (row.address) address.push(row.address);
@@ -255,7 +239,7 @@ export default function Branches() {
     },
     {
       key: 'contact',
-      label: t('Contact'),
+      label: 'Contact',
       render: (value: string, row: any) => {
         const contact = [];
         if (row.phone) contact.push(row.phone);
@@ -266,21 +250,21 @@ export default function Branches() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -289,28 +273,28 @@ export default function Branches() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-branches'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-branches'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'toggle-status-branches'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -320,7 +304,7 @@ export default function Branches() {
 
   return (
     <PageTemplate
-      title={t("Branches")}
+      title={"Branches"}
       url="/hr/branches"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -376,7 +360,7 @@ export default function Branches() {
           to={branches?.to || 0}
           total={branches?.total || 0}
           links={branches?.links}
-          entityName={t("branches")}
+          entityName={"branches"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -388,21 +372,21 @@ export default function Branches() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Branch Name'), type: 'text', required: true },
-            { name: 'address', label: t('Address'), type: 'textarea' },
-            { name: 'city', label: t('City'), type: 'text' },
-            { name: 'state', label: t('State/Province'), type: 'text' },
-            { name: 'country', label: t('Country'), type: 'text' },
-            { name: 'zip_code', label: t('ZIP/Postal Code'), type: 'text' },
-            { name: 'phone', label: t('Phone'), type: 'text' },
-            { name: 'email', label: t('Email'), type: 'email' },
+            { name: 'name', label: 'Branch Name', type: 'text', required: true },
+            { name: 'address', label: 'Address', type: 'textarea' },
+            { name: 'city', label: 'City', type: 'text' },
+            { name: 'state', label: 'State/Province', type: 'text' },
+            { name: 'country', label: 'Country', type: 'text' },
+            { name: 'zip_code', label: 'ZIP/Postal Code', type: 'text' },
+            { name: 'phone', label: 'Phone', type: 'text' },
+            { name: 'email', label: 'Email', type: 'email' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ],
               defaultValue: 'active'
             }
@@ -412,10 +396,10 @@ export default function Branches() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Branch')
+            ? 'Add New Branch'
             : formMode === 'edit'
-              ? t('Edit Branch')
-              : t('View Branch')
+              ? 'Edit Branch'
+              : 'View Branch'
         }
         mode={formMode}
       />

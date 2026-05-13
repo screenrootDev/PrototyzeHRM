@@ -4,10 +4,10 @@ import { RolePermissionCheckboxGroup } from '@/components/RolePermissionCheckbox
 import { PermissionBadges } from '@/components/PermissionBadges';
 import { useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 
 export default function RolesPage() {
-  const { t } = useTranslation();
+  
   const { permissions, flash, auth } = usePage().props as any;
   const [config, setConfig] = useState(rolesConfig);
   
@@ -25,7 +25,7 @@ export default function RolesPage() {
             ...rolesConfig.table.columns,
             {
               key: 'permissions',
-              label: t('Permissions'),
+              label: 'Permissions',
               render: (value, row) => <PermissionBadges permissions={value || []} />
             }
           ]
@@ -57,18 +57,18 @@ export default function RolesPage() {
             }).filter(field => field.name !== 'permissions'),
             {
               name: 'permissions',
-              label: t('Role Permissions'),
+              label: 'Role Permissions',
               type: 'custom',
               colSpan: 12,
               render: (field, formData, onChange) => {
                 return (
                   <div className="mt-4" id="permissions">
-                    <h3 className="text-lg font-medium mb-2">{t("Manage Permissions")}</h3>
+                    <h3 className="text-lg font-medium mb-2">{"Manage Permissions"}</h3>
                     <p className="text-sm text-gray-500 mb-4">
-                      {t("Select permissions for this role. You can select all permissions at once or manage them by module.")}
+                      {"Select permissions for this role. You can select all permissions at once or manage them by module."}
                       {auth.user?.type !== 'superadmin' && (
                         <span className="block mt-1 text-amber-600">
-                          {t("Note: Only permissions for modules available to your role are shown.")}
+                          {"Note: Only permissions for modules available to your role are shown."}
                         </span>
                       )}
                     </p>
@@ -88,12 +88,12 @@ export default function RolesPage() {
 
       });
     }
-  }, [permissions, t]);
+  }, [permissions]);
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Staff'), href: route('roles.index') },
-    { title: t('Roles') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Staff', href: route('roles.index') },
+    { title: 'Roles' }
   ];
 
   return (

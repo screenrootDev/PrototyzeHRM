@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -27,13 +27,13 @@ export function MidtransPaymentForm({
   onSuccess,
   onCancel,
 }: MidtransPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handlePayment = async () => {
     if (!midtransSecretKey) {
-      setError(t('Midtrans not configured'));
+      setError('Midtrans not configured');
       return;
     }
 
@@ -59,11 +59,11 @@ export function MidtransPaymentForm({
       if (data.success) {
         initializeMidtransSnap(data.snap_token, data.order_id);
       } else {
-        throw new Error(data.error || t('Payment creation failed'));
+        throw new Error(data.error || 'Payment creation failed');
       }
     } catch (err) {
       console.error('Midtrans payment error:', err);
-      setError(err instanceof Error ? err.message : t('Payment initialization failed'));
+      setError(err instanceof Error ? err.message : 'Payment initialization failed');
       setIsLoading(false);
     }
   };
@@ -77,7 +77,7 @@ export function MidtransPaymentForm({
         openSnapPayment(snapToken, orderId);
       };
       script.onerror = () => {
-        setError(t('Failed to load Midtrans script'));
+        setError('Failed to load Midtrans script');
         setIsLoading(false);
       };
       document.head.appendChild(script);
@@ -95,7 +95,7 @@ export function MidtransPaymentForm({
         setIsLoading(false);
       },
       onError: (result: any) => {
-        setError(t('Payment failed'));
+        setError('Payment failed');
         setIsLoading(false);
       },
       onClose: () => {
@@ -124,10 +124,7 @@ export function MidtransPaymentForm({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: currency,
-    }).format(price);
+    return new Intl.NumberFormat('id-ID').format(price);
   };
 
   return (
@@ -135,7 +132,7 @@ export function MidtransPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Midtrans Payment')}
+          {'Midtrans Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -148,21 +145,21 @@ export function MidtransPaymentForm({
 
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex justify-between items-center">
-            <span className="font-medium">{t('Total Amount')}</span>
+            <span className="font-medium">{'Total Amount'}</span>
             <span className="text-lg font-bold">{formatPrice(planPrice)}</span>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
-            {t('Billing Cycle')}: {t(billingCycle)}
+            {'Billing Cycle'}: {billingCycle}
           </div>
           {couponCode && (
             <div className="text-sm text-green-600 mt-1">
-              {t('Coupon Applied')}: {couponCode}
+              {'Coupon Applied'}: {couponCode}
             </div>
           )}
         </div>
 
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">{t('Supported Payment Methods')}</h4>
+          <h4 className="font-medium text-blue-900 mb-2">{'Supported Payment Methods'}</h4>
           <ul className="text-sm text-blue-800 space-y-1">
             <li>• Credit/Debit Cards</li>
             <li>• Bank Transfer</li>
@@ -178,7 +175,7 @@ export function MidtransPaymentForm({
             disabled={isLoading}
             className="flex-1"
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button
             onClick={handlePayment}
@@ -188,12 +185,12 @@ export function MidtransPaymentForm({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('Processing...')}
+                {'Processing...'}
               </>
             ) : (
               <>
                 <CreditCard className="mr-2 h-4 w-4" />
-                {t('Pay with Midtrans')}
+                {'Pay with Midtrans'}
               </>
             )}
           </Button>

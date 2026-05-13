@@ -27,7 +27,6 @@ import {
 import { SettingsSection } from "@/components/settings-section";
 import { SidebarPreview } from "@/components/sidebar-preview";
 import MediaPicker from "@/components/MediaPicker";
-import { useTranslation } from "react-i18next";
 import { usePage, router } from "@inertiajs/react";
 import { getImagePath } from "@/utils/helpers";
 
@@ -41,9 +40,9 @@ const setCookie = (name: string, value: string, days = 365) => {
 const getCookie = (name: string): string | null => {
   if (typeof document === "undefined") return null;
   const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
+  const parts = value.split(`; ${name}=`)
   if (parts.length === 2) {
-    const cookieValue = parts.pop()?.split(";").shift();
+    const cookieValue = parts.pop()?.split(';').shift();
     return cookieValue ? decodeURIComponent(cookieValue) : null;
   }
   return null;
@@ -61,7 +60,6 @@ export interface BrandSettings {
   customColor: string;
   sidebarVariant: string;
   sidebarStyle: string;
-  layoutDirection: LayoutPosition;
   themeMode: Appearance;
 }
 
@@ -77,7 +75,6 @@ export const DEFAULT_BRAND_SETTINGS: BrandSettings = {
   customColor: "#3b82f6",
   sidebarVariant: "inset",
   sidebarStyle: "plain",
-  layoutDirection: "left",
   themeMode: "light",
 };
 
@@ -132,8 +129,6 @@ export const getBrandSettings = (
           parsedSidebar.variant || DEFAULT_BRAND_SETTINGS.sidebarVariant,
         sidebarStyle:
           parsedSidebar.style || DEFAULT_BRAND_SETTINGS.sidebarStyle,
-        layoutDirection:
-          layoutPosition || DEFAULT_BRAND_SETTINGS.layoutDirection,
         themeMode: parsedTheme.appearance || DEFAULT_BRAND_SETTINGS.themeMode,
       };
     } catch (error) {
@@ -160,9 +155,6 @@ export const getBrandSettings = (
         userSettings.sidebarVariant || DEFAULT_BRAND_SETTINGS.sidebarVariant,
       sidebarStyle:
         userSettings.sidebarStyle || DEFAULT_BRAND_SETTINGS.sidebarStyle,
-      layoutDirection:
-        (userSettings.layoutDirection as LayoutPosition) ||
-        DEFAULT_BRAND_SETTINGS.layoutDirection,
       themeMode:
         (userSettings.themeMode as Appearance) ||
         DEFAULT_BRAND_SETTINGS.themeMode,
@@ -178,7 +170,7 @@ interface BrandSettingsProps {
 }
 
 export default function BrandSettings({ settings }: BrandSettingsProps) {
-  const { t } = useTranslation();
+  
   const { props } = usePage();
   const currentGlobalSettings = (props as any).globalSettings;
   const auth = (props as any).auth;
@@ -200,7 +192,6 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
     saveThemeSettings,
   } = useAppearance();
 
-  const { updatePosition, saveLayoutPosition } = useLayout();
   const { updateVariant, updateStyle, saveSidebarSettings } =
     useSidebarSettings();
 
@@ -283,11 +274,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
     updateStyle(style);
   };
 
-  // Handle layout direction change
-  const handleLayoutDirectionChange = (direction: LayoutPosition) => {
-    setBrandSettings((prev) => ({ ...prev, layoutDirection: direction }));
-    updatePosition(direction);
-  };
+
 
   // Handle theme mode change
   const handleThemeModeChange = (mode: Appearance) => {
@@ -314,7 +301,6 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
       updateCustomColor(brandSettings.customColor);
     }
     updateAppearance(brandSettings.themeMode);
-    updatePosition(brandSettings.layoutDirection);
 
     // Update sidebar settings
     updateVariant(brandSettings.sidebarVariant as any);
@@ -323,7 +309,6 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
     // Save all settings to cookies in demo mode
     saveThemeSettings();
     saveSidebarSettings();
-    saveLayoutPosition();
 
     // Update brand context
     updateBrandSettings({
@@ -362,7 +347,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
           const errorMessage =
             errors.error ||
             Object.values(errors).join(", ") ||
-            t("Failed to save brand settings");
+            "Failed to save brand settings";
           toast.error(errorMessage);
         },
       },
@@ -371,12 +356,12 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
 
   return (
     <SettingsSection
-      title={t("Brand Settings")}
-      description={t("Customize your application's branding and appearance")}
+      title={"Brand Settings"}
+      description={"Customize your application's branding and appearance"}
       action={
         <Button onClick={saveSettings} disabled={isLoading} size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {isLoading ? t("Saving...") : t("Save Changes")}
+          {isLoading ? "Saving..." : "Save Changes"}
         </Button>
       }
     >
@@ -390,7 +375,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
               className="flex-1"
             >
               <Upload className="h-4 w-4 mr-2" />
-              {t("Logos")}
+              {"Logos"}
             </Button>
             <Button
               variant={activeSection === "text" ? "default" : "outline"}
@@ -399,7 +384,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
               className="flex-1"
             >
               <FileText className="h-4 w-4 mr-2" />
-              {t("Text")}
+              {"Text"}
             </Button>
             <Button
               variant={activeSection === "theme" ? "default" : "outline"}
@@ -408,7 +393,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
               className="flex-1"
             >
               <Palette className="h-4 w-4 mr-2" />
-              {t("Theme")}
+              {"Theme"}
             </Button>
           </div>
 
@@ -417,7 +402,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                  <Label>{t("Logo Dark")}</Label>
+                  <Label>{"Logo Dark"}</Label>
                   <div className="flex flex-col gap-3">
                     <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 dark:bg-white h-32">
                       {brandSettings.logoDark ? (
@@ -434,7 +419,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         <div className="text-muted-foreground flex flex-col items-center gap-2">
                           <div className="h-12 w-24 bg-muted flex items-center justify-center rounded border border-dashed">
                             <span className="font-semibold text-muted-foreground">
-                              {t("Logo")}
+                              {"Logo"}
                             </span>
                           </div>
                           <span className="text-xs">No logo selected</span>
@@ -452,7 +437,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>{t("Logo Light")}</Label>
+                  <Label>{"Logo Light"}</Label>
                   <div className="flex flex-col gap-3">
                     <div className="border rounded-md p-4 flex items-center justify-center bg-black h-32">
                       {brandSettings.logoLight ? (
@@ -469,7 +454,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         <div className="text-muted-foreground flex flex-col items-center gap-2">
                           <div className="h-12 w-24 bg-muted flex items-center justify-center rounded border border-dashed">
                             <span className="font-semibold text-muted-foreground">
-                              {t("Logo")}
+                              {"Logo"}
                             </span>
                           </div>
                           <span className="text-xs">No logo selected</span>
@@ -487,7 +472,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                 </div>
 
                 <div className="space-y-3">
-                  <Label>{t("Favicon")}</Label>
+                  <Label>{"Favicon"}</Label>
                   <div className="flex flex-col gap-3">
                     <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 h-20">
                       {brandSettings.favicon ? (
@@ -504,7 +489,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         <div className="text-muted-foreground flex flex-col items-center gap-1">
                           <div className="h-10 w-10 bg-muted flex items-center justify-center rounded border border-dashed">
                             <span className="font-semibold text-xs text-muted-foreground">
-                              {t("Icon")}
+                              {"Icon"}
                             </span>
                           </div>
                           <span className="text-xs">No favicon selected</span>
@@ -529,7 +514,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
-                  <Label htmlFor="titleText">{t("Title Text")}</Label>
+                  <Label htmlFor="titleText">{"Title Text"}</Label>
                   <Input
                     id="titleText"
                     name="titleText"
@@ -538,12 +523,12 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     placeholder="WorkDo"
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t("Application title displayed in the browser tab")}
+                    {"Application title displayed in the browser tab"}
                   </p>
                 </div>
 
                 <div className="space-y-3">
-                  <Label htmlFor="footerText">{t("Footer Text")}</Label>
+                  <Label htmlFor="footerText">{"Footer Text"}</Label>
                   <Input
                     id="footerText"
                     name="footerText"
@@ -552,14 +537,14 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     placeholder="© 2024 WorkDo. All rights reserved."
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t("Text displayed in the footer")}
+                    {"Text displayed in the footer"}
                   </p>
                 </div>
 
                 {userRole === "company" && (
                   <div className="space-y-3">
                     <Label htmlFor="companyMobile">
-                      {t("Company Mobile Number")}
+                      {"Company Mobile Number"}
                     </Label>
                     <Input
                       id="companyMobile"
@@ -569,7 +554,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                       placeholder="+1 234 567 8900"
                     />
                     <p className="text-xs text-muted-foreground">
-                      {t("Company contact mobile number")}
+                      {"Company contact mobile number"}
                     </p>
                   </div>
                 )}
@@ -586,7 +571,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                   <div className="flex items-center">
                     <Palette className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">
-                      {t("Theme Color")}
+                      {"Theme Color"}
                     </h3>
                   </div>
                   <Separator className="my-2" />
@@ -649,7 +634,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
 
                   {brandSettings.themeColor === "custom" && (
                     <div className="space-y-2 mt-4">
-                      <Label htmlFor="customColor">{t("Custom Color")}</Label>
+                      <Label htmlFor="customColor">{"Custom Color"}</Label>
                       <div className="flex gap-2">
                         <div className="relative">
                           <Input
@@ -687,14 +672,14 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                 <div className="space-y-4">
                   <div className="flex items-center">
                     <SidebarIcon className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">{t("Sidebar")}</h3>
+                    <h3 className="text-base font-medium">{"Sidebar"}</h3>
                   </div>
                   <Separator className="my-2" />
 
                   <div className="space-y-6">
                     <div>
                       <Label className="mb-2 block">
-                        {t("Sidebar Variant")}
+                        {"Sidebar Variant"}
                       </Label>
                       <div className="grid grid-cols-3 gap-3">
                         {["inset", "floating", "minimal"].map((variant) => (
@@ -727,7 +712,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     </div>
 
                     <div>
-                      <Label className="mb-2 block">{t("Sidebar Style")}</Label>
+                      <Label className="mb-2 block">{"Sidebar Style"}</Label>
                       <div className="grid grid-cols-3 gap-3">
                         {[
                           { id: "plain", name: "Plain" },
@@ -764,74 +749,13 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                   </div>
                 </div>
 
-                {/* Layout Section */}
-                <div className="space-y-4">
-                  <div className="flex items-center">
-                    <Layout className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">{t("Layout")}</h3>
-                  </div>
-                  <Separator className="my-2" />
 
-                  <div className="space-y-2">
-                    <Label className="mb-2 block">
-                      {t("Layout Direction")}
-                    </Label>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        type="button"
-                        variant={
-                          brandSettings.layoutDirection === "left"
-                            ? "default"
-                            : "outline"
-                        }
-                        className="h-10 justify-start"
-                        style={{
-                          backgroundColor:
-                            brandSettings.layoutDirection === "left"
-                              ? brandSettings.themeColor === "custom"
-                                ? brandSettings.customColor
-                                : null
-                              : "transparent",
-                        }}
-                        onClick={() => handleLayoutDirectionChange("left")}
-                      >
-                        {t("Left-to-Right")}
-                        {brandSettings.layoutDirection === "left" && (
-                          <Check className="h-4 w-4 ml-2" />
-                        )}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={
-                          brandSettings.layoutDirection === "right"
-                            ? "default"
-                            : "outline"
-                        }
-                        className="h-10 justify-start"
-                        style={{
-                          backgroundColor:
-                            brandSettings.layoutDirection === "right"
-                              ? brandSettings.themeColor === "custom"
-                                ? brandSettings.customColor
-                                : null
-                              : "transparent",
-                        }}
-                        onClick={() => handleLayoutDirectionChange("right")}
-                      >
-                        {t("Right-to-Left")}
-                        {brandSettings.layoutDirection === "right" && (
-                          <Check className="h-4 w-4 ml-2" />
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-                </div>
 
                 {/* Mode Section */}
                 <div className="space-y-4">
                   <div className="flex items-center">
                     <Moon className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">{t("Theme Mode")}</h3>
+                    <h3 className="text-base font-medium">{"Theme Mode"}</h3>
                   </div>
                   <Separator className="my-2" />
 
@@ -855,7 +779,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         }}
                         onClick={() => handleThemeModeChange("light")}
                       >
-                        {t("Light")}
+                        {"Light"}
                         {brandSettings.themeMode === "light" && (
                           <Check className="h-4 w-4 ml-2" />
                         )}
@@ -878,7 +802,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         }}
                         onClick={() => handleThemeModeChange("dark")}
                       >
-                        {t("Dark")}
+                        {"Dark"}
                         {brandSettings.themeMode === "dark" && (
                           <Check className="h-4 w-4 ml-2" />
                         )}
@@ -901,7 +825,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                         }}
                         onClick={() => handleThemeModeChange("system")}
                       >
-                        {t("System")}
+                        {"System"}
                         {brandSettings.themeMode === "system" && (
                           <Check className="h-4 w-4 ml-2" />
                         )}
@@ -920,7 +844,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
             <div className="border rounded-md p-4">
               <div className="flex items-center gap-2 mb-4">
                 <Palette className="h-4 w-4" />
-                <h3 className="font-medium">{t("Live Preview")}</h3>
+                <h3 className="font-medium">{"Live Preview"}</h3>
               </div>
 
               {/* Comprehensive Theme Preview */}
@@ -929,7 +853,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
               {/* Text Preview */}
               <div className="mt-4 pt-4 border-t">
                 <div className="text-xs text-muted-foreground">
-                  {t("Footer:")}{" "}
+                  {"Footer:"}{" "}
                   <span className="font-medium text-foreground">
                     {brandSettings.footerText}
                   </span>

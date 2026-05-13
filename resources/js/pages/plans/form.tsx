@@ -1,6 +1,6 @@
 import React from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { useTranslation } from 'react-i18next';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -32,7 +32,7 @@ interface Props {
   otherDefaultPlanExists?: boolean;
 }
 export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPlanExists = false }: Props) {
-  const { t } = useTranslation();
+  
   const [processing, setProcessing] = useState(false);
   const isEdit = !!plan;
   
@@ -71,10 +71,8 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
           setProcessing(false);
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update plan: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update plan: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else {
@@ -83,23 +81,21 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
           setProcessing(false);
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create plan: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create plan: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   return (
     <PageTemplate 
-      title={t(isEdit ? "Edit Plan" : "Create Plan")}
-      description={t(isEdit ? "Update subscription plan details" : "Add a new subscription plan")}
+      title={isEdit ? "Edit Plan" : "Create Plan"}
+      description={isEdit ? "Update subscription plan details" : "Add a new subscription plan"}
       url={isEdit ? route('plans.update', plan.id) : "/plans/create"}
       breadcrumbs={[
-        { title: t('Dashboard'), href: route('dashboard') },
-        { title: t('Plans'), href: route('plans.index') },
-        { title: t(isEdit ? 'Edit Plan' : 'Create Plan') }
+        { title: 'Dashboard', href: route('dashboard') },
+        { title: 'Plans', href: route('plans.index') },
+        { title: isEdit ? 'Edit Plan' : 'Create Plan' }
       ]}
     >
       <div className="bg-white rounded-lg shadow p-6">
@@ -107,7 +103,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">{t("Plan Name")}</Label>
+                <Label htmlFor="name">{"Plan Name"}</Label>
                 <Input
                   id="name"
                   name="name"
@@ -117,7 +113,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                 />
               </div>
               <div>
-                <Label htmlFor="price">{t("Monthly Price")}</Label>
+                <Label htmlFor="price">{"Monthly Price"}</Label>
                 <Input
                   id="price"
                   name="price"
@@ -129,7 +125,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                 />
               </div>
               <div>
-                <Label htmlFor="yearly_price">{t("Yearly Price")} <span className="text-sm text-muted-foreground">({t("Optional")})</span></Label>
+                <Label htmlFor="yearly_price">{"Yearly Price"} <span className="text-sm text-muted-foreground">({"Optional"})</span></Label>
                 <Input
                   id="yearly_price"
                   name="yearly_price"
@@ -137,14 +133,14 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                   step="0.01"
                   value={formData.yearly_price || ''}
                   onChange={handleChange}
-                  placeholder={t("Leave empty for 20% discount")}
+                  placeholder={"Leave empty for 20% discount"}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t("If left empty, yearly price will be calculated as 80% of monthly price × 12")}
+                  {"If left empty, yearly price will be calculated as 80% of monthly price × 12"}
                 </p>
               </div>
               <div>
-                <Label htmlFor="description">{t("Description")}</Label>
+                <Label htmlFor="description">{"Description"}</Label>
                 <Textarea
                   id="description"
                   name="description"
@@ -156,7 +152,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
             </div>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="max_users">{t("Maximum Users")}</Label>
+                <Label htmlFor="max_users">{"Maximum Users"}</Label>
                 <Input
                   id="max_users"
                   name="max_users"
@@ -167,7 +163,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                 />
               </div>
               <div>
-                <Label htmlFor="max_employees">{t("Maximum Employees")}</Label>
+                <Label htmlFor="max_employees">{"Maximum Employees"}</Label>
                 <Input
                   id="max_employees"
                   name="max_employees"
@@ -178,7 +174,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                 />
               </div>
               <div>
-                <Label htmlFor="storage_limit">{t("Storage Limit (GB)")}</Label>
+                <Label htmlFor="storage_limit">{"Storage Limit (GB)"}</Label>
                 <Input
                   id="storage_limit"
                   name="storage_limit"
@@ -190,7 +186,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
                 />
               </div>
               <div>
-                <Label htmlFor="trial_day">{t("Trial Days")}</Label>
+                <Label htmlFor="trial_day">{"Trial Days"}</Label>
                 <Input
                   id="trial_day"
                   name="trial_day"
@@ -202,11 +198,11 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
             </div>
           </div>
           <div className="border rounded-lg p-4 space-y-4">
-            <h3 className="font-medium">{t("Features")}</h3>
+            <h3 className="font-medium">{"Features"}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="enable_chatgpt">{t("AI Integration")}</Label>
+                <Label htmlFor="enable_chatgpt">{"AI Integration"}</Label>
                 <Switch
                   id="enable_chatgpt"
                   checked={formData.enable_chatgpt === 'on'}
@@ -215,7 +211,7 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
               </div>
               
               <div className="flex items-center justify-between">
-                <Label htmlFor="is_trial">{t("Enable Trial")}</Label>
+                <Label htmlFor="is_trial">{"Enable Trial"}</Label>
                 <Switch
                   id="is_trial"
                   checked={formData.is_trial === 'on'}
@@ -226,11 +222,11 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
             
           </div>
           <div className="border rounded-lg p-4 space-y-4">
-            <h3 className="font-medium">{t("Settings")}</h3>
+            <h3 className="font-medium">{"Settings"}</h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center justify-between">
-                <Label htmlFor="is_plan_enable">{t("Active")}</Label>
+                <Label htmlFor="is_plan_enable">{"Active"}</Label>
                 <Switch
                   id="is_plan_enable"
                   checked={formData.is_plan_enable === 'on'}
@@ -240,10 +236,10 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
               
               <div className="flex items-center justify-between">
                 <div>
-                  <Label htmlFor="is_default">{t("Default Plan")}</Label>
+                  <Label htmlFor="is_default">{"Default Plan"}</Label>
                   {(isEdit ? !plan?.is_default : hasDefaultPlan) && (
                     <p className="text-xs text-amber-600 mt-1">
-                      {t("Setting this as default will remove default status from the current default plan.")}
+                      {"Setting this as default will remove default status from the current default plan."}
                     </p>
                   )}
                 </div>
@@ -261,13 +257,13 @@ export default function PlanForm({ plan, hasDefaultPlan = false, otherDefaultPla
               variant="outline" 
               onClick={() => router.get(route('plans.index'))}
             >
-              {t("Cancel")}
+              {"Cancel"}
             </Button>
             <Button 
               type="submit" 
               disabled={processing}
             >
-              {processing ? t(isEdit ? "Updating..." : "Creating...") : t(isEdit ? "Update Plan" : "Create Plan")}
+              {processing ? isEdit ? "Updating..." : "Creating..." : isEdit ? "Update Plan" : "Create Plan"}
             </Button>
           </div>
         </form>

@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function AttendancePolicies() {
-  const { t } = useTranslation();
+  
   const { auth, attendancePolicies, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -93,17 +93,15 @@ export default function AttendancePolicies() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating attendance policy...'));
+      toast.loading('Creating attendance policy...');
 
       router.post(route('hr.attendance-policies.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -115,17 +113,15 @@ export default function AttendancePolicies() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating attendance policy...'));
+      toast.loading('Updating attendance policy...');
 
       router.put(route('hr.attendance-policies.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -140,17 +136,15 @@ export default function AttendancePolicies() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting attendance policy...'));
+    toast.loading('Deleting attendance policy...');
 
     router.delete(route('hr.attendance-policies.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -165,16 +159,14 @@ export default function AttendancePolicies() {
 
   const handleToggleStatus = (policy: any) => {
     const newStatus = policy.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} attendance policy...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} attendance policy...`);
 
     router.put(route('hr.attendance-policies.toggle-status', policy.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -204,7 +196,7 @@ export default function AttendancePolicies() {
   // Add the "Add New Attendance Policy" button if user has permission
   if (hasPermission(permissions, 'create-attendance-policies')) {
     pageActions.push({
-      label: t('Add Attendance Policy'),
+      label: 'Add Attendance Policy',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -212,49 +204,49 @@ export default function AttendancePolicies() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Shift Management'), href: route('hr.attendance-policies.index') },
-    { title: t('Attendance Policies') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Shift Management', href: route('hr.attendance-policies.index') },
+    { title: 'Attendance Policies' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Policy Name'),
+      label: 'Policy Name',
       sortable: true
     },
     {
       key: 'late_arrival_grace',
-      label: t('Late Grace (mins)'),
+      label: 'Late Grace (mins)',
       render: (value: number) => (
         <span className="font-mono text-orange-600">{value}</span>
       )
     },
     {
       key: 'early_departure_grace',
-      label: t('Early Grace (mins)'),
+      label: 'Early Grace (mins)',
       render: (value: number) => (
         <span className="font-mono text-blue-600">{value}</span>
       )
     },
     {
       key: 'overtime_rate_per_hour',
-      label: t('Overtime Rate'),
+      label: 'Overtime Rate',
       render: (value: number) => (
         <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value)}/hr</span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
@@ -264,28 +256,28 @@ export default function AttendancePolicies() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-attendance-policies'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-attendance-policies'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-attendance-policies'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -295,16 +287,16 @@ export default function AttendancePolicies() {
 
   // Prepare options for filters
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') , disabled : true},
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' , disabled : true},
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
 
 
   return (
     <PageTemplate
-      title={t("Attendance Policies")}
+      title={"Attendance Policies"}
       url="/hr/attendance-policies"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -319,7 +311,7 @@ export default function AttendancePolicies() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -371,7 +363,7 @@ export default function AttendancePolicies() {
           to={attendancePolicies?.to || 0}
           total={attendancePolicies?.total || 0}
           links={attendancePolicies?.links}
-          entityName={t("attendance policies")}
+          entityName={"attendance policies"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -383,14 +375,14 @@ export default function AttendancePolicies() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Policy Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
-            { name: 'late_arrival_grace', label: t('Late Arrival Grace (minutes)'), type: 'number', required: true, min: 0, defaultValue: 15 },
-            { name: 'early_departure_grace', label: t('Early Departure Grace (minutes)'), type: 'number', required: true, min: 0, defaultValue: 15 },
-            { name: 'overtime_rate_per_hour', label: t('Overtime Rate Per Hour'), type: 'number', required: true, min: 0, step: 0.01, defaultValue: 150 },
+            { name: 'name', label: 'Policy Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'late_arrival_grace', label: 'Late Arrival Grace (minutes)', type: 'number', required: true, min: 0, defaultValue: 15 },
+            { name: 'early_departure_grace', label: 'Early Departure Grace (minutes)', type: 'number', required: true, min: 0, defaultValue: 15 },
+            { name: 'overtime_rate_per_hour', label: 'Overtime Rate Per Hour', type: 'number', required: true, min: 0, step: 0.01, defaultValue: 150 },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
                 { value: 'active', label: 'Active' },
@@ -404,10 +396,10 @@ export default function AttendancePolicies() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Attendance Policy')
+            ? 'Add New Attendance Policy'
             : formMode === 'edit'
-              ? t('Edit Attendance Policy')
-              : t('View Attendance Policy')
+              ? 'Edit Attendance Policy'
+              : 'View Attendance Policy'
         }
         mode={formMode}
       />

@@ -6,12 +6,12 @@ import { Plus, Download, FileText } from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function Payslips() {
-  const { t } = useTranslation();
+  
   const { auth, payslips, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -75,14 +75,14 @@ export default function Payslips() {
   };
 
   const handleDownload = (payslip: any) => {
-    toast.loading(t('Downloading payslip...'));
+    toast.loading('Downloading payslip...');
 
     window.location.href = route('hr.payslips.download', payslip.id);
     
     // Clear loading toast and refresh data after download
     setTimeout(() => {
       toast.dismiss();
-      toast.success(t('Payslip downloaded successfully'));
+      toast.success('Payslip downloaded successfully');
       router.reload({ only: ['payslips'] });
     }, 100);
   };
@@ -105,16 +105,16 @@ export default function Payslips() {
   const pageActions = [];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Payroll Management'), href: route('hr.payslips.index') },
-    { title: t('Payslips') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Payroll Management', href: route('hr.payslips.index') },
+    { title: 'Payslips' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'payslip_number',
-      label: t('Payslip Number'),
+      label: 'Payslip Number',
       sortable: true,
       render: (value: string) => (
         <span className="font-mono text-blue-600">{value}</span>
@@ -122,12 +122,12 @@ export default function Payslips() {
     },
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'pay_period',
-      label: t('Pay Period'),
+      label: 'Pay Period',
       render: (value: any, row: any) => (
         <div className="text-sm">
           <div>{window.appSettings?.formatDateTimeSimple(row.pay_period_start, false) || new Date(row.pay_period_start).toLocaleDateString()}</div>
@@ -137,13 +137,13 @@ export default function Payslips() {
     },
     {
       key: 'pay_date',
-      label: t('Pay Date'),
+      label: 'Pay Date',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'net_pay',
-      label: t('Net Pay'),
+      label: 'Net Pay',
       render: (value: any, row: any) => (
         <span className="font-mono text-green-600">
           {window.appSettings?.formatCurrency(row.payroll_entry?.net_pay || 0)}
@@ -152,7 +152,7 @@ export default function Payslips() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         const statusColors = {
           generated: 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -161,14 +161,14 @@ export default function Payslips() {
         };
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusColors[value as keyof typeof statusColors]}`}>
-            {t(value.charAt(0).toUpperCase() + value.slice(1))}
+            {value.charAt(0).toUpperCase() + value.slice(1)}
           </span>
         );
       }
     },
     {
       key: 'created_at',
-      label: t('Generated On'),
+      label: 'Generated On',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -177,7 +177,7 @@ export default function Payslips() {
   // Define table actions
   const actions = [
     {
-      label: t('Download PDF'),
+      label: 'Download PDF',
       icon: 'Download',
       action: 'download',
       className: 'text-blue-500',
@@ -187,7 +187,7 @@ export default function Payslips() {
 
   // Prepare options for filters
   const employeeOptions = [
-    { value: 'all', label: t('All Employees') },
+    { value: 'all', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -195,15 +195,15 @@ export default function Payslips() {
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'generated', label: t('Generated') },
-    { value: 'sent', label: t('Sent') },
-    { value: 'downloaded', label: t('Downloaded') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'generated', label: 'Generated' },
+    { value: 'sent', label: 'Sent' },
+    { value: 'downloaded', label: 'Downloaded' }
   ];
 
   return (
     <PageTemplate
-      title={t("Payslips")}
+      title={"Payslips"}
       url="/hr/payslips"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -218,7 +218,7 @@ export default function Payslips() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -226,7 +226,7 @@ export default function Payslips() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -234,14 +234,14 @@ export default function Payslips() {
             },
             {
               name: 'date_from',
-              label: t('Period From'),
+              label: 'Period From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Period To'),
+              label: 'Period To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -294,7 +294,7 @@ export default function Payslips() {
           to={payslips?.to || 0}
           total={payslips?.total || 0}
           links={payslips?.links}
-          entityName={t("payslips")}
+          entityName={"payslips"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

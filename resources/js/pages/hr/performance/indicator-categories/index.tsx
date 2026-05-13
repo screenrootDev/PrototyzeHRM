@@ -8,13 +8,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function PerformanceIndicatorCategories() {
-  const { t } = useTranslation();
+  
   const { auth, categories, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -93,96 +93,80 @@ export default function PerformanceIndicatorCategories() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating performance indicator category...'));
+      toast.loading('Creating performance indicator category...');
 
       router.post(route('hr.performance.indicator-categories.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create category: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create category: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating performance indicator category...'));
+      toast.loading('Updating performance indicator category...');
 
       router.put(route('hr.performance.indicator-categories.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update category: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update category: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting performance indicator category...'));
+    toast.loading('Deleting performance indicator category...');
     
     router.delete(route('hr.performance.indicator-categories.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete category: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete category: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleToggleStatus = (category: any) => {
     const newStatus = category.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} category...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} category...`);
     
     router.put(route('hr.performance.indicator-categories.toggle-status', category.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update category status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update category status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -204,7 +188,7 @@ export default function PerformanceIndicatorCategories() {
   // Add the "Add New Category" button if user has permission
   if (hasPermission(permissions, 'create-performance-indicator-categories')) {
     pageActions.push({
-      label: t('Add Category'),
+      label: 'Add Category',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -212,27 +196,27 @@ export default function PerformanceIndicatorCategories() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Indicator Categories') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Indicator Categories' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value: string) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -240,14 +224,14 @@ export default function PerformanceIndicatorCategories() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Created At'), 
+      label: 'Created At', 
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -256,28 +240,28 @@ export default function PerformanceIndicatorCategories() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-performance-indicator-categories'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-performance-indicator-categories'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-performance-indicator-categories'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -287,14 +271,14 @@ export default function PerformanceIndicatorCategories() {
 
   // Prepare filter options
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Indicator Categories")} 
+      title={"Indicator Categories"} 
       url="/hr/performance/indicator-categories"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -309,7 +293,7 @@ export default function PerformanceIndicatorCategories() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -360,7 +344,7 @@ export default function PerformanceIndicatorCategories() {
           to={categories?.to || 0}
           total={categories?.total || 0}
           links={categories?.links}
-          entityName={t("performance indicator categories")}
+          entityName={"performance indicator categories"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -372,15 +356,15 @@ export default function PerformanceIndicatorCategories() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Category Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
+            { name: 'name', label: 'Category Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ],
               defaultValue: 'active'
             }
@@ -390,10 +374,10 @@ export default function PerformanceIndicatorCategories() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Performance Indicator Category')
+            ? 'Add New Performance Indicator Category'
             : formMode === 'edit'
-              ? t('Edit Performance Indicator Category')
-              : t('View Performance Indicator Category')
+              ? 'Edit Performance Indicator Category'
+              : 'View Performance Indicator Category'
         }
         mode={formMode}
       />

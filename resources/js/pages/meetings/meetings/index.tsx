@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Clock, Calendar, User, DiscAlbum } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function Meetings() {
-  const { t } = useTranslation();
+  
   const { auth, meetings, meetingTypes, meetingRooms, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -98,17 +98,15 @@ export default function Meetings() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating meeting...'));
+      toast.loading('Creating meeting...');
       
       router.post(route('meetings.meetings.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -120,17 +118,15 @@ export default function Meetings() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating meeting...'));
+      toast.loading('Updating meeting...');
       
       router.put(route('meetings.meetings.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -145,17 +141,15 @@ export default function Meetings() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting meeting...'));
+    toast.loading('Deleting meeting...');
     
     router.delete(route('meetings.meetings.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -169,17 +163,15 @@ export default function Meetings() {
   };
   
   const handleStatusUpdate = (formData: any) => {
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
     
     router.put(route('meetings.meetings.update-status', currentItem.id), { status: formData.status }, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -209,7 +201,7 @@ export default function Meetings() {
   
   if (hasPermission(permissions, 'create-meetings')) {
     pageActions.push({
-      label: t('Schedule Meeting'),
+      label: 'Schedule Meeting',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -217,9 +209,9 @@ export default function Meetings() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.meetings.index') },
-    { title: t('Meetings') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.meetings.index') },
+    { title: 'Meetings' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -240,7 +232,7 @@ export default function Meetings() {
   const columns = [
     { 
       key: 'title', 
-      label: t('Meeting'),
+      label: 'Meeting',
       sortable: true,
       render: (value, row) => (
         <div>
@@ -257,7 +249,7 @@ export default function Meetings() {
     },
     { 
       key: 'meeting_date', 
-      label: t('Date & Time'),
+      label: 'Date & Time',
       sortable: true,
       render: (value, row) => (
         <div>
@@ -274,7 +266,7 @@ export default function Meetings() {
     },
     { 
       key: 'organizer.name', 
-      label: t('Organizer'),
+      label: 'Organizer',
       render: (_, row) => (
         <div className="flex items-center gap-1">
           <User className="h-4 w-4 text-gray-500" />
@@ -284,24 +276,24 @@ export default function Meetings() {
     },
     { 
       key: 'room.name', 
-      label: t('Room'),
+      label: 'Room',
       render: (_, row) => row.room?.name || '-'
     },
     { 
       key: 'recurrence', 
-      label: t('Recurrence'),
+      label: 'Recurrence',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getRecurrenceColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     }
@@ -309,28 +301,28 @@ export default function Meetings() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-meetings'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meetings'
     },
     { 
-      label: t('Update Status'), 
+      label: 'Update Status', 
       icon: 'RefreshCw', 
       action: 'update-status', 
       className: 'text-green-500',
       requiredPermission: 'manage-meeting-status'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -339,15 +331,15 @@ export default function Meetings() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'Scheduled', label: t('Scheduled') },
-    { value: 'In Progress', label: t('In Progress') },
-    { value: 'Completed', label: t('Completed') },
-    { value: 'Cancelled', label: t('Cancelled') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'Scheduled', label: 'Scheduled' },
+    { value: 'In Progress', label: 'In Progress' },
+    { value: 'Completed', label: 'Completed' },
+    { value: 'Cancelled', label: 'Cancelled' }
   ];
 
   const typeOptions = [
-    { value: '_empty_', label: t('All Types'), disabled: true },
+    { value: '_empty_', label: 'All Types', disabled: true },
     ...(meetingTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -355,7 +347,7 @@ export default function Meetings() {
   ];
 
   const organizerOptions = [
-    { value: '_empty_', label: t('All Organizers'), disabled: true },
+    { value: '_empty_', label: 'All Organizers', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -363,7 +355,7 @@ export default function Meetings() {
   ];
 
   const typeSelectOptions = [
-    { value: '_empty_', label: t('Select Type') },
+    { value: '_empty_', label: 'Select Type' },
     ...(meetingTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -371,7 +363,7 @@ export default function Meetings() {
   ];
 
   const roomSelectOptions = [
-    { value: '_empty_', label: t('Select Room') },
+    { value: '_empty_', label: 'Select Room' },
     ...(meetingRooms || []).map((room: any) => ({
       value: room.id.toString(),
       label: `${room.name} (${room.type})`
@@ -379,7 +371,7 @@ export default function Meetings() {
   ];
 
   const organizerSelectOptions = [
-    { value: '_empty_', label: t('Select Organizer') },
+    { value: '_empty_', label: 'Select Organizer' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -388,7 +380,7 @@ export default function Meetings() {
 
   return (
     <PageTemplate 
-      title={t("Meetings")} 
+      title={"Meetings"} 
       url="/meetings/meetings"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -402,7 +394,7 @@ export default function Meetings() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -411,7 +403,7 @@ export default function Meetings() {
             },
             {
               name: 'type_id',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: typeFilter,
               onChange: setTypeFilter,
@@ -420,7 +412,7 @@ export default function Meetings() {
             },
             {
               name: 'organizer_id',
-              label: t('Organizer'),
+              label: 'Organizer',
               type: 'select',
               value: organizerFilter,
               onChange: setOrganizerFilter,
@@ -472,7 +464,7 @@ export default function Meetings() {
           to={meetings?.to || 0}
           total={meetings?.total || 0}
           links={meetings?.links}
-          entityName={t("meetings")}
+          entityName={"meetings"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -485,18 +477,18 @@ export default function Meetings() {
           fields: [
             { 
               name: 'title', 
-              label: t('Meeting Title'), 
+              label: 'Meeting Title', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'type_id', 
-              label: t('Meeting Type'), 
+              label: 'Meeting Type', 
               type: 'select', 
               required: true,
               options: typeSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -504,32 +496,32 @@ export default function Meetings() {
             },
             { 
               name: 'room_id', 
-              label: t('Meeting Room'), 
+              label: 'Meeting Room', 
               type: 'select',
               options: roomSelectOptions.filter(opt => opt.value !== '_empty_'),
               searchable : true
             },
             { 
               name: 'meeting_date', 
-              label: t('Meeting Date'), 
+              label: 'Meeting Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'start_time', 
-              label: t('Start Time'), 
+              label: 'Start Time', 
               type: 'time', 
               required: true 
             },
             { 
               name: 'end_time', 
-              label: t('End Time'), 
+              label: 'End Time', 
               type: 'time', 
               required: true 
             },
             { 
               name: 'organizer_id', 
-              label: t('Organizer'), 
+              label: 'Organizer', 
               type: 'select', 
               required: true,
               options: organizerSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -537,25 +529,25 @@ export default function Meetings() {
             },
             { 
               name: 'recurrence', 
-              label: t('Recurrence'), 
+              label: 'Recurrence', 
               type: 'select', 
               required: true,
               options: [
-                { value: 'None', label: t('None') },
-                { value: 'Daily', label: t('Daily') },
-                { value: 'Weekly', label: t('Weekly') },
-                { value: 'Monthly', label: t('Monthly') }
+                { value: 'None', label: 'None' },
+                { value: 'Daily', label: 'Daily' },
+                { value: 'Weekly', label: 'Weekly' },
+                { value: 'Monthly', label: 'Monthly' }
               ]
             },
             { 
               name: 'recurrence_end_date', 
-              label: t('Recurrence End Date'), 
+              label: 'Recurrence End Date', 
               type: 'date',
-              helpText: t('Required for recurring meetings')
+              helpText: 'Required for recurring meetings'
             },
             { 
               name: 'agenda', 
-              label: t('Agenda'), 
+              label: 'Agenda', 
               type: 'textarea',
               rows: 4
             }
@@ -568,10 +560,10 @@ export default function Meetings() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Schedule New Meeting')
+            ? 'Schedule New Meeting'
             : formMode === 'edit'
-              ? t('Edit Meeting')
-              : t('View Meeting')
+              ? 'Edit Meeting'
+              : 'View Meeting'
         }
         mode={formMode}
       />
@@ -592,23 +584,23 @@ export default function Meetings() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Scheduled', label: t('Scheduled') },
-                { value: 'In Progress', label: t('In Progress') },
-                { value: 'Completed', label: t('Completed') },
-                { value: 'Cancelled', label: t('Cancelled') }
+                { value: 'Scheduled', label: 'Scheduled' },
+                { value: 'In Progress', label: 'In Progress' },
+                { value: 'Completed', label: 'Completed' },
+                { value: 'Cancelled', label: 'Cancelled' }
               ]
             }
           ],
           modalSize: 'sm'
         }}
         initialData={{ status: selectedStatus }}
-        title={t('Update Meeting Status')}
+        title={'Update Meeting Status'}
         mode="edit"
-        submitButtonText={t('Update Status')}
+        submitButtonText={'Update Status'}
       />
     </PageTemplate>
   );

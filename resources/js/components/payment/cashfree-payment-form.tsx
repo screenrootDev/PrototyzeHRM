@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 import axios from 'axios';
 import '../../../css/cashfree-modal-fix.css';
@@ -28,7 +28,7 @@ export function CashfreePaymentForm({
   onSuccess,
   onCancel
 }: CashfreePaymentFormProps) {
-  const { t } = useTranslation();
+  
   
   useEffect(() => {
     // Check if Cashfree SDK is already loaded
@@ -41,7 +41,7 @@ export function CashfreePaymentForm({
     script.src = 'https://sdk.cashfree.com/js/v3/cashfree.js';
     script.async = true;
     script.onerror = () => {
-      toast.error(t('Failed to load Cashfree SDK. Please try again.'));
+      toast.error('Failed to load Cashfree SDK. Please try again.');
     };
     document.body.appendChild(script);
     
@@ -71,17 +71,17 @@ export function CashfreePaymentForm({
       const { payment_session_id, order_id, amount, mode: serverMode } = response.data;
       
       if (!payment_session_id || !order_id) {
-        toast.error(t('Invalid response from server'));
+        toast.error('Invalid response from server');
         return;
       }
       
       if (!serverMode) {
-        toast.error(t('Payment mode not configured'));
+        toast.error('Payment mode not configured');
         return;
       }
       
       if (!(window as any).Cashfree) {
-        toast.error(t('Cashfree SDK not loaded'));
+        toast.error('Cashfree SDK not loaded');
         return;
       }
       
@@ -113,7 +113,7 @@ export function CashfreePaymentForm({
       // Open Cashfree checkout
       cashfree.checkout(checkoutOptions).then((result: any) => {
         if (result.error) {
-          toast.error(result.error.message || t('Payment failed'));
+          toast.error(result.error.message || 'Payment failed');
           return;
         }
         
@@ -131,18 +131,18 @@ export function CashfreePaymentForm({
             onSuccess();
           })
           .catch((error) => {
-            const errorMsg = error.response?.data?.error || t('Payment verification failed');
+            const errorMsg = error.response?.data?.error || 'Payment verification failed';
             toast.error(errorMsg);
           });
         } else {
-          toast.error(t('Payment status unclear'));
+          toast.error('Payment status unclear');
         }
       }).catch((error: any) => {
-        toast.error(error.message || t('Payment initialization failed'));
+        toast.error(error.message || 'Payment initialization failed');
       });
       
     } catch (error: any) {
-      const errorMsg = error.response?.data?.error || t('Failed to initialize payment');
+      const errorMsg = error.response?.data?.error || 'Failed to initialize payment';
       toast.error(errorMsg);
     }
   };
@@ -150,15 +150,15 @@ export function CashfreePaymentForm({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        {t('You will be redirected to Cashfree to complete your payment.')}
+        {'You will be redirected to Cashfree to complete your payment.'}
       </p>
       
       <div className="flex gap-3">
         <Button variant="outline" onClick={onCancel} className="flex-1">
-          {t('Cancel')}
+          {'Cancel'}
         </Button>
         <Button onClick={handlePayment} className="flex-1">
-          {t('Pay with Cashfree')}
+          {'Pay with Cashfree'}
         </Button>
       </div>
     </div>

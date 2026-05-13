@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
@@ -28,7 +28,7 @@ export function CoinGatePaymentForm({
   onSuccess,
   onCancel
 }: CoinGatePaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -75,14 +75,14 @@ export function CoinGatePaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Coins className="h-5 w-5 text-orange-500" />
-          {t('CoinGate Cryptocurrency Payment')}
+          {'CoinGate Cryptocurrency Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Alert className="mb-4">
           <Info className="h-4 w-4" />
           <AlertDescription>
-            {t('You will be redirected to CoinGate to complete your cryptocurrency payment securely.')}
+            {'You will be redirected to CoinGate to complete your cryptocurrency payment securely.'}
           </AlertDescription>
         </Alert>
 
@@ -90,15 +90,15 @@ export function CoinGatePaymentForm({
           
           <div className="bg-muted p-4 rounded-lg">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium">{t('Plan')}</span>
-              <span className="text-sm">{t(billingCycle)} {t('billing')}</span>
+              <span className="text-sm font-medium">{'Plan'}</span>
+              <span className="text-sm">{billingCycle} {'billing'}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">{t('Amount')}</span>
+              <span className="text-sm font-medium">{'Amount'}</span>
               <span className="text-lg font-bold">{currency} {planPrice}</span>
             </div>
             <p className="text-xs text-muted-foreground mt-2">
-              {t('Final cryptocurrency amount will be calculated at checkout based on current exchange rates')}
+              {'Final cryptocurrency amount will be calculated at checkout based on current exchange rates'}
             </p>
           </div>
 
@@ -106,11 +106,11 @@ export function CoinGatePaymentForm({
             <div className="flex items-start gap-2">
               <Info className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="text-xs text-blue-800">
-                <p className="font-medium mb-1">{t('Payment Process:')}</p>
+                <p className="font-medium mb-1">{'Payment Process:'}</p>
                 <ul className="space-y-1 list-disc list-inside">
-                  <li>{t('Click "Pay with Crypto" to proceed to CoinGate')}</li>
-                  <li>{t('Complete payment using your selected cryptocurrency')}</li>
-                  <li>{t('You will be redirected back after payment completion')}</li>
+                  <li>{'Click "Pay with Crypto" to proceed to CoinGate'}</li>
+                  <li>{'Complete payment using your selected cryptocurrency'}</li>
+                  <li>{'You will be redirected back after payment completion'}</li>
                 </ul>
               </div>
             </div>
@@ -124,7 +124,7 @@ export function CoinGatePaymentForm({
               className="flex-1"
               disabled={isProcessing}
             >
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button 
               type="submit" 
@@ -134,12 +134,12 @@ export function CoinGatePaymentForm({
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('Redirecting...')}
+                  {'Redirecting...'}
                 </>
               ) : (
                 <>
                   <Coins className="mr-2 h-4 w-4" />
-                  {t('Pay with Crypto')}
+                  {'Pay with Crypto'}
                 </>
               )}
             </Button>

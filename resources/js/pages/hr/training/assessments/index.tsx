@@ -8,14 +8,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function TrainingAssessments() {
-  const { t } = useTranslation();
+  
   const { auth, trainingAssessments, trainingPrograms, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -93,18 +93,16 @@ export default function TrainingAssessments() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating assessment...'));
+      toast.loading('Creating assessment...');
 
       router.post(route('hr.training-assessments.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Assessment created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Assessment created successfully');
           }
         },
         onError: (errors) => {
@@ -117,18 +115,16 @@ export default function TrainingAssessments() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating assessment...'));
+      toast.loading('Updating assessment...');
 
       router.put(route('hr.training-assessments.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Assessment updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Assessment updated successfully');
           }
         },
         onError: (errors) => {
@@ -144,18 +140,16 @@ export default function TrainingAssessments() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting assessment...'));
+    toast.loading('Deleting assessment...');
     
     router.delete(route('hr.training-assessments.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Assessment deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Assessment deleted successfully');
         }
       },
       onError: (errors) => {
@@ -187,7 +181,7 @@ export default function TrainingAssessments() {
   // Add the "Add New Assessment" button if user has permission
   if (hasPermission(permissions, 'manage-assessments')) {
     pageActions.push({
-      label: t('Add Assessment'),
+      label: 'Add Assessment',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -195,17 +189,17 @@ export default function TrainingAssessments() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-assessments.index') },
-    { title: t('Training Management'), href: route('hr.training-assessments.index') },
-    { title: t('Training Assessments') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-assessments.index') },
+    { title: 'Training Management', href: route('hr.training-assessments.index') },
+    { title: 'Training Assessments' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value, row) => (
         <div>
@@ -216,7 +210,7 @@ export default function TrainingAssessments() {
     },
     { 
       key: 'type', 
-      label: t('Type'),
+      label: 'Type',
       sortable: true,
       render: (value) => {
         const typeClasses = {
@@ -234,20 +228,20 @@ export default function TrainingAssessments() {
     },
     { 
       key: 'passing_score', 
-      label: t('Passing Score'),
+      label: 'Passing Score',
       sortable: true,
       render: (value) => `${value}%`
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value) => value ? (
         <div className="max-w-xs truncate">{value}</div>
       ) : '-'
     },
     { 
       key: 'employee_results_count', 
-      label: t('Results'),
+      label: 'Results',
       render: (value) => value || '0'
     }
   ];
@@ -255,21 +249,21 @@ export default function TrainingAssessments() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'manage-assessments'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'manage-assessments'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -279,7 +273,7 @@ export default function TrainingAssessments() {
 
   // Prepare training program options for filter
   const trainingProgramOptions = [
-    { value: '', label: t('All Programs') },
+    { value: '', label: 'All Programs' },
     ...(trainingPrograms || []).map((program: any) => ({
       value: program.id.toString(),
       label: program.name
@@ -288,15 +282,15 @@ export default function TrainingAssessments() {
 
   // Prepare assessment type options for filter
   const assessmentTypeOptions = [
-    { value: '', label: t('All Types') },
-    { value: 'quiz', label: t('Quiz') },
-    { value: 'practical', label: t('Practical') },
-    { value: 'presentation', label: t('Presentation') }
+    { value: '', label: 'All Types' },
+    { value: 'quiz', label: 'Quiz' },
+    { value: 'practical', label: 'Practical' },
+    { value: 'presentation', label: 'Presentation' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Training Assessments")} 
+      title={"Training Assessments"} 
       url="/hr/training/assessments"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -311,7 +305,7 @@ export default function TrainingAssessments() {
           filters={[
             {
               name: 'training_program_id',
-              label: t('Training Program'),
+              label: 'Training Program',
               type: 'select',
               value: selectedProgram,
               onChange: setSelectedProgram,
@@ -319,7 +313,7 @@ export default function TrainingAssessments() {
             },
             {
               name: 'type',
-              label: t('Assessment Type'),
+              label: 'Assessment Type',
               type: 'select',
               value: selectedType,
               onChange: setSelectedType,
@@ -371,7 +365,7 @@ export default function TrainingAssessments() {
           to={trainingAssessments?.to || 0}
           total={trainingAssessments?.total || 0}
           links={trainingAssessments?.links}
-          entityName={t("assessments")}
+          entityName={"assessments"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -385,36 +379,36 @@ export default function TrainingAssessments() {
           fields: [
             { 
               name: 'training_program_id', 
-              label: t('Training Program'), 
+              label: 'Training Program', 
               type: 'select',
               required: true,
               options: trainingProgramOptions.filter(opt => opt.value !== '')
             },
             { 
               name: 'name', 
-              label: t('Assessment Name'), 
+              label: 'Assessment Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea'
             },
             { 
               name: 'type', 
-              label: t('Assessment Type'), 
+              label: 'Assessment Type', 
               type: 'select',
               required: true,
               options: [
-                { value: 'quiz', label: t('Quiz') },
-                { value: 'practical', label: t('Practical') },
-                { value: 'presentation', label: t('Presentation') }
+                { value: 'quiz', label: 'Quiz' },
+                { value: 'practical', label: 'Practical' },
+                { value: 'presentation', label: 'Presentation' }
               ]
             },
             { 
               name: 'passing_score', 
-              label: t('Passing Score (%)'), 
+              label: 'Passing Score (%)', 
               type: 'number',
               required: true,
               min: 0,
@@ -423,9 +417,9 @@ export default function TrainingAssessments() {
             },
             { 
               name: 'criteria', 
-              label: t('Assessment Criteria'), 
+              label: 'Assessment Criteria', 
               type: 'textarea',
-              helpText: t('Describe the criteria used to evaluate this assessment')
+              helpText: 'Describe the criteria used to evaluate this assessment'
             }
           ],
           modalSize: 'lg'
@@ -433,10 +427,10 @@ export default function TrainingAssessments() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Assessment')
+            ? 'Add New Assessment'
             : formMode === 'edit'
-              ? t('Edit Assessment')
-              : t('View Assessment')
+              ? 'Edit Assessment'
+              : 'View Assessment'
         }
         mode={formMode}
       />

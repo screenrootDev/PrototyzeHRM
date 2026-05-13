@@ -7,7 +7,7 @@ import { SettingsSection } from '@/components/settings-section';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { useTranslation } from 'react-i18next';
+
 
 // Define notification types by module
 const notificationModules = [
@@ -109,7 +109,7 @@ const notificationModules = [
 ];
 
 export default function EmailNotificationSettings() {
-  const { t } = useTranslation();
+  
   const [modules, setModules] = useState(notificationModules);
   const [activeTab, setActiveTab] = useState('general');
 
@@ -162,12 +162,12 @@ export default function EmailNotificationSettings() {
 
   return (
     <SettingsSection
-      title={t("Email Notification Settings")}
-      description={t("Configure which email notifications are sent for different modules")}
+      title={"Email Notification Settings"}
+      description={"Configure which email notifications are sent for different modules"}
       action={
         <Button type="submit" form="notification-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
@@ -178,7 +178,7 @@ export default function EmailNotificationSettings() {
             <div className="sticky top-24">
               <div className="text-sm font-medium mb-2 flex items-center">
                 <Bell className="h-4 w-4 mr-2" />
-                {t("Modules")}
+                {"Modules"}
               </div>
               <ScrollArea className="h-[calc(100vh-12rem)]">
                 <div className="space-y-1 pr-4">
@@ -220,15 +220,15 @@ export default function EmailNotificationSettings() {
                     <div>
                       <h3 className="text-base font-medium flex items-center gap-2">
                         <span>{module.icon}</span>
-                        {module.name} {t("Notifications")}
+                        {module.name} {"Notifications"}
                       </h3>
                       <p className="text-sm text-muted-foreground mt-1">
-                        {getEnabledCount(module.id)} of {module.notifications.length} {t("notifications enabled")}
+                        {getEnabledCount(module.id)} of {module.notifications.length} {"notifications enabled"}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">
                       <Label htmlFor={`toggle-all-${module.id}`} className="text-sm">
-                        {t("Toggle All")}
+                        {"Toggle All"}
                       </Label>
                       <Switch
                         id={`toggle-all-${module.id}`}

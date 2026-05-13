@@ -4,7 +4,6 @@ import { CrudConfig } from '@/types/crud';
 import { columnRenderers } from '@/utils/columnRenderers';
 import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/custom-toast';
-import { t } from '@/utils/i18n';
 import { router } from '@inertiajs/react';
 
 // Separate component for status toggle to properly handle hooks
@@ -12,7 +11,7 @@ const StatusToggle = ({ initialValue, rowId }: { initialValue: boolean, rowId: n
   const [isChecked, setIsChecked] = React.useState(initialValue);
 
   const handleToggle = () => {
-    toast.loading(`${isChecked ? t('Deactivating') : t('Activating')} coupon...`);
+    toast.loading(`${isChecked ? 'Deactivating' : 'Activating'} coupon...`);
 
     // Use Inertia router for consistent error handling
     router.put(route('coupons.toggle-status', rowId), {}, {
@@ -21,18 +20,14 @@ const StatusToggle = ({ initialValue, rowId }: { initialValue: boolean, rowId: n
         setIsChecked(!isChecked);
         
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors: any) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update coupon status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update coupon status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -58,34 +53,34 @@ export const couponsConfig: CrudConfig = {
     }
   },
   modalSize: '4xl',
-  description: t('Manage discount coupons and promotional codes'),
+  description: 'Manage discount coupons and promotional codes',
   table: {
     columns: [
-      { key: 'name', label: t('Name'), sortable: true },
+      { key: 'name', label: 'Name', sortable: true },
       {
         key: 'type',
-        label: t('Type'),
+        label: 'Type',
         sortable: true,
         render: (value) => {
           const className = value === 'percentage'
             ? 'bg-blue-100 text-blue-800'
             : 'bg-green-100 text-green-800';
-          return value === 'percentage' ? t('Percentage') : t('Flat Amount');
+          return value === 'percentage' ? 'Percentage' : 'Flat Amount';
         }
       },
       {
         key: 'minimum_spend',
-        label: t('Min Spend'),
+        label: 'Min Spend',
         render: (value) => value ? (window.appSettings?.formatCurrency(value) || `$${parseFloat(value).toFixed(2)}`) : '-'
       },
       {
         key: 'maximum_spend',
-        label: t('Max Spend'),
+        label: 'Max Spend',
         render: (value) => value ? (window.appSettings?.formatCurrency(value) || `$${parseFloat(value).toFixed(2)}`) : '-'
       },
       {
         key: 'discount_amount',
-        label: t('Discount'),
+        label: 'Discount',
         render: (value, row) => {
           const amount = parseFloat(value);
           return row.type === 'percentage'
@@ -93,18 +88,18 @@ export const couponsConfig: CrudConfig = {
             : (window.appSettings?.formatCurrency(amount) || `$${amount.toFixed(2)}`);
         }
       },
-      { key: 'use_limit_per_coupon', label: t('Coupon Limit'), render: (value) => value || t('Unlimited') },
-      { key: 'use_limit_per_user', label: t('User Limit'), render: (value) => value || t('Unlimited') },
+      { key: 'use_limit_per_coupon', label: 'Coupon Limit', render: (value) => value || 'Unlimited' },
+      { key: 'use_limit_per_user', label: 'User Limit', render: (value) => value || 'Unlimited' },
       {
         key: 'expiry_date',
-        label: t('Expiry Date'),
+        label: 'Expiry Date',
         sortable: true,
         render: (value) => `${window.appSettings.formatDateTime(value, false)}`
       },
-      { key: 'code', label: t('Code'), sortable: true },
+      { key: 'code', label: 'Code', sortable: true },
       {
         key: 'status',
-        label: t('Status'),
+        label: 'Status',
         render: (value, row) => {
           // Use a component to properly handle hooks
           return React.createElement(StatusToggle, { initialValue: !!value, rowId: row.id });
@@ -113,20 +108,20 @@ export const couponsConfig: CrudConfig = {
     ],
     actions: [
       {
-        label: t('View Details'),
+        label: 'View Details',
         icon: 'Eye',
         action: 'view-details',
         href: (row: any) => route('coupons.show', row.id),
         className: 'text-blue-500'
       },
       {
-        label: t('Edit'),
+        label: 'Edit',
         icon: 'Edit',
         action: 'edit',
         className: 'text-amber-500'
       },
       {
-        label: t('Delete'),
+        label: 'Delete',
         icon: 'Trash2',
         action: 'delete',
         className: 'text-red-500'
@@ -135,28 +130,28 @@ export const couponsConfig: CrudConfig = {
   },
   search: {
     enabled: true,
-    placeholder: t('Search coupons...'),
+    placeholder: 'Search coupons...',
     fields: ['name', 'code']
   },
   filters: [
     {
       key: 'type',
-      label: t('Type'),
+      label: 'Type',
       type: 'select',
       options: [
-        { value: 'all', label: t('All Types') },
-        { value: 'percentage', label: t('Percentage') },
-        { value: 'flat', label: t('Flat Amount') }
+        { value: 'all', label: 'All Types' },
+        { value: 'percentage', label: 'Percentage' },
+        { value: 'flat', label: 'Flat Amount' }
       ]
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       type: 'select',
       options: [
-        { value: 'all', label: t('All Status') },
-        { value: '1', label: t('Active') },
-        { value: '0', label: t('Inactive') }
+        { value: 'all', label: 'All Status' },
+        { value: '1', label: 'Active' },
+        { value: '0', label: 'Inactive' }
       ]
     }
   ],
@@ -164,49 +159,49 @@ export const couponsConfig: CrudConfig = {
     fields: [
       {
         name: 'name',
-        label: t('Coupon Name'),
+        label: 'Coupon Name',
         type: 'text',
         required: true,
         colSpan: 12,
-        placeholder: t('Enter coupon name')
+        placeholder: 'Enter coupon name'
       },
       {
         name: 'type',
-        label: t('Discount Type'),
+        label: 'Discount Type',
         type: 'select',
         required: true,
         colSpan: 6,
         options: [
-          { value: 'percentage', label: t('Percentage (%)') },
-          { value: 'flat', label: t('Fixed Amount ($)') }
+          { value: 'percentage', label: 'Percentage (%)' },
+          { value: 'flat', label: 'Fixed Amount ($)' }
         ]
       },
       {
         name: 'discount_amount',
-        label: t('Discount Value'),
+        label: 'Discount Value',
         type: 'number',
         required: true,
         colSpan: 6,
         min: 0,
         max: 99,
         step: 0.01,
-        placeholder: t('Enter value')
+        placeholder: 'Enter value'
       },
       {
         name: 'code_type',
-        label: t('Code Generation'),
+        label: 'Code Generation',
         type: 'radio',
         required: true,
         colSpan: 12,
         options: [
-          { value: 'manual', label: t('Manual Entry') },
-          { value: 'auto', label: t('Auto Generate') }
+          { value: 'manual', label: 'Manual Entry' },
+          { value: 'auto', label: 'Auto Generate' }
         ],
         defaultValue: 'manual'
       },
       {
         name: 'code',
-        label: t('Coupon Code'),
+        label: 'Coupon Code',
         type: 'custom',
         colSpan: 12,
         render: (field: any, formData: any, onChange: any) => {
@@ -226,80 +221,66 @@ export const couponsConfig: CrudConfig = {
               className: isAuto ? 'flex gap-2' : '',
               key: 'input-group'
             }, isAuto ? [
-              React.createElement('input', {
-                key: 'code-input',
-                type: 'text',
-                value: formData.code || '',
-                onChange: (e: any) => onChange('code', e.target.value.toUpperCase()),
-                placeholder: t('Click generate to create code'),
-                className: 'flex-1 px-3 py-2 border rounded-md'
-              }),
+              React.createElement('input'),
               React.createElement('button', {
                 key: 'generate-btn',
                 type: 'button',
                 onClick: generateCode,
                 className: 'px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600'
-              }, t('Generate'))
+              }, 'Generate')
             ] : [
-              React.createElement('input', {
-                key: 'code-input-manual',
-                type: 'text',
-                value: formData.code || '',
-                onChange: (e: any) => onChange('code', e.target.value.toUpperCase()),
-                placeholder: t('Enter coupon code'),
-                className: 'w-full px-3 py-2 border rounded-md'
-              })
+              React.createElement('input')
             ])
           ]);
         }
       },
       {
         name: 'minimum_spend',
-        label: t('Minimum Spend ($)'),
+        label: 'Minimum Spend ($)',
         type: 'number',
         colSpan: 6,
         min: 0,
         step: 0.01,
-        placeholder: t('Optional')
+        placeholder: 'Optional'
       },
       {
         name: 'maximum_spend',
-        label: t('Maximum Spend ($)'),
+        label: 'Maximum Spend ($)',
         type: 'number',
         colSpan: 6,
         min: 0,
         step: 0.01,
-        placeholder: t('Optional')
+        placeholder: 'Optional'
       },
       {
         name: 'use_limit_per_coupon',
-        label: t('Total Usage Limit'),
+        label: 'Total Usage Limit',
         type: 'number',
         colSpan: 6,
         min: 1,
-        placeholder: t('Leave empty for unlimited')
+        placeholder: 'Leave empty for unlimited'
       },
       {
         name: 'use_limit_per_user',
-        label: t('Usage Limit Per User'),
+        label: 'Usage Limit Per User',
         type: 'number',
         colSpan: 6,
         min: 1,
-        placeholder: t('Leave empty for unlimited')
+        placeholder: 'Leave empty for unlimited'
       },
       {
         name: 'expiry_date',
-        label: t('Expiry Date'),
+        label: 'Expiry Date',
         type: 'date',
         colSpan: 6
       },
       {
         name: 'status',
-        label: t('Status'),
+        label: 'Status',
         type: 'switch',
         colSpan: 6,
         defaultValue: true,
-        placeholder: t('Enable or disable this coupon')
+        placeholder: 'Enable or disable this coupon'
       }
     ]
   }

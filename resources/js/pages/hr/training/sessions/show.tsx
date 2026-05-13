@@ -4,7 +4,7 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { hasPermission } from '@/utils/authorization';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Edit, Trash, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,7 +16,7 @@ import { toast } from '@/components/custom-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 
 export default function TrainingSessionShow() {
-  const { t } = useTranslation();
+  
   const { auth, trainingSession, attendanceData } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -66,73 +66,61 @@ export default function TrainingSessionShow() {
     delete submitData.start_time;
     delete submitData.end_time;
     
-    toast.loading(t('Updating session...'));
+    toast.loading('Updating session...');
 
     router.put(route('hr.training-sessions.update', trainingSession.id), submitData, {
       onSuccess: (page) => {
         setIsFormModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update session: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update session: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleAttendanceSubmit = () => {
-    toast.loading(t('Updating attendance...'));
+    toast.loading('Updating attendance...');
 
     router.post(route('hr.training-sessions.update-attendance', trainingSession.id), { attendance }, {
       onSuccess: (page) => {
         setIsAttendanceModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update attendance: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update attendance: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting session...'));
+    toast.loading('Deleting session...');
     
     router.delete(route('hr.training-sessions.destroy', trainingSession.id), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
         router.get(route('hr.training-sessions.index'));
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete session: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete session: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -142,7 +130,7 @@ export default function TrainingSessionShow() {
   
   // Add the "Back to List" button
   pageActions.push({
-    label: t('Back to List'),
+    label: 'Back to List',
     icon: <ArrowLeft className="h-4 w-4 mr-2" />,
     variant: 'outline' as const,
     onClick: handleBackToList
@@ -151,7 +139,7 @@ export default function TrainingSessionShow() {
   // Add action buttons based on permissions
   if (hasPermission(permissions, 'edit-training-sessions')) {
     pageActions.push({
-      label: t('Edit'),
+      label: 'Edit',
       icon: <Edit className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleEdit
@@ -160,7 +148,7 @@ export default function TrainingSessionShow() {
   
   if (hasPermission(permissions, 'delete-training-sessions')) {
     pageActions.push({
-      label: t('Delete'),
+      label: 'Delete',
       icon: <Trash className="h-4 w-4 mr-2" />,
       variant: 'destructive' as const,
       onClick: handleDelete
@@ -170,7 +158,7 @@ export default function TrainingSessionShow() {
   // Add Manage Attendance button
   if (hasPermission(permissions, 'manage-attendance')) {
     pageActions.push({
-      label: t('Manage Attendance'),
+      label: 'Manage Attendance',
       icon: <Check className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleManageAttendance
@@ -178,10 +166,10 @@ export default function TrainingSessionShow() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Sessions'), href: route('hr.training-sessions.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Sessions', href: route('hr.training-sessions.index') },
     { title: trainingSession.name || trainingSession.training_program?.name || '' }
   ];
   
@@ -220,35 +208,35 @@ export default function TrainingSessionShow() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Date')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Date'}</h3>
                   <p>{window.appSettings?.formatDateTimeSimple(trainingSession.start_date, false) || format(new Date(trainingSession.start_date), 'MMMM dd, yyyy')}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Time')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Time'}</h3>
                   <p>
                     {window.appSettings?.formatDateTimeSimple(trainingSession.start_date, true)?.split(' ').slice(-2).join(' ') || format(new Date(trainingSession.start_date), 'h:mm a')} - {window.appSettings?.formatDateTimeSimple(trainingSession.end_date, true)?.split(' ').slice(-2).join(' ') || format(new Date(trainingSession.end_date), 'h:mm a')}
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Duration')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Duration'}</h3>
                   <p>
                     {new Date(trainingSession.end_date).getTime() - new Date(trainingSession.start_date).getTime() > 0 
-                      ? `${Math.round((new Date(trainingSession.end_date).getTime() - new Date(trainingSession.start_date).getTime()) / (1000 * 60 * 60))} ${t('hours')}`
+                      ? `${Math.round((new Date(trainingSession.end_date).getTime() - new Date(trainingSession.start_date).getTime()) / (1000 * 60 * 60))} ${'hours'}`
                       : '-'
                     }
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Location Type')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Location Type'}</h3>
                   <p>
                     <Badge variant="outline" className={trainingSession.location_type === 'virtual' ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'}>
-                      {trainingSession.location_type === 'virtual' ? t('Virtual') : t('Physical')}
+                      {trainingSession.location_type === 'virtual' ? 'Virtual' : 'Physical'}
                     </Badge>
                   </p>
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-500">
-                    {trainingSession.location_type === 'virtual' ? t('Meeting Link') : t('Location')}
+                    {trainingSession.location_type === 'virtual' ? 'Meeting Link' : 'Location'}
                   </h3>
                   <p>
                     {trainingSession.location_type === 'virtual' 
@@ -260,14 +248,14 @@ export default function TrainingSessionShow() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Created')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Created'}</h3>
                   <p>{auth.user?.name || '-'}</p>
                 </div>
               </div>
               
               {trainingSession.notes && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Notes')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Notes'}</h3>
                   <p className="mt-1">{trainingSession.notes}</p>
                 </div>
               )}
@@ -277,16 +265,16 @@ export default function TrainingSessionShow() {
           {/* Attendance */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('Attendance')}</CardTitle>
+              <CardTitle>{'Attendance'}</CardTitle>
             </CardHeader>
             <CardContent>
               {attendance && attendance.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>{t('Employee')}</TableHead>
-                      <TableHead>{t('Status')}</TableHead>
-                      <TableHead>{t('Notes')}</TableHead>
+                      <TableHead>{'Employee'}</TableHead>
+                      <TableHead>{'Status'}</TableHead>
+                      <TableHead>{'Notes'}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -299,11 +287,11 @@ export default function TrainingSessionShow() {
                         <TableCell>
                           {item.is_present ? (
                             <Badge variant="outline" className="bg-green-50 text-green-700">
-                              {t('Present')}
+                              {'Present'}
                             </Badge>
                           ) : (
                             <Badge variant="outline" className="bg-red-50 text-red-700">
-                              {t('Absent')}
+                              {'Absent'}
                             </Badge>
                           )}
                         </TableCell>
@@ -316,7 +304,7 @@ export default function TrainingSessionShow() {
                 </Table>
               ) : (
                 <div className="text-center py-4 text-gray-500">
-                  {t('No attendance data available')}
+                  {'No attendance data available'}
                 </div>
               )}
               
@@ -327,7 +315,7 @@ export default function TrainingSessionShow() {
                     onClick={handleManageAttendance}
                   >
                     <Check className="h-4 w-4 mr-2" />
-                    {t('Manage Attendance')}
+                    {'Manage Attendance'}
                   </Button>
                 </div>
               )}
@@ -340,28 +328,28 @@ export default function TrainingSessionShow() {
           {/* Program Details */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle>{t('Program Details')}</CardTitle>
+              <CardTitle>{'Program Details'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Program')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Program'}</h3>
                   <p className="font-medium">{trainingSession.training_program?.name || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Training Program')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Training Program'}</h3>
                   <p>{trainingSession.training_program?.name || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Duration')}</h3>
-                  <p>{trainingSession.training_program?.duration ? `${trainingSession.training_program.duration} ${t('hours')}` : '-'}</p>
+                  <h3 className="text-sm font-medium text-gray-500">{'Duration'}</h3>
+                  <p>{trainingSession.training_program?.duration ? `${trainingSession.training_program.duration} ${'hours'}` : '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Cost')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Cost'}</h3>
                   <p>{trainingSession.training_program?.cost ? window.appSettings?.formatCurrency(parseFloat(trainingSession.training_program.cost)) : '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Capacity')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Capacity'}</h3>
                   <p>{trainingSession.training_program?.capacity || '-'}</p>
                 </div>
               </div>
@@ -372,7 +360,7 @@ export default function TrainingSessionShow() {
                   onClick={() => router.get(route('hr.training-programs.show', trainingSession.training_program_id))}
                   className="w-full"
                 >
-                  {t('View Program Details')}
+                  {'View Program Details'}
                 </Button>
               </div>
             </CardContent>
@@ -381,7 +369,7 @@ export default function TrainingSessionShow() {
           {/* Trainers */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('Trainers')}</CardTitle>
+              <CardTitle>{'Trainers'}</CardTitle>
             </CardHeader>
             <CardContent>
               {trainingSession.trainers && trainingSession.trainers.length > 0 ? (
@@ -402,7 +390,7 @@ export default function TrainingSessionShow() {
                 </div>
               ) : (
                 <div className="text-center py-4 text-gray-500">
-                  {t('No trainers assigned')}
+                  {'No trainers assigned'}
                 </div>
               )}
             </CardContent>
@@ -419,7 +407,7 @@ export default function TrainingSessionShow() {
           fields: [
             { 
               name: 'training_program_id', 
-              label: t('Training Program'), 
+              label: 'Training Program', 
               type: 'select',
               required: true,
               options: [
@@ -429,64 +417,64 @@ export default function TrainingSessionShow() {
             },
             { 
               name: 'name', 
-              label: t('Session Name'), 
+              label: 'Session Name', 
               type: 'text',
-              helpText: t('Leave blank to use program name')
+              helpText: 'Leave blank to use program name'
             },
             { 
               name: 'start_date', 
-              label: t('Start Date & Time'), 
+              label: 'Start Date & Time', 
               type: 'datetime-local',
               required: true
             },
             { 
               name: 'end_date', 
-              label: t('End Date & Time'), 
+              label: 'End Date & Time', 
               type: 'datetime-local',
               required: true
             },
             { 
               name: 'location_type', 
-              label: t('Location Type'), 
+              label: 'Location Type', 
               type: 'select',
               required: true,
               options: [
-                { value: 'physical', label: t('Physical') },
-                { value: 'virtual', label: t('Virtual') }
+                { value: 'physical', label: 'Physical' },
+                { value: 'virtual', label: 'Virtual' }
               ]
             },
             { 
               name: 'location', 
-              label: t('Location'), 
+              label: 'Location', 
               type: 'text',
               showWhen: (formData) => formData.location_type === 'physical'
             },
             { 
               name: 'meeting_link', 
-              label: t('Meeting Link'), 
+              label: 'Meeting Link', 
               type: 'text',
               showWhen: (formData) => formData.location_type === 'virtual'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'scheduled', label: t('Scheduled') },
-                { value: 'in_progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'cancelled', label: t('Cancelled') }
+                { value: 'scheduled', label: 'Scheduled' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
               ]
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             },
             { 
               name: 'trainer_ids', 
-              label: t('Trainers'), 
+              label: 'Trainers', 
               type: 'multiselect',
               options: auth.trainers?.map((trainer: any) => ({
                 value: trainer.id.toString(),
@@ -504,7 +492,7 @@ export default function TrainingSessionShow() {
           end_time: trainingSession.end_date ? trainingSession.end_date.split(' ')[1]?.substring(0, 5) : '',
           trainer_ids: trainingSession.trainers?.map((trainer: any) => trainer.id.toString())
         }}
-        title={t('Edit Training Session')}
+        title={'Edit Training Session'}
         mode="edit"
       />
       
@@ -521,9 +509,9 @@ export default function TrainingSessionShow() {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>{t('Employee')}</TableHead>
-                    <TableHead>{t('Present')}</TableHead>
-                    <TableHead>{t('Notes')}</TableHead>
+                    <TableHead>{'Employee'}</TableHead>
+                    <TableHead>{'Present'}</TableHead>
+                    <TableHead>{'Notes'}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -544,7 +532,7 @@ export default function TrainingSessionShow() {
                             htmlFor={`present-${item.employee_id}`}
                             className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                           >
-                            {t('Present')}
+                            {'Present'}
                           </label>
                         </div>
                       </TableCell>
@@ -554,7 +542,7 @@ export default function TrainingSessionShow() {
                           value={item.notes || ''}
                           onChange={(e) => handleAttendanceNoteChange(item.employee_id, e.target.value)}
                           className="w-full p-2 border rounded-md"
-                          placeholder={t('Add notes')}
+                          placeholder={'Add notes'}
                         />
                       </TableCell>
                     </TableRow>
@@ -565,9 +553,9 @@ export default function TrainingSessionShow() {
           )
         }}
         initialData={{}}
-        title={t('Manage Attendance')}
+        title={'Manage Attendance'}
         mode="custom"
-        submitLabel={t('Save Attendance')}
+        submitLabel={'Save Attendance'}
       />
 
       {/* Delete Modal */}

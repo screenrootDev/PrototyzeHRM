@@ -1,7 +1,6 @@
 // config/crud/contacts.ts
 import { CrudConfig } from '@/types/crud';
 import { columnRenderers } from '@/utils/columnRenderers';
-import { t } from '@/utils/i18n';
 
 export const contactsConfig: CrudConfig = {
   entity: {
@@ -16,14 +15,14 @@ export const contactsConfig: CrudConfig = {
   },
   table: {
     columns: [
-      { key: 'business.name', label: t('Business Name'), sortable: false },
-      { key: 'name', label: t('Name'), sortable: true },
-      { key: 'email', label: t('Email'), sortable: true },
-      { key: 'phone', label: t('Phone') },
-      { key: 'message', label: t('Message') },
+      { key: 'business.name', label: 'Business Name', sortable: false },
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'email', label: 'Email', sortable: true },
+      { key: 'phone', label: 'Phone' },
+      { key: 'message', label: 'Message' },
       { 
         key: 'status', 
-        label: t('Status'), 
+        label: 'Status', 
         sortable: true, 
         render: columnRenderers.status({
           'new': 'bg-blue-100 text-blue-800',
@@ -36,14 +35,14 @@ export const contactsConfig: CrudConfig = {
     ],
     actions: [
       { 
-        label: t('Reply'), 
+        label: 'Reply', 
         icon: 'MessageSquare', 
         action: 'reply', 
         className: 'text-blue-500',
         requiredPermission: 'edit-contacts'
       },
       { 
-        label: t('Delete'), 
+        label: 'Delete', 
         icon: 'Trash2', 
         action: 'delete', 
         className: 'text-red-500',
@@ -54,38 +53,38 @@ export const contactsConfig: CrudConfig = {
   filters: [
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       type: 'select',
       options: [
-        { value: 'new', label: t('New') },
-        { value: 'contacted', label: t('Contacted') },
-        { value: 'qualified', label: t('Qualified') },
-        { value: 'converted', label: t('Converted') },
-        { value: 'closed', label: t('Closed') }
+        { value: 'new', label: 'New' },
+        { value: 'contacted', label: 'Contacted' },
+        { value: 'qualified', label: 'Qualified' },
+        { value: 'converted', label: 'Converted' },
+        { value: 'closed', label: 'Closed' }
       ]
     }
   ],
   form: {
     fields: [
-      { name: 'business_id', label: t('Business'), type: 'select', required: true },
-      { name: 'name', label: t('Name'), type: 'text', required: true },
-      { name: 'email', label: t('Email'), type: 'email' },
-      { name: 'phone', label: t('Phone'), type: 'text' },
-      { name: 'message', label: t('Message'), type: 'textarea' },
+      { name: 'business_id', label: 'Business', type: 'select', required: true },
+      { name: 'name', label: 'Name', type: 'text', required: true },
+      { name: 'email', label: 'Email', type: 'email' },
+      { name: 'phone', label: 'Phone', type: 'text' },
+      { name: 'message', label: 'Message', type: 'textarea' },
       {
         name: 'status',
-        label: t('Status'),
+        label: 'Status',
         type: 'select',
         required: true,
         options: [
-          { value: 'new', label: t('New') },
-          { value: 'contacted', label: t('Contacted') },
-          { value: 'qualified', label: t('Qualified') },
-          { value: 'converted', label: t('Converted') },
-          { value: 'closed', label: t('Closed') }
+          { value: 'new', label: 'New' },
+          { value: 'contacted', label: 'Contacted' },
+          { value: 'qualified', label: 'Qualified' },
+          { value: 'converted', label: 'Converted' },
+          { value: 'closed', label: 'Closed' }
         ]
       },
-      { name: 'notes', label: t('Notes'), type: 'textarea' }
+      { name: 'notes', label: 'Notes', type: 'textarea' }
     ]
   }
 };

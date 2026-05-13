@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function LeavePolicies() {
-  const { t } = useTranslation();
+  
   const { auth, leavePolicies, leaveTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -95,17 +95,15 @@ export default function LeavePolicies() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating leave policy...'));
+      toast.loading('Creating leave policy...');
 
       router.post(route('hr.leave-policies.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -117,17 +115,15 @@ export default function LeavePolicies() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating leave policy...'));
+      toast.loading('Updating leave policy...');
 
       router.put(route('hr.leave-policies.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -142,17 +138,15 @@ export default function LeavePolicies() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting leave policy...'));
+    toast.loading('Deleting leave policy...');
 
     router.delete(route('hr.leave-policies.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -167,16 +161,14 @@ export default function LeavePolicies() {
 
   const handleToggleStatus = (leavePolicy: any) => {
     const newStatus = leavePolicy.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} leave policy...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} leave policy...`);
 
     router.put(route('hr.leave-policies.toggle-status', leavePolicy.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -207,7 +199,7 @@ export default function LeavePolicies() {
   // Add the "Add New Leave Policy" button if user has permission
   if (hasPermission(permissions, 'create-leave-policies')) {
     pageActions.push({
-      label: t('Add Leave Policy'),
+      label: 'Add Leave Policy',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -215,21 +207,21 @@ export default function LeavePolicies() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Leave Management'), href: route('hr.leave-policies.index') },
-    { title: t('Leave Policies') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Leave Management', href: route('hr.leave-policies.index') },
+    { title: 'Leave Policies' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Policy Name'),
+      label: 'Policy Name',
       sortable: true
     },
     {
       key: 'leave_type',
-      label: t('Leave Type'),
+      label: 'Leave Type',
       render: (value: any, row: any) => (
         <div className="flex items-center gap-2">
           <div 
@@ -242,47 +234,47 @@ export default function LeavePolicies() {
     },
     {
       key: 'accrual_rate',
-      label: t('Accrual'),
+      label: 'Accrual',
       render: (value: number, row: any) => (
         <span className="font-mono">{value} days/{row.accrual_type}</span>
       )
     },
     {
       key: 'carry_forward_limit',
-      label: t('Carry Forward'),
+      label: 'Carry Forward',
       render: (value: number) => (
         <span className="font-mono">{value} days</span>
       )
     },
     {
       key: 'requires_approval',
-      label: t('Approval'),
+      label: 'Approval',
       render: (value: boolean) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value
           ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
           : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
           }`}>
-          {value ? t('Required') : t('Not Required')}
+          {value ? 'Required' : 'Not Required'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -291,28 +283,28 @@ export default function LeavePolicies() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-leave-policies'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-leave-policies'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-leave-policies'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -322,7 +314,7 @@ export default function LeavePolicies() {
 
   // Prepare leave type options for filter and form
   const leaveTypeOptions = [
-    { value: 'all', label: t('All Leave Types') , disabled: true },
+    { value: 'all', label: 'All Leave Types' , disabled: true },
     ...(leaveTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -331,14 +323,14 @@ export default function LeavePolicies() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') , disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' , disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate
-      title={t("Leave Policies")}
+      title={"Leave Policies"}
       url="/hr/leave-policies"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -353,7 +345,7 @@ export default function LeavePolicies() {
           filters={[
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               value: selectedLeaveType,
               onChange: setSelectedLeaveType,
@@ -362,7 +354,7 @@ export default function LeavePolicies() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -414,7 +406,7 @@ export default function LeavePolicies() {
           to={leavePolicies?.to || 0}
           total={leavePolicies?.total || 0}
           links={leavePolicies?.links}
-          entityName={t("leave policies")}
+          entityName={"leave policies"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -426,11 +418,11 @@ export default function LeavePolicies() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Policy Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
+            { name: 'name', label: 'Policy Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               required: true,
               searchable: true,
@@ -441,22 +433,22 @@ export default function LeavePolicies() {
             },
             {
               name: 'accrual_type',
-              label: t('Accrual Type'),
+              label: 'Accrual Type',
               type: 'select',
               required: true,
               options: [
-                { value: 'yearly', label: t('Yearly') },
-                { value: 'monthly', label: t('Monthly') }
+                { value: 'yearly', label: 'Yearly' },
+                { value: 'monthly', label: 'Monthly' }
               ]
             },
-            { name: 'accrual_rate', label: t('Accrual Rate (Days)'), type: 'number', required: true, min: 0, step: 0.5 },
-            { name: 'carry_forward_limit', label: t('Carry Forward Limit (Days)'), type: 'number', required: true, min: 0 },
-            { name: 'min_days_per_application', label: t('Min Days Per Application'), type: 'number', required: true, min: 1 },
-            { name: 'max_days_per_application', label: t('Max Days Per Application'), type: 'number', required: true, min: 1 },
-            { name: 'requires_approval', label: t('Requires Approval'), type: 'checkbox', defaultValue: true },
+            { name: 'accrual_rate', label: 'Accrual Rate (Days)', type: 'number', required: true, min: 0, step: 0.5 },
+            { name: 'carry_forward_limit', label: 'Carry Forward Limit (Days)', type: 'number', required: true, min: 0 },
+            { name: 'min_days_per_application', label: 'Min Days Per Application', type: 'number', required: true, min: 1 },
+            { name: 'max_days_per_application', label: 'Max Days Per Application', type: 'number', required: true, min: 1 },
+            { name: 'requires_approval', label: 'Requires Approval', type: 'checkbox', defaultValue: true },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
                 { value: 'active', label: 'Active' },
@@ -470,10 +462,10 @@ export default function LeavePolicies() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Leave Policy')
+            ? 'Add New Leave Policy'
             : formMode === 'edit'
-              ? t('Edit Leave Policy')
-              : t('View Leave Policy')
+              ? 'Edit Leave Policy'
+              : 'View Leave Policy'
         }
         mode={formMode}
       />

@@ -8,13 +8,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function PerformanceIndicators() {
-  const { t } = useTranslation();
+  
   const { auth, indicators, categories, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -96,96 +96,80 @@ export default function PerformanceIndicators() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating performance indicator...'));
+      toast.loading('Creating performance indicator...');
 
       router.post(route('hr.performance.indicators.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create indicator: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create indicator: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating performance indicator...'));
+      toast.loading('Updating performance indicator...');
 
       router.put(route('hr.performance.indicators.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update indicator: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update indicator: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting performance indicator...'));
+    toast.loading('Deleting performance indicator...');
     
     router.delete(route('hr.performance.indicators.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete indicator: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete indicator: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleToggleStatus = (indicator: any) => {
     const newStatus = indicator.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} indicator...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} indicator...`);
     
     router.put(route('hr.performance.indicators.toggle-status', indicator.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update indicator status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update indicator status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -208,7 +192,7 @@ export default function PerformanceIndicators() {
   // Add the "Add New Indicator" button if user has permission
   if (hasPermission(permissions, 'create-performance-indicators')) {
     pageActions.push({
-      label: t('Add Indicator'),
+      label: 'Add Indicator',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -216,37 +200,37 @@ export default function PerformanceIndicators() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Indicators') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Indicators' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true
     },
     { 
       key: 'category.name', 
-      label: t('Category'),
+      label: 'Category',
       render: (value: string, row: any) => row.category?.name || '-'
     },
     { 
       key: 'measurement_unit', 
-      label: t('Measurement Unit'),
+      label: 'Measurement Unit',
       render: (value: string) => value || '-'
     },
     { 
       key: 'target_value', 
-      label: t('Target Value'),
+      label: 'Target Value',
       render: (value: string) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -254,14 +238,14 @@ export default function PerformanceIndicators() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Created At'), 
+      label: 'Created At', 
       sortable: true,
       render: (value: string) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     }
@@ -270,28 +254,28 @@ export default function PerformanceIndicators() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-performance-indicators'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-performance-indicators'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-performance-indicators'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -301,14 +285,14 @@ export default function PerformanceIndicators() {
 
   // Prepare filter options
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   // Prepare category options
   const categoryOptions = [
-    { value: '', label: t('All Categories') },
+    { value: '', label: 'All Categories' },
     ...(categories || []).map((category: any) => ({
       value: category.id.toString(),
       label: category.name
@@ -317,7 +301,7 @@ export default function PerformanceIndicators() {
 
   return (
     <PageTemplate 
-      title={t("Indicators")} 
+      title={"Indicators"} 
       url="/hr/performance/indicators"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -332,7 +316,7 @@ export default function PerformanceIndicators() {
           filters={[
             {
               name: 'category_id',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: selectedCategory,
               onChange: setSelectedCategory,
@@ -341,7 +325,7 @@ export default function PerformanceIndicators() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -393,7 +377,7 @@ export default function PerformanceIndicators() {
           to={indicators?.to || 0}
           total={indicators?.total || 0}
           links={indicators?.links}
-          entityName={t("performance indicators")}
+          entityName={"performance indicators"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -405,10 +389,10 @@ export default function PerformanceIndicators() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Indicator Name'), type: 'text', required: true },
+            { name: 'name', label: 'Indicator Name', type: 'text', required: true },
             { 
               name: 'category_id', 
-              label: t('Category'), 
+              label: 'Category', 
               type: 'select', 
               required: true,
               searchable: true,
@@ -417,16 +401,16 @@ export default function PerformanceIndicators() {
                 label: category.name
               }))
             },
-            { name: 'description', label: t('Description'), type: 'textarea' },
-            { name: 'measurement_unit', label: t('Measurement Unit'), type: 'text', placeholder: 'e.g., Rating 1-5, Percentage, etc.' },
-            { name: 'target_value', label: t('Target Value'), type: 'text', placeholder: 'e.g., 4, 95%, etc.' },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'measurement_unit', label: 'Measurement Unit', type: 'text', placeholder: 'e.g., Rating 1-5, Percentage, etc.' },
+            { name: 'target_value', label: 'Target Value', type: 'text', placeholder: 'e.g., 4, 95%, etc.' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ],
               defaultValue: 'active'
             }
@@ -436,10 +420,10 @@ export default function PerformanceIndicators() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Performance Indicator')
+            ? 'Add New Performance Indicator'
             : formMode === 'edit'
-              ? t('Edit Performance Indicator')
-              : t('View Performance Indicator')
+              ? 'Edit Performance Indicator'
+              : 'View Performance Indicator'
         }
         mode={formMode}
       />

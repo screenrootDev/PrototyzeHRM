@@ -9,12 +9,12 @@ import { hasPermission } from '@/utils/authorization';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 import { useInitials } from '@/hooks/use-initials';
-import { useTranslation } from 'react-i18next';
+
 import { Edit, Trash2, Download, FileText, Calendar, Phone, Mail, MapPin, Building, Briefcase, CreditCard, User, Lock, Unlock, ArrowLeft, Check, X } from 'lucide-react';
 import { getImagePath } from '@/utils/helpers';
 
 export default function EmployeeShow() {
-  const { t } = useTranslation();
+  
   const { auth, employee } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const getInitials = useInitials();
@@ -28,101 +28,87 @@ export default function EmployeeShow() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee...'));
+    toast.loading('Deleting employee...');
 
     router.delete(route('hr.employees.destroy', employee.id), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
         router.get(route('hr.employees.index'));
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete employee: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete employee: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleToggleStatus = () => {
     const newStatus = employee.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} employee...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} employee...`);
 
     router.put(route('hr.employees.toggle-status', employee.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update employee status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update employee status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDeleteDocument = (documentId: number) => {
-    toast.loading(t('Deleting document...'));
+    toast.loading('Deleting document...');
 
     router.delete(route('hr.employees.documents.destroy', [employee.id, documentId]), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete document: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete document: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDocumentVerification = (documentId: number, status: 'verified' | 'rejected') => {
     const action = status === 'verified' ? 'approve' : 'reject';
-    toast.loading(t(`${status === 'verified' ? 'Approving' : 'Rejecting'} document...`));
+    toast.loading(`${status === 'verified' ? 'Approving' : 'Rejecting'} document...`);
 
     router.put(route(`hr.employees.documents.${action}`, [employee.id, documentId]), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else {
-          toast.success(t(`Document ${status === 'verified' ? 'approved' : 'rejected'} successfully`));
+          toast.success(page.props.flash.success);        } else {
+          toast.success(`Document ${status === 'verified' ? 'approved' : 'rejected'} successfully`);
         }
       },
       onError: (errors) => {
         toast.dismiss();
         const errorMessage = errors?.message || Object.values(errors)[0] || `Failed to ${action} document`;
-        toast.error(t(errorMessage));
-      }
+        toast.error(errorMessage);      }
     });
   };
 
   // Define page actions
   const pageActions = [
     {
-      label: t('Back to Employees'),
+      label: 'Back to Employees',
       icon: <ArrowLeft className="h-4 w-4 mr-2" />,
       variant: 'outline',
       onClick: () => router.get(route('hr.employees.index'))
@@ -130,15 +116,15 @@ export default function EmployeeShow() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.employees.index') },
-    { title: t('Employees'), href: route('hr.employees.index') },
-    { title: employee?.name || t('Employee Details') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.employees.index') },
+    { title: 'Employees', href: route('hr.employees.index') },
+    { title: employee?.name || 'Employee Details' }
   ];
 
   return (
     <PageTemplate
-      title={employee?.name || t("Employee Details")}
+      title={employee?.name || "Employee Details"}
       url={`/hr/employees/${employee?.id}`}
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -167,17 +153,17 @@ export default function EmployeeShow() {
                       ? 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                       : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                 }`}>
-                {employee.employee?.employee_status === 'active' && t('Active')}
-                {employee.employee?.employee_status === 'inactive' && t('Inactive')}
-                {employee.employee?.employee_status === 'probation' && t('Probation')}
-                {employee.employee?.employee_status === 'terminated' && t('Terminated')}
+                {employee.employee?.employee_status === 'active' && 'Active'}
+                {employee.employee?.employee_status === 'inactive' && 'Inactive'}
+                {employee.employee?.employee_status === 'probation' && 'Probation'}
+                {employee.employee?.employee_status === 'terminated' && 'Terminated'}
                 {!employee.employee?.employee_status && '-'}
               </div>
 
               <div className="w-full space-y-3">
                 <div className="flex items-center">
                   <User className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="text-sm">{t('Employee ID')}: {employee.employee?.employee_id}</span>
+                  <span className="text-sm">{'Employee ID'}: {employee.employee?.employee_id}</span>
                 </div>
                 <div className="flex items-center">
                   <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
@@ -192,13 +178,13 @@ export default function EmployeeShow() {
                 {employee.employee?.date_of_birth && (
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span className="text-sm">{t('DOB')}: {window.appSettings?.formatDateTimeSimple(employee.employee.date_of_birth, false) || new Date(employee.employee.date_of_birth).toLocaleDateString()}</span>
+                    <span className="text-sm">{'DOB'}: {window.appSettings?.formatDateTimeSimple(employee.employee.date_of_birth, false) || new Date(employee.employee.date_of_birth).toLocaleDateString()}</span>
                   </div>
                 )}
                 {employee.employee?.date_of_joining && (
                   <div className="flex items-center">
                     <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                    <span className="text-sm">{t('Joined')}: {window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()}</span>
+                    <span className="text-sm">{'Joined'}: {window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()}</span>
                   </div>
                 )}
                 {employee.employee?.department?.name && (
@@ -228,48 +214,48 @@ export default function EmployeeShow() {
         <div className="lg:col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid grid-cols-5 mb-4">
-              <TabsTrigger value="basic_info">{t('Basic Info')}</TabsTrigger>
-              <TabsTrigger value="employment">{t('Employment')}</TabsTrigger>
-              <TabsTrigger value="contact">{t('Contact')}</TabsTrigger>
-              <TabsTrigger value="banking">{t('Banking')}</TabsTrigger>
-              <TabsTrigger value="documents">{t('Documents')}</TabsTrigger>
+              <TabsTrigger value="basic_info">{'Basic Info'}</TabsTrigger>
+              <TabsTrigger value="employment">{'Employment'}</TabsTrigger>
+              <TabsTrigger value="contact">{'Contact'}</TabsTrigger>
+              <TabsTrigger value="banking">{'Banking'}</TabsTrigger>
+              <TabsTrigger value="documents">{'Documents'}</TabsTrigger>
             </TabsList>
 
             {/* Basic Info Tab */}
             <TabsContent value="basic_info">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Basic Information')}</CardTitle>
+                  <CardTitle>{'Basic Information'}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Full Name')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Full Name'}</h4>
                       <p>{employee.name}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Employee ID')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Employee ID'}</h4>
                       <p>{employee.employee?.employee_id}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Email')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Email'}</h4>
                       <p>{employee.email}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Phone Number')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Phone Number'}</h4>
                       <p>{employee.employee?.phone || '-'}</p>
                     </div>
                      <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Employee Code')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Employee Code'}</h4>
                       <p>{employee.employee?.biometric_emp_id || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Date of Birth')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Date of Birth'}</h4>
                       <p>{employee.employee?.date_of_birth ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_birth, false) || new Date(employee.employee.date_of_birth).toLocaleDateString()) : '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Gender')}</h4>
-                      <p>{employee.employee?.gender ? t(employee.employee.gender.charAt(0).toUpperCase() + employee.employee.gender.slice(1)) : '-'}</p>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Gender'}</h4>
+                      <p>{employee.employee?.gender ? (employee.employee.gender.charAt(0).toUpperCase() + employee.employee.gender.slice(1)) : '-'}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -280,37 +266,37 @@ export default function EmployeeShow() {
             <TabsContent value="employment">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Employment Details')}</CardTitle>
+                  <CardTitle>{'Employment Details'}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Branch')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Branch'}</h4>
                       <p>{employee.employee?.branch?.name || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Department')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Department'}</h4>
                       <p>{employee.employee?.department?.name || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Designation')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Designation'}</h4>
                       <p>{employee.employee?.designation?.name || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Date of Joining')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Date of Joining'}</h4>
                       <p>{employee.employee?.date_of_joining ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()) : '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Employment Type')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Employment Type'}</h4>
                       <p>{employee.employee?.employment_type || '-'}</p>
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Shift')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Shift'}</h4>
                       <p>{employee.employee?.shift ? `${employee.employee.shift.name} (${employee.employee.shift.start_time} - ${employee.employee.shift.end_time})` : '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Attendance Policy')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Attendance Policy'}</h4>
                       <p>{employee.employee?.attendance_policy?.name || '-'}</p>
                     </div>
                   </div>
@@ -322,49 +308,49 @@ export default function EmployeeShow() {
             <TabsContent value="contact">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Contact Information')}</CardTitle>
+                  <CardTitle>{'Contact Information'}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Address Line 1')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Address Line 1'}</h4>
                       <p>{employee.employee?.address_line_1 || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Address Line 2')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Address Line 2'}</h4>
                       <p>{employee.employee?.address_line_2 || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('City')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'City'}</h4>
                       <p>{employee.employee?.city || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('State/Province')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'State/Province'}</h4>
                       <p>{employee.employee?.state || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Country')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Country'}</h4>
                       <p>{employee.employee?.country || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Postal/Zip Code')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Postal/Zip Code'}</h4>
                       <p>{employee.employee?.postal_code || '-'}</p>
                     </div>
                   </div>
 
                   <div className="mt-6">
-                    <h3 className="text-lg font-medium mb-4">{t('Emergency Contact')}</h3>
+                    <h3 className="text-lg font-medium mb-4">{'Emergency Contact'}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground">{t('Name')}</h4>
+                        <h4 className="text-sm font-medium text-muted-foreground">{'Name'}</h4>
                         <p>{employee.employee?.emergency_contact_name || '-'}</p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground">{t('Relationship')}</h4>
+                        <h4 className="text-sm font-medium text-muted-foreground">{'Relationship'}</h4>
                         <p>{employee.employee?.emergency_contact_relationship || '-'}</p>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground">{t('Phone Number')}</h4>
+                        <h4 className="text-sm font-medium text-muted-foreground">{'Phone Number'}</h4>
                         <p>{employee.employee?.emergency_contact_number || '-'}</p>
                       </div>
                     </div>
@@ -377,37 +363,37 @@ export default function EmployeeShow() {
             <TabsContent value="banking">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Banking Information')}</CardTitle>
+                  <CardTitle>{'Banking Information'}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Bank Name')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Bank Name'}</h4>
                       <p>{employee.employee?.bank_name || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Account Holder Name')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Account Holder Name'}</h4>
                       <p>{employee.employee?.account_holder_name || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Account Number')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Account Number'}</h4>
                       <p>{employee.employee?.account_number || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Bank Identifier Code (BIC/SWIFT)')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Bank Identifier Code (BIC/SWIFT)'}</h4>
                       <p>{employee.employee?.bank_identifier_code || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Bank Branch')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Bank Branch'}</h4>
                       <p>{employee.employee?.bank_branch || '-'}</p>
                     </div>
                     <div>
-                      <h4 className="text-sm font-medium text-muted-foreground">{t('Tax Payer ID')}</h4>
+                      <h4 className="text-sm font-medium text-muted-foreground">{'Tax Payer ID'}</h4>
                       <p>{employee.employee?.tax_payer_id || '-'}</p>
                     </div>
                     {employee.employee?.base_salary && (
                       <div>
-                        <h4 className="text-sm font-medium text-muted-foreground">{t('Base Salary')}</h4>
+                        <h4 className="text-sm font-medium text-muted-foreground">{'Base Salary'}</h4>
                         <p>{employee.employee.base_salary}</p>
                       </div>
                     )}
@@ -420,7 +406,7 @@ export default function EmployeeShow() {
             <TabsContent value="documents">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Documents')}</CardTitle>
+                  <CardTitle>{'Documents'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {employee.employee?.documents && employee.employee.documents.length > 0 ? (
@@ -434,7 +420,7 @@ export default function EmployeeShow() {
                                 <div>
                                   <h4 className="font-medium">{document.document_type?.name}</h4>
                                   <p className="text-sm text-muted-foreground">
-                                    {document.expiry_date ? `${t('Expires')}: ${window.appSettings?.formatDateTimeSimple(document.expiry_date, false) || new Date(document.expiry_date).toLocaleDateString()}` : t('No expiry date')}
+                                    {document.expiry_date ? `${'Expires'}: ${window.appSettings?.formatDateTimeSimple(document.expiry_date, false) || new Date(document.expiry_date).toLocaleDateString()}` : 'No expiry date'}
                                   </p>
                                   <div className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium mt-2 ${document.verification_status === 'verified'
                                     ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
@@ -443,10 +429,10 @@ export default function EmployeeShow() {
                                       : 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
                                     }`}>
                                     {document.verification_status === 'verified'
-                                      ? t('Verified')
+                                      ? 'Verified'
                                       : document.verification_status === 'rejected'
-                                        ? t('Rejected')
-                                        : t('Pending')}
+                                        ? 'Rejected'
+                                        : 'Pending'}
                                   </div>
                                 </div>
                               </div>
@@ -487,7 +473,7 @@ export default function EmployeeShow() {
                     </div>
                   ) : (
                     <div className="text-center py-8 text-muted-foreground">
-                      {t('No documents found')}
+                      {'No documents found'}
                     </div>
                   )}
                 </CardContent>

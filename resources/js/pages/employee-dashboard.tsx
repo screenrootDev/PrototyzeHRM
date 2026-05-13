@@ -3,7 +3,7 @@ import { PageTemplate } from '@/components/page-template';
 import { RefreshCw, Bell, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
 import { usePage, router } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 import { format } from 'date-fns';
@@ -30,7 +30,7 @@ interface PageAction {
 }
 
 export default function EmployeeDashboard({ dashboardData }: { dashboardData: EmployeeDashboardData }) {
-  const { t } = useTranslation();
+  
   const { auth } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const [isClockedIn, setIsClockedIn] = useState(false);
@@ -71,7 +71,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
   }, [dashboardData, isClockedIn]);
 
   const handleClockIn = () => {
-    toast.loading(t('Clocking in...'));
+    toast.loading('Clocking in...');
 
     router.post(route('hr.attendance.clock-in'), {
       employee_id: auth.user.id
@@ -81,29 +81,26 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
         if (page.props.flash?.success) {
           setIsClockedIn(true);
           setClockInTime(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-          toast.success(t(page.props.flash.success));
-        } else {
-          toast.error(t(page.props.flash.error || 'Failed to clock in'));
-        }
+          toast.success(page.props.flash.success);        } else {
+          toast.error(page.props.flash.error || 'Failed to clock in');        }
       },
       onError: (errors, page) => {
         toast.dismiss();
         if (page?.props?.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        } else if (typeof errors === 'string') {
+          toast.error(page.props.flash.error);        } else if (typeof errors === 'string') {
           toast.error(errors);
         } else if (errors && Object.keys(errors).length > 0) {
           const firstError = Object.values(errors)[0];
           toast.error(Array.isArray(firstError) ? firstError[0] : firstError);
         } else {
-          toast.error(t('Failed to clock in. Please try again.'));
+          toast.error('Failed to clock in. Please try again.');
         }
       }
     });
   };
 
   const handleClockOut = () => {
-    toast.loading(t('Clocking out...'));
+    toast.loading('Clocking out...');
 
     router.post(route('hr.attendance.clock-out'), {
       employee_id: auth.user.id
@@ -113,22 +110,19 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
         if (page.props.flash?.success) {
           setIsClockedIn(false);
           setClockOutTime(new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }));
-          toast.success(t(page.props.flash.success));
-        } else {
-          toast.error(t(page.props.flash.error || 'Failed to clock out'));
-        }
+          toast.success(page.props.flash.success);        } else {
+          toast.error(page.props.flash.error || 'Failed to clock out');        }
       },
       onError: (errors, page) => {
         toast.dismiss();
         if (page?.props?.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        } else if (typeof errors === 'string') {
+          toast.error(page.props.flash.error);        } else if (typeof errors === 'string') {
           toast.error(errors);
         } else if (errors && Object.keys(errors).length > 0) {
           const firstError = Object.values(errors)[0];
           toast.error(Array.isArray(firstError) ? firstError[0] : firstError);
         } else {
-          toast.error(t('Failed to clock out. Please try again.'));
+          toast.error('Failed to clock out. Please try again.');
         }
       }
     });
@@ -136,7 +130,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
 
   const pageActions: PageAction[] = [
     {
-      label: t('Refresh'),
+      label: 'Refresh',
       icon: <RefreshCw className="h-4 w-4" />,
       variant: 'outline',
       onClick: () => window.location.reload()
@@ -165,7 +159,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
 
   return (
     <PageTemplate
-      title={t('Dashboard')}
+      title={'Dashboard'}
       url="/dashboard"
       actions={pageActions}
     >
@@ -186,7 +180,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Awards')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Awards'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalAwards}</p>
                 </div>
                 <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
@@ -202,7 +196,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Warnings')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Warnings'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalWarnings}</p>
                 </div>
                 <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
@@ -218,7 +212,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Complaints')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Complaints'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalComplaints}</p>
                 </div>
                 <div className="rounded-full bg-red-100 p-3 dark:bg-red-900">
@@ -235,7 +229,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
         <Card>
           <CardContent className="p-6">
             <div className="text-center">
-              <h2 className="text-lg font-semibold mb-4">{t('Attendance')}</h2>
+              <h2 className="text-lg font-semibold mb-4">{'Attendance'}</h2>
 
               {/* Shift Information */}
               {dashboardData?.employeeShift && (
@@ -261,7 +255,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2" />
                       <circle cx="12" cy="12" r="10" />
                     </svg>
-                    {t('Clock In')}
+                    {'Clock In'}
                   </button>
 
                   <button
@@ -275,7 +269,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                     <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                     </svg>
-                    {t('Clock Out')}
+                    {'Clock Out'}
                   </button>
                 </div>
               )}
@@ -283,13 +277,13 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
               {/* Clock Times Display */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                  <p className="text-sm text-green-600 font-medium mb-1">{t('Clock In Time')}</p>
+                  <p className="text-sm text-green-600 font-medium mb-1">{'Clock In Time'}</p>
                   <p className="text-lg font-bold text-green-800">{clockInTime || '--:-- --'}</p>
                   <p className="text-xs text-green-600">{clockInTime ? 'Today' : 'Not clocked in'}</p>
                 </div>
 
                 <div className="bg-red-50 p-4 rounded-lg border border-red-200">
-                  <p className="text-sm text-red-600 font-medium mb-1">{t('Clock Out Time')}</p>
+                  <p className="text-sm text-red-600 font-medium mb-1">{'Clock Out Time'}</p>
                   <p className="text-lg font-bold text-red-800">{clockOutTime || '--:-- --'}</p>
                   <p className="text-xs text-red-600">{clockOutTime ? 'Today' : 'Not clocked out'}</p>
                 </div>
@@ -306,7 +300,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Bell className="h-5 w-5" />
-                  {t('Recent Announcements')}
+                  {'Recent Announcements'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.announcements.length}</Badge>
@@ -314,7 +308,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                     onClick={() => window.location.href = route('hr.announcements.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -348,7 +342,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent announcements')}
+                  {'No recent announcements'}
                 </div>
               )}
             </CardContent>
@@ -360,7 +354,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  {t('Recent Meetings')}
+                  {'Recent Meetings'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.meetings.length}</Badge>
@@ -368,7 +362,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                     onClick={() => window.location.href = route('meetings.meetings.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -405,7 +399,7 @@ export default function EmployeeDashboard({ dashboardData }: { dashboardData: Em
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent meetings')}
+                  {'No recent meetings'}
                 </div>
               )}
             </CardContent>

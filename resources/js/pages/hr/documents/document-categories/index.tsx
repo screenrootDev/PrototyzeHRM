@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Folder, FileText, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function DocumentCategories() {
-  const { t } = useTranslation();
+  
   const { auth, documentCategories, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -92,17 +92,15 @@ export default function DocumentCategories() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating document category...'));
+      toast.loading('Creating document category...');
 
       router.post(route('hr.documents.document-categories.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -114,17 +112,15 @@ export default function DocumentCategories() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating document category...'));
+      toast.loading('Updating document category...');
 
       router.put(route('hr.documents.document-categories.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -139,17 +135,15 @@ export default function DocumentCategories() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting document category...'));
+    toast.loading('Deleting document category...');
 
     router.delete(route('hr.documents.document-categories.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -164,16 +158,14 @@ export default function DocumentCategories() {
   
   const handleToggleStatus = (item: any) => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} document category...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} document category...`);
 
     router.put(route('hr.documents.document-categories.toggle-status', item.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -202,7 +194,7 @@ export default function DocumentCategories() {
   
   if (hasPermission(permissions, 'create-document-categories')) {
     pageActions.push({
-      label: t('Add Category'),
+      label: 'Add Category',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -210,15 +202,15 @@ export default function DocumentCategories() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Document Management'), href: route('hr.documents.document-categories.index') },
-    { title: t('Document Categories') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Document Management', href: route('hr.documents.document-categories.index') },
+    { title: 'Document Categories' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Category'), 
+      label: 'Category', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -242,7 +234,7 @@ export default function DocumentCategories() {
     },
     // { 
     //   key: 'sort_order', 
-    //   label: t('Order'),
+    //   label: 'Order',
     //   sortable: true,
     //   render: (value) => (
     //     <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
@@ -252,17 +244,17 @@ export default function DocumentCategories() {
     // },
     { 
       key: 'documents_count', 
-      label: t('Documents'),
+      label: 'Documents',
       render: (value) => (
         <div className="flex items-center gap-1">
           <FileText className="h-4 w-4 text-gray-500" />
-          <span>{value || 0} {t('documents')}</span>
+          <span>{value || 0} {'documents'}</span>
         </div>
       )
     },
     { 
       key: 'is_mandatory', 
-      label: t('Type'),
+      label: 'Type',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value 
@@ -272,30 +264,30 @@ export default function DocumentCategories() {
           {value ? (
             <>
               <AlertTriangle className="h-3 w-3 mr-1" />
-              {t('Mandatory')}
+              {'Mandatory'}
             </>
           ) : (
-            t('Optional')
+            'Optional'
           )}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value === 'active' 
             ? 'bg-green-50 text-green-700 ring-green-600/20' 
             : 'bg-red-50 text-red-700 ring-red-600/20'
         }`}>
-          {t(value === 'active' ? 'Active' : 'Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -303,28 +295,28 @@ export default function DocumentCategories() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-document-categories'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-document-categories'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-document-categories'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -333,15 +325,15 @@ export default function DocumentCategories() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const mandatoryOptions = [
-    { value: '_empty_', label: t('All Types'), disabled: true  },
-    { value: 'true', label: t('Mandatory') },
-    { value: 'false', label: t('Optional') }
+    { value: '_empty_', label: 'All Types', disabled: true  },
+    { value: 'true', label: 'Mandatory' },
+    { value: 'false', label: 'Optional' }
   ];
 
   const iconOptions = [
@@ -361,7 +353,7 @@ export default function DocumentCategories() {
 
   return (
     <PageTemplate 
-      title={t("Document Categories")} 
+      title={"Document Categories"} 
       url="/hr/documents/document-categories"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -375,7 +367,7 @@ export default function DocumentCategories() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -383,7 +375,7 @@ export default function DocumentCategories() {
             },
             {
               name: 'is_mandatory',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: mandatoryFilter,
               onChange: setMandatoryFilter,
@@ -433,7 +425,7 @@ export default function DocumentCategories() {
           to={documentCategories?.to || 0}
           total={documentCategories?.total || 0}
           links={documentCategories?.links}
-          entityName={t("document categories")}
+          entityName={"document categories"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -446,26 +438,26 @@ export default function DocumentCategories() {
           fields: [
             { 
               name: 'name', 
-              label: t('Category Name'), 
+              label: 'Category Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea',
               rows: 3
             },
             { 
               name: 'color', 
-              label: t('Color'), 
+              label: 'Color', 
               type: 'color', 
               required: true,
-              helpText: t('Choose a color to represent this category')
+              helpText: 'Choose a color to represent this category'
             },
             { 
               name: 'icon', 
-              label: t('Icon'), 
+              label: 'Icon', 
               type: 'select', 
               required: true,
               options: iconOptions,
@@ -473,20 +465,20 @@ export default function DocumentCategories() {
             },
             // { 
             //   name: 'sort_order', 
-            //   label: t('Sort Order'), 
+            //   label: 'Sort Order', 
             //   type: 'number',
             //   min: 0,
-            //   helpText: t('Lower numbers appear first')
+            //   helpText: 'Lower numbers appear first'
             // },
             { 
               name: 'is_mandatory', 
-              label: t('Mandatory Category'), 
+              label: 'Mandatory Category', 
               type: 'checkbox',
-              helpText: t('Documents in mandatory categories require acknowledgment')
+              helpText: 'Documents in mandatory categories require acknowledgment'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -497,10 +489,10 @@ export default function DocumentCategories() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Document Category')
+            ? 'Add New Document Category'
             : formMode === 'edit'
-              ? t('Edit Document Category')
-              : t('View Document Category')
+              ? 'Edit Document Category'
+              : 'View Document Category'
         }
         mode={formMode}
       />

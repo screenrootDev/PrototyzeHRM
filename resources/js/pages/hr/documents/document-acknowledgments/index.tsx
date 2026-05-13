@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, CheckCircle, Clock, AlertTriangle, User, FileText, Calendar, XCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function DocumentAcknowledgments() {
-  const { t } = useTranslation();
+  
   const { auth, documentAcknowledgments, documents, users, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -96,17 +96,15 @@ export default function DocumentAcknowledgments() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Assigning document acknowledgment...'));
+      toast.loading('Assigning document acknowledgment...');
 
       router.post(route('hr.documents.document-acknowledgments.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -118,17 +116,15 @@ export default function DocumentAcknowledgments() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating document acknowledgment...'));
+      toast.loading('Updating document acknowledgment...');
 
       router.put(route('hr.documents.document-acknowledgments.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -143,17 +139,15 @@ export default function DocumentAcknowledgments() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting document acknowledgment...'));
+    toast.loading('Deleting document acknowledgment...');
 
     router.delete(route('hr.documents.document-acknowledgments.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -180,7 +174,7 @@ export default function DocumentAcknowledgments() {
   };
   
   const handleAcknowledgeSubmit = (formData: any) => {
-    toast.loading(t('Acknowledging document...'));
+    toast.loading('Acknowledging document...');
 
     router.put(route('hr.documents.document-acknowledgments.acknowledge', currentItem.id), {
       acknowledgment_note: formData.acknowledgment_note || 'Document acknowledged'
@@ -189,10 +183,8 @@ export default function DocumentAcknowledgments() {
         setIsAcknowledgeModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -209,7 +201,7 @@ export default function DocumentAcknowledgments() {
   
   if (hasPermission(permissions, 'create-document-acknowledgments')) {
     pageActions.push({
-      label: t('Assign Document'),
+      label: 'Assign Document',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -217,9 +209,9 @@ export default function DocumentAcknowledgments() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Document Management'), href: route('hr.documents.document-acknowledgments.index') },
-    { title: t('Acknowledgments') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Document Management', href: route('hr.documents.document-acknowledgments.index') },
+    { title: 'Acknowledgments' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -264,7 +256,7 @@ export default function DocumentAcknowledgments() {
   const columns = [
     { 
       key: 'document.title', 
-      label: t('Document'), 
+      label: 'Document', 
       sortable: true,
       render: (_, row) => (
         <div className="flex items-center gap-3">
@@ -283,7 +275,7 @@ export default function DocumentAcknowledgments() {
     },
     { 
       key: 'user.name', 
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-gray-500" />
@@ -293,17 +285,17 @@ export default function DocumentAcknowledgments() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
           {getStatusIcon(value)}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'due_date', 
-      label: t('Due Date'),
+      label: 'Due Date',
       sortable: true,
       render: (value, row) => {
         if (!value) return '-';
@@ -329,7 +321,7 @@ export default function DocumentAcknowledgments() {
     },
     { 
       key: 'acknowledged_at', 
-      label: t('Acknowledged'),
+      label: 'Acknowledged',
       sortable: true,
       render: (value, row) => {
         if (!value) return '-';
@@ -342,12 +334,12 @@ export default function DocumentAcknowledgments() {
     },
     { 
       key: 'assigned_by.name', 
-      label: t('Assigned By'),
+      label: 'Assigned By',
       render: (_, row) => row.assigned_by?.name || '-'
     },
     { 
       key: 'assigned_at', 
-      label: t('Assigned'),
+      label: 'Assigned',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -355,21 +347,21 @@ export default function DocumentAcknowledgments() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-document-acknowledgments'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-document-acknowledgments'
     },
     { 
-      label: t('Acknowledge'), 
+      label: 'Acknowledge', 
       icon: 'CheckCircle', 
       action: 'acknowledge', 
       className: 'text-green-500',
@@ -377,7 +369,7 @@ export default function DocumentAcknowledgments() {
       condition: (item: any) => item.status === 'Pending' || item.status === 'Overdue'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -386,7 +378,7 @@ export default function DocumentAcknowledgments() {
   ];
 
   const documentOptions = [
-    { value: '_empty_', label: t('All Documents'), disabled:true },
+    { value: '_empty_', label: 'All Documents', disabled:true },
     ...(documents || []).map((doc: any) => ({
       value: doc.id.toString(),
       label: doc.title
@@ -394,7 +386,7 @@ export default function DocumentAcknowledgments() {
   ];
 
   const userOptions = [
-    { value: '_empty_', label: t('All Users'), disabled:true },
+    { value: '_empty_', label: 'All Users', disabled:true },
     ...(users || []).map((user: any) => ({
       value: user.id.toString(),
       label: user.name
@@ -402,15 +394,15 @@ export default function DocumentAcknowledgments() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled:true },
-    { value: 'Pending', label: t('Pending') },
-    { value: 'Acknowledged', label: t('Acknowledged') },
-    { value: 'Overdue', label: t('Overdue') },
-    { value: 'Exempted', label: t('Exempted') }
+    { value: '_empty_', label: 'All Statuses', disabled:true },
+    { value: 'Pending', label: 'Pending' },
+    { value: 'Acknowledged', label: 'Acknowledged' },
+    { value: 'Overdue', label: 'Overdue' },
+    { value: 'Exempted', label: 'Exempted' }
   ];
 
   const documentSelectOptions = [
-    { value: '_empty_', label: t('Select Document') },
+    { value: '_empty_', label: 'Select Document' },
     ...(documents || []).map((doc: any) => ({
       value: doc.id.toString(),
       label: doc.title
@@ -418,7 +410,7 @@ export default function DocumentAcknowledgments() {
   ];
 
   const userSelectOptions = [
-    { value: '_empty_', label: t('Select User') },
+    { value: '_empty_', label: 'Select User' },
     ...(users || []).map((user: any) => ({
       value: user.id.toString(),
       label: user.name
@@ -427,7 +419,7 @@ export default function DocumentAcknowledgments() {
 
   return (
     <PageTemplate 
-      title={t("Acknowledgments")} 
+      title={"Acknowledgments"} 
       url="/hr/documents/document-acknowledgments"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -441,7 +433,7 @@ export default function DocumentAcknowledgments() {
           filters={[
             {
               name: 'document_id',
-              label: t('Document'),
+              label: 'Document',
               type: 'select',
               value: documentFilter,
               onChange: setDocumentFilter,
@@ -450,7 +442,7 @@ export default function DocumentAcknowledgments() {
             },
             {
               name: 'user_id',
-              label: t('User'),
+              label: 'User',
               type: 'select',
               value: userFilter,
               onChange: setUserFilter,
@@ -459,7 +451,7 @@ export default function DocumentAcknowledgments() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -510,7 +502,7 @@ export default function DocumentAcknowledgments() {
           to={documentAcknowledgments?.to || 0}
           total={documentAcknowledgments?.total || 0}
           links={documentAcknowledgments?.links}
-          entityName={t("acknowledgments")}
+          entityName={"acknowledgments"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -523,7 +515,7 @@ export default function DocumentAcknowledgments() {
           fields: [
             { 
               name: 'document_id', 
-              label: t('Document'), 
+              label: 'Document', 
               type: 'select', 
               required: true,
               options: documentSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -531,7 +523,7 @@ export default function DocumentAcknowledgments() {
             },
             { 
               name: 'user_id', 
-              label: t('User'), 
+              label: 'User', 
               type: 'select', 
               required: true,
               options: userSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -539,13 +531,13 @@ export default function DocumentAcknowledgments() {
             },
             { 
               name: 'due_date', 
-              label: t('Due Date'), 
+              label: 'Due Date', 
               type: 'date',
-              helpText: formMode === 'create' ? t('Leave empty to set 7 days from today') : undefined
+              helpText: formMode === 'create' ? 'Leave empty to set 7 days from today' : undefined
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: formMode === 'edit',
               options: statusOptions.filter(opt => opt.value !== '_empty_'),
@@ -553,7 +545,7 @@ export default function DocumentAcknowledgments() {
             },
             { 
               name: 'acknowledgment_note', 
-              label: t('Note'), 
+              label: 'Note', 
               type: 'textarea',
               rows: 3
             }
@@ -568,10 +560,10 @@ export default function DocumentAcknowledgments() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Assign Document for Acknowledgment')
+            ? 'Assign Document for Acknowledgment'
             : formMode === 'edit'
-              ? t('Edit Document Acknowledgment')
-              : t('View Document Acknowledgment')
+              ? 'Edit Document Acknowledgment'
+              : 'View Document Acknowledgment'
         }
         mode={formMode}
       />
@@ -592,15 +584,15 @@ export default function DocumentAcknowledgments() {
           fields: [
             {
               name: 'acknowledgment_note',
-              label: t('Acknowledgment Note'),
+              label: 'Acknowledgment Note',
               type: 'textarea',
               rows: 3,
-              placeholder: t('Enter acknowledgment note (optional)')
+              placeholder: 'Enter acknowledgment note (optional)'
             }
           ]
         }}
         initialData={{ acknowledgment_note: '' }}
-        title={t('Acknowledge Document')}
+        title={'Acknowledge Document'}
         mode="edit"
       />
     </PageTemplate>

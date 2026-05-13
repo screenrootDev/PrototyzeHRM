@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function JobLocations() {
-  const { t } = useTranslation();
+  
   const { auth, jobLocations, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -82,17 +82,13 @@ export default function JobLocations() {
         router.put(route('hr.recruitment.job-locations.toggle-status', item.id), {}, {
           onSuccess: (page) => {
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t('Failed to update status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to update status: ${Object.values(errors).join(', ')}`);            }
           }
         });
         break;
@@ -111,17 +107,13 @@ export default function JobLocations() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create job location: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create job location: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
@@ -129,17 +121,13 @@ export default function JobLocations() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update job location: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update job location: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -150,17 +138,13 @@ export default function JobLocations() {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete job location: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete job location: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -181,7 +165,7 @@ export default function JobLocations() {
 
   if (hasPermission(permissions, 'create-job-locations')) {
     pageActions.push({
-      label: t('Add Job Location'),
+      label: 'Add Job Location',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -189,24 +173,24 @@ export default function JobLocations() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.job-locations.index') },
-    { title: t('Job Locations') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.job-locations.index') },
+    { title: 'Job Locations' }
   ];
 
   const columns = [
     {
       key: 'name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     {
       key: 'address',
-      label: t('Address'),
+      label: 'Address',
       render: (value, row) => {
         if (row.is_remote) {
-          return <span className="text-blue-600 font-medium">{t('Remote Work')}</span>;
+          return <span className="text-blue-600 font-medium">{'Remote Work'}</span>;
         }
         const parts = [value, row.city, row.state, row.country].filter(Boolean);
         return parts.length > 0 ? parts.join(', ') : '-';
@@ -214,31 +198,31 @@ export default function JobLocations() {
     },
     {
       key: 'is_remote',
-      label: t('Type'),
+      label: 'Type',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${value
           ? 'bg-blue-50 text-blue-700 ring-blue-600/20'
           : 'bg-gray-50 text-gray-600 ring-gray-500/10'
           }`}>
-          {value ? t('Remote') : t('On-site')}
+          {value ? 'Remote' : 'On-site'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium  ${value === 'active'
           ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
           : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-          {value === 'active' ? t('Active') : t('Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -246,28 +230,28 @@ export default function JobLocations() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-job-locations'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-job-locations'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-job-locations'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -276,20 +260,20 @@ export default function JobLocations() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const remoteOptions = [
-    { value: '_empty_', label: t('All Types') },
-    { value: 'true', label: t('Remote') },
-    { value: 'false', label: t('On-site') }
+    { value: '_empty_', label: 'All Types' },
+    { value: 'true', label: 'Remote' },
+    { value: 'false', label: 'On-site' }
   ];
 
   return (
     <PageTemplate
-      title={t("Job Locations")}
+      title={"Job Locations"}
       url="/hr/recruitment/job-locations"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -303,7 +287,7 @@ export default function JobLocations() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -311,7 +295,7 @@ export default function JobLocations() {
             },
             {
               name: 'is_remote',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: remoteFilter,
               onChange: setRemoteFilter,
@@ -361,7 +345,7 @@ export default function JobLocations() {
           to={jobLocations?.to || 0}
           total={jobLocations?.total || 0}
           links={jobLocations?.links}
-          entityName={t("job locations")}
+          entityName={"job locations"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -374,43 +358,43 @@ export default function JobLocations() {
           fields: [
             {
               name: 'name',
-              label: t('Name'),
+              label: 'Name',
               type: 'text',
               required: true
             },
             {
               name: 'is_remote',
-              label: t('Remote Work'),
+              label: 'Remote Work',
               type: 'checkbox'
             },
             {
               name: 'address',
-              label: t('Address'),
+              label: 'Address',
               type: 'textarea'
             },
             {
               name: 'city',
-              label: t('City'),
+              label: 'City',
               type: 'text'
             },
             {
               name: 'state',
-              label: t('State'),
+              label: 'State',
               type: 'text'
             },
             {
               name: 'country',
-              label: t('Country'),
+              label: 'Country',
               type: 'text'
             },
             {
               name: 'postal_code',
-              label: t('Postal Code'),
+              label: 'Postal Code',
               type: 'text'
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -420,10 +404,10 @@ export default function JobLocations() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Job Location')
+            ? 'Add New Job Location'
             : formMode === 'edit'
-              ? t('Edit Job Location')
-              : t('View Job Location')
+              ? 'Edit Job Location'
+              : 'View Job Location'
         }
         mode={formMode}
       />

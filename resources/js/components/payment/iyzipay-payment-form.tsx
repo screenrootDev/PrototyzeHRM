@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -28,14 +28,14 @@ export function IyzipayPaymentForm({
   onSuccess,
   onCancel,
 }: IyzipayPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [redirectUrl, setRedirectUrl] = useState<string | null>(null);
 
   const handlePayment = async () => {
     if (!iyzipayPublicKey) {
-      setError(t('Iyzipay configuration is missing'));
+      setError('Iyzipay configuration is missing');
       return;
     }
 
@@ -63,11 +63,11 @@ export function IyzipayPaymentForm({
         // Redirect to Iyzipay payment page
         window.location.href = data.redirect_url;
       } else {
-        throw new Error(data.error || t('Failed to create payment form'));
+        throw new Error(data.error || 'Failed to create payment form');
       }
     } catch (err) {
       console.error('Iyzipay payment error:', err);
-      setError(err instanceof Error ? err.message : t('Payment initialization failed'));
+      setError(err instanceof Error ? err.message : 'Payment initialization failed');
     } finally {
       setIsLoading(false);
     }
@@ -76,10 +76,7 @@ export function IyzipayPaymentForm({
 
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-    }).format(price);
+    return new Intl.NumberFormat('en-US').format(price);
   };
 
   return (
@@ -87,7 +84,7 @@ export function IyzipayPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Iyzipay Payment')}
+          {'Iyzipay Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -100,15 +97,15 @@ export function IyzipayPaymentForm({
 
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex justify-between items-center">
-            <span className="font-medium">{t('Total Amount')}</span>
+            <span className="font-medium">{'Total Amount'}</span>
             <span className="text-lg font-bold">{formatPrice(planPrice)}</span>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
-            {t('Billing Cycle')}: {t(billingCycle)}
+            {'Billing Cycle'}: {billingCycle}
           </div>
           {couponCode && (
             <div className="text-sm text-green-600 mt-1">
-              {t('Coupon Applied')}: {couponCode}
+              {'Coupon Applied'}: {couponCode}
             </div>
           )}
         </div>
@@ -116,14 +113,14 @@ export function IyzipayPaymentForm({
         {isLoading ? (
           <div className="text-center py-8">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-            <p>{t('Redirecting to payment page...')}</p>
+            <p>{'Redirecting to payment page...'}</p>
           </div>
         ) : (
           <div className="space-y-4">
             <Alert>
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {t('You will be redirected to Iyzipay secure payment page to complete your payment.')}
+                {'You will be redirected to Iyzipay secure payment page to complete your payment.'}
               </AlertDescription>
             </Alert>
 
@@ -134,7 +131,7 @@ export function IyzipayPaymentForm({
                 disabled={isLoading}
                 className="flex-1"
               >
-                {t('Cancel')}
+                {'Cancel'}
               </Button>
               <Button
                 onClick={handlePayment}
@@ -144,12 +141,12 @@ export function IyzipayPaymentForm({
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('Processing...')}
+                    {'Processing...'}
                   </>
                 ) : (
                   <>
                     <CreditCard className="mr-2 h-4 w-4" />
-                    {t('Pay with Iyzipay')}
+                    {'Pay with Iyzipay'}
                   </>
                 )}
               </Button>
@@ -158,7 +155,7 @@ export function IyzipayPaymentForm({
         )}
 
         <div className="text-xs text-muted-foreground text-center">
-          {t('Powered by Iyzipay - Secure payment processing')}
+          {'Powered by Iyzipay - Secure payment processing'}
         </div>
       </CardContent>
     </Card>

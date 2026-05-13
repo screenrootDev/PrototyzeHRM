@@ -8,7 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { useState } from 'react';
 import { Plus, Edit, Trash2, Save, X, Link2 } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import axios from 'axios';
@@ -26,7 +26,7 @@ interface WebhookSettingsProps {
 }
 
 export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps) {
-  const { t } = useTranslation();
+  
   const [webhookList, setWebhookList] = useState<Webhook[]>(webhooks);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingWebhook, setEditingWebhook] = useState<Webhook | null>(null);
@@ -74,7 +74,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
       setIsDialogOpen(false);
       resetForm();
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || t('An error occurred');
+      const errorMessage = error.response?.data?.message || 'An error occurred';
       toast.error(errorMessage);
     }
   };
@@ -92,7 +92,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
       setWebhookList(prev => prev.filter(w => w.id !== webhookToDelete.id));
       toast.success(response.data.message);
     } catch (error: any) {
-      const errorMessage = error.response?.data?.message || t('An error occurred');
+      const errorMessage = error.response?.data?.message || 'An error occurred';
       toast.error(errorMessage);
     } finally {
       setDeleteModalOpen(false);
@@ -107,12 +107,12 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
 
   return (
     <SettingsSection
-      title={t("Webhook Settings")}
-      description={t("Manage webhooks for external integrations")}
+      title={"Webhook Settings"}
+      description={"Manage webhooks for external integrations"}
       action={
         <Button onClick={handleCreate} size="sm">
           <Plus className="h-4 w-4 mr-2" />
-          {t("Add Webhook")}
+          {"Add Webhook"}
         </Button>
       }
     >
@@ -120,17 +120,17 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50 dark:bg-gray-800 border-b dark:border-gray-700">
-              <TableHead className="py-2.5 font-semibold">{t("Module")}</TableHead>
-              <TableHead className="py-2.5 font-semibold">{t("Method")}</TableHead>
-              <TableHead className="py-2.5 font-semibold">{t("URL")}</TableHead>
-              <TableHead className="w-24 py-2.5 font-semibold text-right">{t("Actions")}</TableHead>
+              <TableHead className="py-2.5 font-semibold">{"Module"}</TableHead>
+              <TableHead className="py-2.5 font-semibold">{"Method"}</TableHead>
+              <TableHead className="py-2.5 font-semibold">{"URL"}</TableHead>
+              <TableHead className="w-24 py-2.5 font-semibold text-right">{"Actions"}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {webhookList.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center text-muted-foreground dark:text-gray-400">
-                  {t("No webhooks configured")}
+                  {"No webhooks configured"}
                 </TableCell>
               </TableRow>
             ) : (
@@ -171,7 +171,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>{t("Edit")}</p>
+                            <p>{"Edit"}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -188,7 +188,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <p>{t("Delete")}</p>
+                            <p>{"Delete"}</p>
                           </TooltipContent>
                         </Tooltip>
                       </TooltipProvider>
@@ -204,34 +204,34 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                {editingWebhook ? t("Edit Webhook") : t("Add New Webhook")}
+                {editingWebhook ? "Edit Webhook" : "Add New Webhook"}
               </DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid gap-2">
-                <Label htmlFor="module">{t("Module")}</Label>
+                <Label htmlFor="module">{"Module"}</Label>
                 <Select 
                   value={formData.module} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, module: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("Select module")} />
+                    <SelectValue placeholder={"Select module"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="New User">{t("New User")}</SelectItem>
-                    <SelectItem value="New Appointment">{t("New Appointment")}</SelectItem>
+                    <SelectItem value="New User">{"New User"}</SelectItem>
+                    <SelectItem value="New Appointment">{"New Appointment"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="method">{t("Method")}</Label>
+                <Label htmlFor="method">{"Method"}</Label>
                 <Select 
                   value={formData.method} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, method: value }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("Select method")} />
+                    <SelectValue placeholder={"Select method"} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="GET">GET</SelectItem>
@@ -241,7 +241,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="url">{t("URL")}</Label>
+                <Label htmlFor="url">{"URL"}</Label>
                 <Input
                   id="url"
                   type="url"
@@ -259,11 +259,11 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
                   onClick={() => setIsDialogOpen(false)}
                 >
                   <X className="h-4 w-4 mr-2" />
-                  {t("Cancel")}
+                  {"Cancel"}
                 </Button>
                 <Button type="submit">
                   <Save className="h-4 w-4 mr-2" />
-                  {editingWebhook ? t("Update") : t("Create")}
+                  {editingWebhook ? "Update" : "Create"}
                 </Button>
               </div>
             </form>
@@ -275,7 +275,7 @@ export default function WebhookSettings({ webhooks = [] }: WebhookSettingsProps)
           onClose={handleDeleteCancel}
           onConfirm={handleDeleteConfirm}
           itemName={webhookToDelete?.module || ''}
-          entityName={t('Webhook')}
+          entityName={'Webhook'}
         />
       </div>
     </SettingsSection>

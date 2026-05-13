@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function DocumentTypes() {
-    const { t } = useTranslation();
+    
     const { auth, documentTypes, filters: pageFilters = {} } = usePage().props as any;
     const permissions = auth?.permissions || [];
 
@@ -100,72 +100,60 @@ export default function DocumentTypes() {
         formData.is_required = formData.is_required === true || formData.is_required === 'true' || formData.is_required === '1' ? 1 : 0;
 
         if (formMode === 'create') {
-            toast.loading(t('Creating document type...'));
+            toast.loading('Creating document type...');
 
             router.post(route('hr.document-types.store'), formData, {
                 onSuccess: (page) => {
                     setIsFormModalOpen(false);
                     toast.dismiss();
                     if (page.props.flash.success) {
-                        toast.success(t(page.props.flash.success));
-                    } else if (page.props.flash.error) {
-                        toast.error(t(page.props.flash.error));
-                    }
+                        toast.success(page.props.flash.success);                    } else if (page.props.flash.error) {
+                        toast.error(page.props.flash.error);                    }
                 },
                 onError: (errors) => {
                     toast.dismiss();
                     if (typeof errors === 'string') {
-                        toast.error(t(errors));
-                    } else {
-                        toast.error(t('Failed to create document type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-                    }
+                        toast.error(errors);                    } else {
+                        toast.error(`Failed to create document type: ${Object.values(errors).join(', ')}`);                    }
                 }
             });
         } else if (formMode === 'edit') {
-            toast.loading(t('Updating document type...'));
+            toast.loading('Updating document type...');
 
             router.put(route('hr.document-types.update', currentItem.id), formData, {
                 onSuccess: (page) => {
                     setIsFormModalOpen(false);
                     toast.dismiss();
                     if (page.props.flash.success) {
-                        toast.success(t(page.props.flash.success));
-                    } else if (page.props.flash.error) {
-                        toast.error(t(page.props.flash.error));
-                    }
+                        toast.success(page.props.flash.success);                    } else if (page.props.flash.error) {
+                        toast.error(page.props.flash.error);                    }
                 },
                 onError: (errors) => {
                     toast.dismiss();
                     if (typeof errors === 'string') {
-                        toast.error(t(errors));
-                    } else {
-                        toast.error(t('Failed to update document type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-                    }
+                        toast.error(errors);                    } else {
+                        toast.error(`Failed to update document type: ${Object.values(errors).join(', ')}`);                    }
                 }
             });
         }
     };
 
     const handleDeleteConfirm = () => {
-        toast.loading(t('Deleting document type...'));
+        toast.loading('Deleting document type...');
 
         router.delete(route('hr.document-types.destroy', currentItem.id), {
             onSuccess: (page) => {
                 setIsDeleteModalOpen(false);
                 toast.dismiss();
                 if (page.props.flash.success) {
-                    toast.success(t(page.props.flash.success));
-                } else if (page.props.flash.error) {
-                    toast.error(t(page.props.flash.error));
-                }
+                    toast.success(page.props.flash.success);                } else if (page.props.flash.error) {
+                    toast.error(page.props.flash.error);                }
             },
             onError: (errors) => {
                 toast.dismiss();
                 if (typeof errors === 'string') {
-                    toast.error(t(errors));
-                } else {
-                    toast.error(t('Failed to delete document type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-                }
+                    toast.error(errors);                } else {
+                    toast.error(`Failed to delete document type: ${Object.values(errors).join(', ')}`);                }
             }
         });
     };
@@ -187,7 +175,7 @@ export default function DocumentTypes() {
     // Add the "Add New Document Type" button if user has permission
     if (hasPermission(permissions, 'create-document-types')) {
         pageActions.push({
-            label: t('Add Document Type'),
+            label: 'Add Document Type',
             icon: <Plus className="h-4 w-4 mr-2" />,
             variant: 'default',
             onClick: () => handleAddNew()
@@ -195,26 +183,26 @@ export default function DocumentTypes() {
     }
 
     const breadcrumbs = [
-        { title: t('Dashboard'), href: route('dashboard') },
-        { title: t('HR Management'), href: route('hr.document-types.index') },
-        { title: t('Document Types') }
+        { title: 'Dashboard', href: route('dashboard') },
+        { title: 'HR Management', href: route('hr.document-types.index') },
+        { title: 'Document Types' }
     ];
 
     // Define table columns
     const columns = [
         {
             key: 'name',
-            label: t('Name'),
+            label: 'Name',
             sortable: true
         },
         {
             key: 'description',
-            label: t('Description'),
+            label: 'Description',
             render: (value: string) => value || '-'
         },
         {
             key: 'is_required',
-            label: t('Required'),
+            label: 'Required',
             render: (value: any) => {
                 // Convert any value to a proper boolean
                 let isRequired = false;
@@ -229,14 +217,14 @@ export default function DocumentTypes() {
                             : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
                         }`}>
                         {isRequired ? <Check className="h-3 w-3 mr-1" /> : <X className="h-3 w-3 mr-1" />}
-                        {isRequired ? t('Required') : t('Optional')}
+                        {isRequired ? 'Required' : 'Optional'}
                     </span>
                 );
             }
         },
         {
             key: 'created_at',
-            label: t('Created At'),
+            label: 'Created At',
             sortable: true,
             render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
         }
@@ -245,21 +233,21 @@ export default function DocumentTypes() {
     // Define table actions
     const actions = [
         {
-            label: t('View'),
+            label: 'View',
             icon: 'Eye',
             action: 'view',
             className: 'text-blue-500',
             requiredPermission: 'view-document-types'
         },
         {
-            label: t('Edit'),
+            label: 'Edit',
             icon: 'Edit',
             action: 'edit',
             className: 'text-amber-500',
             requiredPermission: 'edit-document-types'
         },
         {
-            label: t('Delete'),
+            label: 'Delete',
             icon: 'Trash2',
             action: 'delete',
             className: 'text-red-500',
@@ -269,25 +257,25 @@ export default function DocumentTypes() {
 
     // Prepare required options for filter
     const requiredOptions = [
-        { value: 'all', label: t('All') },
-        { value: 'yes', label: t('Required') },
-        { value: 'no', label: t('Optional') }
+        { value: 'all', label: 'All' },
+        { value: 'yes', label: 'Required' },
+        { value: 'no', label: 'Optional' }
     ];
 
     // Get form fields based on mode
     const getFormFields = () => {
         const fields = [
-            { name: 'name', label: t('Document Type Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' }
+            { name: 'name', label: 'Document Type Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' }
         ];
 
         // Add is_required field only for create and edit modes
         if (formMode !== 'view') {
             fields.push({
                 name: 'is_required',
-                label: t('Required'),
+                label: 'Required',
                 type: 'switch',
-                description: t('Is this document required for all employees?')
+                description: 'Is this document required for all employees?'
             });
         }
 
@@ -296,7 +284,7 @@ export default function DocumentTypes() {
 
     return (
         <PageTemplate
-            title={t("Document Types")}
+            title={"Document Types"}
             url="/hr/document-types"
             actions={pageActions}
             breadcrumbs={breadcrumbs}
@@ -311,7 +299,7 @@ export default function DocumentTypes() {
                     filters={[
                         {
                             name: 'required',
-                            label: t('Required'),
+                            label: 'Required',
                             type: 'select',
                             value: selectedRequired,
                             onChange: setSelectedRequired,
@@ -362,7 +350,7 @@ export default function DocumentTypes() {
                     to={documentTypes?.to || 0}
                     total={documentTypes?.total || 0}
                     links={documentTypes?.links}
-                    entityName={t("document types")}
+                    entityName={"document types"}
                     onPageChange={(url) => router.get(url)}
                 />
             </div>
@@ -379,10 +367,10 @@ export default function DocumentTypes() {
                 initialData={currentItem}
                 title={
                     formMode === 'create'
-                        ? t('Add New Document Type')
+                        ? 'Add New Document Type'
                         : formMode === 'edit'
-                            ? t('Edit Document Type')
-                            : t('View Document Type')
+                            ? 'Edit Document Type'
+                            : 'View Document Type'
                 }
                 mode={formMode}
             />

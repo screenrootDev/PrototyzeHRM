@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -27,13 +27,13 @@ export function BenefitPaymentForm({
   onSuccess,
   onCancel,
 }: BenefitPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handlePayment = async () => {
     if (!benefitPublicKey) {
-      setError(t('Benefit payment configuration is missing'));
+      setError('Benefit payment configuration is missing');
       return;
     }
 
@@ -61,21 +61,17 @@ export function BenefitPaymentForm({
         // Redirect to Benefit payment page
         window.location.href = data.payment_url;
       } else {
-        throw new Error(data.error || t('Failed to create payment session'));
+        throw new Error(data.error || 'Failed to create payment session');
       }
     } catch (err) {
       console.error('Benefit payment error:', err);
-      setError(err instanceof Error ? err.message : t('Payment initialization failed'));
+      setError(err instanceof Error ? err.message : 'Payment initialization failed');
       setIsLoading(false);
     }
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-BH', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 3,
-    }).format(price);
+    return new Intl.NumberFormat('en-BH').format(price);
   };
 
   return (
@@ -83,7 +79,7 @@ export function BenefitPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Benefit Payment')}
+          {'Benefit Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -96,15 +92,15 @@ export function BenefitPaymentForm({
 
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex justify-between items-center">
-            <span className="font-medium">{t('Total Amount')}</span>
+            <span className="font-medium">{'Total Amount'}</span>
             <span className="text-lg font-bold">{formatPrice(planPrice)}</span>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
-            {t('Billing Cycle')}: {t(billingCycle)}
+            {'Billing Cycle'}: {billingCycle}
           </div>
           {couponCode && (
             <div className="text-sm text-green-600 mt-1">
-              {t('Coupon Applied')}: {couponCode}
+              {'Coupon Applied'}: {couponCode}
             </div>
           )}
         </div>
@@ -112,17 +108,17 @@ export function BenefitPaymentForm({
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {t('You will be redirected to Benefit to complete your payment securely. Benefit is the leading payment gateway in Bahrain.')}
+            {'You will be redirected to Benefit to complete your payment securely. Benefit is the leading payment gateway in Bahrain.'}
           </AlertDescription>
         </Alert>
 
         <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">{t('Supported Payment Methods')}</h4>
+          <h4 className="font-medium text-blue-900 mb-2">{'Supported Payment Methods'}</h4>
           <ul className="text-sm text-blue-800 space-y-1">
-            <li>• {t('Benefit Debit Cards')}</li>
-            <li>• {t('Visa Credit/Debit Cards')}</li>
-            <li>• {t('Mastercard Credit/Debit Cards')}</li>
-            <li>• {t('Benefit Pay Mobile Wallet')}</li>
+            <li>• {'Benefit Debit Cards'}</li>
+            <li>• {'Visa Credit/Debit Cards'}</li>
+            <li>• {'Mastercard Credit/Debit Cards'}</li>
+            <li>• {'Benefit Pay Mobile Wallet'}</li>
           </ul>
         </div>
 
@@ -133,7 +129,7 @@ export function BenefitPaymentForm({
             disabled={isLoading}
             className="flex-1"
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button
             onClick={handlePayment}
@@ -143,19 +139,19 @@ export function BenefitPaymentForm({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('Redirecting...')}
+                {'Redirecting...'}
               </>
             ) : (
               <>
                 <ExternalLink className="mr-2 h-4 w-4" />
-                {t('Pay with Benefit')}
+                {'Pay with Benefit'}
               </>
             )}
           </Button>
         </div>
 
         <div className="text-xs text-muted-foreground text-center">
-          {t('Powered by Benefit - Bahrain\'s trusted payment gateway')}
+          {'Powered by Benefit - Bahrain\'s trusted payment gateway'}
         </div>
       </CardContent>
     </Card>

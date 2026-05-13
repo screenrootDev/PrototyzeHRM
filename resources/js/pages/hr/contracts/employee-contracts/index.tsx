@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, User, DollarSign, Calendar, AlertTriangle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function EmployeeContracts() {
-  const { t } = useTranslation();
+  
   const { auth, employeeContracts, contractTypes, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -96,17 +96,15 @@ export default function EmployeeContracts() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating employee contract...'));
+      toast.loading('Creating employee contract...');
 
       router.post(route('hr.contracts.employee-contracts.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -118,17 +116,15 @@ export default function EmployeeContracts() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating employee contract...'));
+      toast.loading('Updating employee contract...');
 
       router.put(route('hr.contracts.employee-contracts.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -143,17 +139,15 @@ export default function EmployeeContracts() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee contract...'));
+    toast.loading('Deleting employee contract...');
 
     router.delete(route('hr.contracts.employee-contracts.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -167,17 +161,15 @@ export default function EmployeeContracts() {
   };
   
   const handleStatusUpdate = (formData: any) => {
-    toast.loading(t('Updating contract status...'));
+    toast.loading('Updating contract status...');
 
     router.put(route('hr.contracts.employee-contracts.update-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -207,7 +199,7 @@ export default function EmployeeContracts() {
   
   if (hasPermission(permissions, 'create-employee-contracts')) {
     pageActions.push({
-      label: t('Add Contract'),
+      label: 'Add Contract',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -215,9 +207,9 @@ export default function EmployeeContracts() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Contract Management'), href: route('hr.contracts.employee-contracts.index') },
-    { title: t('Employee Contracts') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Contract Management', href: route('hr.contracts.employee-contracts.index') },
+    { title: 'Employee Contracts' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -248,7 +240,7 @@ export default function EmployeeContracts() {
   const columns = [
     { 
       key: 'contract_number', 
-      label: t('Contract #'), 
+      label: 'Contract #', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-2">
@@ -262,7 +254,7 @@ export default function EmployeeContracts() {
     },
     { 
       key: 'employee.name', 
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-gray-500" />
@@ -272,7 +264,7 @@ export default function EmployeeContracts() {
     },
     { 
       key: 'start_date', 
-      label: t('Contract Period'),
+      label: 'Contract Period',
       sortable: true,
       render: (value, row) => {
         const daysUntilExpiry = getDaysUntilExpiry(row.end_date, row.status);
@@ -299,7 +291,7 @@ export default function EmployeeContracts() {
     },
     { 
       key: 'basic_salary', 
-      label: t('Compensation'),
+      label: 'Compensation',
       render: (value, row) => {
         const total = getTotalCompensation(value);
         return (
@@ -316,16 +308,16 @@ export default function EmployeeContracts() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'approved_at', 
-      label: t('Approved'),
+      label: 'Approved',
       render: (value, row) => {
         if (!value) return '-';
         return (
@@ -340,28 +332,28 @@ export default function EmployeeContracts() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-employee-contracts'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-contracts'
     },
     { 
-      label: t('Update Status'), 
+      label: 'Update Status', 
       icon: 'RefreshCw', 
       action: 'update-status', 
       className: 'text-green-500',
       requiredPermission: 'approve-employee-contracts'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -370,17 +362,17 @@ export default function EmployeeContracts() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true},
-    { value: 'Draft', label: t('Draft') },
-    { value: 'Pending Approval', label: t('Pending Approval') },
-    { value: 'Active', label: t('Active') },
-    { value: 'Expired', label: t('Expired') },
-    { value: 'Terminated', label: t('Terminated') },
-    { value: 'Renewed', label: t('Renewed') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true},
+    { value: 'Draft', label: 'Draft' },
+    { value: 'Pending Approval', label: 'Pending Approval' },
+    { value: 'Active', label: 'Active' },
+    { value: 'Expired', label: 'Expired' },
+    { value: 'Terminated', label: 'Terminated' },
+    { value: 'Renewed', label: 'Renewed' }
   ];
 
   const typeOptions = [
-    { value: '_empty_', label: t('All Types') , disabled: true },
+    { value: '_empty_', label: 'All Types' , disabled: true },
     ...(contractTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -388,7 +380,7 @@ export default function EmployeeContracts() {
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('All Employees') ,disabled: true},
+    { value: '_empty_', label: 'All Employees' ,disabled: true},
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -396,7 +388,7 @@ export default function EmployeeContracts() {
   ];
 
   const employeeSelectOptions = [
-    { value: '_empty_', label: t('Select Employee') },
+    { value: '_empty_', label: 'Select Employee' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -404,7 +396,7 @@ export default function EmployeeContracts() {
   ];
 
   const typeSelectOptions = [
-    { value: '_empty_', label: t('Select Contract Type') },
+    { value: '_empty_', label: 'Select Contract Type' },
     ...(contractTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -413,7 +405,7 @@ export default function EmployeeContracts() {
 
   return (
     <PageTemplate 
-      title={t("Employee Contracts")} 
+      title={"Employee Contracts"} 
       url="/hr/contracts/employee-contracts"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -427,7 +419,7 @@ export default function EmployeeContracts() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -435,7 +427,7 @@ export default function EmployeeContracts() {
             },
             {
               name: 'contract_type_id',
-              label: t('Contract Type'),
+              label: 'Contract Type',
               type: 'select',
               value: typeFilter,
               onChange: setTypeFilter,
@@ -444,7 +436,7 @@ export default function EmployeeContracts() {
             },
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: employeeFilter,
               onChange: setEmployeeFilter,
@@ -496,7 +488,7 @@ export default function EmployeeContracts() {
           to={employeeContracts?.to || 0}
           total={employeeContracts?.total || 0}
           links={employeeContracts?.links}
-          entityName={t("employee contracts")}
+          entityName={"employee contracts"}
           onPageChange={(url) => {
             const urlObj = new URL(url);
             // Preserve current filters
@@ -520,7 +512,7 @@ export default function EmployeeContracts() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select', 
               required: true,
               options: employeeSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -528,7 +520,7 @@ export default function EmployeeContracts() {
             },
             { 
               name: 'contract_type_id', 
-              label: t('Contract Type'), 
+              label: 'Contract Type', 
               type: 'select', 
               required: true,
               options: typeSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -536,19 +528,19 @@ export default function EmployeeContracts() {
             },
             { 
               name: 'start_date', 
-              label: t('Start Date'), 
+              label: 'Start Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date',
-              helpText: t('Leave empty for permanent contracts')
+              helpText: 'Leave empty for permanent contracts'
             },
             { 
               name: 'basic_salary', 
-              label: t('Basic Salary'), 
+              label: 'Basic Salary', 
               type: 'number', 
               required: true,
               min: 0,
@@ -556,7 +548,7 @@ export default function EmployeeContracts() {
             },
             { 
               name: 'terms_conditions', 
-              label: t('Terms & Conditions'), 
+              label: 'Terms & Conditions', 
               type: 'textarea',
               rows: 6
             }
@@ -570,10 +562,10 @@ export default function EmployeeContracts() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Employee Contract')
+            ? 'Add Employee Contract'
             : formMode === 'edit'
-              ? t('Edit Employee Contract')
-              : t('View Employee Contract')
+              ? 'Edit Employee Contract'
+              : 'View Employee Contract'
         }
         mode={formMode}
       />
@@ -594,22 +586,22 @@ export default function EmployeeContracts() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Draft', label: t('Draft') },
-                { value: 'Pending Approval', label: t('Pending Approval') },
-                { value: 'Active', label: t('Active') },
-                { value: 'Expired', label: t('Expired') },
-                { value: 'Terminated', label: t('Terminated') },
-                { value: 'Renewed', label: t('Renewed') }
+                { value: 'Draft', label: 'Draft' },
+                { value: 'Pending Approval', label: 'Pending Approval' },
+                { value: 'Active', label: 'Active' },
+                { value: 'Expired', label: 'Expired' },
+                { value: 'Terminated', label: 'Terminated' },
+                { value: 'Renewed', label: 'Renewed' }
               ]
             }
           ]
         }}
         initialData={currentItem ? { status: currentItem.status } : {}}
-        title={t('Update Contract Status')}
+        title={'Update Contract Status'}
         mode="edit"
       />
     </PageTemplate>

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 import { Loader2 } from 'lucide-react';
 import { toast } from '@/components/custom-toast';
 import axios from 'axios';
@@ -26,7 +26,7 @@ export function MercadoPagoPaymentForm({
   onSuccess,
   onCancel
 }: MercadoPagoPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(false);
   
   // Payment method using redirect flow
@@ -50,11 +50,11 @@ export function MercadoPagoPaymentForm({
         // Redirect to MercadoPago checkout
         window.location.href = response.data.redirect_url;
       } else {
-        toast.error(t('Failed to create payment preference'));
+        toast.error('Failed to create payment preference');
         setIsLoading(false);
       }
     } catch (error: any) {
-      const errorMsg = error.response?.data?.error || error.message || t('Failed to create payment preference');
+      const errorMsg = error.response?.data?.error || error.message || 'Failed to create payment preference';
       toast.error(errorMsg);
       setIsLoading(false);
     }
@@ -63,12 +63,12 @@ export function MercadoPagoPaymentForm({
   return (
     <div className="space-y-4">
       <p className="text-sm text-muted-foreground">
-        {t('You will be redirected to MercadoPago to complete your payment.')}
+        {'You will be redirected to MercadoPago to complete your payment.'}
       </p>
       
       <div className="flex gap-3 mt-4">
         <Button variant="outline" onClick={onCancel} className="flex-1" disabled={isLoading}>
-          {t('Cancel')}
+          {'Cancel'}
         </Button>
         <Button 
           onClick={handlePayment}
@@ -78,10 +78,10 @@ export function MercadoPagoPaymentForm({
           {isLoading ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {t('Processing...')}
+              {'Processing...'}
             </>
           ) : (
-            t('Pay with MercadoPago')
+            'Pay with MercadoPago'
           )}
         </Button>
       </div>

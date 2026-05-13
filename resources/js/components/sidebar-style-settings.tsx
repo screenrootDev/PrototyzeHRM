@@ -3,7 +3,7 @@ import { Check, Sidebar as SidebarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SidebarMenuSkeleton } from '@/components/ui/sidebar';
 import { useLayout } from '@/contexts/LayoutContext';
-import { useTranslation } from 'react-i18next';
+
 
 // Sidebar style types
 export type SidebarVariant = 'sidebar' | 'floating' | 'inset';
@@ -36,7 +36,7 @@ export const getSidebarSettings = (): SidebarSettings => {
 };
 
 export function SidebarStyleSettings() {
-  const { t } = useTranslation();
+  
   const { position } = useLayout();
   const [settings, setSettings] = useState<SidebarSettings>(DEFAULT_SIDEBAR_SETTINGS);
 
@@ -66,36 +66,36 @@ export function SidebarStyleSettings() {
   return (
     <div className="space-y-6 rounded-lg border p-6">
       <div>
-        <h3 className="text-lg font-medium">{t("Sidebar Style")}</h3>
+        <h3 className="text-lg font-medium">{"Sidebar Style"}</h3>
         <p className="text-sm text-neutral-500 dark:text-neutral-400">
-          {t("Choose how your sidebar looks and behaves")}
+          {"Choose how your sidebar looks and behaves"}
         </p>
         
         {/* Variant Selection */}
         <div className="mt-4">
-          <h4 className="text-sm font-medium mb-2">{t("Sidebar Variant")}</h4>
+          <h4 className="text-sm font-medium mb-2">{"Sidebar Variant"}</h4>
           <div className="grid grid-cols-3 gap-2">
             <VariantButton 
               variant="sidebar"
               isActive={settings.variant === 'sidebar'}
-              onClick={() => updateVariant('sidebar')}
+              onClick={() => updateVarian'sidebar'}
             />
             <VariantButton 
               variant="floating"
               isActive={settings.variant === 'floating'}
-              onClick={() => updateVariant('floating')}
+              onClick={() => updateVarian'floating'}
             />
             <VariantButton 
               variant="inset"
               isActive={settings.variant === 'inset'}
-              onClick={() => updateVariant('inset')}
+              onClick={() => updateVarian'inset'}
             />
           </div>
         </div>
         
         {/* Collapsible Selection */}
         <div className="mt-4">
-          <h4 className="text-sm font-medium mb-2">{t("Sidebar Collapse Mode")}</h4>
+          <h4 className="text-sm font-medium mb-2">{"Sidebar Collapse Mode"}</h4>
           <div className="grid grid-cols-3 gap-2">
             <CollapsibleButton 
               mode="offcanvas"
@@ -117,11 +117,11 @@ export function SidebarStyleSettings() {
         
         {/* Preview */}
         <div className="mt-6">
-          <h4 className="text-sm font-medium mb-2">{t("Preview")}</h4>
+          <h4 className="text-sm font-medium mb-2">{"Preview"}</h4>
           <div className="border rounded-md p-4 bg-sidebar text-sidebar-foreground">
             <div className="flex items-center gap-2 mb-2">
               <SidebarIcon className="h-4 w-4" />
-              <span className="font-medium">{t("Sidebar Preview")}</span>
+              <span className="font-medium">{"Sidebar Preview"}</span>
             </div>
             <div className="space-y-1">
               <SidebarMenuSkeleton showIcon={true} />
@@ -130,7 +130,7 @@ export function SidebarStyleSettings() {
             </div>
           </div>
           <p className="text-xs text-neutral-500 mt-2">
-            {t("Changes will take effect after page reload")}
+            {"Changes will take effect after page reload"}
           </p>
         </div>
       </div>

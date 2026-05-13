@@ -8,13 +8,13 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import MediaPicker from '@/components/MediaPicker';
 import { getImagePath } from '@/utils/helpers';
 
 export default function ConvertToEmployee() {
-  const { t } = useTranslation();
+  
   const { candidate, branches, departments, designations, documentTypes, shifts, attendancePolicies, generatedEmployeeId } = usePage().props as any;
 
   // Pre-fill form with candidate data
@@ -177,33 +177,32 @@ export default function ConvertToEmployee() {
       onSuccess: (page) => {
         setIsSubmitting(false);
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        }
+          toast.success(page.props.flash.success);        }
         // Don't manually redirect - let the backend handle it
       },
       onError: (errors) => {
         setIsSubmitting(false);
         setErrors(errors);
-        toast.error(t('Please correct the errors in the form'));
+        toast.error('Please correct the errors in the form');
       }
     });
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidates.index') },
-    { title: t('Candidates'), href: route('hr.recruitment.candidates.index') },
-    { title: t('Convert to Employee') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidates.index') },
+    { title: 'Candidates', href: route('hr.recruitment.candidates.index') },
+    { title: 'Convert to Employee' }
   ];
 
   return (
     <PageTemplate
-      title={t("Convert Candidate to Employee")}
+      title={"Convert Candidate to Employee"}
       url={`/hr/recruitment/candidates/${candidate.id}/convert-to-employee`}
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: t('Back to Candidates'),
+          label: 'Back to Candidates',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.recruitment.candidates.index'))
@@ -213,27 +212,27 @@ export default function ConvertToEmployee() {
       {/* Candidate Info Card */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>{t('Candidate Information')}</CardTitle>
+          <CardTitle>{'Candidate Information'}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
             <div>
-              <span className="font-medium">{t('Name')}:</span> {candidate.first_name} {candidate.last_name}
+              <span className="font-medium">{'Name'}:</span> {candidate.first_name} {candidate.last_name}
             </div>
             <div>
-              <span className="font-medium">{t('Email')}:</span> {candidate.email}
+              <span className="font-medium">{'Email'}:</span> {candidate.email}
             </div>
             <div>
-              <span className="font-medium">{t('Job')}:</span> {candidate.job?.title}
+              <span className="font-medium">{'Job'}:</span> {candidate.job?.title}
             </div>
             <div>
-              <span className="font-medium">{t('Experience')}:</span> {candidate.experience_years} {t('years')}
+              <span className="font-medium">{'Experience'}:</span> {candidate.experience_years} {'years'}
             </div>
             <div>
-              <span className="font-medium">{t('Final Salary')}:</span> {candidate.final_salary ? window.appSettings?.formatCurrency(candidate.final_salary) : '-'}
+              <span className="font-medium">{'Final Salary'}:</span> {candidate.final_salary ? window.appSettings?.formatCurrency(candidate.final_salary) : '-'}
             </div>
             <div>
-              <span className="font-medium">{t('Status')}:</span> {candidate.status}
+              <span className="font-medium">{'Status'}:</span> {candidate.status}
             </div>
           </div>
         </CardContent>
@@ -243,12 +242,12 @@ export default function ConvertToEmployee() {
         {/* Basic Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Basic Information')}</CardTitle>
+            <CardTitle>{'Basic Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name" required>{t('Full Name')} </Label>
+                <Label htmlFor="name" required>{'Full Name'} </Label>
                 <Input
                   id="name"
                   value={formData.name}
@@ -260,18 +259,18 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employee_id" required>{t('Employee ID')}</Label>
+                <Label htmlFor="employee_id" required>{'Employee ID'}</Label>
                 <Input
                   id="employee_id"
                   value={generatedEmployeeId}
                   readOnly
                   className="bg-muted"
                 />
-                <p className="text-sm text-muted-foreground">{t('Employee ID will be auto-generated')}</p>
+                <p className="text-sm text-muted-foreground">{'Employee ID will be auto-generated'}</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="biometric_emp_id" required>{t('Employee Code')}</Label>
+                <Label htmlFor="biometric_emp_id" required>{'Employee Code'}</Label>
                 <Input
                   id="biometric_emp_id"
                   required
@@ -283,7 +282,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" required>{t('Email')} </Label>
+                <Label htmlFor="email" required>{'Email'} </Label>
                 <Input
                   id="email"
                   type="email"
@@ -296,7 +295,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password" required>{t('Password')} </Label>
+                <Label htmlFor="password" required>{'Password'} </Label>
                 <Input
                   id="password"
                   type="password"
@@ -309,7 +308,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone" required>{t('Phone Number')}</Label>
+                <Label htmlFor="phone" required>{'Phone Number'}</Label>
                 <Input
                   id="phone"
                   required
@@ -321,7 +320,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2" required>
-                <Label htmlFor="date_of_birth">{t('Date of Birth')}</Label>
+                <Label htmlFor="date_of_birth">{'Date of Birth'}</Label>
                 <Input
                   id="date_of_birth"
                   required
@@ -334,7 +333,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="gender" required>{t('Gender')}</Label>
+                <Label htmlFor="gender" required>{'Gender'}</Label>
                 <RadioGroup
                   value={formData.gender}
                   onValueChange={(value) => handleChange('gender', value)}
@@ -342,22 +341,22 @@ export default function ConvertToEmployee() {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="male" id="gender-male" />
-                    <Label htmlFor="gender-male">{t('Male')}</Label>
+                    <Label htmlFor="gender-male">{'Male'}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="female" id="gender-female" />
-                    <Label htmlFor="gender-female">{t('Female')}</Label>
+                    <Label htmlFor="gender-female">{'Female'}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="other" id="gender-other" />
-                    <Label htmlFor="gender-other">{t('Other')}</Label>
+                    <Label htmlFor="gender-other">{'Other'}</Label>
                   </div>
                 </RadioGroup>
                 {errors.gender && <p className="text-red-500 text-xs">{errors.gender}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="profile_image" required>{t('Profile Image')}</Label>
+                <Label htmlFor="profile_image" required>{'Profile Image'}</Label>
                 <div className="flex flex-col gap-3">
                   <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 h-32">
                     {formData.profile_image ? (
@@ -369,7 +368,7 @@ export default function ConvertToEmployee() {
                     ) : (
                       <div className="text-muted-foreground flex flex-col items-center gap-2">
                         <div className="h-12 w-12 bg-muted flex items-center justify-center rounded-full border border-dashed">
-                          <span className="font-semibold text-xs text-muted-foreground">{t('Image')}</span>
+                          <span className="font-semibold text-xs text-muted-foreground">{'Image'}</span>
                         </div>
                         <span className="text-xs">No image selected</span>
                       </div>
@@ -392,19 +391,19 @@ export default function ConvertToEmployee() {
         {/* Employment Details Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Employment Details')}</CardTitle>
+            <CardTitle>{'Employment Details'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="branch_id" required>{t('Branch')} </Label>
+                <Label htmlFor="branch_id" required>{'Branch'} </Label>
                 <Select
                   value={formData.branch_id}
                   required
                   onValueChange={(value) => handleChange('branch_id', value)}
                 >
                   <SelectTrigger className={errors.branch_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Branch')} />
+                    <SelectValue placeholder={'Select Branch'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {branches.map((branch: any) => (
@@ -418,7 +417,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="department_id" required>{t('Department')} </Label>
+                <Label htmlFor="department_id" required>{'Department'} </Label>
                 <Select
                   value={formData.department_id}
                   onValueChange={(value) => handleChange('department_id', value)}
@@ -426,7 +425,7 @@ export default function ConvertToEmployee() {
                   required
                 >
                   <SelectTrigger className={errors.department_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={formData.branch_id ? t('Select Department') : t('Select Branch First')} />
+                    <SelectValue placeholder={formData.branch_id ? 'Select Department' : 'Select Branch First'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {filteredDepartments.map((department: any) => (
@@ -440,7 +439,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="designation_id" required>{t('Designation')} </Label>
+                <Label htmlFor="designation_id" required>{'Designation'} </Label>
                 <Select
                   value={formData.designation_id}
                   onValueChange={(value) => handleChange('designation_id', value)}
@@ -448,7 +447,7 @@ export default function ConvertToEmployee() {
                   required
                 >
                   <SelectTrigger className={errors.designation_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={formData.department_id ? t('Select Designation') : t('Select Department First')} />
+                    <SelectValue placeholder={formData.department_id ? 'Select Designation' : 'Select Department First'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {filteredDesignations.map((designation: any) => (
@@ -462,7 +461,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date_of_joining" required>{t('Date of Joining')} </Label>
+                <Label htmlFor="date_of_joining" required>{'Date of Joining'} </Label>
                 <Input
                   id="date_of_joining"
                   type="date"
@@ -475,7 +474,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employment_type">{t('Employment Type')}</Label>
+                <Label htmlFor="employment_type">{'Employment Type'}</Label>
                 <Select
                   value={formData.employment_type}
                   onValueChange={(value) => handleChange('employment_type', value)}
@@ -484,16 +483,16 @@ export default function ConvertToEmployee() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Full-time">{t('Full-time')}</SelectItem>
-                    <SelectItem value="Part-time">{t('Part-time')}</SelectItem>
-                    <SelectItem value="Contract">{t('Contract')}</SelectItem>
-                    <SelectItem value="Internship">{t('Internship')}</SelectItem>
+                    <SelectItem value="Full-time">{'Full-time'}</SelectItem>
+                    <SelectItem value="Part-time">{'Part-time'}</SelectItem>
+                    <SelectItem value="Contract">{'Contract'}</SelectItem>
+                    <SelectItem value="Internship">{'Internship'}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employee_status" required>{t('Employee Status')}</Label>
+                <Label htmlFor="employee_status" required>{'Employee Status'}</Label>
                 <Select
                   value={formData.employee_status}
                   onValueChange={(value) => handleChange('employee_status', value)}
@@ -502,23 +501,23 @@ export default function ConvertToEmployee() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">{t('Active')}</SelectItem>
-                    <SelectItem value="inactive">{t('Inactive')}</SelectItem>
-                    <SelectItem value="probation">{t('Probation')}</SelectItem>
-                    <SelectItem value="terminated">{t('Terminated')}</SelectItem>
+                    <SelectItem value="active">{'Active'}</SelectItem>
+                    <SelectItem value="inactive">{'Inactive'}</SelectItem>
+                    <SelectItem value="probation">{'Probation'}</SelectItem>
+                    <SelectItem value="terminated">{'Terminated'}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.employee_status && <p className="text-red-500 text-xs">{errors.employee_status}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="shift_id">{t('Shift')}</Label>
+                <Label htmlFor="shift_id">{'Shift'}</Label>
                 <Select
                   value={formData.shift_id}
                   onValueChange={(value) => handleChange('shift_id', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Shift (Optional)')} />
+                    <SelectValue placeholder={'Select Shift (Optional)'} />
                   </SelectTrigger>
                   <SelectContent>
                     {shifts?.map((shift: any) => (
@@ -531,13 +530,13 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="attendance_policy_id">{t('Attendance Policy')}</Label>
+                <Label htmlFor="attendance_policy_id">{'Attendance Policy'}</Label>
                 <Select
                   value={formData.attendance_policy_id}
                   onValueChange={(value) => handleChange('attendance_policy_id', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Attendance Policy (Optional)')} />
+                    <SelectValue placeholder={'Select Attendance Policy (Optional)'} />
                   </SelectTrigger>
                   <SelectContent>
                     {attendancePolicies?.map((policy: any) => (
@@ -555,12 +554,12 @@ export default function ConvertToEmployee() {
         {/* Contact Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Contact Information')}</CardTitle>
+            <CardTitle>{'Contact Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="address_line_1" required>{t('Address Line 1')} </Label>
+                <Label htmlFor="address_line_1" required>{'Address Line 1'} </Label>
                 <Input
                   id="address_line_1"
                   required
@@ -572,7 +571,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address_line_2" required>{t('Address Line 2')}</Label>
+                <Label htmlFor="address_line_2" required>{'Address Line 2'}</Label>
                 <Input
                   id="address_line_2"
                   required
@@ -582,7 +581,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="city" required>{t('City')} </Label>
+                <Label htmlFor="city" required>{'City'} </Label>
                 <Input
                   id="city"
                   required
@@ -594,7 +593,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="state" required>{t('State/Province')} </Label>
+                <Label htmlFor="state" required>{'State/Province'} </Label>
                 <Input
                   id="state"
                   required
@@ -606,7 +605,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="country" required>{t('Country')} </Label>
+                <Label htmlFor="country" required>{'Country'} </Label>
                 <Input
                   id="country"
                   required
@@ -618,7 +617,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="postal_code" required>{t('Postal/Zip Code')} </Label>
+                <Label htmlFor="postal_code" required>{'Postal/Zip Code'} </Label>
                 <Input
                   id="postal_code"
                   required
@@ -631,10 +630,10 @@ export default function ConvertToEmployee() {
             </div>
 
             <div className="mt-6">
-              <h3 className="text-lg font-medium mb-4">{t('Emergency Contact')}</h3>
+              <h3 className="text-lg font-medium mb-4">{'Emergency Contact'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_name" required>{t('Name')} </Label>
+                  <Label htmlFor="emergency_contact_name" required>{'Name'} </Label>
                   <Input
                     id="emergency_contact_name"
                     required
@@ -646,7 +645,7 @@ export default function ConvertToEmployee() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_relationship" required>{t('Relationship')} </Label>
+                  <Label htmlFor="emergency_contact_relationship" required>{'Relationship'} </Label>
                   <Input
                     id="emergency_contact_relationship"
                     required
@@ -658,7 +657,7 @@ export default function ConvertToEmployee() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_number" required>{t('Phone Number')} </Label>
+                  <Label htmlFor="emergency_contact_number" required>{'Phone Number'} </Label>
                   <Input
                     id="emergency_contact_number"
                     required
@@ -676,12 +675,12 @@ export default function ConvertToEmployee() {
         {/* Banking Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Banking Information')}</CardTitle>
+            <CardTitle>{'Banking Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="bank_name" required>{t('Bank Name')} </Label>
+                <Label htmlFor="bank_name" required>{'Bank Name'} </Label>
                 <Input
                   id="bank_name"
                   required
@@ -693,7 +692,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account_holder_name" required>{t('Account Holder Name')} </Label>
+                <Label htmlFor="account_holder_name" required>{'Account Holder Name'} </Label>
                 <Input
                   id="account_holder_name"
                   required
@@ -705,7 +704,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account_number" required>{t('Account Number')} </Label>
+                <Label htmlFor="account_number" required>{'Account Number'} </Label>
                 <Input
                   id="account_number"
                   required
@@ -717,7 +716,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2" >
-                <Label htmlFor="bank_identifier_code" required>{t('Bank Identifier Code (BIC/SWIFT)')}</Label>
+                <Label htmlFor="bank_identifier_code" required>{'Bank Identifier Code (BIC/SWIFT)'}</Label>
                 <Input
                   id="bank_identifier_code"
                   required
@@ -727,7 +726,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bank_branch" required>{t('Bank Branch')}</Label>
+                <Label htmlFor="bank_branch" required>{'Bank Branch'}</Label>
                 <Input
                   id="bank_branch"
                   required
@@ -737,7 +736,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tax_payer_id">{t('Tax Payer ID')}</Label>
+                <Label htmlFor="tax_payer_id">{'Tax Payer ID'}</Label>
                 <Input
                   id="tax_payer_id"
                   value={formData.tax_payer_id}
@@ -746,7 +745,7 @@ export default function ConvertToEmployee() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="salary" required>{t('Salary')} </Label>
+                <Label htmlFor="salary" required>{'Salary'} </Label>
                 <Input
                   id="salary"
                   type="number"
@@ -766,13 +765,13 @@ export default function ConvertToEmployee() {
         {/* Documents Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Documents')}</CardTitle>
+            <CardTitle>{'Documents'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {formData.documents.map((document: any, index: number) => (
               <div key={index} className="border rounded-md p-4 space-y-4">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium">{t('Document')} #{index + 1}</h3>
+                  <h3 className="text-lg font-medium">{'Document'} #{index + 1}</h3>
                   <Button
                     type="button"
                     variant="ghost"
@@ -785,13 +784,13 @@ export default function ConvertToEmployee() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>{t('Document Type')} </Label>
+                    <Label>{'Document Type'} </Label>
                     <Select
                       value={document.document_type_id}
                       onValueChange={(value) => handleDocumentChange(index, 'document_type_id', value)}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder={t('Select Document Type')} />
+                        <SelectValue placeholder={'Select Document Type'} />
                       </SelectTrigger>
                       <SelectContent>
                         {documentTypes.map((type: any) => (
@@ -804,7 +803,7 @@ export default function ConvertToEmployee() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>{t('File')} </Label>
+                    <Label>{'File'} </Label>
                     <MediaPicker
                       label=""
                       value={document.file_path || ''}
@@ -815,7 +814,7 @@ export default function ConvertToEmployee() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>{t('Expiry Date')}</Label>
+                    <Label>{'Expiry Date'}</Label>
                     <Input
                       type="date"
                       value={document.expiry_date}
@@ -832,7 +831,7 @@ export default function ConvertToEmployee() {
               onClick={addDocument}
             >
               <Plus className="h-4 w-4 mr-2" />
-              {t('Add Document')}
+              {'Add Document'}
             </Button>
           </CardContent>
         </Card>
@@ -844,13 +843,13 @@ export default function ConvertToEmployee() {
             variant="outline"
             onClick={() => router.get(route('hr.recruitment.candidates.index'))}
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? t('Converting...') : t('Convert to Employee')}
+            {isSubmitting ? 'Converting...' : 'Convert to Employee'}
           </Button>
         </div>
       </form>

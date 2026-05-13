@@ -8,14 +8,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function TrainingTypes() {
-  const { t } = useTranslation();
+  
   const { auth, trainingTypes, branches, departments, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -124,18 +124,16 @@ export default function TrainingTypes() {
     };
     
     if (formMode === 'create') {
-      toast.loading(t('Creating training type...'));
+      toast.loading('Creating training type...');
 
       router.post(route('hr.training-types.store'), submitData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Training type created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Training type created successfully');
           }
         },
         onError: (errors) => {
@@ -143,23 +141,21 @@ export default function TrainingTypes() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to create training type: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to create training type: ${Object.values(errors).join(', ')}`);
           }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating training type...'));
+      toast.loading('Updating training type...');
 
       router.put(route('hr.training-types.update', currentItem.id), submitData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Training type updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Training type updated successfully');
           }
         },
         onError: (errors) => {
@@ -167,7 +163,7 @@ export default function TrainingTypes() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to update training type: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to update training type: ${Object.values(errors).join(', ')}`);
           }
         }
       });
@@ -175,7 +171,7 @@ export default function TrainingTypes() {
   };
   
   const handleDepartmentAssignment = (formData: any) => {
-    toast.loading(t('Assigning departments...'));
+    toast.loading('Assigning departments...');
     
     router.put(route('hr.training-types.assign-departments', selectedTrainingType.id), {
       department_ids: formData.department_ids
@@ -184,9 +180,8 @@ export default function TrainingTypes() {
         setIsDepartmentModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else {
-          toast.success(t('Departments assigned successfully'));
+          toast.success(page.props.flash.success);        } else {
+          toast.success('Departments assigned successfully');
         }
       },
       onError: (errors) => {
@@ -194,25 +189,23 @@ export default function TrainingTypes() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to assign departments: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to assign departments: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting training type...'));
+    toast.loading('Deleting training type...');
     
     router.delete(route('hr.training-types.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Training type deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Training type deleted successfully');
         }
       },
       onError: (errors) => {
@@ -220,7 +213,7 @@ export default function TrainingTypes() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to delete training type: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to delete training type: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -244,7 +237,7 @@ export default function TrainingTypes() {
   // Add the "Add New Training Type" button if user has permission
   if (hasPermission(permissions, 'create-training-types')) {
     pageActions.push({
-      label: t('Add Training Type'),
+      label: 'Add Training Type',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -252,31 +245,31 @@ export default function TrainingTypes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-types.index') },
-    { title: t('Training Management'), href: route('hr.training-types.index') },
-    { title: t('Training Types') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-types.index') },
+    { title: 'Training Management', href: route('hr.training-types.index') },
+    { title: 'Training Types' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value) => value || '-'
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value) => value || '-'
     },
     { 
       key: 'departments', 
-      label: t('Departments'),
+      label: 'Departments',
       render: (value) => {
         if (!value || value.length === 0) {
-          return <span className="text-gray-500">{t('All Departments')}</span>;
+          return <span className="text-gray-500">{'All Departments'}</span>;
         }
         
         return (
@@ -293,7 +286,7 @@ export default function TrainingTypes() {
     },
     { 
       key: 'training_programs_count', 
-      label: t('Programs'),
+      label: 'Programs',
       render: (_, row) => row.training_programs_count || '0'
     }
   ];
@@ -301,28 +294,28 @@ export default function TrainingTypes() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-training-types'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-training-types'
     },
     { 
-      label: t('Assign Departments'), 
+      label: 'Assign Departments', 
       icon: 'Users', 
       action: 'assign-departments', 
       className: 'text-green-500',
       requiredPermission: 'edit-training-types'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -332,7 +325,7 @@ export default function TrainingTypes() {
 
   // Prepare branch options for filter
   const branchOptions = [
-    { value: '_none_', label: t('All Branches') },
+    { value: '_none_', label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -341,7 +334,7 @@ export default function TrainingTypes() {
 
   // Prepare department options for filter (filtered by selected branch)
   const departmentOptions = [
-    { value: '_none_', label: t('All Departments') },
+    { value: '_none_', label: 'All Departments' },
     ...filteredFilterDepartments.map((dept: any) => ({
       value: dept.id.toString(),
       label: dept.name
@@ -350,7 +343,7 @@ export default function TrainingTypes() {
 
   return (
     <PageTemplate 
-      title={t("Training Types")} 
+      title={"Training Types"} 
       url="/hr/training/types"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -365,7 +358,7 @@ export default function TrainingTypes() {
           filters={[
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -374,7 +367,7 @@ export default function TrainingTypes() {
             },
             {
               name: 'department_id',
-              label: t('Department'),
+              label: 'Department',
               type: 'select',
               value: selectedDepartment,
               onChange: setSelectedDepartment,
@@ -427,7 +420,7 @@ export default function TrainingTypes() {
           to={trainingTypes?.to || 0}
           total={trainingTypes?.total || 0}
           links={trainingTypes?.links}
-          entityName={t("training types")}
+          entityName={"training types"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -441,18 +434,18 @@ export default function TrainingTypes() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea'
             },
             { 
               name: 'branch_id', 
-              label: t('Branch'), 
+              label: 'Branch', 
               type: 'select',
               required: true,
               searchable:true,
@@ -466,10 +459,10 @@ export default function TrainingTypes() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Training Type')
+            ? 'Add New Training Type'
             : formMode === 'edit'
-              ? t('Edit Training Type')
-              : t('View Training Type')
+              ? 'Edit Training Type'
+              : 'View Training Type'
         }
         mode={formMode}
       />
@@ -483,7 +476,7 @@ export default function TrainingTypes() {
           fields: [
             { 
               name: 'department_ids', 
-              label: t('Departments'), 
+              label: 'Departments', 
               type: 'multi-select',
               options: departments
                 .filter((dept: any) => dept.branch_id === selectedTrainingType?.branch_id)
@@ -491,7 +484,7 @@ export default function TrainingTypes() {
                   value: dept.id.toString(),
                   label: dept.name
                 })),
-              helpText: t('Select departments for this training type')
+              helpText: 'Select departments for this training type'
             }
           ],
           modalSize: 'xl'
@@ -499,7 +492,7 @@ export default function TrainingTypes() {
         initialData={{
           department_ids: selectedTrainingType?.departments?.map((dept: any) => dept.id.toString()) || []
         }}
-        title={t('Assign Departments')}
+        title={'Assign Departments'}
         mode="edit"
       />
 

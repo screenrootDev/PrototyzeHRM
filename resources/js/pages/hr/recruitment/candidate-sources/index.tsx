@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function CandidateSources() {
-  const { t } = useTranslation();
+  
   const { auth, candidateSources, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -89,96 +89,80 @@ export default function CandidateSources() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating candidate source...'));
+      toast.loading('Creating candidate source...');
 
       router.post(route('hr.recruitment.candidate-sources.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create candidate source: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create candidate source: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating candidate source...'));
+      toast.loading('Updating candidate source...');
 
       router.put(route('hr.recruitment.candidate-sources.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update candidate source: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update candidate source: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting candidate source...'));
+    toast.loading('Deleting candidate source...');
 
     router.delete(route('hr.recruitment.candidate-sources.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete candidate source: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete candidate source: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleToggleStatus = (candidateSource: any) => {
     const newStatus = candidateSource.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} candidate source...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} candidate source...`);
 
     router.put(route('hr.recruitment.candidate-sources.toggle-status', candidateSource.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update candidate source status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update candidate source status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -198,7 +182,7 @@ export default function CandidateSources() {
   
   if (hasPermission(permissions, 'create-candidate-sources')) {
     pageActions.push({
-      label: t('Add Candidate Source'),
+      label: 'Add Candidate Source',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -206,39 +190,39 @@ export default function CandidateSources() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidate-sources.index') },
-    { title: t('Candidate Sources') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidate-sources.index') },
+    { title: 'Candidate Sources' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value === 'active' 
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
         }`}>
-          {value === 'active' ? t('Active') : t('Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -246,28 +230,28 @@ export default function CandidateSources() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-candidate-sources'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-candidate-sources'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-candidate-sources'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -276,14 +260,14 @@ export default function CandidateSources() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Candidate Sources")} 
+      title={"Candidate Sources"} 
       url="/hr/recruitment/candidate-sources"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -297,7 +281,7 @@ export default function CandidateSources() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -346,7 +330,7 @@ export default function CandidateSources() {
           to={candidateSources?.to || 0}
           total={candidateSources?.total || 0}
           links={candidateSources?.links}
-          entityName={t("candidate sources")}
+          entityName={"candidate sources"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -359,18 +343,18 @@ export default function CandidateSources() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -380,10 +364,10 @@ export default function CandidateSources() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Candidate Source')
+            ? 'Add New Candidate Source'
             : formMode === 'edit'
-              ? t('Edit Candidate Source')
-              : t('View Candidate Source')
+              ? 'Edit Candidate Source'
+              : 'View Candidate Source'
         }
         mode={formMode}
       />

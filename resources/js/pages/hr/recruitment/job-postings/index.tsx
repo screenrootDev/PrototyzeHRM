@@ -5,14 +5,14 @@ import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import React from 'react';
 import { Plus } from 'lucide-react';
 
 export default function JobPostings() {
-  const { t } = useTranslation();
+  
   const { auth, jobPostings, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -74,7 +74,7 @@ export default function JobPostings() {
         break;
       case 'publish':
         if (!globalSettings?.is_demo) {
-          toast.loading(t('Publishing job posting...'));
+          toast.loading('Publishing job posting...');
         }
         router.put(route('hr.recruitment.job-postings.publish', item.id), {}, {
           onSuccess: (page) => {
@@ -82,26 +82,22 @@ export default function JobPostings() {
               toast.dismiss();
             }
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (!globalSettings?.is_demo) {
               toast.dismiss();
             }
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t('Failed to publish job posting: {{errors}}', { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to publish job posting: ${Object.values(errors).join(', ')}`);            }
           }
         });
         break;
       case 'unpublish':
         if (!globalSettings?.is_demo) {
-          toast.loading(t('Unpublishing job posting...'));
+          toast.loading('Unpublishing job posting...');
         }
         router.put(route('hr.recruitment.job-postings.unpublish', item.id), {}, {
           onSuccess: (page) => {
@@ -109,20 +105,16 @@ export default function JobPostings() {
               toast.dismiss();
             }
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (!globalSettings?.is_demo) {
               toast.dismiss();
             }
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t('Failed to unpublish job posting: {{errors}}', { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to unpublish job posting: ${Object.values(errors).join(', ')}`);            }
           }
         });
         break;
@@ -140,7 +132,7 @@ export default function JobPostings() {
   
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting job posting...'));
+      toast.loading('Deleting job posting...');
     }
 
     router.delete(route('hr.recruitment.job-postings.destroy', currentItem.id), {
@@ -150,20 +142,16 @@ export default function JobPostings() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete job posting: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete job posting: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -184,7 +172,7 @@ export default function JobPostings() {
   
   if (hasPermission(permissions, 'create-job-postings')) {
     pageActions.push({
-      label: t('Add Job Posting'),
+      label: 'Add Job Posting',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -192,9 +180,9 @@ export default function JobPostings() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.job-postings.index') },
-    { title: t('Job Postings') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.job-postings.index') },
+    { title: 'Job Postings' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -209,20 +197,20 @@ export default function JobPostings() {
   const columns = [
     { 
       key: 'job_code', 
-      label: t('Code'), 
+      label: 'Code', 
       sortable: true,
       render: (value) => <div className="font-mono text-sm">{value}</div>
     },
     { 
       key: 'title', 
-      label: t('Title'), 
+      label: 'Title', 
       sortable: true,
       render: (value, row) => (
         <div>
           <div className="font-medium">{value}</div>
           {row.is_featured && (
             <span className="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">
-              {t('Featured')}
+              {'Featured'}
             </span>
           )}
         </div>
@@ -230,17 +218,17 @@ export default function JobPostings() {
     },
     { 
       key: 'job_type.name', 
-      label: t('Type'),
+      label: 'Type',
       render: (_, row) => row.job_type?.name || '-'
     },
     { 
       key: 'location.name', 
-      label: t('Location'),
+      label: 'Location',
       render: (_, row) => row.location?.name || '-'
     },
     { 
       key: 'min_salary', 
-      label: t('Salary Range'),
+      label: 'Salary Range',
       render: (_, row) => {
         if (row.min_salary && row.max_salary) {
           return `${window.appSettings?.formatCurrency(row.min_salary)} - ${window.appSettings?.formatCurrency(row.max_salary)}`;
@@ -252,55 +240,55 @@ export default function JobPostings() {
     },
     { 
       key: 'candidates_count', 
-      label: t('Applications'),
+      label: 'Applications',
       render: (value) => <div className="text-center">{value || 0}</div>
     },
     { 
       key: 'is_published', 
-      label: t('Published'),
+      label: 'Published',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value 
             ? 'bg-green-50 text-green-700 ring-green-600/20' 
             : 'bg-yellow-50 text-yellow-700 ring-yellow-600/20'
         }`}>
-          {value ? t('Yes') : t('No')}
+          {value ? 'Yes' : 'No'}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'application_deadline', 
-      label: t('Deadline'),
+      label: 'Deadline',
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
   ];
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-job-postings'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-job-postings'
     },
     { 
-      label: t('Publish'), 
+      label: 'Publish', 
       icon: 'Upload', 
       action: 'publish', 
       className: 'text-green-500',
@@ -308,7 +296,7 @@ export default function JobPostings() {
       condition: (item) => !item.is_published
     },
     { 
-      label: t('Unpublish'), 
+      label: 'Unpublish', 
       icon: 'Download', 
       action: 'unpublish', 
       className: 'text-orange-500',
@@ -316,7 +304,7 @@ export default function JobPostings() {
       condition: (item) => item.is_published
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -325,21 +313,21 @@ export default function JobPostings() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'Draft', label: t('Draft') },
-    { value: 'Published', label: t('Published') },
-    { value: 'Closed', label: t('Closed') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'Draft', label: 'Draft' },
+    { value: 'Published', label: 'Published' },
+    { value: 'Closed', label: 'Closed' }
   ];
 
   const publishedOptions = [
-    { value: '_empty_', label: t('All') },
-    { value: 'true', label: t('Published') },
-    { value: 'false', label: t('Draft') }
+    { value: '_empty_', label: 'All' },
+    { value: 'true', label: 'Published' },
+    { value: 'false', label: 'Draft' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Job Postings")} 
+      title={"Job Postings"} 
       url="/hr/recruitment/job-postings"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -353,7 +341,7 @@ export default function JobPostings() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -361,7 +349,7 @@ export default function JobPostings() {
             },
             {
               name: 'is_published',
-              label: t('Published'),
+              label: 'Published',
               type: 'select',
               value: publishedFilter,
               onChange: setPublishedFilter,
@@ -411,7 +399,7 @@ export default function JobPostings() {
           to={jobPostings?.to || 0}
           total={jobPostings?.total || 0}
           links={jobPostings?.links}
-          entityName={t("job postings")}
+          entityName={"job postings"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

@@ -4,7 +4,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useTranslation } from 'react-i18next';
+
 import { Loader2 } from 'lucide-react';
 import { toast } from '@/components/custom-toast';
 import { usePaymentProcessor } from '@/hooks/usePaymentProcessor';
@@ -19,7 +19,7 @@ interface StripePaymentFormProps {
 }
 
 const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }: Omit<StripePaymentFormProps, 'stripeKey'>) => {
-  const { t } = useTranslation();
+  
   const stripe = useStripe();
   const elements = useElements();
   const [cardholderName, setCardholderName] = useState('');
@@ -33,7 +33,7 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
     event.preventDefault();
 
     if (!stripe || !elements || !cardholderName.trim()) {
-      toast.error(t('Please fill in all required fields'));
+      toast.error('Please fill in all required fields');
       return;
     }
 
@@ -49,17 +49,11 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
     });
 
     if (error) {
-      toast.error(error.message || t('Payment failed'));
+      toast.error(error.message || 'Payment failed');
       return;
     }
 
-    processPayment('stripe', {
-      planId,
-      billingCycle,
-      couponCode,
-      payment_method_id: paymentMethod.id,
-      cardholder_name: cardholderName,
-    });
+    processPayment('stripe');
   };
 
   const cardElementOptions = {
@@ -80,19 +74,19 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="cardholder-name">{t('Name on card')}</Label>
+        <Label htmlFor="cardholder-name">{'Name on card'}</Label>
         <Input
           id="cardholder-name"
           type="text"
           value={cardholderName}
           onChange={(e) => setCardholderName(e.target.value)}
-          placeholder={t('Enter cardholder name')}
+          placeholder={'Enter cardholder name'}
           required
         />
       </div>
 
       <div className="space-y-2">
-        <Label>{t('Card details')}</Label>
+        <Label>{'Card details'}</Label>
         <div className="p-3 border rounded-md">
           <CardElement options={cardElementOptions} />
         </div>
@@ -106,7 +100,7 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
           disabled={processing}
           className="flex-1"
         >
-          {t('Cancel')}
+          {'Cancel'}
         </Button>
         <Button
           type="submit"
@@ -116,10 +110,10 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
           {processing ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              {t('Processing...')}
+              {'Processing...'}
             </>
           ) : (
-            t('Pay Now')
+            'Pay Now'
           )}
         </Button>
       </div>
@@ -128,7 +122,7 @@ const CheckoutForm = ({ planId, couponCode, billingCycle, onSuccess, onCancel }:
 };
 
 export function StripePaymentForm({ planId, couponCode, billingCycle, stripeKey, onSuccess, onCancel }: StripePaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [stripePromise, setStripePromise] = useState<any>(null);
 
   useEffect(() => {
@@ -138,7 +132,7 @@ export function StripePaymentForm({ planId, couponCode, billingCycle, stripeKey,
   }, [stripeKey]);
 
   if (!stripePromise) {
-    return <div className="p-4 text-center text-red-500">{t('Stripe not configured properly')}</div>;
+    return <div className="p-4 text-center text-red-500">{'Stripe not configured properly'}</div>;
   }
 
   return (

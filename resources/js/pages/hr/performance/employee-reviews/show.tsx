@@ -4,23 +4,23 @@ import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
 import { ClipboardList, ArrowLeft, Star } from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
 
 export default function ShowEmployeeReview() {
-  const { t } = useTranslation();
+  
   const { review, auth } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'scheduled':
-        return <Badge variant="outline" className="bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20">{t('Scheduled')}</Badge>;
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20">{'Scheduled'}</Badge>;
       case 'in_progress':
-        return <Badge variant="outline" className="bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">{t('In Progress')}</Badge>;
+        return <Badge variant="outline" className="bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20">{'In Progress'}</Badge>;
       case 'completed':
-        return <Badge variant="outline" className="bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20">{t('Completed')}</Badge>;
+        return <Badge variant="outline" className="bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20">{'Completed'}</Badge>;
       default:
         return <Badge variant="outline">{status}</Badge>;
     }
@@ -35,11 +35,11 @@ export default function ShowEmployeeReview() {
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Employee Reviews'), href: route('hr.performance.employee-reviews.index') },
-    { title: t('View Review') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Employee Reviews', href: route('hr.performance.employee-reviews.index') },
+    { title: 'View Review' }
   ];
 
   // Group ratings by category
@@ -60,7 +60,7 @@ export default function ShowEmployeeReview() {
 
   return (
     <PageTemplate
-      title={t("Review Details")}
+      title={"Review Details"}
       url={`/hr/performance/employee-reviews/${review.id}`}
       breadcrumbs={breadcrumbs}
     >
@@ -69,13 +69,13 @@ export default function ShowEmployeeReview() {
         <div className="flex justify-between">
           <Button variant="outline" onClick={handleBack}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('Back to Reviews')}
+            {'Back to Reviews'}
           </Button>
 
           {review.status !== 'completed' && hasPermission(permissions, 'edit-employee-reviews') && (
             <Button onClick={handleConductReview}>
               <ClipboardList className="h-4 w-4 mr-2" />
-              {t('Conduct Review')}
+              {'Conduct Review'}
             </Button>
           )}
         </div>
@@ -83,28 +83,28 @@ export default function ShowEmployeeReview() {
         {/* Review Details */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Review Information')}</CardTitle>
-            <CardDescription>{t('Details about this performance review')}</CardDescription>
+            <CardTitle>{'Review Information'}</CardTitle>
+            <CardDescription>{'Details about this performance review'}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Employee')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Employee'}</h3>
                   <p className="mt-1 text-base font-semibold">
                     {review.employee?.name}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Reviewer')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Reviewer'}</h3>
                   <p className="mt-1 text-base font-semibold">
                     {review.reviewer?.name}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Review Cycle')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Review Cycle'}</h3>
                   <p className="mt-1 text-base font-semibold">
                     {review.review_cycle?.name}
                   </p>
@@ -114,14 +114,14 @@ export default function ShowEmployeeReview() {
               <div className="space-y-4">
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Review Date')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Review Date'}</h3>
                   <p className="mt-1 text-base font-semibold">
                     {review.review_date ? (window.appSettings?.formatDateTimeSimple(review.review_date, false) || new Date(review.review_date).toLocaleString()) : '-'}
                   </p>
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Status')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Status'}</h3>
                   <div className="mt-1">
                     {getStatusBadge(review.status)}
                   </div>
@@ -132,7 +132,7 @@ export default function ShowEmployeeReview() {
             {review.status === 'completed' && (
               <div className="mt-6 pt-6 border-t">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium">{t('Overall Rating')}</h3>
+                  <h3 className="text-lg font-medium">{'Overall Rating'}</h3>
                   <div className="flex items-center">
                     <span className="text-2xl font-bold mr-2">{review.overall_rating?.toFixed(1)}</span>
                     <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
@@ -141,7 +141,7 @@ export default function ShowEmployeeReview() {
 
                 {review.comments && (
                   <div className="mt-4">
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Comments')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Comments'}</h3>
                     <p className="mt-1 text-base">{review.comments}</p>
                   </div>
                 )}
@@ -154,8 +154,8 @@ export default function ShowEmployeeReview() {
         {review.status === 'completed' && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Performance Ratings')}</CardTitle>
-              <CardDescription>{t('Individual ratings for each performance indicator')}</CardDescription>
+              <CardTitle>{'Performance Ratings'}</CardTitle>
+              <CardDescription>{'Individual ratings for each performance indicator'}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
@@ -169,7 +169,7 @@ export default function ShowEmployeeReview() {
                             <div>
                               <h4 className="font-medium">{rating.indicator?.name}</h4>
                               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                {rating.indicator?.description || t('No description')}
+                                {rating.indicator?.description || 'No description'}
                               </p>
                               {rating.indicator?.measurement_unit && (
                                 <Badge variant="outline" className="mt-2">
@@ -185,7 +185,7 @@ export default function ShowEmployeeReview() {
 
                           {rating.comments && (
                             <div className="mt-3 pt-3 border-t">
-                              <h5 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Comments')}</h5>
+                              <h5 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Comments'}</h5>
                               <p className="mt-1 text-sm">{rating.comments}</p>
                             </div>
                           )}

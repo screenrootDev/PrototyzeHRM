@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, Code, Eye, Star, Download } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 
 export default function DocumentTemplates() {
-  const { t } = useTranslation();
+  
   const { auth, documentTemplates, categories, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -158,27 +158,27 @@ export default function DocumentTemplates() {
       } catch (e) {
         // If not valid JSON, create simple key-value pairs
         const pairs = formData.default_values.split(',');
-        const obj = {};
+        const parsed: Record<string, string> = {};
         pairs.forEach((pair: string) => {
           const [key, value] = pair.split(':').map((s: string) => s.trim());
-          if (key && value) obj[key] = value;
+          if (key && value !== undefined) {
+            parsed[key] = value;
+          }
         });
-        formData.default_values = obj;
+        formData.default_values = parsed;
       }
     }
 
     if (formMode === 'create') {
-      toast.loading(t('Creating document template...'));
+      toast.loading('Creating document template...');
       
       router.post(route('hr.documents.document-templates.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -190,17 +190,15 @@ export default function DocumentTemplates() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating document template...'));
+      toast.loading('Updating document template...');
       
       router.put(route('hr.documents.document-templates.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -215,17 +213,15 @@ export default function DocumentTemplates() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting document template...'));
+    toast.loading('Deleting document template...');
     
     router.delete(route('hr.documents.document-templates.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -240,16 +236,14 @@ export default function DocumentTemplates() {
   
   const handleToggleStatus = (template: any) => {
     const newStatus = template.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} document template...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} document template...`);
     
     router.put(route('hr.documents.document-templates.toggle-status', template.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -279,7 +273,7 @@ export default function DocumentTemplates() {
   
   if (hasPermission(permissions, 'create-document-templates')) {
     pageActions.push({
-      label: t('Add Template'),
+      label: 'Add Template',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -287,15 +281,15 @@ export default function DocumentTemplates() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Document Management'), href: route('hr.documents.document-templates.index') },
-    { title: t('Document Templates') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Document Management', href: route('hr.documents.document-templates.index') },
+    { title: 'Document Templates' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Template Name'), 
+      label: 'Template Name', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -319,25 +313,25 @@ export default function DocumentTemplates() {
     },
     { 
       key: 'category.name', 
-      label: t('Category'),
+      label: 'Category',
       render: (_, row) => row.category?.name || '-'
     },
     { 
       key: 'placeholders', 
-      label: t('Placeholders'),
+      label: 'Placeholders',
       render: (value) => {
         if (!value || !Array.isArray(value) || value.length === 0) return '-';
         return (
           <div className="flex items-center gap-1">
             <Code className="h-4 w-4 text-gray-500" />
-            <span>{value.length} {t('placeholders')}</span>
+            <span>{value.length} {'placeholders'}</span>
           </div>
         );
       }
     },
     { 
       key: 'file_format', 
-      label: t('Format'),
+      label: 'Format',
       render: (value) => (
         <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
           {value.toUpperCase()}
@@ -346,16 +340,16 @@ export default function DocumentTemplates() {
     },
     { 
       key: 'template_content', 
-      label: t('Content Length'),
+      label: 'Content Length',
       render: (value) => (
         <span className="text-sm text-gray-600">
-          {value ? `${value.length} ${t('characters')}` : '-'}
+          {value ? `${value.length} ${'characters'}` : '-'}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -363,14 +357,14 @@ export default function DocumentTemplates() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Created'),
+      label: 'Created',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -378,42 +372,42 @@ export default function DocumentTemplates() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-document-templates'
     },
     { 
-      label: t('Preview'), 
+      label: 'Preview', 
       icon: 'FileText', 
       action: 'preview', 
       className: 'text-purple-500',
       requiredPermission: 'view-document-templates'
     },
     { 
-      label: t('Generate'), 
+      label: 'Generate', 
       icon: 'Download', 
       action: 'generate', 
       className: 'text-green-500',
       requiredPermission: 'view-document-templates'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-document-templates'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-document-templates'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -422,7 +416,7 @@ export default function DocumentTemplates() {
   ];
 
   const categoryOptions = [
-    { value: '_empty_', label: t('All Categories') },
+    { value: '_empty_', label: 'All Categories' },
     ...(categories || []).map((cat: any) => ({
       value: cat.id.toString(),
       label: cat.name
@@ -430,19 +424,19 @@ export default function DocumentTemplates() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const defaultOptions = [
-    { value: '_empty_', label: t('All') },
-    { value: 'true', label: t('Default') },
-    { value: 'false', label: t('Custom') }
+    { value: '_empty_', label: 'All' },
+    { value: 'true', label: 'Default' },
+    { value: 'false', label: 'Custom' }
   ];
 
   const categorySelectOptions = [
-    { value: '_empty_', label: t('Select Category') },
+    { value: '_empty_', label: 'Select Category' },
     ...(categories || []).map((cat: any) => ({
       value: cat.id.toString(),
       label: cat.name
@@ -458,7 +452,7 @@ export default function DocumentTemplates() {
 
   return (
     <PageTemplate 
-      title={t("Document Templates")} 
+      title={"Document Templates"} 
       url="/hr/documents/document-templates"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -472,7 +466,7 @@ export default function DocumentTemplates() {
           filters={[
             {
               name: 'category_id',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: categoryFilter,
               onChange: setCategoryFilter,
@@ -480,7 +474,7 @@ export default function DocumentTemplates() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -488,7 +482,7 @@ export default function DocumentTemplates() {
             },
             {
               name: 'is_default',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: defaultFilter,
               onChange: setDefaultFilter,
@@ -539,7 +533,7 @@ export default function DocumentTemplates() {
           to={documentTemplates?.to || 0}
           total={documentTemplates?.total || 0}
           links={documentTemplates?.links}
-          entityName={t("document templates")}
+          entityName={"document templates"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -552,59 +546,59 @@ export default function DocumentTemplates() {
           fields: [
             { 
               name: 'name', 
-              label: t('Template Name'), 
+              label: 'Template Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea',
               rows: 2
             },
             { 
               name: 'category_id', 
-              label: t('Category'), 
+              label: 'Category', 
               type: 'select', 
               required: true,
               options: categorySelectOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'template_content', 
-              label: t('Template Content'), 
+              label: 'Template Content', 
               type: 'textarea', 
               required: true,
               rows: 12,
-              helpText: t('Use {{placeholder_name}} for dynamic content')
+              helpText: 'Use {{placeholder_name}} for dynamic content'
             },
             { 
               name: 'placeholders', 
-              label: t('Placeholders'), 
+              label: 'Placeholders', 
               type: 'text',
-              helpText: t('Comma-separated list of placeholder names (without {{}})')
+              helpText: 'Comma-separated list of placeholder names (without {{}})'
             },
             { 
               name: 'default_values', 
-              label: t('Default Values'), 
+              label: 'Default Values', 
               type: 'textarea',
               rows: 3,
-              helpText: t('JSON object or key:value pairs separated by commas')
+              helpText: 'JSON object or key:value pairs separated by commas'
             },
             { 
               name: 'file_format', 
-              label: t('File Format'), 
+              label: 'File Format', 
               type: 'select',
               options: fileFormatOptions
             },
             { 
               name: 'is_default', 
-              label: t('Set as Default for Category'), 
+              label: 'Set as Default for Category', 
               type: 'checkbox',
-              helpText: t('Only one template can be default per category')
+              helpText: 'Only one template can be default per category'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -619,10 +613,10 @@ export default function DocumentTemplates() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Document Template')
+            ? 'Add Document Template'
             : formMode === 'edit'
-              ? t('Edit Document Template')
-              : t('View Document Template')
+              ? 'Edit Document Template'
+              : 'View Document Template'
         }
         mode={formMode}
       />
@@ -639,18 +633,18 @@ export default function DocumentTemplates() {
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>
-              {t('Template Preview')}: {currentItem?.name}
+              {'Template Preview'}: {currentItem?.name}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4 overflow-y-auto max-h-[60vh] pr-1">
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
               <pre className="whitespace-pre-wrap text-sm font-mono">
-                {currentItem?.template_content || t('No content available')}
+                {currentItem?.template_content || 'No content available'}
               </pre>
             </div>
             {currentItem?.placeholders && currentItem.placeholders.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">{t('Available Placeholders')}:</h4>
+                <h4 className="text-sm font-medium mb-2">{'Available Placeholders'}:</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentItem.placeholders.map((placeholder: string, index: number) => (
                     <span key={index} className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
@@ -669,7 +663,7 @@ export default function DocumentTemplates() {
         <DialogContent className="max-w-lg max-h-[80vh]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
-              {t('Generate Document')}
+              {'Generate Document'}
             </DialogTitle>
             <p className="text-sm text-gray-600">{currentItem?.name}</p>
           </DialogHeader>
@@ -690,10 +684,10 @@ export default function DocumentTemplates() {
           </div>
           <div className="flex justify-end space-x-2 pt-2 border-t">
             <Button variant="outline" onClick={() => setIsGenerateModalOpen(false)}>
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button onClick={handleGenerateSubmit} className="bg-red-500 hover:bg-red-600">
-              {t('Generate Document')}
+              {'Generate Document'}
             </Button>
           </div>
         </DialogContent>

@@ -1,22 +1,22 @@
 import { PageTemplate } from '@/components/page-template';
 import { usePage } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft } from 'lucide-react';
 
 export default function CandidateOnboardingShow() {
-  const { t } = useTranslation();
+  
   const { candidateOnboarding } = usePage().props as any;
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidate-onboarding.index') },
-    { title: t('Candidate Onboarding'), href: route('hr.recruitment.candidate-onboarding.index') },
-    { title: t('View Details') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidate-onboarding.index') },
+    { title: 'Candidate Onboarding', href: route('hr.recruitment.candidate-onboarding.index') },
+    { title: 'View Details' }
   ];
 
   const pageActions = [
     {
-      label: t('Back to List'),
+      label: 'Back to List',
       icon: <ArrowLeft className="h-4 w-4 mr-2" />,
       variant: 'outline',
       onClick: () => window.history.back()
@@ -34,7 +34,7 @@ export default function CandidateOnboardingShow() {
 
   return (
     <PageTemplate
-      title={t("Onboarding Details")}
+      title={"Onboarding Details"}
       url="/hr/recruitment/candidate-onboarding"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -42,30 +42,30 @@ export default function CandidateOnboardingShow() {
       <div className="space-y-6">
         {/* Employee Information */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium mb-4">{t('Employee Information')}</h3>
+          <h3 className="text-lg font-medium mb-4">{'Employee Information'}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Employee Name')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{'Employee Name'}</label>
               <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">{candidateOnboarding.employee?.name || '-'}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Email')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{'Email'}</label>
               <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">{candidateOnboarding.employee?.email || '-'}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Buddy Employee')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{'Buddy Employee'}</label>
               <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">{candidateOnboarding.buddy_employee?.name || '-'}</p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Start Date')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{'Start Date'}</label>
               <p className="mt-1 text-sm text-gray-900 dark:text-gray-100">
                 {candidateOnboarding.start_date ? new Date(candidateOnboarding.start_date).toLocaleDateString() : '-'}
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{t('Status')}</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">{'Status'}</label>
               <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(candidateOnboarding.status)}`}>
-                {t(candidateOnboarding.status)}
+                {candidateOnboarding.status}
               </span>
             </div>
           </div>
@@ -73,7 +73,7 @@ export default function CandidateOnboardingShow() {
 
         {/* Onboarding Checklist */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium mb-4">{t('Onboarding Checklist')}</h3>
+          <h3 className="text-lg font-medium mb-4">{'Onboarding Checklist'}</h3>
           <div className="mb-4">
             <h4 className="font-medium text-gray-900 dark:text-gray-100">{candidateOnboarding.checklist?.name}</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400">{candidateOnboarding.checklist?.description}</p>
@@ -95,7 +95,7 @@ export default function CandidateOnboardingShow() {
                     )}
                     {item.due_day && (
                       <p className="text-xs text-gray-500 mt-1">
-                        {t('Due Day')}: {item.due_day}
+                        {'Due Day'}: {item.due_day}
                       </p>
                     )}
                   </div>
@@ -103,7 +103,7 @@ export default function CandidateOnboardingShow() {
               ))}
             </div>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400">{t('No checklist items found')}</p>
+            <p className="text-gray-500 dark:text-gray-400">{'No checklist items found'}</p>
           )}
         </div>
       </div>

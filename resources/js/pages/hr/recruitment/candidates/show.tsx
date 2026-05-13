@@ -1,6 +1,6 @@
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,13 @@ import { ArrowLeft, User, Briefcase, MapPin, Clock, DollarSign, Calendar, Phone,
 import { getImagePath } from '@/utils/helpers';
 
 export default function CandidateShow() {
-  const { t } = useTranslation();
+  
   const { candidate } = usePage().props as any;
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment') },
-    { title: t('Candidates'), href: route('hr.recruitment.candidates.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment' },
+    { title: 'Candidates', href: route('hr.recruitment.candidates.index') },
     { title: `${candidate.first_name} ${candidate.last_name}` }
   ];
 
@@ -36,7 +36,7 @@ export default function CandidateShow() {
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: t('Back to Candidates'),
+          label: 'Back to Candidates',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.recruitment.candidates.index'))
@@ -56,11 +56,11 @@ export default function CandidateShow() {
                   <h1 className="text-2xl font-bold text-gray-900">
                     {candidate.first_name} {candidate.last_name}
                   </h1>
-                  <p className="text-base text-gray-600 mt-1">{candidate.current_position || t('Job Applicant')}</p>
+                  <p className="text-base text-gray-600 mt-1">{candidate.current_position || 'Job Applicant'}</p>
                   <p className="text-sm text-gray-500">{candidate.current_company}</p>
                   {candidate.rating && (
                     <div className="flex items-center mt-2">
-                      <span className="text-sm font-medium text-gray-700 mr-2">{t('Rating')}:</span>
+                      <span className="text-sm font-medium text-gray-700 mr-2">{'Rating'}:</span>
                       <div className="flex">
                         {[...Array(5)].map((_, i) => (
                           <span key={i} className={`text-lg ${i < candidate.rating ? 'text-yellow-400' : 'text-gray-300'}`}>★</span>
@@ -72,16 +72,16 @@ export default function CandidateShow() {
               </div>
               <div className="text-right">
                 <Badge className={`inline-flex items-center rounded-md px-3 py-1 text-sm font-medium ring-1 ring-inset ${getStatusColor(candidate.status)}`}>
-                  {t(candidate.status)}
+                  {candidate.status}
                 </Badge>
                 <p className="text-sm text-gray-500 mt-2">
-                  {t('Applied on')} {new Date(candidate.application_date).toLocaleDateString()}
+                  {'Applied on'} {new Date(candidate.application_date).toLocaleDateString()}
                 </p>
                 {candidate.is_archive && (
-                  <Badge variant="secondary" className="mt-2">{t('Archived')}</Badge>
+                  <Badge variant="secondary" className="mt-2">{'Archived'}</Badge>
                 )}
                 {candidate.is_employee && (
-                  <Badge variant="outline" className="mt-2 ml-2">{t('Employee')}</Badge>
+                  <Badge variant="outline" className="mt-2 ml-2">{'Employee'}</Badge>
                 )}
               </div>
             </div>
@@ -94,14 +94,14 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <Phone className="h-5 w-5" />
-                {t('Contact Information')}
+                {'Contact Information'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-gray-500" />
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Email')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Email'}</p>
                   <p className="text-sm text-gray-600">{candidate.email}</p>
                 </div>
               </div>
@@ -109,7 +109,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <Phone className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Phone')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Phone'}</p>
                     <p className="text-sm text-gray-600">{candidate.phone}</p>
                   </div>
                 </div>
@@ -118,7 +118,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Address')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Address'}</p>
                     <p className="text-sm text-gray-600">{candidate.address}</p>
                   </div>
                 </div>
@@ -127,7 +127,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('City')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'City'}</p>
                     <p className="text-sm text-gray-600">{candidate.city}</p>
                   </div>
                 </div>
@@ -136,7 +136,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('State')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'State'}</p>
                     <p className="text-sm text-gray-600">{candidate.state}</p>
                   </div>
                 </div>
@@ -145,7 +145,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Country')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Country'}</p>
                     <p className="text-sm text-gray-600">{candidate.country}</p>
                   </div>
                 </div>
@@ -154,7 +154,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <MapPin className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Zip Code')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Zip Code'}</p>
                     <p className="text-sm text-gray-600">{candidate.zip_code}</p>
                   </div>
                 </div>
@@ -170,7 +170,7 @@ export default function CandidateShow() {
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:underline font-medium"
                     >
-                      {t('View Profile')}
+                      {'View Profile'}
                     </a>
                   </div>
                 </div>
@@ -179,14 +179,14 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <ExternalLink className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Portfolio')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Portfolio'}</p>
                     <a 
                       href={candidate.portfolio_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-sm text-blue-600 hover:underline font-medium"
                     >
-                      {t('View Portfolio')}
+                      {'View Portfolio'}
                     </a>
                   </div>
                 </div>
@@ -199,7 +199,7 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <Briefcase className="h-5 w-5" />
-                {t('Applied Position')}
+                {'Applied Position'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -223,19 +223,19 @@ export default function CandidateShow() {
                 {candidate.department && (
                   <div className="flex items-center gap-2">
                     <Building className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-700">{t('Department')}: {candidate.department.name}</span>
+                    <span className="text-sm text-gray-700">{'Department'}: {candidate.department.name}</span>
                   </div>
                 )}
                 {candidate.source && (
                   <div className="flex items-center gap-2">
                     <Users className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-700">{t('Source')}: {candidate.source.name}</span>
+                    <span className="text-sm text-gray-700">{'Source'}: {candidate.source.name}</span>
                   </div>
                 )}
                 {candidate.referral_employee && (
                   <div className="flex items-center gap-2">
                     <User className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm text-gray-700">{t('Referred by')}: {candidate.referral_employee.name}</span>
+                    <span className="text-sm text-gray-700">{'Referred by'}: {candidate.referral_employee.name}</span>
                   </div>
                 )}
               </div>
@@ -247,49 +247,49 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <DollarSign className="h-5 w-5" />
-                {t('Professional Information')}
+                {'Professional Information'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {candidate.experience_years !== null && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Experience')}</p>
-                  <p className="text-sm text-gray-600">{candidate.experience_years} {t('years')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Experience'}</p>
+                  <p className="text-sm text-gray-600">{candidate.experience_years} {'years'}</p>
                 </div>
               )}
               {candidate.current_salary && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Current Salary')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Current Salary'}</p>
                   <p className="text-sm text-gray-600">${candidate.current_salary.toLocaleString()}</p>
                 </div>
               )}
               {candidate.expected_salary && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Expected Salary')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Expected Salary'}</p>
                   <p className="text-sm text-gray-600">${candidate.expected_salary.toLocaleString()}</p>
                 </div>
               )}
               {candidate.final_salary && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Final Salary')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Final Salary'}</p>
                   <p className="text-sm text-gray-600">${candidate.final_salary.toLocaleString()}</p>
                 </div>
               )}
               {candidate.notice_period && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Notice Period')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Notice Period'}</p>
                   <p className="text-sm text-gray-600">{candidate.notice_period}</p>
                 </div>
               )}
               {candidate.gender && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Gender')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Gender'}</p>
                   <p className="text-sm text-gray-600 capitalize">{candidate.gender}</p>
                 </div>
               )}
               {candidate.date_of_birth && (
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{t('Date of Birth')}</p>
+                  <p className="text-sm font-medium text-gray-900">{'Date of Birth'}</p>
                   <p className="text-sm text-gray-600">{new Date(candidate.date_of_birth).toLocaleDateString()}</p>
                 </div>
               )}
@@ -303,7 +303,7 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <FileText className="h-5 w-5" />
-                {t('Documents')}
+                {'Documents'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -311,7 +311,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Resume')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Resume'}</p>
                     <a 
                       href={getImagePath(candidate.resume_path)} 
                       target="_blank" 
@@ -319,7 +319,7 @@ export default function CandidateShow() {
                       className="text-sm text-blue-600 hover:underline font-medium"
                       download
                     >
-                      {t('Download Resume')}
+                      {'Download Resume'}
                     </a>
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default function CandidateShow() {
                 <div className="flex items-center gap-3">
                   <FileText className="h-4 w-4 text-gray-500" />
                   <div>
-                    <p className="text-sm font-medium text-gray-900">{t('Cover Letter')}</p>
+                    <p className="text-sm font-medium text-gray-900">{'Cover Letter'}</p>
                     <a 
                       href={getImagePath(candidate.cover_letter_path)} 
                       target="_blank" 
@@ -336,7 +336,7 @@ export default function CandidateShow() {
                       className="text-sm text-blue-600 hover:underline font-medium"
                       download
                     >
-                      {t('Download Cover Letter')}
+                      {'Download Cover Letter'}
                     </a>
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <Mail className="h-5 w-5" />
-                {t('Cover Letter Message')}
+                {'Cover Letter Message'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -368,7 +368,7 @@ export default function CandidateShow() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
                 <Award className="h-5 w-5" />
-                {t('Custom Questions & Answers')}
+                {'Custom Questions & Answers'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -389,23 +389,23 @@ export default function CandidateShow() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold text-gray-900">
               <Clock className="h-5 w-5" />
-              {t('Additional Information')}
+              {'Additional Information'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="text-sm font-medium text-gray-900">{t('Terms & Conditions')}</p>
+                <p className="text-sm font-medium text-gray-900">{'Terms & Conditions'}</p>
                 <Badge className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
                   candidate.terms_condition_check === 'on'
                     ? 'bg-green-50 text-green-700 ring-green-600/20'
                     : 'bg-red-50 text-red-700 ring-red-600/20'
                 }`}>
-                  {candidate.terms_condition_check === 'on' ? t('Accepted') : t('Not Accepted')}
+                  {candidate.terms_condition_check === 'on' ? 'Accepted' : 'Not Accepted'}
                 </Badge>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{t('Applied Date')}</p>
+                <p className="text-sm font-medium text-gray-900">{'Applied Date'}</p>
                 <p className="text-sm text-gray-600">{new Date(candidate.application_date).toLocaleDateString()}</p>
               </div>
             </div>

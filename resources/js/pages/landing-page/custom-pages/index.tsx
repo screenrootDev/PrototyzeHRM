@@ -14,7 +14,7 @@ import { PageTemplate } from '@/components/page-template';
 import { CrudTable } from '@/components/CrudTable';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Toaster } from '@/components/ui/toaster';
 
 interface CustomPage {
@@ -37,7 +37,7 @@ interface PageProps {
 }
 
 export default function CustomPagesIndex() {
-  const { t } = useTranslation();
+  
   const { pages, flash, filters: pageFilters = {}, globalSettings } = usePage<PageProps>().props;
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingPage, setEditingPage] = useState<CustomPage | null>(null);
@@ -58,7 +58,7 @@ export default function CustomPagesIndex() {
 
     if (editingPage) {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating page...'));
+        toast.loading('Updating page...');
       }
 
       router.put(route('landing-page.custom-pages.update', editingPage.id), formData, {
@@ -69,25 +69,21 @@ export default function CustomPagesIndex() {
             toast.dismiss();
           }
           if (page.props.flash?.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash?.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update page: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update page: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating page...'));
+        toast.loading('Creating page...');
       }
 
       router.post(route('landing-page.custom-pages.store'), formData, {
@@ -98,20 +94,16 @@ export default function CustomPagesIndex() {
             toast.dismiss();
           }
           if (page.props.flash?.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash?.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create page: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create page: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -136,7 +128,7 @@ export default function CustomPagesIndex() {
 
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting page...'));
+      toast.loading('Deleting page...');
     }
 
     router.delete(route('landing-page.custom-pages.destroy', deletingPage.id), {
@@ -147,20 +139,16 @@ export default function CustomPagesIndex() {
           toast.dismiss();
         }
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete page: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete page: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };

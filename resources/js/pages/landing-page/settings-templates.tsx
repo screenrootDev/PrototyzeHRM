@@ -108,15 +108,15 @@ export default function TemplatesSection({
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                {t("Templates Section Content")}
+                {"Templates Section Content"}
               </h3>
               <p className="text-sm text-gray-500">
-                {t("Section title and description")}
+                {"Section title and description"}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Label className="text-sm">{t("Enable Section")}</Label>
+            <Label className="text-sm">{"Enable Section"}</Label>
             <Switch
               checked={
                 data.config_sections?.section_visibility?.templates !== false
@@ -130,35 +130,33 @@ export default function TemplatesSection({
 
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="templates_title">{t("Section Title")}</Label>
+            <Label htmlFor="templates_title">{"Section Title"}</Label>
             <Input
               id="templates_title"
               value={getSectionData("templates").title || ""}
               onChange={(e) =>
                 updateSectionData("templates", { title: e.target.value })
               }
-              placeholder={t("Explore Our Templates")}
+              placeholder={"Explore Our Templates"}
             />
           </div>
 
           <div className="space-y-3">
-            <Label htmlFor="templates_subtitle">{t("Section Subtitle")}</Label>
+            <Label htmlFor="templates_subtitle">{"Section Subtitle"}</Label>
             <Textarea
               id="templates_subtitle"
               value={getSectionData("templates").subtitle || ""}
               onChange={(e) =>
                 updateSectionData("templates", { subtitle: e.target.value })
               }
-              placeholder={t(
-                "Choose from our professionally designed templates...",
-              )}
+              placeholder={"Choose from our professionally designed templates..."}
               rows={3}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-3">
-              <Label htmlFor="templates_layout">{t("Layout Style")}</Label>
+              <Label htmlFor="templates_layout">{"Layout Style"}</Label>
               <select
                 id="templates_layout"
                 value={getSectionData("templates").layout || "grid"}
@@ -175,7 +173,7 @@ export default function TemplatesSection({
 
             <div className="space-y-3">
               <Label htmlFor="templates_columns">
-                {t("Number of Columns")}
+                {"Number of Columns"}
               </Label>
               <select
                 id="templates_columns"
@@ -196,7 +194,7 @@ export default function TemplatesSection({
 
             <div className="space-y-3">
               <Label htmlFor="templates_background_color">
-                {t("Background Color")}
+                {"Background Color"}
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -237,16 +235,16 @@ export default function TemplatesSection({
             </div>
             <div>
               <h3 className="text-lg font-semibold text-gray-900">
-                {t("Template Selection")}
+                {"Template Selection"}
               </h3>
               <p className="text-sm text-gray-500">
-                {t("Select templates to display in this section")}
+                {"Select templates to display in this section"}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium">
-              {t("Selected")}:{" "}
+              {"Selected"}:{" "}
               {Array.isArray(getSectionData("templates").templates_list)
                 ? getSectionData("templates").templates_list.length
                 : 0}
@@ -277,7 +275,7 @@ export default function TemplatesSection({
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder={t("Search templates...")}
+              placeholder={"Search templates..."}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -302,7 +300,7 @@ export default function TemplatesSection({
                   key={template.name}
                   template={template}
                   isSelected={isSelected}
-                  previewButtonText={t("Preview")}
+                  previewButtonText={"Preview"}
                   onClick={() => {
                     const templatesList = Array.isArray(
                       getSectionData("templates").templates_list,
@@ -344,21 +342,19 @@ export default function TemplatesSection({
                 style={{ color: "#0075BD", borderColor: "#0075BD" }}
                 onClick={loadMoreTemplates}
               >
-                {t("Load More Templates")}
+                {"Load More Templates"}
               </Button>
             </div>
           )}
         </div>
 
         <div className="mt-6">
-          <h4 className="font-medium mb-3">{t("Selected Templates")}</h4>
+          <h4 className="font-medium mb-3">{"Selected Templates"}</h4>
           <div className="space-y-2">
             {!Array.isArray(getSectionData("templates").templates_list) ||
             getSectionData("templates").templates_list.length === 0 ? (
               <p className="text-sm text-gray-500">
-                {t(
-                  "No templates selected. Click on templates above to select them.",
-                )}
+                {"No templates selected. Click on templates above to select them."}
               </p>
             ) : (
               <div className="grid grid-cols-1 gap-2">
@@ -394,29 +390,29 @@ export default function TemplatesSection({
           </div>
           <div>
             <h3 className="text-lg font-semibold text-gray-900">
-              {t("Call to Action")}
+              {"Call to Action"}
             </h3>
             <p className="text-sm text-gray-500">
-              {t("Add a call-to-action button to view all templates")}
+              {"Add a call-to-action button to view all templates"}
             </p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="templates_cta_text">{t("CTA Button Text")}</Label>
+            <Label htmlFor="templates_cta_text">{"CTA Button Text"}</Label>
             <Input
               id="templates_cta_text"
               value={getSectionData("templates").cta_text || ""}
               onChange={(e) =>
                 updateSectionData("templates", { cta_text: e.target.value })
               }
-              placeholder={t("View All Templates")}
+              placeholder={"View All Templates"}
             />
           </div>
 
           <div className="space-y-3">
-            <Label htmlFor="templates_cta_link">{t("CTA Button Link")}</Label>
+            <Label htmlFor="templates_cta_link">{"CTA Button Link"}</Label>
             <Input
               id="templates_cta_link"
               value={getSectionData("templates").cta_link || ""}

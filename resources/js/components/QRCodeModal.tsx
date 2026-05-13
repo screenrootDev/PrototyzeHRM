@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 import QRCode from 'qrcode';
 
 interface QRCodeModalProps {
@@ -12,7 +12,7 @@ interface QRCodeModalProps {
 }
 
 export function QRCodeModal({ isOpen, onClose, url, title }: QRCodeModalProps) {
-  const { t } = useTranslation();
+  
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [qrUrl, setQrUrl] = useState('');
 
@@ -49,7 +49,7 @@ export function QRCodeModal({ isOpen, onClose, url, title }: QRCodeModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('QR Code for')} {title}</DialogTitle>
+          <DialogTitle>{'QR Code for'} {title}</DialogTitle>
         </DialogHeader>
         <div className="flex flex-col items-center justify-center p-4">
           {qrUrl ? (
@@ -60,15 +60,15 @@ export function QRCodeModal({ isOpen, onClose, url, title }: QRCodeModalProps) {
             </div>
           )}
           <p className="mt-4 text-sm text-center text-muted-foreground">
-            {t('Scan this QR code to access the vCard')}
+            {'Scan this QR code to access the vCard'}
           </p>
         </div>
         <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-2">
           <Button variant="outline" onClick={onClose}>
-            {t('Close')}
+            {'Close'}
           </Button>
           <Button onClick={handleDownload}>
-            {t('Download QR Code')}
+            {'Download QR Code'}
           </Button>
         </DialogFooter>
       </DialogContent>

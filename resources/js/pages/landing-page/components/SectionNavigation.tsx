@@ -69,7 +69,7 @@ export default function SectionNavigation({ activeSection, onSectionChange, t }:
             <optgroup key={group.title} label={group.title}>
               {group.sections.map(section => (
                 <option key={section.key} value={section.key}>
-                  {t(section.label)}
+                  {section.label}
                 </option>
               ))}
             </optgroup>
@@ -102,7 +102,7 @@ export default function SectionNavigation({ activeSection, onSectionChange, t }:
                     onClick={() => onSectionChange(section.key)}
                   >
                     <Icon className="h-4 w-4 mr-2" />
-                    {t(section.label)}
+                    {section.label}
                   </Button>
                 );
               })}

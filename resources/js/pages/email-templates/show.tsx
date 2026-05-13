@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { RichTextField } from '@/components/ui/rich-text-field'
 import { Save } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+
 import { toast } from '@/components/custom-toast'
 
 interface EmailTemplateLang {
@@ -39,7 +39,7 @@ interface Props {
 }
 
 export default function EmailTemplateShow({ template, languages, variables }: Props) {
-  const { t } = useTranslation()
+  
   const { flash } = usePage().props as any
   const [fromName, setFromName] = useState(template.from)
   const [currentLang, setCurrentLang] = useState(languages[0]?.code || 'en')
@@ -82,8 +82,8 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
   }, [flash])
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Email Templates'), href: route('email-templates.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Email Templates', href: route('email-templates.index') },
     { title: template.name }
   ]
 
@@ -103,7 +103,7 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
           <Card>
             <CardHeader>
               <div className="flex justify-between items-center">
-                <CardTitle>{t("Template Settings")}</CardTitle>
+                <CardTitle>{"Template Settings"}</CardTitle>
                 <Button 
                   onClick={() => {
                     router.put(route('email-templates.update-settings', template.id), {
@@ -113,24 +113,24 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
                   size="sm"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {t("Save Changes")}
+                  {"Save Changes"}
                 </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-2">
-                <Label>{t("Template Name")}</Label>
+                <Label>{"Template Name"}</Label>
                 <Input value={template.name} disabled className="bg-muted" />
-                <p className="text-xs text-muted-foreground">{t("Template name cannot be changed")}</p>
+                <p className="text-xs text-muted-foreground">{"Template name cannot be changed"}</p>
               </div>
               
               <div className="grid gap-2">
-                <Label htmlFor="from">{t("From Name")}</Label>
+                <Label htmlFor="from">{"From Name"}</Label>
                 <Input
                   id="from"
                   value={fromName}
                   onChange={(e) => setFromName(e.target.value)}
-                  placeholder={t("Enter from name (e.g., {app_name}, Support Team)")}
+                  placeholder={"Enter from name (e.g., {app_name}, Support Team)"}
                   className="focus:ring-2 focus:ring-primary"
                 />
               </div>
@@ -141,9 +141,9 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
             <CardHeader>
               <div className="flex justify-between items-center">
                 <div>
-                  <CardTitle>{t("Email Content")}</CardTitle>
+                  <CardTitle>{"Email Content"}</CardTitle>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {t("Customize email content for different languages")}
+                    {"Customize email content for different languages"}
                   </p>
                 </div>
                 <Button 
@@ -161,7 +161,7 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
                   className="shrink-0"
                 >
                   <Save className="h-4 w-4 mr-2" />
-                  {t("Save Content")}
+                  {"Save Content"}
                 </Button>
               </div>
             </CardHeader>
@@ -191,20 +191,20 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
                       </Badge>
                       <div>
                         <span className="font-medium">{language.name}</span>
-                        <p className="text-xs text-muted-foreground">{t("Edit email content for this language")}</p>
+                        <p className="text-xs text-muted-foreground">{"Edit email content for this language"}</p>
                       </div>
                     </div>
                     
                     <div className="space-y-4">
                       <div className="grid gap-3">
                         <Label htmlFor={`subject-${language.code}`} className="text-sm font-medium">
-                          {t("Email Subject")}
+                          {"Email Subject"}
                         </Label>
                         <Input
                           id={`subject-${language.code}`}
                           value={templateLangs[language.code]?.subject || ''}
                           onChange={(e) => handleSubjectChange(language.code, e.target.value)}
-                          placeholder={t("Enter email subject (you can use variables like {app_name})")}
+                          placeholder={"Enter email subject (you can use variables like {app_name})"}
                           className="focus:ring-2 focus:ring-primary"
                         />
                       </div>
@@ -214,11 +214,11 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
                           label="Email Content"
                           value={templateLangs[language.code]?.content || ''}
                           onChange={(content) => handleContentChange(language.code, content)}
-                          placeholder={t("Write your email content here. You can use HTML formatting and variables...")}
+                          placeholder={"Write your email content here. You can use HTML formatting and variables..."}
                           className="min-h-[300px]"
                         />
                         <p className="text-xs text-muted-foreground">
-                          💡 {t("Tip: Use the variables from the sidebar to personalize your emails")}
+                          💡 {"Tip: Use the variables from the sidebar to personalize your emails"}
                         </p>
                       </div>
                     </div>
@@ -233,13 +233,13 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <span>{t("Available Variables")}</span>
+                <span>{"Available Variables"}</span>
                 <Badge variant="secondary" className="text-xs">
                   {Object.keys(variables).length}
                 </Badge>
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                {t("Click to copy variables to use in your email content")}
+                {"Click to copy variables to use in your email content"}
               </p>
             </CardHeader>
             <CardContent>
@@ -258,7 +258,7 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
                       </code>
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                         <Badge variant="outline" className="text-xs">
-                          {t("Click to copy")}
+                          {"Click to copy"}
                         </Badge>
                       </div>
                     </div>
@@ -270,7 +270,7 @@ export default function EmailTemplateShow({ template, languages, variables }: Pr
               </div>
               <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
                 <p className="text-xs text-blue-700">
-                  💡 <strong>{t("Tip")}:</strong> {t("These variables will be automatically replaced with actual values when emails are sent.")}
+                  💡 <strong>{"Tip"}:</strong> {"These variables will be automatically replaced with actual values when emails are sent."}
                 </p>
               </div>
             </CardContent>

@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Brain } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 interface ChatGptButtonProps {
   onClick: () => void;
@@ -17,7 +17,7 @@ export function ChatGptButton({
   size = "sm",
   className = ""
 }: ChatGptButtonProps) {
-  const { t } = useTranslation();
+  
 
   return (
     <Button
@@ -28,7 +28,7 @@ export function ChatGptButton({
       className={`flex items-center gap-2 ${className}`}
     >
       <Brain className="h-4 w-4" />
-      {t(text)}
+      {text}
     </Button>
   );
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Plus } from 'lucide-react';
@@ -17,7 +17,7 @@ interface IpRestriction {
 }
 
 export default function IpRestrictionSettings() {
-  const { t } = useTranslation();
+  
   const { ipRestrictions = [], auth = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -51,17 +51,13 @@ export default function IpRestrictionSettings() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash?.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash?.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create IP address: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create IP address: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
@@ -69,17 +65,13 @@ export default function IpRestrictionSettings() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash?.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash?.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update IP address: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update IP address: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -98,25 +90,21 @@ export default function IpRestrictionSettings() {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete IP address: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete IP address: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   return (
     <SettingsSection
-      title={t("IP Restriction Settings")}
-      description={t("Manage allowed IP addresses for company access")}
+      title={"IP Restriction Settings"}
+      description={"Manage allowed IP addresses for company access"}
       action={
         <Button 
           onClick={handleAddNew}
@@ -124,7 +112,7 @@ export default function IpRestrictionSettings() {
           size="sm"
         >
           <Plus className="h-4 w-4 mr-2" />
-          {t('Add IP Address')}
+          {'Add IP Address'}
         </Button>
       }
     >
@@ -135,21 +123,21 @@ export default function IpRestrictionSettings() {
               columns={[
                 {
                   key: 'ip_address',
-                  label: t('IP Address'),
+                  label: 'IP Address',
                   sortable: true,
                   render: (value) => <span className="font-mono">{value}</span>
                 }
               ]}
               actions={[
                 {
-                  label: t('Edit'),
+                  label: 'Edit',
                   icon: 'Edit',
                   action: 'edit',
                   className: 'text-amber-500',
                   requiredPermission: 'edit-ip-restriction'
                 },
                 {
-                  label: t('Delete'),
+                  label: 'Delete',
                   icon: 'Trash2',
                   action: 'delete',
                   className: 'text-red-500',
@@ -177,7 +165,7 @@ export default function IpRestrictionSettings() {
           fields: [
             {
               name: 'ip_address',
-              label: t('IP Address'),
+              label: 'IP Address',
               type: 'text',
               required: true,
               placeholder: '192.168.1.1'
@@ -187,8 +175,8 @@ export default function IpRestrictionSettings() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add IP Address')
-            : t('Edit IP Address')
+            ? 'Add IP Address'
+            : 'Edit IP Address'
         }
         mode={formMode}
       />

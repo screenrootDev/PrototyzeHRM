@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function LeaveTypes() {
-  const { t } = useTranslation();
+  
   const { auth, leaveTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -92,17 +92,15 @@ export default function LeaveTypes() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating leave type...'));
+      toast.loading('Creating leave type...');
 
       router.post(route('hr.leave-types.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -114,17 +112,15 @@ export default function LeaveTypes() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating leave type...'));
+      toast.loading('Updating leave type...');
 
       router.put(route('hr.leave-types.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -139,17 +135,15 @@ export default function LeaveTypes() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting leave type...'));
+    toast.loading('Deleting leave type...');
 
     router.delete(route('hr.leave-types.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -164,16 +158,14 @@ export default function LeaveTypes() {
 
   const handleToggleStatus = (leaveType: any) => {
     const newStatus = leaveType.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} leave type...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} leave type...`);
 
     router.put(route('hr.leave-types.toggle-status', leaveType.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -203,7 +195,7 @@ export default function LeaveTypes() {
   // Add the "Add New Leave Type" button if user has permission
   if (hasPermission(permissions, 'create-leave-types')) {
     pageActions.push({
-      label: t('Add Leave Type'),
+      label: 'Add Leave Type',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -211,16 +203,16 @@ export default function LeaveTypes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Leave Management'), href: route('hr.leave-types.index') },
-    { title: t('Leave Types') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Leave Management', href: route('hr.leave-types.index') },
+    { title: 'Leave Types' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value: string, row: any) => (
         <div className="flex items-center gap-2">
@@ -234,48 +226,48 @@ export default function LeaveTypes() {
     },
     {
       key: 'description',
-      label: t('Description'),
+      label: 'Description',
       render: (value: string) => {
         return value || '-';
       }
     },
     {
       key: 'max_days_per_year',
-      label: t('Max Days/Year'),
+      label: 'Max Days/Year',
       render: (value: number) => (
         <span className="font-mono">{value}</span>
       )
     },
     {
       key: 'is_paid',
-      label: t('Type'),
+      label: 'Type',
       render: (value: boolean) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
           value
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
         }`}>
-          {value ? t('Paid') : t('Unpaid')}
+          {value ? 'Paid' : 'Unpaid'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -284,28 +276,28 @@ export default function LeaveTypes() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-leave-types'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-leave-types'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-leave-types'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -315,14 +307,14 @@ export default function LeaveTypes() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses'), disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses', disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate
-      title={t("Leave Types")}
+      title={"Leave Types"}
       url="/hr/leave-types"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -337,7 +329,7 @@ export default function LeaveTypes() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -388,7 +380,7 @@ export default function LeaveTypes() {
           to={leaveTypes?.to || 0}
           total={leaveTypes?.total || 0}
           links={leaveTypes?.links}
-          entityName={t("leave types")}
+          entityName={"leave types"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -400,14 +392,14 @@ export default function LeaveTypes() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Leave Type Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
-            { name: 'max_days_per_year', label: t('Maximum Days Per Year'), type: 'number', required: true, min: 0 },
-            { name: 'is_paid', label: t('Is Paid'), type: 'checkbox', defaultValue: true },
-            { name: 'color', label: t('Color'), type: 'color', required: true, defaultValue: '#3B82F6' },
+            { name: 'name', label: 'Leave Type Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'max_days_per_year', label: 'Maximum Days Per Year', type: 'number', required: true, min: 0 },
+            { name: 'is_paid', label: 'Is Paid', type: 'checkbox', defaultValue: true },
+            { name: 'color', label: 'Color', type: 'color', required: true, defaultValue: '#3B82F6' },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
                 { value: 'active', label: 'Active' },
@@ -421,10 +413,10 @@ export default function LeaveTypes() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Leave Type')
+            ? 'Add New Leave Type'
             : formMode === 'edit'
-              ? t('Edit Leave Type')
-              : t('View Leave Type')
+              ? 'Edit Leave Type'
+              : 'View Leave Type'
         }
         mode={formMode}
       />

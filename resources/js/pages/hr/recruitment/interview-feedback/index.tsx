@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function InterviewFeedback() {
-  const { t } = useTranslation();
+  
   const { auth, interviewFeedback, interviews, interviewers, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -136,7 +136,7 @@ export default function InterviewFeedback() {
     }
     
     if (formMode === 'create') {
-      toast.loading(t('Submitting interview feedback...'));
+      toast.loading('Submitting interview feedback...');
 
       router.post(route('hr.recruitment.interview-feedback.store'), formData, {
         onSuccess: (page) => {
@@ -145,11 +145,9 @@ export default function InterviewFeedback() {
           setAvailableInterviewers([]);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Interview feedback submitted successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Interview feedback submitted successfully');
           }
         },
         onError: (errors) => {
@@ -162,7 +160,7 @@ export default function InterviewFeedback() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating interview feedback...'));
+      toast.loading('Updating interview feedback...');
 
       router.put(route('hr.recruitment.interview-feedback.update', currentItem.id), formData, {
         onSuccess: (page) => {
@@ -171,11 +169,9 @@ export default function InterviewFeedback() {
           setAvailableInterviewers([]);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Interview feedback updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Interview feedback updated successfully');
           }
         },
         onError: (errors) => {
@@ -191,18 +187,16 @@ export default function InterviewFeedback() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting interview feedback...'));
+    toast.loading('Deleting interview feedback...');
 
     router.delete(route('hr.recruitment.interview-feedback.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Interview feedback deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Interview feedback deleted successfully');
         }
       },
       onError: (errors) => {
@@ -232,7 +226,7 @@ export default function InterviewFeedback() {
   
   if (hasPermission(permissions, 'create-interview-feedback')) {
     pageActions.push({
-      label: t('Add Feedback'),
+      label: 'Add Feedback',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -240,9 +234,9 @@ export default function InterviewFeedback() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.interview-feedback.index') },
-    { title: t('Interview Feedback') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.interview-feedback.index') },
+    { title: 'Interview Feedback' }
   ];
 
   const getRecommendationColor = (recommendation: string) => {
@@ -259,7 +253,7 @@ export default function InterviewFeedback() {
   const columns = [
     { 
       key: 'interview.candidate.full_name', 
-      label: t('Candidate'),
+      label: 'Candidate',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.interview?.candidate?.first_name} {row.interview?.candidate?.last_name}</div>
@@ -269,17 +263,17 @@ export default function InterviewFeedback() {
     },
     { 
       key: 'interview.round.name', 
-      label: t('Round'),
+      label: 'Round',
       render: (_, row) => row.interview?.round?.name || '-'
     },
     { 
       key: 'interviewer_names', 
-      label: t('Interviewer'),
+      label: 'Interviewer',
       render: (_, row) => row.interviewer_names || '-'
     },
     { 
       key: 'overall_rating', 
-      label: t('Overall Rating'),
+      label: 'Overall Rating',
       render: (value) => {
         if (!value) return '-';
         return (
@@ -298,19 +292,19 @@ export default function InterviewFeedback() {
     },
     { 
       key: 'recommendation', 
-      label: t('Recommendation'),
+      label: 'Recommendation',
       render: (value) => {
         if (!value) return '-';
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getRecommendationColor(value)}`}>
-            {t(value)}
+            {value}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Submitted'),
+      label: 'Submitted',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -318,21 +312,21 @@ export default function InterviewFeedback() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-interview-feedback'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-interview-feedback'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -341,16 +335,16 @@ export default function InterviewFeedback() {
   ];
 
   const recommendationOptions = [
-    { value: '_empty_', label: t('All Recommendations') },
-    { value: 'Strong Hire', label: t('Strong Hire') },
-    { value: 'Hire', label: t('Hire') },
-    { value: 'Maybe', label: t('Maybe') },
-    { value: 'Reject', label: t('Reject') },
-    { value: 'Strong Reject', label: t('Strong Reject') }
+    { value: '_empty_', label: 'All Recommendations' },
+    { value: 'Strong Hire', label: 'Strong Hire' },
+    { value: 'Hire', label: 'Hire' },
+    { value: 'Maybe', label: 'Maybe' },
+    { value: 'Reject', label: 'Reject' },
+    { value: 'Strong Reject', label: 'Strong Reject' }
   ];
 
   const interviewerOptions = [
-    { value: '_empty_', label: t('All Interviewers'), disabled: true },
+    { value: '_empty_', label: 'All Interviewers', disabled: true },
     ...(interviewers || []).map((interviewer: any) => ({
       value: interviewer.id.toString(),
       label: interviewer.name
@@ -358,7 +352,7 @@ export default function InterviewFeedback() {
   ];
 
   const interviewOptions = [
-    { value: '_empty_', label: t('Select Interview') },
+    { value: '_empty_', label: 'Select Interview' },
     ...(interviews || []).map((interview: any) => ({
       value: interview.id.toString(),
       label: `${interview.candidate?.first_name} ${interview.candidate?.last_name} - ${interview.job?.title} (${interview.round?.name || 'No Round'})`
@@ -366,7 +360,7 @@ export default function InterviewFeedback() {
   ];
 
   const interviewerSelectOptions = [
-    { value: '_empty_', label: t('Select Interviewer') },
+    { value: '_empty_', label: 'Select Interviewer' },
     ...(interviewers || []).map((interviewer: any) => ({
       value: interviewer.id.toString(),
       label: interviewer.name
@@ -375,7 +369,7 @@ export default function InterviewFeedback() {
 
   return (
     <PageTemplate 
-      title={t("Interview Feedback")} 
+      title={"Interview Feedback"} 
       url="/hr/recruitment/interview-feedback"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -389,7 +383,7 @@ export default function InterviewFeedback() {
           filters={[
             {
               name: 'recommendation',
-              label: t('Recommendation'),
+              label: 'Recommendation',
               type: 'select',
               value: recommendationFilter,
               onChange: setRecommendationFilter,
@@ -397,7 +391,7 @@ export default function InterviewFeedback() {
             },
             {
               name: 'interviewer_id',
-              label: t('Interviewer'),
+              label: 'Interviewer',
               type: 'select',
               value: interviewerFilter,
               onChange: setInterviewerFilter,
@@ -448,7 +442,7 @@ export default function InterviewFeedback() {
           to={interviewFeedback?.to || 0}
           total={interviewFeedback?.total || 0}
           links={interviewFeedback?.links}
-          entityName={t("interview feedback")}
+          entityName={"interview feedback"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -461,7 +455,7 @@ export default function InterviewFeedback() {
           fields: [
             { 
               name: 'interview_id', 
-              label: t('Interview'), 
+              label: 'Interview', 
               type: 'select', 
               required: false,
               options: interviewOptions.filter(opt => opt.value !== '_empty_'),
@@ -480,7 +474,7 @@ export default function InterviewFeedback() {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('Select Interview')} />
+                      <SelectValue placeholder={'Select Interview'} />
                     </SelectTrigger>
                     <SelectContent className="z-[60000]" searchable={true}>
                       {interviewOptions.filter(opt => opt.value !== '_empty_').map(option => (
@@ -495,7 +489,7 @@ export default function InterviewFeedback() {
             },
             { 
               name: 'interviewer_id', 
-              label: t('Interviewer'), 
+              label: 'Interviewer', 
               type: 'multi-select', 
               searchable: true,
               key: `interviewer-${selectedInterview}`,
@@ -506,51 +500,51 @@ export default function InterviewFeedback() {
             },
             { 
               name: 'technical_rating', 
-              label: t('Technical Rating (1-5)'), 
+              label: 'Technical Rating (1-5)', 
               type: 'number',
               min: 1,
               max: 5
             },
             { 
               name: 'communication_rating', 
-              label: t('Communication Rating (1-5)'), 
+              label: 'Communication Rating (1-5)', 
               type: 'number',
               min: 1,
               max: 5
             },
             { 
               name: 'cultural_fit_rating', 
-              label: t('Cultural Fit Rating (1-5)'), 
+              label: 'Cultural Fit Rating (1-5)', 
               type: 'number',
               min: 1,
               max: 5
             },
             { 
               name: 'overall_rating', 
-              label: t('Overall Rating (1-5)'), 
+              label: 'Overall Rating (1-5)', 
               type: 'number',
               min: 1,
               max: 5
             },
             { 
               name: 'recommendation', 
-              label: t('Recommendation'), 
+              label: 'Recommendation', 
               type: 'select',
               options: recommendationOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'strengths', 
-              label: t('Strengths'), 
+              label: 'Strengths', 
               type: 'textarea' 
             },
             { 
               name: 'weaknesses', 
-              label: t('Weaknesses'), 
+              label: 'Weaknesses', 
               type: 'textarea' 
             },
             { 
               name: 'comments', 
-              label: t('Comments'), 
+              label: 'Comments', 
               type: 'textarea' 
             }
           ],
@@ -563,10 +557,10 @@ export default function InterviewFeedback() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Interview Feedback')
+            ? 'Add Interview Feedback'
             : formMode === 'edit'
-              ? t('Edit Interview Feedback')
-              : t('View Interview Feedback')
+              ? 'Edit Interview Feedback'
+              : 'View Interview Feedback'
         }
         mode={formMode}
       />

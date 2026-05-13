@@ -5,10 +5,10 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ChatGptField, ChatGptButton, ChatGptModal } from '@/components/chatgpt';
-import { useTranslation } from 'react-i18next';
+
 
 export default function ChatGptDemo() {
-  const { t } = useTranslation();
+  
   const [formData, setFormData] = useState({
     productName: '',
     description: '',
@@ -35,8 +35,8 @@ export default function ChatGptDemo() {
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('ChatGPT Demo') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'ChatGPT Demo' }
   ];
 
   return (
@@ -44,9 +44,9 @@ export default function ChatGptDemo() {
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Modal Stacking Demo */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t('Modal Stacking Demo')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{'Modal Stacking Demo'}</h2>
           <p className="text-sm text-gray-600 mb-4">
-            {t('Test independent modal stacking: Open the Coupon Dialog, then open ChatGPT Modal on top of it.')}
+            {'Test independent modal stacking: Open the Coupon Dialog, then open ChatGPT Modal on top of it.'}
           </p>
           <div className="space-x-2">
             <Button onClick={() => setShowCouponDialog(true)}>
@@ -58,16 +58,16 @@ export default function ChatGptDemo() {
           </div>
         </Card>
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t('Product Information Form')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{'Product Information Form'}</h2>
           
           <div className="space-y-4">
             {/* Example 1: ChatGptField for single input */}
             <div>
-              <Label htmlFor="productName">{t('Product Name')}</Label>
+              <Label htmlFor="productName">{'Product Name'}</Label>
               <ChatGptField
                 value={formData.productName}
                 onChange={(value) => handleFieldChange('productName', value)}
-                placeholder={t('Enter product name')}
+                placeholder={'Enter product name'}
                 modalTitle="Generate Product Name"
                 modalPlaceholder="Describe your product and target market to generate a catchy product name"
               />
@@ -75,11 +75,11 @@ export default function ChatGptDemo() {
 
             {/* Example 2: ChatGptField for textarea */}
             <div>
-              <Label htmlFor="description">{t('Product Description')}</Label>
+              <Label htmlFor="description">{'Product Description'}</Label>
               <ChatGptField
                 value={formData.description}
                 onChange={(value) => handleFieldChange('description', value)}
-                placeholder={t('Enter product description')}
+                placeholder={'Enter product description'}
                 type="textarea"
                 rows={4}
                 modalTitle="Generate Product Description"
@@ -89,11 +89,11 @@ export default function ChatGptDemo() {
 
             {/* Example 3: ChatGptField for marketing copy */}
             <div>
-              <Label htmlFor="marketingCopy">{t('Marketing Copy')}</Label>
+              <Label htmlFor="marketingCopy">{'Marketing Copy'}</Label>
               <ChatGptField
                 value={formData.marketingCopy}
                 onChange={(value) => handleFieldChange('marketingCopy', value)}
-                placeholder={t('Enter marketing copy')}
+                placeholder={'Enter marketing copy'}
                 type="textarea"
                 rows={3}
                 modalTitle="Generate Marketing Copy"
@@ -106,8 +106,8 @@ export default function ChatGptDemo() {
             <div className="pt-4 border-t">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium">{t('Bulk Content Generation')}</h3>
-                  <p className="text-sm text-gray-600">{t('Generate all content at once')}</p>
+                  <h3 className="font-medium">{'Bulk Content Generation'}</h3>
+                  <p className="text-sm text-gray-600">{'Generate all content at once'}</p>
                 </div>
                 <ChatGptButton
                   onClick={() => setShowModal(true)}
@@ -121,11 +121,11 @@ export default function ChatGptDemo() {
 
         {/* Display current form data */}
         <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">{t('Current Form Data')}</h3>
+          <h3 className="text-lg font-semibold mb-4">{'Current Form Data'}</h3>
           <div className="space-y-2 text-sm">
-            <div><strong>{t('Product Name')}:</strong> {formData.productName || t('Not set')}</div>
-            <div><strong>{t('Description')}:</strong> {formData.description || t('Not set')}</div>
-            <div><strong>{t('Marketing Copy')}:</strong> {formData.marketingCopy || t('Not set')}</div>
+            <div><strong>{'Product Name'}:</strong> {formData.productName || 'Not set'}</div>
+            <div><strong>{'Description'}:</strong> {formData.description || 'Not set'}</div>
+            <div><strong>{'Marketing Copy'}:</strong> {formData.marketingCopy || 'Not set'}</div>
           </div>
         </Card>
       </div>

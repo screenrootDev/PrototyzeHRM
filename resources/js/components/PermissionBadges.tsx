@@ -1,6 +1,6 @@
 // components/PermissionBadges.tsx
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+
 
 interface Permission {
   id: number | string;
@@ -14,7 +14,7 @@ interface PermissionBadgesProps {
 }
 
 export function PermissionBadges({ permissions = [], maxDisplay = 3 }: PermissionBadgesProps) {
-  const { t } = useTranslation();
+  
   if (!permissions || !Array.isArray(permissions) || permissions.length === 0) {
     return <span className="text-sm text-gray-500">-</span>;
   }
@@ -31,7 +31,7 @@ export function PermissionBadges({ permissions = [], maxDisplay = 3 }: Permissio
       ))}
       {permissions.length > maxDisplay && (
         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800">
-          +{permissions.length - maxDisplay} {t("more")}
+          +{permissions.length - maxDisplay} {"more"}
         </span>
       )}
     </div>

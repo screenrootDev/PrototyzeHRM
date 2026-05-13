@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Trips() {
-  const { t } = useTranslation();
+  
   const { auth, trips, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -129,144 +129,120 @@ export default function Trips() {
     const data = formData;
 
     if (formMode === 'create') {
-      toast.loading(t('Creating trip...'));
+      toast.loading('Creating trip...');
 
       router.post(route('hr.trips.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create trip: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create trip: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating trip...'));
+      toast.loading('Updating trip...');
 
       router.put(route('hr.trips.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update trip: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update trip: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
 
   const handleStatusChange = (formData: any) => {
-    toast.loading(t('Updating trip status...'));
+    toast.loading('Updating trip status...');
 
     router.put(route('hr.trips.change-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update trip status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update trip status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleAdvanceStatusChange = (formData: any) => {
-    toast.loading(t('Updating advance status...'));
+    toast.loading('Updating advance status...');
 
     router.put(route('hr.trips.update-advance-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsAdvanceStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update advance status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update advance status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleReimbursementStatusChange = (formData: any) => {
-    toast.loading(t('Updating reimbursement status...'));
+    toast.loading('Updating reimbursement status...');
 
     router.put(route('hr.trips.update-reimbursement-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsReimbursementStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update reimbursement status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update reimbursement status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting trip...'));
+    toast.loading('Deleting trip...');
 
     router.delete(route('hr.trips.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete trip: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete trip: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -291,7 +267,7 @@ export default function Trips() {
   // Add the "Add New Trip" button if user has permission
   if (hasPermission(permissions, 'create-trips')) {
     pageActions.push({
-      label: t('Add Trip'),
+      label: 'Add Trip',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -299,16 +275,16 @@ export default function Trips() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.trips.index') },
-    { title: t('Trips') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.trips.index') },
+    { title: 'Trips' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee.name',
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -318,29 +294,29 @@ export default function Trips() {
     },
     {
       key: 'purpose',
-      label: t('Purpose'),
+      label: 'Purpose',
       render: (value) => value || '-'
     },
     {
       key: 'destination',
-      label: t('Destination'),
+      label: 'Destination',
       render: (value) => value || '-'
     },
     {
       key: 'start_date',
-      label: t('Start Date'),
+      label: 'Start Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'end_date',
-      label: t('End Date'),
+      label: 'End Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           'planned': 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -358,7 +334,7 @@ export default function Trips() {
     },
     {
       key: 'advance_amount',
-      label: t('Advance'),
+      label: 'Advance',
       render: (value, row) => {
         if (!value || parseFloat(value) === 0) return '-';
 
@@ -383,7 +359,7 @@ export default function Trips() {
     },
     {
       key: 'total_expenses',
-      label: t('Expenses'),
+      label: 'Expenses',
       render: (value, row) => {
         if (!value || parseFloat(value) === 0) return '-';
 
@@ -407,7 +383,7 @@ export default function Trips() {
     },
     {
       key: 'actions',
-      label: t('Actions'),
+      label: 'Actions',
       render: (_, row) => (
         <div className="flex space-x-2">
           <Button
@@ -420,7 +396,7 @@ export default function Trips() {
             }}
           >
             <FileText className="h-4 w-4 mr-1" />
-            {t('Expenses')}
+            {'Expenses'}
           </Button>
           {row.documents && row.documents.trim() !== '' && (
             <Button
@@ -432,7 +408,7 @@ export default function Trips() {
                 handleAction('download-document', row);
               }}
             >
-              {t('Documents')}
+              {'Documents'}
             </Button>
           )}
         </div>
@@ -443,28 +419,28 @@ export default function Trips() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-trips'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-trips'
     },
     {
-      label: t('Change Status'),
+      label: 'Change Status',
       icon: 'RefreshCw',
       action: 'change-status',
       className: 'text-green-500',
       requiredPermission: 'edit-trips'
     },
     {
-      label: t('Advance Status'),
+      label: 'Advance Status',
       icon: 'DollarSign',
       action: 'advance-status',
       className: 'text-purple-500',
@@ -472,7 +448,7 @@ export default function Trips() {
       showWhen: (item) => item.advance_amount > 0
     },
     {
-      label: t('Reimbursement Status'),
+      label: 'Reimbursement Status',
       icon: 'CreditCard',
       action: 'reimbursement-status',
       className: 'text-indigo-500',
@@ -480,7 +456,7 @@ export default function Trips() {
       showWhen: (item) => item.total_expenses > 0
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -490,7 +466,7 @@ export default function Trips() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees'), disabled: true },
+    { value: '', label: 'All Employees', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -499,16 +475,16 @@ export default function Trips() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'planned', label: t('Planned') },
-    { value: 'ongoing', label: t('Ongoing') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'cancelled', label: t('Cancelled') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'planned', label: 'Planned' },
+    { value: 'ongoing', label: 'Ongoing' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   return (
     <PageTemplate
-      title={t("Trips")}
+      title={"Trips"}
       url="/hr/trips"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -523,7 +499,7 @@ export default function Trips() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -532,7 +508,7 @@ export default function Trips() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -540,14 +516,14 @@ export default function Trips() {
             },
             {
               name: 'date_from',
-              label: t('Start Date From'),
+              label: 'Start Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('End Date To'),
+              label: 'End Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -600,7 +576,7 @@ export default function Trips() {
           to={trips?.to || 0}
           total={trips?.total || 0}
           links={trips?.links}
-          entityName={t("trips")}
+          entityName={"trips"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -614,7 +590,7 @@ export default function Trips() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -622,53 +598,53 @@ export default function Trips() {
             },
             {
               name: 'purpose',
-              label: t('Purpose'),
+              label: 'Purpose',
               type: 'text',
               required: true
             },
             {
               name: 'destination',
-              label: t('Destination'),
+              label: 'Destination',
               type: 'text',
               required: true
             },
             {
               name: 'start_date',
-              label: t('Start Date'),
+              label: 'Start Date',
               type: 'date',
               required: true
             },
             {
               name: 'end_date',
-              label: t('End Date'),
+              label: 'End Date',
               type: 'date',
               required: true
             },
             {
               name: 'description',
-              label: t('Description'),
+              label: 'Description',
               type: 'textarea'
             },
             {
               name: 'expected_outcomes',
-              label: t('Expected Outcomes'),
+              label: 'Expected Outcomes',
               type: 'textarea'
             },
             {
               name: 'documents',
-              label: t('Documents'),
+              label: 'Documents',
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             {
               name: 'advance_amount',
-              label: t('Advance Amount'),
+              label: 'Advance Amount',
               type: 'number',
               min: 0,
               step: 0.01
@@ -676,41 +652,41 @@ export default function Trips() {
             ...(formMode === 'edit' ? [
               {
                 name: 'status',
-                label: t('Status'),
+                label: 'Status',
                 type: 'select',
                 options: [
-                  { value: 'planned', label: t('Planned') },
-                  { value: 'ongoing', label: t('Ongoing') },
-                  { value: 'completed', label: t('Completed') },
-                  { value: 'cancelled', label: t('Cancelled') }
+                  { value: 'planned', label: 'Planned' },
+                  { value: 'ongoing', label: 'Ongoing' },
+                  { value: 'completed', label: 'Completed' },
+                  { value: 'cancelled', label: 'Cancelled' }
                 ]
               },
               {
                 name: 'advance_status',
-                label: t('Advance Status'),
+                label: 'Advance Status',
                 type: 'select',
                 options: [
-                  { value: 'requested', label: t('Requested') },
-                  { value: 'approved', label: t('Approved') },
-                  { value: 'paid', label: t('Paid') },
-                  { value: 'reconciled', label: t('Reconciled') }
+                  { value: 'requested', label: 'Requested' },
+                  { value: 'approved', label: 'Approved' },
+                  { value: 'paid', label: 'Paid' },
+                  { value: 'reconciled', label: 'Reconciled' }
                 ],
                 showWhen: (formData) => formData.advance_amount > 0
               },
               {
                 name: 'reimbursement_status',
-                label: t('Reimbursement Status'),
+                label: 'Reimbursement Status',
                 type: 'select',
                 options: [
-                  { value: 'pending', label: t('Pending') },
-                  { value: 'approved', label: t('Approved') },
-                  { value: 'paid', label: t('Paid') }
+                  { value: 'pending', label: 'Pending' },
+                  { value: 'approved', label: 'Approved' },
+                  { value: 'paid', label: 'Paid' }
                 ],
                 showWhen: (formData) => formData.total_expenses > 0
               },
               {
                 name: 'trip_report',
-                label: t('Trip Report'),
+                label: 'Trip Report',
                 type: 'textarea',
                 showWhen: (formData) => formData.status === 'completed'
               }
@@ -721,10 +697,10 @@ export default function Trips() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Trip')
+            ? 'Add New Trip'
             : formMode === 'edit'
-              ? t('Edit Trip')
-              : t('View Trip')
+              ? 'Edit Trip'
+              : 'View Trip'
         }
         mode={formMode}
       />
@@ -738,14 +714,14 @@ export default function Trips() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'planned', label: t('Planned') },
-                { value: 'ongoing', label: t('Ongoing') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'cancelled', label: t('Cancelled') }
+                { value: 'planned', label: 'Planned' },
+                { value: 'ongoing', label: 'Ongoing' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
               ],
               defaultValue: currentItem?.status
             }
@@ -753,7 +729,7 @@ export default function Trips() {
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Change Trip Status')}
+        title={'Change Trip Status'}
         mode="edit"
       />
 
@@ -766,14 +742,14 @@ export default function Trips() {
           fields: [
             {
               name: 'advance_status',
-              label: t('Advance Status'),
+              label: 'Advance Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'requested', label: t('Requested') },
-                { value: 'approved', label: t('Approved') },
-                { value: 'paid', label: t('Paid') },
-                { value: 'reconciled', label: t('Reconciled') }
+                { value: 'requested', label: 'Requested' },
+                { value: 'approved', label: 'Approved' },
+                { value: 'paid', label: 'Paid' },
+                { value: 'reconciled', label: 'Reconciled' }
               ],
               defaultValue: currentItem?.advance_status
             }
@@ -781,7 +757,7 @@ export default function Trips() {
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Change Advance Status')}
+        title={'Change Advance Status'}
         mode="edit"
       />
 
@@ -794,13 +770,13 @@ export default function Trips() {
           fields: [
             {
               name: 'reimbursement_status',
-              label: t('Reimbursement Status'),
+              label: 'Reimbursement Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'pending', label: t('Pending') },
-                { value: 'approved', label: t('Approved') },
-                { value: 'paid', label: t('Paid') }
+                { value: 'pending', label: 'Pending' },
+                { value: 'approved', label: 'Approved' },
+                { value: 'paid', label: 'Paid' }
               ],
               defaultValue: currentItem?.reimbursement_status
             }
@@ -808,7 +784,7 @@ export default function Trips() {
           modalSize: 'sm'
         }}
         initialData={currentItem}
-        title={t('Change Reimbursement Status')}
+        title={'Change Reimbursement Status'}
         mode="edit"
       />
 

@@ -3,14 +3,14 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { List, BarChart, PieChart, Calendar, AlertTriangle, DollarSign } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
 export default function AssetDashboard() {
-  const { t } = useTranslation();
+  
   const { 
     assetCounts, 
     assetTypeData, 
@@ -31,13 +31,13 @@ export default function AssetDashboard() {
   // Define page actions
   const pageActions = [
     {
-      label: t('Asset List'),
+      label: 'Asset List',
       icon: <List className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewAssets
     },
     {
-      label: t('Depreciation Report'),
+      label: 'Depreciation Report',
       icon: <BarChart className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewDepreciationReport
@@ -45,10 +45,10 @@ export default function AssetDashboard() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.assets.index') },
-    { title: t('Asset Management'), href: route('hr.assets.index') },
-    { title: t('Asset Dashboard') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.assets.index') },
+    { title: 'Asset Management', href: route('hr.assets.index') },
+    { title: 'Asset Dashboard' }
   ];
   
   // Status colors for badges
@@ -61,15 +61,15 @@ export default function AssetDashboard() {
   
   // Status labels
   const statusLabels = {
-    'available': t('Available'),
-    'assigned': t('Assigned'),
-    'under_maintenance': t('Under Maintenance'),
-    'disposed': t('Disposed')
+    'available': 'Available',
+    'assigned': 'Assigned',
+    'under_maintenance': 'Under Maintenance',
+    'disposed': 'Disposed'
   };
   
   return (
     <PageTemplate 
-      title={t("Asset Dashboard")} 
+      title={"Asset Dashboard"} 
       url="/hr/assets/dashboard"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -78,7 +78,7 @@ export default function AssetDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Assets')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Assets'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{assetCounts.total}</div>
@@ -87,36 +87,36 @@ export default function AssetDashboard() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Available')}</CardTitle>
+            <CardTitle className="text-lg">{'Available'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600">{assetCounts.available}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {assetCounts.total > 0 ? Math.round((assetCounts.available / assetCounts.total) * 100) : 0}% {t('of total')}
+              {assetCounts.total > 0 ? Math.round((assetCounts.available / assetCounts.total) * 100) : 0}% {'of total'}
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Assigned')}</CardTitle>
+            <CardTitle className="text-lg">{'Assigned'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600">{assetCounts.assigned}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {assetCounts.total > 0 ? Math.round((assetCounts.assigned / assetCounts.total) * 100) : 0}% {t('of total')}
+              {assetCounts.total > 0 ? Math.round((assetCounts.assigned / assetCounts.total) * 100) : 0}% {'of total'}
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Under Maintenance')}</CardTitle>
+            <CardTitle className="text-lg">{'Under Maintenance'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-amber-600">{assetCounts.under_maintenance}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {assetCounts.total > 0 ? Math.round((assetCounts.under_maintenance / assetCounts.total) * 100) : 0}% {t('of total')}
+              {assetCounts.total > 0 ? Math.round((assetCounts.under_maintenance / assetCounts.total) * 100) : 0}% {'of total'}
             </div>
           </CardContent>
         </Card>
@@ -125,26 +125,26 @@ export default function AssetDashboard() {
       {/* Asset Value Summary */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>{t('Asset Value Summary')}</CardTitle>
+          <CardTitle>{'Asset Value Summary'}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">{t('Total Purchase Value')}</span>
+              <span className="text-sm text-gray-500">{'Total Purchase Value'}</span>
               <span className="text-2xl font-bold">{window.appSettings?.formatCurrency(assetValueSummary.total_purchase_value || 0)}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">{t('Total Current Value')}</span>
+              <span className="text-sm text-gray-500">{'Total Current Value'}</span>
               <span className="text-2xl font-bold">{window.appSettings?.formatCurrency(assetValueSummary.total_current_value || 0)}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-sm text-gray-500">{t('Total Depreciation')}</span>
+              <span className="text-sm text-gray-500">{'Total Depreciation'}</span>
               <span className="text-2xl font-bold">{window.appSettings?.formatCurrency(assetValueSummary.total_depreciation || 0)}</span>
             </div>
           </div>
           <div className="mt-4">
             <div className="flex justify-between mb-1">
-              <span className="text-sm">{t('Depreciation Progress')}</span>
+              <span className="text-sm">{'Depreciation Progress'}</span>
               <span className="text-sm">
                 {Number(assetValueSummary.total_purchase_value || 0) > 0 
                   ? Math.round((Number(assetValueSummary.total_depreciation || 0) / Number(assetValueSummary.total_purchase_value || 0)) * 100) 
@@ -162,7 +162,7 @@ export default function AssetDashboard() {
         <CardFooter>
           <Button variant="outline" onClick={handleViewDepreciationReport}>
             <BarChart className="h-4 w-4 mr-2" />
-            {t('View Depreciation Report')}
+            {'View Depreciation Report'}
           </Button>
         </CardFooter>
       </Card>
@@ -171,7 +171,7 @@ export default function AssetDashboard() {
         {/* Asset Distribution by Type */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Asset Distribution by Type')}</CardTitle>
+            <CardTitle>{'Asset Distribution by Type'}</CardTitle>
           </CardHeader>
           <CardContent>
             {assetTypeData.length > 0 ? (
@@ -190,7 +190,7 @@ export default function AssetDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No asset data available')}</div>
+              <div className="text-center py-4 text-gray-500">{'No asset data available'}</div>
             )}
           </CardContent>
         </Card>
@@ -198,7 +198,7 @@ export default function AssetDashboard() {
         {/* Recent Assignments */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Recent Assignments')}</CardTitle>
+            <CardTitle>{'Recent Assignments'}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentAssignments && recentAssignments.length > 0 ? (
@@ -207,7 +207,7 @@ export default function AssetDashboard() {
                   <div key={assignment.id} className="flex items-start justify-between border-b pb-3">
                     <div>
                       <div className="font-medium">{assignment.asset?.name}</div>
-                      <div className="text-sm text-gray-500">{t('Assigned to')}: {assignment.employee?.name}</div>
+                      <div className="text-sm text-gray-500">{'Assigned to'}: {assignment.employee?.name}</div>
                       <div className="text-xs text-gray-500">
                         {window.appSettings?.formatDateTimeSimple(assignment.checkout_date, false) || format(new Date(assignment.checkout_date), 'MMM dd, yyyy')}
                       </div>
@@ -217,13 +217,13 @@ export default function AssetDashboard() {
                       size="sm"
                       onClick={() => router.get(route('hr.assets.show', assignment.asset_id))}
                     >
-                      {t('View')}
+                      {'View'}
                     </Button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No recent assignments')}</div>
+              <div className="text-center py-4 text-gray-500">{'No recent assignments'}</div>
             )}
           </CardContent>
         </Card>
@@ -233,7 +233,7 @@ export default function AssetDashboard() {
         {/* Upcoming Maintenance */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Upcoming Maintenance')}</CardTitle>
+            <CardTitle>{'Upcoming Maintenance'}</CardTitle>
           </CardHeader>
           <CardContent>
             {upcomingMaintenance && upcomingMaintenance.length > 0 ? (
@@ -252,13 +252,13 @@ export default function AssetDashboard() {
                       size="sm"
                       onClick={() => router.get(route('hr.assets.show', maintenance.asset_id))}
                     >
-                      {t('View')}
+                      {'View'}
                     </Button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No upcoming maintenance')}</div>
+              <div className="text-center py-4 text-gray-500">{'No upcoming maintenance'}</div>
             )}
           </CardContent>
         </Card>
@@ -266,7 +266,7 @@ export default function AssetDashboard() {
         {/* Expiring Warranties */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Expiring Warranties')}</CardTitle>
+            <CardTitle>{'Expiring Warranties'}</CardTitle>
           </CardHeader>
           <CardContent>
             {expiringWarranties && expiringWarranties.length > 0 ? (
@@ -277,7 +277,7 @@ export default function AssetDashboard() {
                       <div className="font-medium">{asset.name}</div>
                       <div className="text-sm text-gray-500">{asset.warranty_info}</div>
                       <div className="text-xs text-red-500">
-                        {t('Expires')}: {window.appSettings?.formatDateTimeSimple(asset.warranty_expiry_date, false) || format(new Date(asset.warranty_expiry_date), 'MMM dd, yyyy')}
+                        {'Expires'}: {window.appSettings?.formatDateTimeSimple(asset.warranty_expiry_date, false) || format(new Date(asset.warranty_expiry_date), 'MMM dd, yyyy')}
                       </div>
                     </div>
                     <Button 
@@ -285,13 +285,13 @@ export default function AssetDashboard() {
                       size="sm"
                       onClick={() => router.get(route('hr.assets.show', asset.id))}
                     >
-                      {t('View')}
+                      {'View'}
                     </Button>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No expiring warranties')}</div>
+              <div className="text-center py-4 text-gray-500">{'No expiring warranties'}</div>
             )}
           </CardContent>
         </Card>

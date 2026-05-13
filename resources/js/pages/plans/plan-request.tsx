@@ -4,7 +4,7 @@ import { planRequestsConfig } from '@/config/crud/plan-requests';
 import { useEffect, useState } from 'react';
 import { usePage, router } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -14,7 +14,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function PlanRequestsPage() {
-  const { t } = useTranslation();
+  
   const { flash, planRequests, filters: pageFilters = {}, auth, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -35,7 +35,7 @@ export default function PlanRequestsPage() {
   const handleAction = (action: string, item: any) => {
     if (action === 'approve') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Approving plan request...'));
+        toast.loading('Approving plan request...');
       }
       
       router.post(route("plan-requests.approve", item.id), {}, {
@@ -44,10 +44,8 @@ export default function PlanRequestsPage() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
@@ -62,7 +60,7 @@ export default function PlanRequestsPage() {
       });
     } else if (action === 'reject') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Rejecting plan request...'));
+        toast.loading('Rejecting plan request...');
       }
       
       router.post(route("plan-requests.reject", item.id), {}, {
@@ -71,10 +69,8 @@ export default function PlanRequestsPage() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
@@ -139,9 +135,9 @@ export default function PlanRequestsPage() {
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Plans'), href: route('plans.index') },
-    { title: t('Plan Requests') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Plans', href: route('plans.index') },
+    { title: 'Plan Requests' }
   ];
 
   const hasActiveFilters = () => {
@@ -152,12 +148,12 @@ export default function PlanRequestsPage() {
 
   const filteredActions = planRequestsConfig.table.actions?.map(action => ({
     ...action,
-    label: t(action.label)
+    label: action.label
   }));
 
   return (
     <PageTemplate 
-      title={t('Plan Requests')} 
+      title={'Plan Requests'} 
       url="/plan-requests"
       breadcrumbs={breadcrumbs}
       noPadding
@@ -169,13 +165,13 @@ export default function PlanRequestsPage() {
           onSearch={handleSearch}
           filters={planRequestsConfig.filters?.map(filter => ({
             name: filter.key,
-            label: t(filter.label),
+            label: filter.label,
             type: 'select',
             value: filterValues[filter.key] || '',
             onChange: (value) => handleFilterChange(filter.key, value),
             options: filter.options?.map(option => ({
               value: option.value,
-              label: t(option.label)
+              label: option.label
             })) || []
           })) || []}
           showFilters={showFilters}
@@ -213,7 +209,7 @@ export default function PlanRequestsPage() {
         <CrudTable
           columns={planRequestsConfig.table.columns.map(col => ({
             ...col,
-            label: t(col.label)
+            label: col.label
           }))}
           actions={filteredActions}
           data={planRequests?.data || []}
@@ -228,7 +224,7 @@ export default function PlanRequestsPage() {
           to={planRequests?.to || 0}
           total={planRequests?.total || 0}
           links={planRequests?.links}
-          entityName={t("plan requests")}
+          entityName={"plan requests"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

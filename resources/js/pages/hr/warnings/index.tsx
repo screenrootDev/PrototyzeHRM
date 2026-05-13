@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Warnings() {
-  const { t } = useTranslation();
+  
   const { auth, warnings, employees, managers, warningTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -132,78 +132,66 @@ export default function Warnings() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Creating warning...'));
+      toast.loading('Creating warning...');
 
       router.post(route('hr.warnings.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create warning: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create warning: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating warning...'));
+      toast.loading('Updating warning...');
       
       router.put(route('hr.warnings.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update warning: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update warning: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleStatusChange = (formData: any) => {
-    toast.loading(t('Updating warning status...'));
+    toast.loading('Updating warning status...');
     
     router.put(route('hr.warnings.change-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update warning status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update warning status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleImprovementPlanUpdate = (formData: any) => {
-    toast.loading(t('Updating improvement plan...'));
+    toast.loading('Updating improvement plan...');
     
     // Ensure has_improvement_plan is properly converted to boolean
     const updatedFormData = {
@@ -216,42 +204,34 @@ export default function Warnings() {
         setIsImprovementPlanModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update improvement plan: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update improvement plan: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting warning...'));
+    toast.loading('Deleting warning...');
     
     router.delete(route('hr.warnings.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete warning: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete warning: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -278,7 +258,7 @@ export default function Warnings() {
   // Add the "Add New Warning" button if user has permission
   if (hasPermission(permissions, 'create-warnings')) {
     pageActions.push({
-      label: t('Add Warning'),
+      label: 'Add Warning',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -286,16 +266,16 @@ export default function Warnings() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.warnings.index') },
-    { title: t('Warnings') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.warnings.index') },
+    { title: 'Warnings' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee.name', 
-      label: t('Employee'), 
+      label: 'Employee', 
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -305,17 +285,17 @@ export default function Warnings() {
     },
     { 
       key: 'subject', 
-      label: t('Subject'),
+      label: 'Subject',
       render: (value) => value || '-'
     },
     { 
       key: 'warning_type', 
-      label: t('Type'),
+      label: 'Type',
       render: (value) => value || '-'
     },
     { 
       key: 'severity', 
-      label: t('Severity'),
+      label: 'Severity',
       render: (value) => {
         const severityClasses = {
           'verbal': 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -332,13 +312,13 @@ export default function Warnings() {
     },
     { 
       key: 'warning_date', 
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           'draft': 'bg-gray-50 text-gray-700 ring-gray-600/20',
@@ -356,20 +336,20 @@ export default function Warnings() {
     },
     { 
       key: 'has_improvement_plan', 
-      label: t('Improvement Plan'),
+      label: 'Improvement Plan',
       render: (value) => value ? (
         <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-          {t('Yes')}
+          {'Yes'}
         </span>
       ) : (
         <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">
-          {t('No')}
+          {'No'}
         </span>
       )
     },
     { 
       key: 'documents', 
-      label: t('Documents'),
+      label: 'Documents',
       render: (value, row) => value && value.trim() !== '' ? (
         <span 
           className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 cursor-pointer"
@@ -378,7 +358,7 @@ export default function Warnings() {
             handleAction('download-document', row);
           }}
         >
-          {t('View Document')}
+          {'View Document'}
         </span>
       ) : '-'
     }
@@ -387,35 +367,35 @@ export default function Warnings() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-warnings'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-warnings'
     },
     { 
-      label: t('Change Status'), 
+      label: 'Change Status', 
       icon: 'RefreshCw', 
       action: 'change-status', 
       className: 'text-green-500',
       requiredPermission: 'edit-warnings'
     },
     { 
-      label: t('Improvement Plan'), 
+      label: 'Improvement Plan', 
       icon: 'LineChart', 
       action: 'improvement-plan', 
       className: 'text-purple-500',
       requiredPermission: 'edit-warnings'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -425,7 +405,7 @@ export default function Warnings() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees'), disabled: true },
+    { value: '', label: 'All Employees', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -434,7 +414,7 @@ export default function Warnings() {
 
   // Prepare warning type options for filter
   const warningTypeOptions = [
-    { value: '', label: t('All Types'), disabled: true },
+    { value: '', label: 'All Types', disabled: true },
     ...(warningTypes || []).map((type: string) => ({
       value: type,
       label: type
@@ -443,36 +423,36 @@ export default function Warnings() {
 
   // Prepare severity options for filter
   const severityOptions = [
-    { value: '', label: t('All Severities'), disabled: true },
-    { value: 'verbal', label: t('Verbal') },
-    { value: 'written', label: t('Written') },
-    { value: 'final', label: t('Final') }
+    { value: '', label: 'All Severities', disabled: true },
+    { value: 'verbal', label: 'Verbal' },
+    { value: 'written', label: 'Written' },
+    { value: 'final', label: 'Final' }
   ];
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses'), disabled: true },
-    { value: 'draft', label: t('Draft') },
-    { value: 'issued', label: t('Issued') },
-    { value: 'acknowledged', label: t('Acknowledged') },
-    { value: 'expired', label: t('Expired') }
+    { value: 'all', label: 'All Statuses', disabled: true },
+    { value: 'draft', label: 'Draft' },
+    { value: 'issued', label: 'Issued' },
+    { value: 'acknowledged', label: 'Acknowledged' },
+    { value: 'expired', label: 'Expired' }
   ];
 
   // Prepare warning type options for form
   const warningTypeFormOptions = [
-    { value: 'Attendance', label: t('Attendance') },
-    { value: 'Performance', label: t('Performance') },
-    { value: 'Conduct', label: t('Conduct') },
-    { value: 'Policy Violation', label: t('Policy Violation') },
-    { value: 'Safety', label: t('Safety') },
-    { value: 'Communication', label: t('Communication') },
-    { value: 'Insubordination', label: t('Insubordination') },
-    { value: 'Confidentiality', label: t('Confidentiality') }
+    { value: 'Attendance', label: 'Attendance' },
+    { value: 'Performance', label: 'Performance' },
+    { value: 'Conduct', label: 'Conduct' },
+    { value: 'Policy Violation', label: 'Policy Violation' },
+    { value: 'Safety', label: 'Safety' },
+    { value: 'Communication', label: 'Communication' },
+    { value: 'Insubordination', label: 'Insubordination' },
+    { value: 'Confidentiality', label: 'Confidentiality' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Warnings")} 
+      title={"Warnings"} 
       url="/hr/warnings"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -487,7 +467,7 @@ export default function Warnings() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -496,7 +476,7 @@ export default function Warnings() {
             },
             {
               name: 'warning_type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: selectedWarningType,
               onChange: setSelectedWarningType,
@@ -505,7 +485,7 @@ export default function Warnings() {
             },
             {
               name: 'severity',
-              label: t('Severity'),
+              label: 'Severity',
               type: 'select',
               value: selectedSeverity,
               onChange: setSelectedSeverity,
@@ -514,7 +494,7 @@ export default function Warnings() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -523,14 +503,14 @@ export default function Warnings() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -585,7 +565,7 @@ export default function Warnings() {
           to={warnings?.to || 0}
           total={warnings?.total || 0}
           links={warnings?.links}
-          entityName={t("warnings")}
+          entityName={"warnings"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -599,7 +579,7 @@ export default function Warnings() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select', 
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -607,7 +587,7 @@ export default function Warnings() {
             },
             { 
               name: 'warning_by', 
-              label: t('Warning By'), 
+              label: 'Warning By', 
               type: 'select', 
               required: true,
               searchable: true,
@@ -618,7 +598,7 @@ export default function Warnings() {
             },
             { 
               name: 'warning_type', 
-              label: t('Warning Type'), 
+              label: 'Warning Type', 
               type: 'select', 
               required: true,
               options: warningTypeFormOptions,
@@ -626,100 +606,100 @@ export default function Warnings() {
             },
             { 
               name: 'subject', 
-              label: t('Subject'), 
+              label: 'Subject', 
               type: 'text',
               required: true
             },
             { 
               name: 'severity', 
-              label: t('Severity'), 
+              label: 'Severity', 
               type: 'select',
               required: true,
               options: [
-                { value: 'verbal', label: t('Verbal') },
-                { value: 'written', label: t('Written') },
-                { value: 'final', label: t('Final') }
+                { value: 'verbal', label: 'Verbal' },
+                { value: 'written', label: 'Written' },
+                { value: 'final', label: 'Final' }
               ]
             },
             { 
               name: 'warning_date', 
-              label: t('Warning Date'), 
+              label: 'Warning Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'documents', 
-              label: t('Documents'), 
+              label: 'Documents', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             { 
               name: 'expiry_date', 
-              label: t('Expiry Date'), 
+              label: 'Expiry Date', 
               type: 'date'
             },
             { 
               name: 'has_improvement_plan', 
-              label: t('Has Improvement Plan'), 
+              label: 'Has Improvement Plan', 
               type: formMode === 'view' ? 'text' : 'checkbox',
-              render: formMode === 'view' ? (value) => value ? t('Yes') : t('No') : undefined
+              render: formMode === 'view' ? (value) => value ? 'Yes' : 'No' : undefined
             },
             { 
               name: 'improvement_plan_goals', 
-              label: t('Improvement Plan Goals'), 
+              label: 'Improvement Plan Goals', 
               type: 'textarea',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_start_date', 
-              label: t('Improvement Plan Start Date'), 
+              label: 'Improvement Plan Start Date', 
               type: 'date',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_end_date', 
-              label: t('Improvement Plan End Date'), 
+              label: 'Improvement Plan End Date', 
               type: 'date',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             ...(formMode === 'edit' ? [
               { 
                 name: 'status', 
-                label: t('Status'), 
+                label: 'Status', 
                 type: 'select',
                 options: [
-                  { value: 'draft', label: t('Draft') },
-                  { value: 'issued', label: t('Issued') },
-                  { value: 'acknowledged', label: t('Acknowledged') },
-                  { value: 'expired', label: t('Expired') }
+                  { value: 'draft', label: 'Draft' },
+                  { value: 'issued', label: 'Issued' },
+                  { value: 'acknowledged', label: 'Acknowledged' },
+                  { value: 'expired', label: 'Expired' }
                 ]
               },
               { 
                 name: 'acknowledgment_date', 
-                label: t('Acknowledgment Date'), 
+                label: 'Acknowledgment Date', 
                 type: 'date',
                 showWhen: (formData) => ['acknowledged', 'expired'].includes(formData.status)
               },
               { 
                 name: 'employee_response', 
-                label: t('Employee Response'), 
+                label: 'Employee Response', 
                 type: 'textarea',
                 showWhen: (formData) => ['acknowledged', 'expired'].includes(formData.status)
               },
               { 
                 name: 'improvement_plan_progress', 
-                label: t('Improvement Plan Progress'), 
+                label: 'Improvement Plan Progress', 
                 type: 'textarea',
                 showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
               }
@@ -734,10 +714,10 @@ export default function Warnings() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Warning')
+            ? 'Add New Warning'
             : formMode === 'edit'
-              ? t('Edit Warning')
-              : t('View Warning')
+              ? 'Edit Warning'
+              : 'View Warning'
         }
         mode={formMode}
       />
@@ -751,26 +731,26 @@ export default function Warnings() {
           fields: [
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'draft', label: t('Draft') },
-                { value: 'issued', label: t('Issued') },
-                { value: 'acknowledged', label: t('Acknowledged') },
-                { value: 'expired', label: t('Expired') }
+                { value: 'draft', label: 'Draft' },
+                { value: 'issued', label: 'Issued' },
+                { value: 'acknowledged', label: 'Acknowledged' },
+                { value: 'expired', label: 'Expired' }
               ],
               defaultValue: currentItem?.status
             },
             { 
               name: 'acknowledgment_date', 
-              label: t('Acknowledgment Date'), 
+              label: 'Acknowledgment Date', 
               type: 'date',
               showWhen: (formData) => ['acknowledged', 'expired'].includes(formData.status)
             },
             { 
               name: 'employee_response', 
-              label: t('Employee Response'), 
+              label: 'Employee Response', 
               type: 'textarea',
               showWhen: (formData) => ['acknowledged', 'expired'].includes(formData.status)
             }
@@ -778,7 +758,7 @@ export default function Warnings() {
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Change Warning Status')}
+        title={'Change Warning Status'}
         mode="edit"
       />
 
@@ -791,31 +771,31 @@ export default function Warnings() {
           fields: [
             { 
               name: 'has_improvement_plan', 
-              label: t('Has Improvement Plan'), 
+              label: 'Has Improvement Plan', 
               type: 'checkbox',
               defaultValue: currentItem?.has_improvement_plan === true || currentItem?.has_improvement_plan === 1 || currentItem?.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_goals', 
-              label: t('Improvement Plan Goals'), 
+              label: 'Improvement Plan Goals', 
               type: 'textarea',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_start_date', 
-              label: t('Improvement Plan Start Date'), 
+              label: 'Improvement Plan Start Date', 
               type: 'date',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_end_date', 
-              label: t('Improvement Plan End Date'), 
+              label: 'Improvement Plan End Date', 
               type: 'date',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             },
             { 
               name: 'improvement_plan_progress', 
-              label: t('Improvement Plan Progress'), 
+              label: 'Improvement Plan Progress', 
               type: 'textarea',
               showWhen: (formData) => formData.has_improvement_plan === true || formData.has_improvement_plan === 1 || formData.has_improvement_plan === '1'
             }
@@ -826,7 +806,7 @@ export default function Warnings() {
           ...currentItem,
           has_improvement_plan: currentItem.has_improvement_plan === true || currentItem.has_improvement_plan === 1 || currentItem.has_improvement_plan === '1'
         } : null}
-        title={t('Update Improvement Plan')}
+        title={'Update Improvement Plan'}
         mode="edit"
       />
 

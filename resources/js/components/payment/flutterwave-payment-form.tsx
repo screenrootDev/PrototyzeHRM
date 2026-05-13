@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+import { usePage } from '@inertiajs/react';
+
 import { toast } from '@/components/custom-toast';
 import { usePaymentProcessor } from '@/hooks/usePaymentProcessor';
 
@@ -24,7 +25,10 @@ export function FlutterwavePaymentForm({
   onSuccess, 
   onCancel 
 }: FlutterwavePaymentFormProps) {
-  const { t } = useTranslation();
+  
+  const { auth } = usePage().props as any;
+  const user = auth?.user;
+  
   const initialized = useRef(false);
 
   const { processPayment } = usePaymentProcessor({
@@ -49,9 +53,9 @@ export function FlutterwavePaymentForm({
         currency: currency.toUpperCase(),
         payment_options: 'card,mobilemoney,ussd',
         customer: {
-          email: 'user@example.com', // Should be dynamic
-          phone_number: '',
-          name: 'Customer',
+          email: user?.email || 'user@example.com',
+          phone_number: user?.phone || '',
+          name: user?.name || 'Customer',
         },
         customizations: {
           title: 'Plan Subscription',
@@ -60,15 +64,9 @@ export function FlutterwavePaymentForm({
         },
         callback: function (data: any) {
           if (data.status === 'successful') {
-            processPayment('flutterwave', {
-              planId,
-              billingCycle,
-              couponCode,
-              payment_id: data.transaction_id,
-              tx_ref: data.tx_ref,
-            });
+            processPayment('flutterwave');
           } else {
-            toast.error(t('Payment was not completed'));
+            toast.error('Payment was not completed');
             onCancel();
           }
         },
@@ -88,12 +86,12 @@ export function FlutterwavePaymentForm({
   }, [flutterwaveKey, planId, billingCycle, couponCode, currency]);
 
   if (!flutterwaveKey) {
-    return <div className="p-4 text-center text-red-500">{t('Flutterwave not configured')}</div>;
+    return <div className="p-4 text-center text-red-500">{'Flutterwave not configured'}</div>;
   }
 
   return (
     <div className="p-4 text-center">
-      <p>{t('Redirecting to Flutterwave...')}</p>
+      <p>{'Redirecting to Flutterwave...'}</p>
     </div>
   );
 }

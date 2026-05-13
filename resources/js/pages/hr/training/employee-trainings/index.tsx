@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, BarChart, Download, UserPlus } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function EmployeeTrainings() {
-  const { t } = useTranslation();
+  
   const { auth, employeeTrainings, employees, trainingPrograms, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -102,16 +102,13 @@ export default function EmployeeTrainings() {
         router.get(route('hr.employee-trainings.show', item.id), {}, {
           onSuccess: (page) => {
             if (page.props.flash?.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else if (errors.message) {
-              toast.error(t(errors.message));
-            } else {
-              toast.error(t('Failed to load training details'));
+              toast.error(errors);            } else if (errors.message) {
+              toast.error(errors.message);            } else {
+              toast.error('Failed to load training details');
             }
           }
         });
@@ -143,96 +140,80 @@ export default function EmployeeTrainings() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Assigning training...'));
+      toast.loading('Assigning training...');
 
       router.post(route('hr.employee-trainings.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to assign training: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to assign training: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating training...'));
+      toast.loading('Updating training...');
       
       router.put(route('hr.employee-trainings.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update training: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update training: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleBulkAssignSubmit = (formData: any) => {
-    toast.loading(t('Assigning training to employees...'));
+    toast.loading('Assigning training to employees...');
 
     router.post(route('hr.employee-trainings.bulk-assign'), formData, {
       onSuccess: (page) => {
         setIsBulkAssignModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to assign training: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to assign training: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting training assignment...'));
+    toast.loading('Deleting training assignment...');
     
     router.delete(route('hr.employee-trainings.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete training assignment: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete training assignment: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -257,7 +238,7 @@ export default function EmployeeTrainings() {
   
   // Add the "Dashboard" button
   pageActions.push({
-    label: t('Dashboard'),
+    label: 'Dashboard',
     icon: <BarChart className="h-4 w-4 mr-2" />,
     variant: 'outline' as const,
     onClick: handleViewDashboard
@@ -266,7 +247,7 @@ export default function EmployeeTrainings() {
   // Add the "Bulk Assign" button if user has permission
   if (hasPermission(permissions, 'create-employee-trainings')) {
     pageActions.push({
-      label: t('Bulk Assign'),
+      label: 'Bulk Assign',
       icon: <UserPlus className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleBulkAssign
@@ -276,7 +257,7 @@ export default function EmployeeTrainings() {
   // Add the "Assign Training" button if user has permission
   if (hasPermission(permissions, 'create-employee-trainings')) {
     pageActions.push({
-      label: t('Assign Training'),
+      label: 'Assign Training',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: () => handleAddNew()
@@ -284,17 +265,17 @@ export default function EmployeeTrainings() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.employee-trainings.index') },
-    { title: t('Training Management'), href: route('hr.employee-trainings.index') },
-    { title: t('Employee Trainings') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.employee-trainings.index') },
+    { title: 'Training Management', href: route('hr.employee-trainings.index') },
+    { title: 'Employee Trainings' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee', 
-      label: t('Employee'),
+      label: 'Employee',
       sortable: true,
       sortField: 'employee_name',
       render: (_, row) => (
@@ -306,7 +287,7 @@ export default function EmployeeTrainings() {
     },
     { 
       key: 'program', 
-      label: t('Training Program'),
+      label: 'Training Program',
       sortable: true,
       sortField: 'program_name',
       render: (_, row) => (
@@ -318,7 +299,7 @@ export default function EmployeeTrainings() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       sortable: true,
       render: (value) => {
         const statusClasses = {
@@ -329,10 +310,10 @@ export default function EmployeeTrainings() {
         };
         
         const statusLabels = {
-          'assigned': t('Assigned'),
-          'in_progress': t('In Progress'),
-          'completed': t('Completed'),
-          'failed': t('Failed')
+          'assigned': 'Assigned',
+          'in_progress': 'In Progress',
+          'completed': 'Completed',
+          'failed': 'Failed'
         };
         
         return (
@@ -344,47 +325,47 @@ export default function EmployeeTrainings() {
     },
     { 
       key: 'assigned_date', 
-      label: t('Assigned Date'),
+      label: 'Assigned Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || format(new Date(value), 'MMM dd, yyyy')) : '-'
     },
     { 
       key: 'completion_date', 
-      label: t('Completion Date'),
+      label: 'Completion Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || format(new Date(value), 'MMM dd, yyyy')) : '-'
     },
     { 
       key: 'score', 
-      label: t('Score'),
+      label: 'Score',
       sortable: true,
       render: (value) => value !== null ? `${value}%` : '-'
     },
     { 
       key: 'is_passed', 
-      label: t('Result'),
+      label: 'Result',
       render: (value) => {
         if (value === null) return '-';
         
         return value ? (
           <Badge variant="outline" className="bg-green-50 text-green-700">
-            {t('Passed')}
+            {'Passed'}
           </Badge>
         ) : (
           <Badge variant="outline" className="bg-red-50 text-red-700">
-            {t('Failed')}
+            {'Failed'}
           </Badge>
         );
       }
     },
     { 
       key: 'assessment_results_count', 
-      label: t('Assessments'),
+      label: 'Assessments',
       render: (value) => value || '0'
     },
     { 
       key: 'certification', 
-      label: t('Certificate'),
+      label: 'Certificate',
       render: (value, row) => value && value.trim() !== '' ? (
         <Button
           variant="outline"
@@ -396,7 +377,7 @@ export default function EmployeeTrainings() {
           }}
         >
           <Download className="h-4 w-4 mr-1" />
-          {t('Download')}
+          {'Download'}
         </Button>
       ) : '-'
     }
@@ -405,21 +386,21 @@ export default function EmployeeTrainings() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-employee-trainings'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-trainings'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -429,7 +410,7 @@ export default function EmployeeTrainings() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees'), disabled: true },
+    { value: '', label: 'All Employees', disabled: true },
     ...(employees || []).map((employee: any) => ({
       value: employee.id.toString(),
       label: employee.name
@@ -438,7 +419,7 @@ export default function EmployeeTrainings() {
 
   // Prepare training program options for filter
   const trainingProgramOptions = [
-    { value: '', label: t('All Programs'), disabled: true },
+    { value: '', label: 'All Programs', disabled: true },
     ...(trainingPrograms || []).map((program: any) => ({
       value: program.id.toString(),
       label: program.name
@@ -447,16 +428,16 @@ export default function EmployeeTrainings() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: '', label: t('All Statuses') },
-    { value: 'assigned', label: t('Assigned') },
-    { value: 'in_progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'failed', label: t('Failed') }
+    { value: '', label: 'All Statuses' },
+    { value: 'assigned', label: 'Assigned' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'failed', label: 'Failed' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Employee Trainings")} 
+      title={"Employee Trainings"} 
       url="/hr/training/employee-trainings"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -471,7 +452,7 @@ export default function EmployeeTrainings() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -480,7 +461,7 @@ export default function EmployeeTrainings() {
             },
             {
               name: 'training_program_id',
-              label: t('Training Program'),
+              label: 'Training Program',
               type: 'select',
               value: selectedProgram,
               onChange: setSelectedProgram,
@@ -489,7 +470,7 @@ export default function EmployeeTrainings() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -497,14 +478,14 @@ export default function EmployeeTrainings() {
             },
             {
               name: 'assigned_date_from',
-              label: t('Assigned From'),
+              label: 'Assigned From',
               type: 'date',
               value: assignedDateFrom,
               onChange: setAssignedDateFrom
             },
             {
               name: 'assigned_date_to',
-              label: t('Assigned To'),
+              label: 'Assigned To',
               type: 'date',
               value: assignedDateTo,
               onChange: setAssignedDateTo
@@ -558,7 +539,7 @@ export default function EmployeeTrainings() {
           to={employeeTrainings?.to || 0}
           total={employeeTrainings?.total || 0}
           links={employeeTrainings?.links}
-          entityName={t("employee trainings")}
+          entityName={"employee trainings"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -572,7 +553,7 @@ export default function EmployeeTrainings() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -580,7 +561,7 @@ export default function EmployeeTrainings() {
             },
             { 
               name: 'training_program_id', 
-              label: t('Training Program'), 
+              label: 'Training Program', 
               type: 'select',
               required: true,
               options: trainingProgramOptions.filter(opt => opt.value !== ''),
@@ -588,46 +569,46 @@ export default function EmployeeTrainings() {
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'assigned', label: t('Assigned') },
-                { value: 'in_progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'failed', label: t('Failed') }
+                { value: 'assigned', label: 'Assigned' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'failed', label: 'Failed' }
               ]
             },
             { 
               name: 'assigned_date', 
-              label: t('Assigned Date'), 
+              label: 'Assigned Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'completion_date', 
-              label: t('Completion Date'), 
+              label: 'Completion Date', 
               type: 'date',
               showWhen: (formData) => ['completed', 'failed'].includes(formData.status)
             },
             { 
               name: 'certification', 
-              label: t('Certification'), 
+              label: 'Certification', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select certification file...')}
+                  placeholder={'Select certification file...'}
                 />
               ),
-              helpText: t('Upload certification file (max 5MB)'),
+              helpText: 'Upload certification file (max 5MB)',
               showWhen: (formData) => formData.status === 'completed'
             },
             { 
               name: 'score', 
-              label: t('Score (%)'), 
+              label: 'Score (%)', 
               type: 'number',
               min: 0,
               max: 100,
@@ -636,19 +617,19 @@ export default function EmployeeTrainings() {
             },
             { 
               name: 'is_passed', 
-              label: t('Passed'), 
+              label: 'Passed', 
               type: 'checkbox',
               showWhen: (formData) => ['completed', 'failed'].includes(formData.status)
             },
             { 
               name: 'feedback', 
-              label: t('Feedback'), 
+              label: 'Feedback', 
               type: 'textarea',
               showWhen: (formData) => ['completed', 'failed'].includes(formData.status)
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             }
           ],
@@ -657,10 +638,10 @@ export default function EmployeeTrainings() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Assign Training')
+            ? 'Assign Training'
             : formMode === 'edit'
-              ? t('Edit Training Assignment')
-              : t('View Training Assignment')
+              ? 'Edit Training Assignment'
+              : 'View Training Assignment'
         }
         mode={formMode}
       />
@@ -674,35 +655,35 @@ export default function EmployeeTrainings() {
           fields: [
             { 
               name: 'employee_ids', 
-              label: t('Employees'), 
+              label: 'Employees', 
               type: 'multi-select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '')
             },
             { 
               name: 'training_program_id', 
-              label: t('Training Program'), 
+              label: 'Training Program', 
               type: 'select',
               required: true,
               options: trainingProgramOptions.filter(opt => opt.value !== '')
             },
             { 
               name: 'assigned_date', 
-              label: t('Assigned Date'), 
+              label: 'Assigned Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             }
           ],
           modalSize: 'lg'
         }}
         initialData={{}}
-        title={t('Bulk Assign Training')}
+        title={'Bulk Assign Training'}
         mode="create"
       />
 

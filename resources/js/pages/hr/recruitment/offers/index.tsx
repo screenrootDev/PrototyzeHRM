@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import axios from 'axios';
 
 export default function Offers() {
-  const { t } = useTranslation();
+  
   const { auth, offers, candidates, departments, employees, jobPostings, currentUser, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -93,18 +93,16 @@ export default function Offers() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating offer...'));
+      toast.loading('Creating offer...');
 
       router.post(route('hr.recruitment.offers.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Offer created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Offer created successfully');
           }
         },
         onError: (errors) => {
@@ -117,18 +115,16 @@ export default function Offers() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating offer...'));
+      toast.loading('Updating offer...');
 
       router.put(route('hr.recruitment.offers.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Offer updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Offer updated successfully');
           }
         },
         onError: (errors) => {
@@ -144,18 +140,16 @@ export default function Offers() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting offer...'));
+    toast.loading('Deleting offer...');
 
     router.delete(route('hr.recruitment.offers.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Offer deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Offer deleted successfully');
         }
       },
       onError: (errors) => {
@@ -170,18 +164,16 @@ export default function Offers() {
   };
 
   const handleStatusUpdate = (formData: any) => {
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
 
     router.put(route('hr.recruitment.offers.update-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Status updated successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Status updated successfully');
         }
       },
       onError: (errors) => {
@@ -211,7 +203,7 @@ export default function Offers() {
 
   if (hasPermission(permissions, 'create-offers')) {
     pageActions.push({
-      label: t('Create Offer'),
+      label: 'Create Offer',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -219,9 +211,9 @@ export default function Offers() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.offers.index') },
-    { title: t('Offers') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.offers.index') },
+    { title: 'Offers' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -239,7 +231,7 @@ export default function Offers() {
   const columns = [
     {
       key: 'candidate.full_name',
-      label: t('Candidate'),
+      label: 'Candidate',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.candidate?.first_name} {row.candidate?.last_name}</div>
@@ -249,7 +241,7 @@ export default function Offers() {
     },
     {
       key: 'salary',
-      label: t('Salary'),
+      label: 'Salary',
       render: (value, row) => (
         <div>
           <div className="font-medium">{window.appSettings?.formatCurrency(value)}</div>
@@ -258,13 +250,13 @@ export default function Offers() {
     },
     {
       key: 'start_date',
-      label: t('Start Date'),
+      label: 'Start Date',
       sortable: false,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'expiration_date',
-      label: t('Expires'),
+      label: 'Expires',
       sortable: false,
       render: (value) => {
         if (!value) return '-';
@@ -280,16 +272,16 @@ export default function Offers() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     {
       key: 'offer_date',
-      label: t('Offer Date'),
+      label: 'Offer Date',
       sortable: false,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -297,14 +289,14 @@ export default function Offers() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-offers'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -312,7 +304,7 @@ export default function Offers() {
       condition: (item: any) => !['Accepted', 'Declined'].includes(item.status)
     },
     {
-      label: t('Update Status'),
+      label: 'Update Status',
       icon: 'RefreshCw',
       action: 'update-status',
       className: 'text-green-500',
@@ -320,7 +312,7 @@ export default function Offers() {
       condition: (item: any) => !['Accepted', 'Declined'].includes(item.status)
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -329,17 +321,17 @@ export default function Offers() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'Draft', label: t('Draft') },
-    { value: 'Sent', label: t('Sent') },
-    { value: 'Accepted', label: t('Accepted') },
-    { value: 'Negotiating', label: t('Negotiating') },
-    { value: 'Declined', label: t('Declined') },
-    { value: 'Expired', label: t('Expired') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'Draft', label: 'Draft' },
+    { value: 'Sent', label: 'Sent' },
+    { value: 'Accepted', label: 'Accepted' },
+    { value: 'Negotiating', label: 'Negotiating' },
+    { value: 'Declined', label: 'Declined' },
+    { value: 'Expired', label: 'Expired' }
   ];
 
   const candidateOptions = [
-    { value: '_empty_', label: t('All Candidates'), disabled: true },
+    { value: '_empty_', label: 'All Candidates', disabled: true },
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -347,7 +339,7 @@ export default function Offers() {
   ];
 
   const candidateSelectOptions = [
-    { value: '_empty_', label: t('Select Candidate') },
+    { value: '_empty_', label: 'Select Candidate' },
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -362,7 +354,7 @@ export default function Offers() {
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('Select Approver') },
+    { value: '_empty_', label: 'Select Approver' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} - ${auth?.user?.name || 'Company'}`
@@ -371,7 +363,7 @@ export default function Offers() {
 
   return (
     <PageTemplate
-      title={t("Offers")}
+      title={"Offers"}
       url="/hr/recruitment/offers"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -385,7 +377,7 @@ export default function Offers() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -394,7 +386,7 @@ export default function Offers() {
             },
             {
               name: 'candidate_id',
-              label: t('Candidate'),
+              label: 'Candidate',
               type: 'select',
               value: candidateFilter,
               onChange: setCandidateFilter,
@@ -445,7 +437,7 @@ export default function Offers() {
           to={offers?.to || 0}
           total={offers?.total || 0}
           links={offers?.links}
-          entityName={t("offers")}
+          entityName={"offers"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -462,14 +454,14 @@ export default function Offers() {
               dependentConfig: [
                 {
                   name: 'candidate_id',
-                  label: t('Candidate'),
+                  label: 'Candidate',
                   required: true,
                   searchable: true,
                   options: candidateSelectOptions.filter(opt => opt.value !== '_empty_')
                 },
                 {
                   name: 'position',
-                  label: t('Position'),
+                  label: 'Position',
                   required: true,
                   apiEndpoint: '/hr/recruitment/offers/candidate/{candidate_id}/job',
                   showCurrentValue: true,
@@ -477,7 +469,7 @@ export default function Offers() {
                 },
                 {
                   name: 'department_id',
-                  label: t('Department'),
+                  label: 'Department',
                   required: false,
                   apiEndpoint: '/hr/recruitment/offers/job/{position}/departments',
                   searchable: false,
@@ -489,7 +481,7 @@ export default function Offers() {
 
             {
               name: 'salary',
-              label: t('Salary'),
+              label: 'Salary',
               type: 'number',
               required: true,
               min: 0,
@@ -497,19 +489,19 @@ export default function Offers() {
             },
             {
               name: 'start_date',
-              label: t('Start Date'),
+              label: 'Start Date',
               type: 'date',
               required: true
             },
             {
               name: 'expiration_date',
-              label: t('Expiration Date'),
+              label: 'Expiration Date',
               type: 'date',
               required: true
             },
             {
               name: 'approved_by',
-              label: t('Approved By'),
+              label: 'Approved By',
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '_empty_'),
@@ -517,7 +509,7 @@ export default function Offers() {
             },
             {
               name: 'benefits',
-              label: t('Benefits'),
+              label: 'Benefits',
               type: 'textarea'
             }
           ],
@@ -535,10 +527,10 @@ export default function Offers() {
         }}
         title={
           formMode === 'create'
-            ? t('Create New Offer')
+            ? 'Create New Offer'
             : formMode === 'edit'
-              ? t('Edit Offer')
-              : t('View Offer')
+              ? 'Edit Offer'
+              : 'View Offer'
         }
         mode={formMode}
       />
@@ -559,23 +551,23 @@ export default function Offers() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Draft', label: t('Draft') },
-                { value: 'Sent', label: t('Sent') },
-                { value: 'Accepted', label: t('Accepted') },
-                { value: 'Negotiating', label: t('Negotiating') },
-                { value: 'Declined', label: t('Declined') },
-                { value: 'Expired', label: t('Expired') }
+                { value: 'Draft', label: 'Draft' },
+                { value: 'Sent', label: 'Sent' },
+                { value: 'Accepted', label: 'Accepted' },
+                { value: 'Negotiating', label: 'Negotiating' },
+                { value: 'Declined', label: 'Declined' },
+                { value: 'Expired', label: 'Expired' }
               ]
             },
 
           ]
         }}
         initialData={currentItem ? { status: currentItem.status } : {}}
-        title={t('Update Offer Status')}
+        title={'Update Offer Status'}
         mode="edit"
       />
     </PageTemplate>

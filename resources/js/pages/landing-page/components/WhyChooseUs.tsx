@@ -1,6 +1,6 @@
 import React from 'react';
 import { CheckCircle, Clock, Users, Zap, Star, Shield, Heart, Award, Layers, BarChart } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 interface WhyChooseUsProps {
@@ -41,36 +41,36 @@ const iconMap: Record<string, React.ComponentType<any>> = {
 };
 
 export default function WhyChooseUs({ settings, sectionData, brandColor = '#3b82f6' }: WhyChooseUsProps) {
-  const { t } = useTranslation();
+  
   const { ref, isVisible } = useScrollAnimation();
   // Default data if none provided
   const defaultReasons = [
     {
       icon: 'layers',
-      title: t('All-in-One HR Solution'),
-      description: t('Manage employees, payroll, attendance, recruitment, and performance from a single platform. No technical skills required.')
+      title: 'All-in-One HR Solution',
+      description: 'Manage employees, payroll, attendance, recruitment, and performance from a single platform. No technical skills required.'
     },
     {
       icon: 'clock',
-      title: t('Time-Saving Automation'),
-      description: t('Automate repetitive HR tasks to focus on strategic decision-making.')
+      title: 'Time-Saving Automation',
+      description: 'Automate repetitive HR tasks to focus on strategic decision-making.'
     },
     {
       icon: 'bar-chart',
-      title: t('Data-Driven Insights'),
-      description: t('Make informed decisions with advanced analytics and reports.')
+      title: 'Data-Driven Insights',
+      description: 'Make informed decisions with advanced analytics and reports.'
     },
     {
       icon: 'shield',
-      title: t('Secure & Reliable'),
-      description: t('Keep sensitive HR data safe with enterprise-grade security.')
+      title: 'Secure & Reliable',
+      description: 'Keep sensitive HR data safe with enterprise-grade security.'
     }
   ];
 
   const defaultStats = [
-    { value: '500+', label: t('Companies Using HRM'), color: 'blue' },
-    { value: '20K+', label: t('Employees Managed'), color: 'green' },
-    { value: '98%', label: t('Customer Satisfaction'), color: 'orange' },
+    { value: '500+', label: 'Companies Using HRM', color: 'blue' },
+    { value: '20K+', label: 'Employees Managed', color: 'green' },
+    { value: '98%', label: 'Customer Satisfaction', color: 'orange' },
 
   ];
 
@@ -89,10 +89,10 @@ export default function WhyChooseUs({ settings, sectionData, brandColor = '#3b82
           {/* Left Content */}
           <div className={`transition-all duration-700 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              {sectionData.title || t('Why Choose HRM SaaS ?')}
+              {sectionData.title || 'Why Choose HRM SaaS ?'}
             </h2>
             <p className="text-lg text-gray-600 mb-8 leading-relaxed font-medium">
-              {sectionData.subtitle || t('Smart, simple, and powerful HR solutions for every business. We\'re your partner in building meaningful professional connections that drive business growth.')}
+              {sectionData.subtitle || 'Smart, simple, and powerful HR solutions for every business. We\'re your partner in building meaningful professional connections that drive business growth.'}
             </p>
 
             <div className="space-y-4 sm:space-y-6">
@@ -121,10 +121,10 @@ export default function WhyChooseUs({ settings, sectionData, brandColor = '#3b82
           <div className={`bg-gray-50 rounded-xl p-8 border border-gray-200 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}>
             <div className="text-center mb-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                {sectionData.stats_title || t('Trusted by Industry Leaders')}
+                {sectionData.stats_title || 'Trusted by Industry Leaders'}
               </h3>
               <p className="text-gray-600">
-                {sectionData.stats_subtitle || t('Join the growing community of professionals')}
+                {sectionData.stats_subtitle || 'Join the growing community of professionals'}
               </p>
             </div>
 
@@ -139,8 +139,8 @@ export default function WhyChooseUs({ settings, sectionData, brandColor = '#3b82
 
             {(sectionData.cta_title || sectionData.cta_subtitle) && (
               <div className="mt-8 p-6 rounded-lg text-white text-center" style={{ backgroundColor: brandColor }}>
-                <div className="text-xl font-bold mb-2">{sectionData.cta_title || t('Ready to get started?')}</div>
-                <div className="text-gray-300">{sectionData.cta_subtitle || t('Join thousands of satisfied users today')}</div>
+                <div className="text-xl font-bold mb-2">{sectionData.cta_title || 'Ready to get started?'}</div>
+                <div className="text-gray-300">{sectionData.cta_subtitle || 'Join thousands of satisfied users today'}</div>
               </div>
             )}
           </div>

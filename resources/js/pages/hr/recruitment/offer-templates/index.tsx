@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, X } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 export default function OfferTemplates() {
-  const { t } = useTranslation();
+  
   const { auth, offerTemplates, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -113,16 +113,14 @@ export default function OfferTemplates() {
   
   const handleToggleStatus = (template: any) => {
     const newStatus = template.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} template...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} template...`);
 
     router.put(route('hr.recruitment.offer-templates.toggle-status', template.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -142,17 +140,15 @@ export default function OfferTemplates() {
     }
 
     if (formMode === 'create') {
-      toast.loading(t('Creating template...'));
+      toast.loading('Creating template...');
 
       router.post(route('hr.recruitment.offer-templates.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -164,17 +160,15 @@ export default function OfferTemplates() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating template...'));
+      toast.loading('Updating template...');
 
       router.put(route('hr.recruitment.offer-templates.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -189,17 +183,15 @@ export default function OfferTemplates() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting template...'));
+    toast.loading('Deleting template...');
 
     router.delete(route('hr.recruitment.offer-templates.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -255,7 +247,7 @@ export default function OfferTemplates() {
   
   if (hasPermission(permissions, 'create-offer-templates')) {
     pageActions.push({
-      label: t('Add Template'),
+      label: 'Add Template',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -263,21 +255,21 @@ export default function OfferTemplates() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.offer-templates.index') },
-    { title: t('Offer Templates') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.offer-templates.index') },
+    { title: 'Offer Templates' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'template_content', 
-      label: t('Content Preview'),
+      label: 'Content Preview',
       render: (value) => (
         <div className="max-w-xs">
           <div className="text-sm text-gray-600 truncate">
@@ -288,7 +280,7 @@ export default function OfferTemplates() {
     },
     { 
       key: 'variables', 
-      label: t('Variables'),
+      label: 'Variables',
       render: (value) => {
         if (!value || !Array.isArray(value) || value.length === 0) return '-';
         return (
@@ -307,19 +299,19 @@ export default function OfferTemplates() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
           ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
           : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
         }`}>
-          {value === 'active' ? t('Active') : t('Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -327,42 +319,42 @@ export default function OfferTemplates() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-offer-templates'
     },
     { 
-      label: t('Preview'), 
+      label: 'Preview', 
       icon: 'FileText', 
       action: 'preview', 
       className: 'text-purple-500',
       requiredPermission: 'view-offer-templates'
     },
     { 
-      label: t('Generate Offer'), 
+      label: 'Generate Offer', 
       icon: 'Download', 
       action: 'generate', 
       className: 'text-green-500',
       requiredPermission: 'view-offer-templates'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-offer-templates'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-offer-templates'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -371,14 +363,14 @@ export default function OfferTemplates() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Offer Templates")} 
+      title={"Offer Templates"} 
       url="/hr/recruitment/offer-templates"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -392,7 +384,7 @@ export default function OfferTemplates() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -441,7 +433,7 @@ export default function OfferTemplates() {
           to={offerTemplates?.to || 0}
           total={offerTemplates?.total || 0}
           links={offerTemplates?.links}
-          entityName={t("offer templates")}
+          entityName={"offer templates"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -454,27 +446,27 @@ export default function OfferTemplates() {
           fields: [
             { 
               name: 'name', 
-              label: t('Template Name'), 
+              label: 'Template Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'template_content', 
-              label: t('Template Content'), 
+              label: 'Template Content', 
               type: 'textarea', 
               required: true,
               rows: 10,
-              helpText: t('Use {{variable_name}} for dynamic content')
+              helpText: 'Use {{variable_name}} for dynamic content'
             },
             { 
               name: 'variables', 
-              label: t('Variables'), 
+              label: 'Variables', 
               type: 'text',
-              helpText: t('Comma-separated list of variables (e.g., candidate_name, position, salary)')
+              helpText: 'Comma-separated list of variables (e.g., candidate_name, position, salary)'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -488,10 +480,10 @@ export default function OfferTemplates() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Offer Template')
+            ? 'Add New Offer Template'
             : formMode === 'edit'
-              ? t('Edit Offer Template')
-              : t('View Offer Template')
+              ? 'Edit Offer Template'
+              : 'View Offer Template'
         }
         mode={formMode}
       />
@@ -508,18 +500,18 @@ export default function OfferTemplates() {
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>
-              {t('Template Preview')}: {currentItem?.name}
+              {'Template Preview'}: {currentItem?.name}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4 overflow-y-auto max-h-[60vh] pr-1">
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
               <pre className="whitespace-pre-wrap text-sm font-mono">
-                {currentItem?.template_content || t('No content available')}
+                {currentItem?.template_content || 'No content available'}
               </pre>
             </div>
             {currentItem?.variables && currentItem.variables.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">{t('Available Variables')}:</h4>
+                <h4 className="text-sm font-medium mb-2">{'Available Variables'}:</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentItem.variables.map((variable: string, index: number) => (
                     <span key={index} className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
@@ -538,7 +530,7 @@ export default function OfferTemplates() {
         <DialogContent className="max-w-lg max-h-[80vh]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
-              {t('Generate Offer')}
+              {'Generate Offer'}
             </DialogTitle>
             <p className="text-sm text-gray-600">{currentItem?.name}</p>
           </DialogHeader>
@@ -559,10 +551,10 @@ export default function OfferTemplates() {
           </div>
           <div className="flex justify-end space-x-2 pt-2 border-t">
             <Button variant="outline" onClick={() => setIsGenerateModalOpen(false)}>
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button onClick={handleGenerateSubmit} className="bg-red-500 hover:bg-red-600">
-              {t('Generate PDF')}
+              {'Generate PDF'}
             </Button>
           </div>
         </DialogContent>

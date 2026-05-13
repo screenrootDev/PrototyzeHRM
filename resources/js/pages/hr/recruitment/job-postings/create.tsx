@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router, useForm } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -15,7 +15,7 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import { ArrowLeft } from 'lucide-react';
 
 export default function CreateJobPosting() {
-  const { t } = useTranslation();
+  
   const { jobTypes, locations, branches, departments, customQuestions, companySlug } = usePage().props as any;
   
   const { data, setData, post, processing, errors } = useForm({
@@ -49,40 +49,38 @@ export default function CreateJobPosting() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    toast.loading(t('Creating job posting...'));
+    toast.loading('Creating job posting...');
     
     post(route('hr.recruitment.job-postings.store'), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        }
+          toast.success(page.props.flash.success);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to create job posting'));
+          toast.error(errors);        } else {
+          toast.error('Failed to create job posting');
         }
       }
     });
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.job-postings.index') },
-    { title: t('Job Postings'), href: route('hr.recruitment.job-postings.index') },
-    { title: t('Create') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.job-postings.index') },
+    { title: 'Job Postings', href: route('hr.recruitment.job-postings.index') },
+    { title: 'Create' }
   ];
 
   return (
     <PageTemplate
-      title={t('Create Job Posting')}
+      title={'Create Job Posting'}
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: t('Back to List'),
+          label: 'Back to List',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.recruitment.job-postings.index'))
@@ -92,27 +90,27 @@ export default function CreateJobPosting() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t('Basic Information')}</CardTitle>
+            <CardTitle>{'Basic Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="title" required>{t('Job Title')} </Label>
+                <Label htmlFor="title" required>{'Job Title'} </Label>
                 <Input
                   id="title"
                   value={data.title}
                   onChange={(e) => setData('title', e.target.value)}
-                  placeholder={t('Enter job title')}
+                  placeholder={'Enter job title'}
                   required
                 />
                 {errors.title && <p className="text-sm text-red-500">{errors.title}</p>}
               </div>
 
               <div>
-                <Label htmlFor="job_type_id" required>{t('Job Type')}</Label>
+                <Label htmlFor="job_type_id" required>{'Job Type'}</Label>
                 <Select value={data.job_type_id} onValueChange={(value) => setData('job_type_id', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Job Type')} />
+                    <SelectValue placeholder={'Select Job Type'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {jobTypes?.map((type: any) => (
@@ -126,10 +124,10 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="location_id" required>{t('Location')} </Label>
+                <Label htmlFor="location_id" required>{'Location'} </Label>
                 <Select value={data.location_id} onValueChange={(value) => setData('location_id', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Location')} />
+                    <SelectValue placeholder={'Select Location'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {locations?.map((loc: any) => (
@@ -143,13 +141,13 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="branch_id" required>{t('Branch')}</Label>
+                <Label htmlFor="branch_id" required>{'Branch'}</Label>
                 <Select value={data.branch_id} onValueChange={(value) => {
                   setData('branch_id', value);
                   setData('department_id', '');
                 }}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Branch')} />
+                    <SelectValue placeholder={'Select Branch'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {branches?.map((branch: any) => (
@@ -163,14 +161,14 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="department_id">{t('Department')}</Label>
+                <Label htmlFor="department_id">{'Department'}</Label>
                 <Select 
                   value={data.department_id} 
                   onValueChange={(value) => setData('department_id', value)}
                   disabled={!data.branch_id}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Department')} />
+                    <SelectValue placeholder={'Select Department'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {departments?.filter((dept: any) => dept.branch_id === parseInt(data.branch_id)).map((dept: any) => (
@@ -184,31 +182,31 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="priority" required>{t('Priority')}</Label>
+                <Label htmlFor="priority" required>{'Priority'}</Label>
                 <Select value={data.priority} onValueChange={(value) => setData('priority', value)}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Priority')} />
+                    <SelectValue placeholder={'Select Priority'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Low">{t('Low')}</SelectItem>
-                    <SelectItem value="Medium">{t('Medium')}</SelectItem>
-                    <SelectItem value="High">{t('High')}</SelectItem>
+                    <SelectItem value="Low">{'Low'}</SelectItem>
+                    <SelectItem value="Medium">{'Medium'}</SelectItem>
+                    <SelectItem value="High">{'High'}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.priority && <p className="text-sm text-red-500">{errors.priority}</p>}
               </div>
               <div>
-                <Label htmlFor="skills" required>{t('Required Skills')} </Label>
+                <Label htmlFor="skills" required>{'Required Skills'} </Label>
                 <TagInput
                   value={data.skills}
                   onChange={(skills) => setData('skills', skills)}
-                  placeholder={t('Type Required Skills and press Enter')}
+                  placeholder={'Type Required Skills and press Enter'}
                 />
                 {errors.skills && <p className="text-sm text-red-500">{errors.skills}</p>}
               </div>
 
               <div>
-                <Label htmlFor="start_date" required>{t('Start Date')}</Label>
+                <Label htmlFor="start_date" required>{'Start Date'}</Label>
                 <Input
                   id="start_date"
                   type="date"
@@ -219,7 +217,7 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="application_deadline" required>{t('Application Deadline')}</Label>
+                <Label htmlFor="application_deadline" required>{'Application Deadline'}</Label>
                 <Input
                   id="application_deadline"
                   type="date"
@@ -230,7 +228,7 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="application_type" required>{t('Job Application')}</Label>
+                <Label htmlFor="application_type" required>{'Job Application'}</Label>
                 <Select value={data.application_type} onValueChange={(value) => {
                   setData('application_type', value);
                   if (value === 'existing') {
@@ -240,23 +238,23 @@ export default function CreateJobPosting() {
                   }
                 }}>
                   <SelectTrigger>
-                    <SelectValue placeholder={t('Select Application Type')} />
+                    <SelectValue placeholder={'Select Application Type'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="existing">{t('Existing Link')}</SelectItem>
-                    <SelectItem value="custom">{t('Custom Link')}</SelectItem>
+                    <SelectItem value="existing">{'Existing Link'}</SelectItem>
+                    <SelectItem value="custom">{'Custom Link'}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.application_type && <p className="text-sm text-red-500">{errors.application_type}</p>}
               </div>
 
               <div>
-                <Label htmlFor="application_url" required>{t('Application URL')}</Label>
+                <Label htmlFor="application_url" required>{'Application URL'}</Label>
                 <Input
                   id="application_url"
                   value={data.application_url}
                   onChange={(e) => setData('application_url', e.target.value)}
-                  placeholder={t('Enter application URL')}
+                  placeholder={'Enter application URL'}
                   disabled={data.application_type === 'existing'}
                 />
                 {errors.application_url && <p className="text-sm text-red-500">{errors.application_url}</p>}
@@ -265,14 +263,14 @@ export default function CreateJobPosting() {
               
 
               <div>
-                <Label htmlFor="positions" required>{t('Number of Positions')} </Label>
+                <Label htmlFor="positions" required>{'Number of Positions'} </Label>
                 <Input
                   id="positions"
                   type="number"
                   min="1"
                   value={data.positions}
                   onChange={(e) => setData('positions', parseInt(e.target.value) || 1)}
-                  placeholder={t('Enter number of positions')}
+                  placeholder={'Enter number of positions'}
                 />
                 {errors.positions && <p className="text-sm text-red-500">{errors.positions}</p>}
               </div>
@@ -284,19 +282,19 @@ export default function CreateJobPosting() {
                 checked={data.is_featured}
                 onCheckedChange={(checked) => setData('is_featured', checked as boolean)}
               />
-              <Label htmlFor="is_featured">{t('Featured Job')}</Label>
+              <Label htmlFor="is_featured">{'Featured Job'}</Label>
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('Experience & Salary')}</CardTitle>
+            <CardTitle>{'Experience & Salary'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="min_experience" required>{t('Min Experience (Years)')} </Label>
+                <Label htmlFor="min_experience" required>{'Min Experience (Years)'} </Label>
                 <Input
                   id="min_experience"
                   type="number"
@@ -309,7 +307,7 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="max_experience" required>{t('Max Experience (Years)')}</Label>
+                <Label htmlFor="max_experience" required>{'Max Experience (Years)'}</Label>
                 <Input
                   id="max_experience"
                   type="number"
@@ -322,7 +320,7 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="min_salary" required> {t('Min Salary')}</Label>
+                <Label htmlFor="min_salary" required> {'Min Salary'}</Label>
                 <Input
                   id="min_salary"
                   type="number"
@@ -335,7 +333,7 @@ export default function CreateJobPosting() {
               </div>
 
               <div>
-                <Label htmlFor="max_salary" required>{t('Max Salary')}</Label>
+                <Label htmlFor="max_salary" required>{'Max Salary'}</Label>
                 <Input
                   id="max_salary"
                   type="number"
@@ -352,37 +350,37 @@ export default function CreateJobPosting() {
 
         <Card>
           <CardHeader>
-            <CardTitle>{t('Job Details')}</CardTitle>
+            <CardTitle>{'Job Details'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="description" required>{t('Job Description')}</Label>
+              <Label htmlFor="description" required>{'Job Description'}</Label>
               <RichTextEditor
                 content={data.description}
                 onChange={(content) => setData('description', content)}
-                placeholder={t('Enter job description...')}
+                placeholder={'Enter job description...'}
                 className="[&_.ProseMirror]:min-h-[150px]"
               />
               {errors.description && <p className="text-sm text-red-500">{errors.description}</p>}
             </div>
 
             <div>
-              <Label htmlFor="requirements" required>{t('Requirements')}</Label>
+              <Label htmlFor="requirements" required>{'Requirements'}</Label>
               <RichTextEditor
                 content={data.requirements}
                 onChange={(content) => setData('requirements', content)}
-                placeholder={t('Enter job requirements...')}
+                placeholder={'Enter job requirements...'}
                 className="[&_.ProseMirror]:min-h-[150px]"
               />
               {errors.requirements && <p className="text-sm text-red-500">{errors.requirements}</p>}
             </div>
 
             <div>
-              <Label htmlFor="benefits" required>{t('Benefits')}</Label>
+              <Label htmlFor="benefits" required>{'Benefits'}</Label>
               <RichTextEditor
                 content={data.benefits}
                 onChange={(content) => setData('benefits', content)}
-                placeholder={t('Enter job benefits...')}
+                placeholder={'Enter job benefits...'}
                 className="[&_.ProseMirror]:min-h-[120px]"
               />
               {errors.benefits && <p className="text-sm text-red-500">{errors.benefits}</p>}
@@ -393,7 +391,7 @@ export default function CreateJobPosting() {
         {customQuestions && customQuestions.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Custom Questions')}</CardTitle>
+              <CardTitle>{'Custom Questions'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {customQuestions.map((question: any) => (
@@ -422,12 +420,12 @@ export default function CreateJobPosting() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('Need to Ask?')}</CardTitle>
+              <CardTitle>{'Need to Ask?'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { key: 'gender', label: t('Gender') },
-                { key: 'date_of_birth', label: t('Date Of Birth') },
+                { key: 'gender', label: 'Gender' },
+                { key: 'date_of_birth', label: 'Date Of Birth' },
               ].map((item) => (
                 <div key={item.key} className="flex items-center space-x-2">
                   <Checkbox
@@ -449,12 +447,12 @@ export default function CreateJobPosting() {
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('Need to Show Option?')}</CardTitle>
+              <CardTitle>{'Need to Show Option?'}</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {[
-                { key: 'cover_letter', label: t('Cover Letter') },
-                { key: 'terms_and_conditions', label: t('Terms And Conditions') }
+                { key: 'cover_letter', label: 'Cover Letter' },
+                { key: 'terms_and_conditions', label: 'Terms And Conditions' }
               ].map((item) => (
                 <div key={item.key} className="flex items-center space-x-2">
                   <Checkbox
@@ -481,10 +479,10 @@ export default function CreateJobPosting() {
             variant="outline"
             onClick={() => router.get(route('hr.recruitment.job-postings.index'))}
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button type="submit" disabled={processing}>
-            {processing ? t('Creating...') : t('Create Job Posting')}
+            {processing ? 'Creating...' : 'Create Job Posting'}
           </Button>
         </div>
       </form>

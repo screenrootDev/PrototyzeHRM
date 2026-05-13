@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, User, Calendar, CheckCircle, XCircle, Clock, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function MeetingAttendees() {
-  const { t } = useTranslation();
+  
   const { auth, meetingAttendees, meetings, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -104,17 +104,15 @@ export default function MeetingAttendees() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Adding meeting attendee...'));
+      toast.loading('Adding meeting attendee...');
       
       router.post(route('meetings.meeting-attendees.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -126,17 +124,15 @@ export default function MeetingAttendees() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating meeting attendee...'));
+      toast.loading('Updating meeting attendee...');
       
       router.put(route('meetings.meeting-attendees.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -151,17 +147,15 @@ export default function MeetingAttendees() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Removing meeting attendee...'));
+    toast.loading('Removing meeting attendee...');
     
     router.delete(route('meetings.meeting-attendees.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -175,7 +169,7 @@ export default function MeetingAttendees() {
   };
   
   const handleRsvpUpdate = (formData: any) => {
-    toast.loading(t('Updating RSVP status...'));
+    toast.loading('Updating RSVP status...');
     
     router.put(route('meetings.meeting-attendees.update-rsvp', currentItem.id), {
       rsvp_status: formData.rsvp_status,
@@ -185,10 +179,8 @@ export default function MeetingAttendees() {
         setIsRsvpModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -202,7 +194,7 @@ export default function MeetingAttendees() {
   };
   
   const handleAttendanceUpdate = (formData: any) => {
-    toast.loading(t('Updating attendance status...'));
+    toast.loading('Updating attendance status...');
     
     router.put(route('meetings.meeting-attendees.update-attendance', currentItem.id), {
       attendance_status: formData.attendance_status
@@ -211,10 +203,8 @@ export default function MeetingAttendees() {
         setIsAttendanceModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -244,7 +234,7 @@ export default function MeetingAttendees() {
   
   if (hasPermission(permissions, 'create-meeting-attendees')) {
     pageActions.push({
-      label: t('Add Attendee'),
+      label: 'Add Attendee',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -252,9 +242,9 @@ export default function MeetingAttendees() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.meeting-attendees.index') },
-    { title: t('Meeting Attendees') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.meeting-attendees.index') },
+    { title: 'Meeting Attendees' }
   ];
 
   const getRsvpColor = (status: string) => {
@@ -290,7 +280,7 @@ export default function MeetingAttendees() {
   const columns = [
     { 
       key: 'user.name', 
-      label: t('Attendee'),
+      label: 'Attendee',
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-gray-500" />
@@ -298,9 +288,9 @@ export default function MeetingAttendees() {
             <div className="font-medium">{row.user?.name}</div>
             <div className="text-xs text-gray-500">
               {row.type === 'Required' ? (
-                <span className="text-red-600">{t('Required')}</span>
+                <span className="text-red-600">{'Required'}</span>
               ) : (
-                <span className="text-blue-600">{t('Optional')}</span>
+                <span className="text-blue-600">{'Optional'}</span>
               )}
             </div>
           </div>
@@ -309,7 +299,7 @@ export default function MeetingAttendees() {
     },
     { 
       key: 'meeting.title', 
-      label: t('Meeting'),
+      label: 'Meeting',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.meeting?.title}</div>
@@ -322,66 +312,66 @@ export default function MeetingAttendees() {
     },
     { 
       key: 'rsvp_status', 
-      label: t('RSVP'),
+      label: 'RSVP',
       render: (value) => (
         <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getRsvpColor(value)}`}>
           {getRsvpIcon(value)}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'attendance_status', 
-      label: t('Attendance'),
+      label: 'Attendance',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getAttendanceColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'rsvp_date', 
-      label: t('RSVP Date'),
+      label: 'RSVP Date',
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     { 
       key: 'decline_reason', 
-      label: t('Decline Reason'),
+      label: 'Decline Reason',
       render: (value) => value || '-'
     }
   ];
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-meeting-attendees'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-attendees'
     },
     { 
-      label: t('Update RSVP'), 
+      label: 'Update RSVP', 
       icon: 'MessageSquare', 
       action: 'update-rsvp', 
       className: 'text-green-500',
       requiredPermission: 'manage-meeting-rsvp-status'
     },
     { 
-      label: t('Update Attendance'), 
+      label: 'Update Attendance', 
       icon: 'UserCheck', 
       action: 'update-attendance', 
       className: 'text-purple-500',
       requiredPermission: 'manage-meeting-attendance'
     },
     { 
-      label: t('Remove'), 
+      label: 'Remove', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -390,23 +380,23 @@ export default function MeetingAttendees() {
   ];
 
   const rsvpOptions = [
-    { value: '_empty_', label: t('All RSVP') , disabled: true},
-    { value: 'Pending', label: t('Pending') },
-    { value: 'Accepted', label: t('Accepted') },
-    { value: 'Declined', label: t('Declined') },
-    { value: 'Tentative', label: t('Tentative') }
+    { value: '_empty_', label: 'All RSVP' , disabled: true},
+    { value: 'Pending', label: 'Pending' },
+    { value: 'Accepted', label: 'Accepted' },
+    { value: 'Declined', label: 'Declined' },
+    { value: 'Tentative', label: 'Tentative' }
   ];
 
   const attendanceOptions = [
-    { value: '_empty_', label: t('All Attendance'), disabled: true },
-    { value: 'Not Attended', label: t('Not Attended') },
-    { value: 'Present', label: t('Present') },
-    { value: 'Late', label: t('Late') },
-    { value: 'Left Early', label: t('Left Early') }
+    { value: '_empty_', label: 'All Attendance', disabled: true },
+    { value: 'Not Attended', label: 'Not Attended' },
+    { value: 'Present', label: 'Present' },
+    { value: 'Late', label: 'Late' },
+    { value: 'Left Early', label: 'Left Early' }
   ];
 
   const meetingOptions = [
-    { value: '_empty_', label: t('All Meetings'), disabled: true },
+    { value: '_empty_', label: 'All Meetings', disabled: true },
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -414,7 +404,7 @@ export default function MeetingAttendees() {
   ];
 
   const meetingSelectOptions = [
-    { value: '_empty_', label: t('Select Meeting') },
+    { value: '_empty_', label: 'Select Meeting' },
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -422,7 +412,7 @@ export default function MeetingAttendees() {
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('Select Employee') },
+    { value: '_empty_', label: 'Select Employee' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -431,7 +421,7 @@ export default function MeetingAttendees() {
 
   return (
     <PageTemplate 
-      title={t("Meeting Attendees")} 
+      title={"Meeting Attendees"} 
       url="/meetings/meeting-attendees"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -445,7 +435,7 @@ export default function MeetingAttendees() {
           filters={[
             {
               name: 'rsvp_status',
-              label: t('RSVP Status'),
+              label: 'RSVP Status',
               type: 'select',
               value: rsvpFilter,
               onChange: setRsvpFilter,
@@ -453,7 +443,7 @@ export default function MeetingAttendees() {
             },
             {
               name: 'attendance_status',
-              label: t('Attendance'),
+              label: 'Attendance',
               type: 'select',
               value: attendanceFilter,
               onChange: setAttendanceFilter,
@@ -461,7 +451,7 @@ export default function MeetingAttendees() {
             },
             {
               name: 'meeting_id',
-              label: t('Meeting'),
+              label: 'Meeting',
               type: 'select',
               value: meetingFilter,
               onChange: setMeetingFilter,
@@ -513,7 +503,7 @@ export default function MeetingAttendees() {
           to={meetingAttendees?.to || 0}
           total={meetingAttendees?.total || 0}
           links={meetingAttendees?.links}
-          entityName={t("meeting attendees")}
+          entityName={"meeting attendees"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -526,7 +516,7 @@ export default function MeetingAttendees() {
           fields: [
             { 
               name: 'meeting_id', 
-              label: t('Meeting'), 
+              label: 'Meeting', 
               type: 'select', 
               required: true,
               options: meetingSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -534,7 +524,7 @@ export default function MeetingAttendees() {
             },
             { 
               name: 'user_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select', 
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '_empty_'),
@@ -542,31 +532,31 @@ export default function MeetingAttendees() {
             },
             { 
               name: 'type', 
-              label: t('Attendance Type'), 
+              label: 'Attendance Type', 
               type: 'select', 
               required: true,
               options: [
-                { value: 'Required', label: t('Required') },
-                { value: 'Optional', label: t('Optional') }
+                { value: 'Required', label: 'Required' },
+                { value: 'Optional', label: 'Optional' }
               ]
             },
             { 
               name: 'rsvp_status', 
-              label: t('RSVP Status'), 
+              label: 'RSVP Status', 
               type: 'select',
               options: rsvpOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'attendance_status', 
-              label: t('Attendance Status'), 
+              label: 'Attendance Status', 
               type: 'select',
               options: attendanceOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'decline_reason', 
-              label: t('Decline Reason'), 
+              label: 'Decline Reason', 
               type: 'textarea',
-              helpText: t('Required if RSVP status is Declined')
+              helpText: 'Required if RSVP status is Declined'
             }
           ],
           modalSize: 'lg'
@@ -574,10 +564,10 @@ export default function MeetingAttendees() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add Meeting Attendee')
+            ? 'Add Meeting Attendee'
             : formMode === 'edit'
-              ? t('Edit Meeting Attendee')
-              : t('View Meeting Attendee')
+              ? 'Edit Meeting Attendee'
+              : 'View Meeting Attendee'
         }
         mode={formMode}
       />
@@ -598,21 +588,21 @@ export default function MeetingAttendees() {
           fields: [
             {
               name: 'rsvp_status',
-              label: t('RSVP Status'),
+              label: 'RSVP Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Pending', label: t('Pending') },
-                { value: 'Accepted', label: t('Accepted') },
-                { value: 'Declined', label: t('Declined') },
-                { value: 'Tentative', label: t('Tentative') }
+                { value: 'Pending', label: 'Pending' },
+                { value: 'Accepted', label: 'Accepted' },
+                { value: 'Declined', label: 'Declined' },
+                { value: 'Tentative', label: 'Tentative' }
               ]
             },
             {
               name: 'decline_reason',
-              label: t('Decline Reason'),
+              label: 'Decline Reason',
               type: 'textarea',
-              helpText: t('Required if RSVP status is Declined')
+              helpText: 'Required if RSVP status is Declined'
             }
           ],
           modalSize: 'md'
@@ -621,9 +611,9 @@ export default function MeetingAttendees() {
           rsvp_status: selectedRsvpStatus,
           decline_reason: currentItem?.decline_reason || ''
         }}
-        title={t('Update RSVP Status')}
+        title={'Update RSVP Status'}
         mode="edit"
-        submitButtonText={t('Update RSVP')}
+        submitButtonText={'Update RSVP'}
       />
 
       <CrudFormModal
@@ -634,23 +624,23 @@ export default function MeetingAttendees() {
           fields: [
             {
               name: 'attendance_status',
-              label: t('Attendance Status'),
+              label: 'Attendance Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Not Attended', label: t('Not Attended') },
-                { value: 'Present', label: t('Present') },
-                { value: 'Late', label: t('Late') },
-                { value: 'Left Early', label: t('Left Early') }
+                { value: 'Not Attended', label: 'Not Attended' },
+                { value: 'Present', label: 'Present' },
+                { value: 'Late', label: 'Late' },
+                { value: 'Left Early', label: 'Left Early' }
               ]
             }
           ],
           modalSize: 'sm'
         }}
         initialData={{ attendance_status: selectedAttendanceStatus }}
-        title={t('Update Attendance Status')}
+        title={'Update Attendance Status'}
         mode="edit"
-        submitButtonText={t('Update Attendance')}
+        submitButtonText={'Update Attendance'}
       />
     </PageTemplate>
   );

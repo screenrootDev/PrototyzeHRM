@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -14,7 +14,7 @@ import { format } from 'date-fns';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function Interviews() {
-  const { t } = useTranslation();
+  
   const { auth, interviews, candidates, interviewTypes, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -136,7 +136,7 @@ export default function Interviews() {
     }
     
     if (formMode === 'create') {
-      toast.loading(t('Scheduling interview...'));
+      toast.loading('Scheduling interview...');
 
       router.post(route('hr.recruitment.interviews.store'), formData, {
         onSuccess: (page) => {
@@ -145,10 +145,8 @@ export default function Interviews() {
           setAvailableRounds([]);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -160,7 +158,7 @@ export default function Interviews() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating interview...'));
+      toast.loading('Updating interview...');
 
       router.put(route('hr.recruitment.interviews.update', currentItem.id), formData, {
         onSuccess: (page) => {
@@ -169,10 +167,8 @@ export default function Interviews() {
           setAvailableRounds([]);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -187,17 +183,15 @@ export default function Interviews() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting interview...'));
+    toast.loading('Deleting interview...');
 
     router.delete(route('hr.recruitment.interviews.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -213,17 +207,15 @@ export default function Interviews() {
   const handleUpdateStatus = (formData: any) => {
     if (!formData.status) return;
     
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
     
     router.put(route('hr.recruitment.interviews.update-status', currentItem.id), { status: formData.status }, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -252,7 +244,7 @@ export default function Interviews() {
   
   if (hasPermission(permissions, 'create-interviews')) {
     pageActions.push({
-      label: t('Schedule Interview'),
+      label: 'Schedule Interview',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -260,9 +252,9 @@ export default function Interviews() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.interviews.index') },
-    { title: t('Interviews') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.interviews.index') },
+    { title: 'Interviews' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -278,7 +270,7 @@ export default function Interviews() {
   const columns = [
     { 
       key: 'candidate.full_name', 
-      label: t('Candidate'),
+      label: 'Candidate',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.candidate?.first_name} {row.candidate?.last_name}</div>
@@ -288,17 +280,17 @@ export default function Interviews() {
     },
     { 
       key: 'round.name', 
-      label: t('Round'),
+      label: 'Round',
       render: (_, row) => row.round?.name || '-'
     },
     { 
       key: 'interview_type.name', 
-      label: t('Type'),
+      label: 'Type',
       render: (_, row) => row.interview_type?.name || '-'
     },
     { 
       key: 'scheduled_date', 
-      label: t('Date & Time'),
+      label: 'Date & Time',
       sortable: false,
       render: (_, row) => (
         <div>
@@ -309,33 +301,33 @@ export default function Interviews() {
     },
     { 
       key: 'location', 
-      label: t('Location'),
+      label: 'Location',
       render: (value, row) => {
         if (row.meeting_link) {
-          return <span className="text-blue-600">{t('Online')}</span>;
+          return <span className="text-blue-600">{'Online'}</span>;
         }
         return value || '-';
       }
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'feedback_submitted', 
-      label: t('Feedback'),
+      label: 'Feedback',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value 
             ? 'bg-green-50 text-green-700 ring-green-600/20' 
             : 'bg-gray-50 text-gray-600 ring-gray-500/10'
         }`}>
-          {value ? t('Submitted') : t('Pending')}
+          {value ? 'Submitted' : 'Pending'}
         </span>
       )
     }
@@ -343,28 +335,28 @@ export default function Interviews() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-interviews'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-interviews'
     },
     { 
-      label: t('Update Status'), 
+      label: 'Update Status', 
       icon: 'RefreshCw', 
       action: 'update-status', 
       className: 'text-green-500',
       requiredPermission: 'edit-interviews'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -373,15 +365,15 @@ export default function Interviews() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'Scheduled', label: t('Scheduled') },
-    { value: 'Completed', label: t('Completed') },
-    { value: 'Cancelled', label: t('Cancelled') },
-    { value: 'No-show', label: t('No-show') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'Scheduled', label: 'Scheduled' },
+    { value: 'Completed', label: 'Completed' },
+    { value: 'Cancelled', label: 'Cancelled' },
+    { value: 'No-show', label: 'No-show' }
   ];
 
   const candidateOptions = [
-    { value: '_empty_', label: t('All Candidates') , disable: true },
+    { value: '_empty_', label: 'All Candidates' , disable: true },
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -389,7 +381,7 @@ export default function Interviews() {
   ];
 
   const candidateSelectOptions = [
-    { value: '_empty_', label: t('Select Candidate') },
+    { value: '_empty_', label: 'Select Candidate' },
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -397,7 +389,7 @@ export default function Interviews() {
   ];
 
   const interviewTypeOptions = [
-    { value: '_empty_', label: t('Select Interview Type') },
+    { value: '_empty_', label: 'Select Interview Type' },
     ...(interviewTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -411,7 +403,7 @@ export default function Interviews() {
 
   return (
     <PageTemplate 
-      title={t("Interviews")} 
+      title={"Interviews"} 
       url="/hr/recruitment/interviews"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -425,7 +417,7 @@ export default function Interviews() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -434,7 +426,7 @@ export default function Interviews() {
             },
             {
               name: 'candidate_id',
-              label: t('Candidate'),
+              label: 'Candidate',
               type: 'select',
               value: candidateFilter,
               onChange: setCandidateFilter,
@@ -485,7 +477,7 @@ export default function Interviews() {
           to={interviews?.to || 0}
           total={interviews?.total || 0}
           links={interviews?.links}
-          entityName={t("interviews")}
+          entityName={"interviews"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -498,7 +490,7 @@ export default function Interviews() {
           fields: [
             { 
               name: 'candidate_id', 
-              label: t('Candidate'), 
+              label: 'Candidate', 
               type: 'select', 
               required: false,
               options: candidateSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -517,7 +509,7 @@ export default function Interviews() {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('Select Candidate')} />
+                      <SelectValue placeholder={'Select Candidate'} />
                     </SelectTrigger>
                     <SelectContent className="z-[60000]" searchable={true}>
                       {candidateSelectOptions.filter(opt => opt.value !== '_empty_').map(option => (
@@ -532,7 +524,7 @@ export default function Interviews() {
             },
             { 
               name: 'round_id', 
-              label: t('Interview Round'), 
+              label: 'Interview Round', 
               type: 'select', 
               required: true,
               searchable: true,
@@ -544,7 +536,7 @@ export default function Interviews() {
             },
             { 
               name: 'interview_type_id', 
-              label: t('Interview Type'), 
+              label: 'Interview Type', 
               type: 'select', 
               required: true,
               options: interviewTypeOptions.filter(opt => opt.value !== '_empty_'),
@@ -552,19 +544,19 @@ export default function Interviews() {
             },
             { 
               name: 'scheduled_date', 
-              label: t('Date'), 
+              label: 'Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'scheduled_time', 
-              label: t('Time'), 
+              label: 'Time', 
               type: 'time', 
               required: true 
             },
             { 
               name: 'duration', 
-              label: t('Duration (minutes)'), 
+              label: 'Duration (minutes)', 
               type: 'number', 
               required: true,
               min: 15,
@@ -572,18 +564,18 @@ export default function Interviews() {
             },
             { 
               name: 'location', 
-              label: t('Location'), 
+              label: 'Location', 
               type: 'text' 
             },
             { 
               name: 'meeting_link', 
-              label: t('Meeting Link'), 
+              label: 'Meeting Link', 
               type: 'text',
               placeholder: 'https://meet.google.com/xxx-xxxx-xxx'
             },
             { 
               name: 'interviewers', 
-              label: t('Interviewers'), 
+              label: 'Interviewers', 
               type: 'multi-select', 
               required: true,
               options: employeeOptions
@@ -598,10 +590,10 @@ export default function Interviews() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Schedule New Interview')
+            ? 'Schedule New Interview'
             : formMode === 'edit'
-              ? t('Edit Interview')
-              : t('View Interview')
+              ? 'Edit Interview'
+              : 'View Interview'
         }
         mode={formMode}
       />
@@ -623,7 +615,7 @@ export default function Interviews() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -631,9 +623,9 @@ export default function Interviews() {
           ]
         }}
         initialData={{ status: selectedStatus }}
-        title={t('Update Interview Status')}
+        title={'Update Interview Status'}
         mode="edit"
-        submitLabel={t('Update Status')}
+        submitLabel={'Update Status'}
       />
     </PageTemplate>
   );

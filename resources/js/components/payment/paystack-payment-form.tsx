@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 import { usePaymentProcessor } from '@/hooks/usePaymentProcessor';
 
@@ -24,7 +24,7 @@ export function PaystackPaymentForm({
   onSuccess, 
   onCancel 
 }: PaystackPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const initialized = useRef(false);
 
   const { processPayment } = usePaymentProcessor({
@@ -58,12 +58,7 @@ export function PaystackPaymentForm({
           if (modalBackdrop) {
             (modalBackdrop as HTMLElement).style.display = '';
           }
-          processPayment('paystack', {
-            planId,
-            billingCycle,
-            couponCode,
-            payment_id: response.reference,
-          });
+          processPayment('paystack');
         },
         onClose: function() {
           // Restore modal backdrop
@@ -87,12 +82,12 @@ export function PaystackPaymentForm({
   }, [paystackKey, planId, billingCycle, couponCode, currency]);
 
   if (!paystackKey) {
-    return <div className="p-4 text-center text-red-500">{t('Paystack not configured')}</div>;
+    return <div className="p-4 text-center text-red-500">{'Paystack not configured'}</div>;
   }
 
   return (
     <div className="p-4 text-center">
-      <p>{t('Redirecting to Paystack...')}</p>
+      <p>{'Redirecting to Paystack...'}</p>
     </div>
   );
 }

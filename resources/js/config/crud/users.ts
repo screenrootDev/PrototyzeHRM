@@ -1,7 +1,6 @@
 // config/crud/users.ts
 import { CrudConfig } from '@/types/crud';
 import { columnRenderers } from '@/utils/columnRenderers';
-import { t } from '@/utils/i18n';
 
 export const usersConfig: CrudConfig = {
   entity: {
@@ -19,13 +18,13 @@ export const usersConfig: CrudConfig = {
     columns: [
       { 
         key: 'name', 
-        label: t('Name'), 
+        label: 'Name', 
         sortable: true,
         render: (value, row) => {
           return (
             `<div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
-                ${row.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                ${row.name.split(' ').map(n => n[0]).join(''.substring(0, 2).toUpperCase()}
               </div>
               <div>
                 <div class="font-medium">${row.name}</div>
@@ -37,7 +36,7 @@ export const usersConfig: CrudConfig = {
       },
       { 
         key: 'roles', 
-        label: t('Roles'),
+        label: 'Roles',
         render: (value) => {
           if (!value || !value.length) return '<span class="text-muted-foreground">No roles assigned</span>';
           
@@ -48,28 +47,28 @@ export const usersConfig: CrudConfig = {
       },
       { 
         key: 'created_at', 
-        label: t('Joined'), 
+        label: 'Joined', 
         sortable: true, 
         render: (value) => `${window.appSettings.formatDateTime(value, false)}` 
       }
     ],
     actions: [
       { 
-        label: t('View'), 
+        label: 'View', 
         icon: 'Eye', 
         action: 'view', 
         className: 'text-blue-500',
         requiredPermission: 'view-users'
       },
       { 
-        label: t('Edit'), 
+        label: 'Edit', 
         icon: 'Edit', 
         action: 'edit', 
         className: 'text-amber-500',
         requiredPermission: 'edit-users'
       },
       { 
-        label: t('Delete'), 
+        label: 'Delete', 
         icon: 'Trash2', 
         action: 'delete', 
         className: 'text-red-500',
@@ -80,32 +79,32 @@ export const usersConfig: CrudConfig = {
   filters: [
     {
       key: 'role',
-      label: t('Role'),
+      label: 'Role',
       type: 'select',
       options: [] // Will be populated dynamically
     }
   ],
   form: {
     fields: [
-      { name: 'name', label: t('Name'), type: 'text', required: true },
-      { name: 'email', label: t('Email'), type: 'email', required: true },
+      { name: 'name', label: 'Name', type: 'text', required: true },
+      { name: 'email', label: 'Email', type: 'email', required: true },
       { 
         name: 'password', 
-        label: t('Password'), 
+        label: 'Password', 
         type: 'password',
         required: true,
         conditional: (mode) => mode === 'create'
       },
       { 
         name: 'password_confirmation', 
-        label: t('Confirm Password'), 
+        label: 'Confirm Password', 
         type: 'password',
         required: true,
         conditional: (mode) => mode === 'create'
       },
       { 
         name: 'roles', 
-        label: t('Roles'), 
+        label: 'Roles', 
         type: 'multiselect', 
         options: [] // Will be populated dynamically
       }

@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, MapPin, Monitor, Users } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function MeetingRooms() {
-  const { t } = useTranslation();
+  
   const { auth, meetingRooms, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -97,17 +97,15 @@ export default function MeetingRooms() {
     }
 
     if (formMode === 'create') {
-      toast.loading(t('Creating meeting room...'));
+      toast.loading('Creating meeting room...');
       
       router.post(route('meetings.meeting-rooms.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -119,17 +117,15 @@ export default function MeetingRooms() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating meeting room...'));
+      toast.loading('Updating meeting room...');
       
       router.put(route('meetings.meeting-rooms.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -144,17 +140,15 @@ export default function MeetingRooms() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting meeting room...'));
+    toast.loading('Deleting meeting room...');
     
     router.delete(route('meetings.meeting-rooms.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -169,16 +163,14 @@ export default function MeetingRooms() {
   
   const handleToggleStatus = (meetingRoom: any) => {
     const newStatus = meetingRoom.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} meeting room...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} meeting room...`);
     
     router.put(route('meetings.meeting-rooms.toggle-status', meetingRoom.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -207,7 +199,7 @@ export default function MeetingRooms() {
   
   if (hasPermission(permissions, 'create-meeting-rooms')) {
     pageActions.push({
-      label: t('Add Meeting Room'),
+      label: 'Add Meeting Room',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -215,15 +207,15 @@ export default function MeetingRooms() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.meeting-rooms.index') },
-    { title: t('Meeting Rooms') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.meeting-rooms.index') },
+    { title: 'Meeting Rooms' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value, row) => (
         <div>
@@ -237,12 +229,12 @@ export default function MeetingRooms() {
     },
     { 
       key: 'location', 
-      label: t('Location'),
+      label: 'Location',
       render: (value, row) => {
         if (row.type === 'Virtual') {
           return row.booking_url ? (
             <a href={row.booking_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline text-sm">
-              {t('Join Link')}
+              {'Join Link'}
             </a>
           ) : '-';
         }
@@ -251,7 +243,7 @@ export default function MeetingRooms() {
     },
     { 
       key: 'capacity', 
-      label: t('Capacity'),
+      label: 'Capacity',
       render: (value) => (
         <div className="flex items-center gap-1">
           <Users className="h-4 w-4 text-gray-500" />
@@ -261,7 +253,7 @@ export default function MeetingRooms() {
     },
     { 
       key: 'equipment', 
-      label: t('Equipment'),
+      label: 'Equipment',
       render: (value) => {
         if (!value || !Array.isArray(value) || value.length === 0) return '-';
         return (
@@ -280,16 +272,16 @@ export default function MeetingRooms() {
     },
     { 
       key: 'meetings_count', 
-      label: t('Meetings'),
+      label: 'Meetings',
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          {value || 0} {t('meetings')}
+          {value || 0} {'meetings'}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -297,7 +289,7 @@ export default function MeetingRooms() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
@@ -306,28 +298,28 @@ export default function MeetingRooms() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-meeting-rooms'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-rooms'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-rooms'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -336,20 +328,20 @@ export default function MeetingRooms() {
   ];
 
   const typeOptions = [
-    { value: '_empty_', label: t('All Types') , disabled: true },
-    { value: 'Physical', label: t('Physical') },
-    { value: 'Virtual', label: t('Virtual') }
+    { value: '_empty_', label: 'All Types' , disabled: true },
+    { value: 'Physical', label: 'Physical' },
+    { value: 'Virtual', label: 'Virtual' }
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Meeting Rooms")} 
+      title={"Meeting Rooms"} 
       url="/meetings/meeting-rooms"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -363,7 +355,7 @@ export default function MeetingRooms() {
           filters={[
             {
               name: 'type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: typeFilter,
               onChange: setTypeFilter,
@@ -371,7 +363,7 @@ export default function MeetingRooms() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -421,7 +413,7 @@ export default function MeetingRooms() {
           to={meetingRooms?.to || 0}
           total={meetingRooms?.total || 0}
           links={meetingRooms?.links}
-          entityName={t("meeting rooms")}
+          entityName={"meeting rooms"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -434,51 +426,51 @@ export default function MeetingRooms() {
           fields: [
             { 
               name: 'name', 
-              label: t('Room Name'), 
+              label: 'Room Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'type', 
-              label: t('Type'), 
+              label: 'Type', 
               type: 'select', 
               required: true,
               options: typeOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'location', 
-              label: t('Location'), 
+              label: 'Location', 
               type: 'text',
-              helpText: t('Physical location for physical rooms')
+              helpText: 'Physical location for physical rooms'
             },
             { 
               name: 'capacity', 
-              label: t('Capacity'), 
+              label: 'Capacity', 
               type: 'number', 
               required: true,
               min: 1,
-              helpText: t('Maximum number of participants')
+              helpText: 'Maximum number of participants'
             },
             { 
               name: 'equipment', 
-              label: t('Equipment'), 
+              label: 'Equipment', 
               type: 'text',
-              helpText: t('Comma-separated list of available equipment')
+              helpText: 'Comma-separated list of available equipment'
             },
             { 
               name: 'booking_url', 
-              label: t('Booking URL'), 
+              label: 'Booking URL', 
               type: 'text',
-              helpText: t('Meeting link for virtual rooms')
+              helpText: 'Meeting link for virtual rooms'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -492,10 +484,10 @@ export default function MeetingRooms() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Meeting Room')
+            ? 'Add New Meeting Room'
             : formMode === 'edit'
-              ? t('Edit Meeting Room')
-              : t('View Meeting Room')
+              ? 'Edit Meeting Room'
+              : 'View Meeting Room'
         }
         mode={formMode}
       />

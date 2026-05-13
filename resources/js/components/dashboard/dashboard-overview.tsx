@@ -13,7 +13,7 @@ import {
   ArrowRight,
   Sparkles
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { Link } from '@inertiajs/react';
 
 interface DashboardOverviewProps {
@@ -22,20 +22,20 @@ interface DashboardOverviewProps {
 }
 
 export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
-  const { t } = useTranslation();
+  
 
   const superAdminFeatures = [
     {
-      title: t('Company Management'),
-      description: t('Manage all registered companies and their subscriptions'),
+      title: 'Company Management',
+      description: 'Manage all registered companies and their subscriptions',
       icon: Building2,
       color: 'blue',
       href: route('companies.index'),
       count: stats?.totalCompanies || 0
     },
     {
-      title: t('Plan Management'),
-      description: t('Create and manage subscription plans'),
+      title: 'Plan Management',
+      description: 'Create and manage subscription plans',
       icon: CreditCard,
       color: 'purple',
       href: route('plans.index'),
@@ -43,8 +43,8 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
     },
 
     {
-      title: t('System Growth'),
-      description: t('Monitor system performance and growth'),
+      title: 'System Growth',
+      description: 'Monitor system performance and growth',
       icon: TrendingUp,
       color: 'orange',
       href: route('dashboard'),
@@ -54,8 +54,8 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
 
   const companyFeatures = [
     {
-      title: t('Business Views'),
-      description: t('Track views of your digital business cards'),
+      title: 'Business Views',
+      description: 'Track views of your digital business cards',
       icon: Eye,
       color: 'orange',
       href: route('dashboard'),
@@ -81,13 +81,13 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
         <div className="flex items-center justify-center gap-2 mb-2">
           <Sparkles className="h-6 w-6 text-primary" />
           <CardTitle className="text-2xl">
-            {t('Features')}
+            {'Features'}
           </CardTitle>
         </div>
         <p className="text-muted-foreground">
           {userType === 'superadmin'
-            ? t('Comprehensive system management and oversight tools')
-            : t('Everything you need to manage your digital business presence')
+            ? 'Comprehensive system management and oversight tools'
+            : 'Everything you need to manage your digital business presence'
           }
         </p>
       </CardHeader>
@@ -120,7 +120,7 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
                       asChild
                     >
                       <Link href={feature.href}>
-                        {t('Explore')}
+                        {'Explore'}
                         <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </Link>
                     </Button>
@@ -137,9 +137,8 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
             <TrendingUp className="h-4 w-4" />
             <span className="text-sm font-medium">
               {userType === 'superadmin'
-                ? t('System growing at {{growth}}% monthly', { growth: stats?.monthlyGrowth || 0 })
-                : t('Your business views increased by {{growth}}%', { growth: stats?.monthlyGrowth || 0 })
-              }
+                ? `System growing at ${stats?.monthlyGrowth || 0}% monthly`
+                : `Your business views increased by ${stats?.monthlyGrowth || 0}%`}
             </span>
           </div>
         </div>

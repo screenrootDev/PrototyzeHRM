@@ -9,12 +9,12 @@ import { Search, MapPin, Clock, Users, Star, Filter, Building, ChevronLeft, Chev
 import CareerHeader from '@/components/career/CareerHeader';
 import CareerFooter from '@/components/career/CareerFooter';
 import { getImagePath } from '@/utils/helpers';
-import { useTranslation } from 'react-i18next';
+
 import { useFavicon } from '@/hooks/use-favicon';
 import { useBrandTheme } from '@/hooks/use-brand-theme';
 
 export default function CareerPage() {
-  const { t, i18n } = useTranslation();
+  
   const { companySettings, jobPostings, jobTypes, locations, filters, companyId, vacancyRanges, companySlug, userSlug } = usePage().props as any;
   const [searchTerm, setSearchTerm] = useState(filters?.search || '');
   const [locationFilter, setLocationFilter] = useState(filters?.location || 'all');
@@ -94,7 +94,7 @@ export default function CareerPage() {
 
   return (
     <>
-      <Head title={t("Careers - Join Our Team")}>
+      <Head title={"Careers - Join Our Team"}>
         {companySettings?.favIcon && (
           <>
             <link rel="icon" href={getImagePath(companySettings.favIcon)} />
@@ -121,15 +121,15 @@ export default function CareerPage() {
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 bg-primary/10 rounded-full px-4 py-2 mb-6">
                 <Star className="h-4 w-4 text-primary" />
-                <span className="text-sm font-medium text-primary">{t("Join 500+ Amazing Professionals")}</span>
+                <span className="text-sm font-medium text-primary">{"Join 500+ Amazing Professionals"}</span>
               </div>
 
               <h1 className="text-4xl md:text-5xl font-light mb-6 text-gray-700">
-                {t("Build Your Dream Career")}
+                {"Build Your Dream Career"}
               </h1>
 
               <p className="text-xl md:text-2xl mb-8 text-gray-600 max-w-3xl mx-auto leading-relaxed">
-                {t("Discover exciting opportunities, grow with innovative projects, and make a meaningful impact in a collaborative environment")}
+                {"Discover exciting opportunities, grow with innovative projects, and make a meaningful impact in a collaborative environment"}
               </p>
             </div>
 
@@ -145,11 +145,11 @@ export default function CareerPage() {
             {/* Header with job count and search */}
             <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0 mb-8">
               <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                {jobPostings?.total || 0} {t("Available Jobs")}
+                {jobPostings?.total || 0} {"Available Jobs"}
               </h2>
               <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
                 <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-2">
-                  <span className="text-sm text-gray-600 whitespace-nowrap">{t("Sort by")}:</span>
+                  <span className="text-sm text-gray-600 whitespace-nowrap">{"Sort by"}:</span>
                   <Select value={sortBy} onValueChange={(value) => {
                     setSortBy(value);
                     const params = {
@@ -171,10 +171,10 @@ export default function CareerPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="newest">{t("Newest First")}</SelectItem>
-                      <SelectItem value="oldest">{t("Oldest First")}</SelectItem>
-                      <SelectItem value="salary-high">{t("Salary High to Low")}</SelectItem>
-                      <SelectItem value="salary-low">{t("Salary Low to High")}</SelectItem>
+                      <SelectItem value="newest">{"Newest First"}</SelectItem>
+                      <SelectItem value="oldest">{"Oldest First"}</SelectItem>
+                      <SelectItem value="salary-high">{"Salary High to Low"}</SelectItem>
+                      <SelectItem value="salary-low">{"Salary Low to High"}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -182,14 +182,14 @@ export default function CareerPage() {
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                     <Input
-                      placeholder={t("Search for jobs")}
+                      placeholder={"Search for jobs"}
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="pl-10 w-full sm:w-64"
                     />
                   </div>
                   <Button onClick={handleSearch} className="bg-primary hover:bg-primary/90 text-primary-foreground w-full sm:w-auto">
-                    {t("Find Jobs")}
+                    {"Find Jobs"}
                   </Button>
                 </div>
               </div>
@@ -201,21 +201,21 @@ export default function CareerPage() {
                 <div className="bg-white rounded-lg shadow-sm border p-4 lg:p-6">
                   <div className="flex items-center gap-2 mb-4 lg:mb-6">
                     <Filter className="h-5 w-5 text-blue-500" />
-                    <h3 className="text-base lg:text-lg font-semibold text-gray-900">{t("Filter Jobs")}</h3>
+                    <h3 className="text-base lg:text-lg font-semibold text-gray-900">{"Filter Jobs"}</h3>
                   </div>
 
                   <div className="space-y-6">
                     {/* Location Filter */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-3">
-                        {t("Location")}
+                        {"Location"}
                       </label>
                       <Select value={locationFilter} onValueChange={setLocationFilter}>
                         <SelectTrigger>
-                          <SelectValue placeholder={t("All Locations")} />
+                          <SelectValue placeholder={"All Locations"} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{t("All Locations")}</SelectItem>
+                          <SelectItem value="all">{"All Locations"}</SelectItem>
                           {dynamicLocations.map(location => (
                             <SelectItem key={location.id} value={location.id.toString()}>{location.name}</SelectItem>
                           ))}
@@ -226,17 +226,17 @@ export default function CareerPage() {
                     {/* Salary Range */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-3">
-                        {t("Salary Range")}
+                        {"Salary Range"}
                       </label>
                       <Select value={salaryFilter} onValueChange={setSalaryFilter}>
                         <SelectTrigger>
-                          <SelectValue placeholder={t("All Ranges")} />
+                          <SelectValue placeholder={"All Ranges"} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">{t("All Ranges")}</SelectItem>
-                          <SelectItem value="0-50k">{t("$0 - $50,000")}</SelectItem>
-                          <SelectItem value="50k-100k">{t("$50,000 - $100,000")}</SelectItem>
-                          <SelectItem value="100k+">{t("$100,000+")}</SelectItem>
+                          <SelectItem value="all">{"All Ranges"}</SelectItem>
+                          <SelectItem value="0-50k">{"$0 - $50,000"}</SelectItem>
+                          <SelectItem value="50k-100k">{"$50,000 - $100,000"}</SelectItem>
+                          <SelectItem value="100k+">{"$100,000+"}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
@@ -245,7 +245,7 @@ export default function CareerPage() {
                     {/* Job Type */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-3">
-                        {t("Job Type")}
+                        {"Job Type"}
                       </label>
                       <div className="space-y-2">
                         {dynamicJobTypes.map(jobType => (
@@ -265,7 +265,7 @@ export default function CareerPage() {
                     {/* Vacancies */}
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-3">
-                        {t("Vacancies")}
+                        {"Vacancies"}
                       </label>
                       <div className="space-y-2">
                         {vacancyRanges?.map(range => (
@@ -284,7 +284,7 @@ export default function CareerPage() {
 
                     {/* Apply Filters Button */}
                     <Button onClick={handleSearch} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-                      {t("Apply Filters")}
+                      {"Apply Filters"}
                     </Button>
                     
                     {/* Reset Filters Button */}
@@ -299,7 +299,7 @@ export default function CareerPage() {
                       variant="outline" 
                       className="w-full"
                     >
-                      {t("Reset Filters")}
+                      {"Reset Filters"}
                     </Button>
                   </div>
                 </div>
@@ -315,12 +315,12 @@ export default function CareerPage() {
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex items-center gap-2">
                             <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">
-                              {job.positions || 1} {t("Vacancies")}
+                              {job.positions || 1} {"Vacancies"}
                             </Badge>
                             {job.is_featured && (
                               <Badge className="bg-yellow-100 text-yellow-700 hover:bg-yellow-100 text-xs">
                                 <Star className="h-3 w-3 mr-1" />
-                                {t("Featured")}
+                                {"Featured"}
                               </Badge>
                             )}
                           </div>
@@ -369,7 +369,7 @@ export default function CareerPage() {
                           onClick={() => router.get(route('career.job-details', [userSlug, job.code]))}
                           className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-2 text-sm font-medium mt-auto"
                         >
-                          {t("Browse Job")}
+                          {"Browse Job"}
                         </Button>
                       </CardContent>
                     </Card>
@@ -387,7 +387,7 @@ export default function CareerPage() {
                       className="flex items-center gap-1 h-8 px-3 w-full sm:w-auto"
                     >
                       <ChevronLeft className="h-3 w-3" />
-                      {t("Previous")}
+                      {"Previous"}
                     </Button>
 
                     <div className="flex space-x-1">
@@ -411,7 +411,7 @@ export default function CareerPage() {
                       disabled={currentPageFromServer === totalPages}
                       className="flex items-center gap-1 h-8 px-3 w-full sm:w-auto"
                     >
-                      {t("Next")}
+                      {"Next"}
                       <ChevronRight className="h-3 w-3" />
                     </Button>
                   </div>
@@ -422,9 +422,9 @@ export default function CareerPage() {
                     <div className="text-gray-300 mb-6">
                       <Search className="h-20 w-20 mx-auto" />
                     </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{t("No jobs found")}</h3>
+                    <h3 className="text-2xl font-bold text-gray-900 mb-3">{"No jobs found"}</h3>
                     <p className="text-gray-600 text-lg">
-                      {t("Try adjusting your search criteria or check back later for new opportunities.")}
+                      {"Try adjusting your search criteria or check back later for new opportunities."}
                     </p>
                   </div>
                 )}

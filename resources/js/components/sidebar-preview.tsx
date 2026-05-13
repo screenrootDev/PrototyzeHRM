@@ -7,7 +7,6 @@ import {
   FileText,
   ShoppingCart,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface SidebarPreviewProps {
   variant: string;
@@ -22,7 +21,7 @@ export function SidebarPreview({
   themeColor,
   customColor,
 }: SidebarPreviewProps) {
-  const { t } = useTranslation();
+  
   // Get the color based on theme color - use CSS variable for primary color
   const getColor = () => {
     // Use the CSS variable for primary color to ensure it matches the theme
@@ -95,7 +94,7 @@ export function SidebarPreview({
         <span
           className={`font-medium ${isColoredStyle ? "text-white" : "text-foreground"}`}
         >
-          {t("Sidebar")}
+          {"Sidebar"}
         </span>
       </div>
 
@@ -111,7 +110,7 @@ export function SidebarPreview({
           <span
             className={`text-sm ${isColoredStyle ? "text-white" : "text-foreground"}`}
           >
-            {t("Dashboard")}
+            {"Dashboard"}
           </span>
         </div>
 
@@ -122,7 +121,7 @@ export function SidebarPreview({
           <span
             className={`text-sm ${isColoredStyle ? "text-white" : "text-foreground"}`}
           >
-            {t("Users")}
+            {"Users"}
           </span>
         </div>
 
@@ -133,7 +132,7 @@ export function SidebarPreview({
           <span
             className={`text-sm ${isColoredStyle ? "text-white" : "text-foreground"}`}
           >
-            {t("Reports")}
+            {"Reports"}
           </span>
         </div>
 
@@ -144,7 +143,7 @@ export function SidebarPreview({
           <span
             className={`text-sm ${isColoredStyle ? "text-white" : "text-foreground"}`}
           >
-            {t("Products")}
+            {"Products"}
           </span>
         </div>
 
@@ -155,7 +154,7 @@ export function SidebarPreview({
           <span
             className={`text-sm ${isColoredStyle ? "text-white" : "text-foreground"}`}
           >
-            {t("Settings")}
+            {"Settings"}
           </span>
         </div>
       </div>

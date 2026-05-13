@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Pagination } from '@/components/ui/pagination';
 import { ArrowLeft, Calendar, DollarSign, Users, TrendingUp } from 'lucide-react';
 import { usePage, Link } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useState, useEffect } from 'react';
 
@@ -40,32 +40,32 @@ interface CouponData {
 }
 
 export default function CouponDetailsPage() {
-  const { t } = useTranslation();
+  
   const { coupon, usage_history } = usePage().props as { coupon: CouponData; usage_history: any };
   
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Coupons'), href: route('coupons.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Coupons', href: route('coupons.index') },
     { title: coupon.name }
   ];
 
   const usageColumns = [
-    { key: 'user_name', label: t('User'), sortable: true },
-    { key: 'user_email', label: t('Email'), sortable: true },
-    { key: 'order_id', label: t('Order ID'), sortable: true },
+    { key: 'user_name', label: 'User', sortable: true },
+    { key: 'user_email', label: 'Email', sortable: true },
+    { key: 'order_id', label: 'Order ID', sortable: true },
     { 
       key: 'amount', 
-      label: t('Order Amount'), 
+      label: 'Order Amount', 
       render: (value: number) => window.appSettings?.formatCurrency(value) || `$${value.toFixed(2)}`
     },
     { 
       key: 'discount_amount', 
-      label: t('Discount Applied'), 
+      label: 'Discount Applied', 
       render: (value: number) => window.appSettings?.formatCurrency(value) || `$${value.toFixed(2)}`
     },
     { 
       key: 'used_at', 
-      label: t('Used At'), 
+      label: 'Used At', 
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTime(value) || value
     }
@@ -79,9 +79,9 @@ export default function CouponDetailsPage() {
 
   const getStatusBadge = (status: boolean) => {
     return status ? (
-      <Badge className="bg-green-100 text-green-800">{t('Active')}</Badge>
+      <Badge className="bg-green-100 text-green-800">{'Active'}</Badge>
     ) : (
-      <Badge className="bg-red-100 text-red-800">{t('Inactive')}</Badge>
+      <Badge className="bg-red-100 text-red-800">{'Inactive'}</Badge>
     );
   };
 
@@ -89,7 +89,7 @@ export default function CouponDetailsPage() {
     const className = type === 'percentage' 
       ? 'bg-blue-100 text-blue-800' 
       : 'bg-green-100 text-green-800';
-    const label = type === 'percentage' ? t('Percentage') : t('Flat Amount');
+    const label = type === 'percentage' ? 'Percentage' : 'Flat Amount';
     return <Badge className={className}>{label}</Badge>;
   };
 
@@ -102,12 +102,12 @@ export default function CouponDetailsPage() {
             <Link href={route('coupons.index')}>
               <Button variant="outline" size="sm">
                 <ArrowLeft className="h-4 w-4 mr-2" />
-                {t('Back to Coupons')}
+                {'Back to Coupons'}
               </Button>
             </Link>
             <div>
               <h1 className="text-2xl font-bold">{coupon.name}</h1>
-              <p className="text-gray-600">{t('Coupon Details & Usage History')}</p>
+              <p className="text-gray-600">{'Coupon Details & Usage History'}</p>
             </div>
           </div>
           {getStatusBadge(coupon.status)}
@@ -119,7 +119,7 @@ export default function CouponDetailsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Discount Value')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Discount Value'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{formatDiscount(coupon.type, coupon.discount_amount)}</h3>
                 </div>
                 <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -133,7 +133,7 @@ export default function CouponDetailsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Times Used')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Times Used'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{coupon.used_count}
                   {coupon.use_limit_per_coupon && ` / ${coupon.use_limit_per_coupon}`}</h3>
                 </div>
@@ -148,8 +148,8 @@ export default function CouponDetailsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('User Limit')}</p>
-                  <h3 className="mt-2 text-2xl font-bold"> {coupon.use_limit_per_user || t('Unlimited')}</h3>
+                  <p className="text-sm font-medium text-muted-foreground">{'User Limit'}</p>
+                  <h3 className="mt-2 text-2xl font-bold"> {coupon.use_limit_per_user || 'Unlimited'}</h3>
                 </div>
                 <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
                   <Users className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -162,10 +162,10 @@ export default function CouponDetailsPage() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Expires')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Expires'}</p>
                   <h3 className="mt-2 text-2xl font-bold"> {coupon.expiry_date 
                     ? window.appSettings?.formatDateTime(coupon.expiry_date, false) || coupon.expiry_date
-                    : t('Never')
+                    : 'Never'
                   }</h3>
                 </div>
                 <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
@@ -178,37 +178,37 @@ export default function CouponDetailsPage() {
 
         {/* Coupon Details */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t('Coupon Information')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{'Coupon Information'}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-gray-600">{t('Coupon Code')}</label>
+                <label className="text-sm font-medium text-gray-600">{'Coupon Code'}</label>
                 <p className="text-lg font-mono bg-gray-100 px-3 py-2 rounded">{coupon.code}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">{t('Type')}</label>
+                <label className="text-sm font-medium text-gray-600">{'Type'}</label>
                 <div className="mt-1">{getTypeBadge(coupon.type)}</div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-600">{t('Created By')}</label>
+                <label className="text-sm font-medium text-gray-600">{'Created By'}</label>
                 <p className="text-sm">{coupon.creator.name} ({coupon.creator.email})</p>
               </div>
             </div>
             <div className="space-y-4">
               {coupon.minimum_spend && (
                 <div>
-                  <label className="text-sm font-medium text-gray-600">{t('Minimum Spend')}</label>
+                  <label className="text-sm font-medium text-gray-600">{'Minimum Spend'}</label>
                   <p className="text-sm">{window.appSettings?.formatCurrency(coupon.minimum_spend) || `$${coupon.minimum_spend.toFixed(2)}`}</p>
                 </div>
               )}
               {coupon.maximum_spend && (
                 <div>
-                  <label className="text-sm font-medium text-gray-600">{t('Maximum Spend')}</label>
+                  <label className="text-sm font-medium text-gray-600">{'Maximum Spend'}</label>
                   <p className="text-sm">{window.appSettings?.formatCurrency(coupon.maximum_spend) || `$${coupon.maximum_spend.toFixed(2)}`}</p>
                 </div>
               )}
               <div>
-                <label className="text-sm font-medium text-gray-600">{t('Created At')}</label>
+                <label className="text-sm font-medium text-gray-600">{'Created At'}</label>
                 <p className="text-sm">{window.appSettings?.formatDateTime(coupon.created_at) || coupon.created_at}</p>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function CouponDetailsPage() {
 
         {/* Usage History */}
         <Card className="p-6">
-          <h2 className="text-lg font-semibold mb-4">{t('Usage History')}</h2>
+          <h2 className="text-lg font-semibold mb-4">{'Usage History'}</h2>
           <div className="border rounded-lg">
             <Table>
               <TableHeader>
@@ -241,7 +241,7 @@ export default function CouponDetailsPage() {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={usageColumns.length} className="text-center py-8 text-gray-500">
-                      {t('No usage history found')}
+                      {'No usage history found'}
                     </TableCell>
                   </TableRow>
                 )}
@@ -258,7 +258,7 @@ export default function CouponDetailsPage() {
                 total={usage_history.total || 0}
                 currentPage={usage_history.current_page}
                 lastPage={usage_history.last_page}
-                entityName={t('records')}
+                entityName={'records'}
                 onPageChange={(url) => {
                   const urlObj = new URL(url, window.location.origin);
                   const page = urlObj.searchParams.get('page');

@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function AttendanceRecords() {
-  const { t } = useTranslation();
+  
   const { auth, attendanceRecords, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -98,17 +98,15 @@ export default function AttendanceRecords() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating attendance record...'));
+      toast.loading('Creating attendance record...');
 
       router.post(route('hr.attendance-records.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -120,17 +118,15 @@ export default function AttendanceRecords() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating attendance record...'));
+      toast.loading('Updating attendance record...');
 
       router.put(route('hr.attendance-records.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -145,17 +141,15 @@ export default function AttendanceRecords() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting attendance record...'));
+    toast.loading('Deleting attendance record...');
 
     router.delete(route('hr.attendance-records.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -188,7 +182,7 @@ export default function AttendanceRecords() {
   // Add the "Add New Record" button if user has permission
   if (hasPermission(permissions, 'create-attendance-records')) {
     pageActions.push({
-      label: t('Add Record'),
+      label: 'Add Record',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -196,32 +190,32 @@ export default function AttendanceRecords() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Shift Management'), href: route('hr.attendance-records.index') },
-    { title: t('Attendance Records') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Shift Management', href: route('hr.attendance-records.index') },
+    { title: 'Attendance Records' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'date',
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'shift',
-      label: t('Shift'),
+      label: 'Shift',
       render: (value: any, row: any) => row.shift?.name || '-'
     },
     {
       key: 'clock_in',
-      label: t('Clock In'),
+      label: 'Clock In',
       render: (value: string) => (
 
         <span className="font-mono text-green-600">{window.appSettings.formatTime(value) || '-'}</span>
@@ -229,21 +223,21 @@ export default function AttendanceRecords() {
     },
     {
       key: 'clock_out',
-      label: t('Clock Out'),
+      label: 'Clock Out',
       render: (value: string) => (
         <span className="font-mono text-red-600">{window.appSettings.formatTime(value) || '-'}</span>
       )
     },
     {
       key: 'total_hours',
-      label: t('Total Hours'),
+      label: 'Total Hours',
       render: (value: number) => (
         <span className="font-mono">{Number(value).toFixed(2)}h</span>
       )
     },
     {
       key: 'overtime_hours',
-      label: t('Overtime'),
+      label: 'Overtime',
       render: (value: number, row: any) => (
         <div className="text-sm">
           <span className={`font-mono ${value > 0 ? 'text-orange-600' : 'text-gray-500'}`}>
@@ -259,27 +253,27 @@ export default function AttendanceRecords() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string, row: any) => {
         const statusConfig = {
           present: {
-            label: t('Present'),
+            label: 'Present',
             className: 'bg-green-50 text-green-700 ring-green-600/20'
           },
           absent: {
-            label: t('Absent'),
+            label: 'Absent',
             className: 'bg-red-50 text-red-700 ring-red-600/20'
           },
           half_day: {
-            label: t('Half Day'),
+            label: 'Half Day',
             className: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20'
           },
           on_leave: {
-            label: row.leave_type ? `${t('On Leave')} (${row.leave_type.name})` : t('On Leave'),
+            label: row.leave_type ? `${'On Leave'} (${row.leave_type.name})` : 'On Leave',
             className: 'bg-blue-50 text-blue-700 ring-blue-600/20'
           },
           holiday: {
-            label: t('Holiday'),
+            label: 'Holiday',
             className: 'bg-purple-50 text-purple-700 ring-purple-600/20'
           }
         };
@@ -292,7 +286,7 @@ export default function AttendanceRecords() {
         return (
           <div className="flex items-center gap-2">
             <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${config.className}`}>
-              {value === 'on_leave' ? t('On Leave') : config.label}
+              {value === 'on_leave' ? 'On Leave' : config.label}
             </span>
             {value === 'on_leave' && row.leave_type && (
               <span className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
@@ -301,12 +295,12 @@ export default function AttendanceRecords() {
             )}
             {row.is_late && (
               <span className="inline-flex items-center rounded-md px-1 py-0.5 text-xs font-medium bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20">
-                {t('Late')}
+                {'Late'}
               </span>
             )}
             {row.is_early_departure && (
               <span className="inline-flex items-center rounded-md px-1 py-0.5 text-xs font-medium bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-600/20">
-                {t('Early')}
+                {'Early'}
               </span>
             )}
           </div>
@@ -318,21 +312,21 @@ export default function AttendanceRecords() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-attendance-records'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-attendance-records'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -342,7 +336,7 @@ export default function AttendanceRecords() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees'), disabled: true },
+    { value: 'all', label: 'All Employees', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -350,17 +344,17 @@ export default function AttendanceRecords() {
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses'), disabled: true },
-    { value: 'present', label: t('Present') },
-    { value: 'absent', label: t('Absent') },
-    { value: 'half_day', label: t('Half Day') },
-    { value: 'on_leave', label: t('On Leave') },
-    { value: 'holiday', label: t('Holiday') }
+    { value: 'all', label: 'All Statuses', disabled: true },
+    { value: 'present', label: 'Present' },
+    { value: 'absent', label: 'Absent' },
+    { value: 'half_day', label: 'Half Day' },
+    { value: 'on_leave', label: 'On Leave' },
+    { value: 'holiday', label: 'Holiday' }
   ];
 
   return (
     <PageTemplate
-      title={t("Attendance Records")}
+      title={"Attendance Records"}
       url="/hr/attendance-records"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -375,7 +369,7 @@ export default function AttendanceRecords() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -384,7 +378,7 @@ export default function AttendanceRecords() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -392,14 +386,14 @@ export default function AttendanceRecords() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -452,7 +446,7 @@ export default function AttendanceRecords() {
           to={attendanceRecords?.to || 0}
           total={attendanceRecords?.total || 0}
           links={attendanceRecords?.links}
-          entityName={t("attendance records")}
+          entityName={"attendance records"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -466,7 +460,7 @@ export default function AttendanceRecords() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               searchable: true,
@@ -475,25 +469,25 @@ export default function AttendanceRecords() {
                 label: emp.name
               })) : []
             },
-            { name: 'date', label: t('Date'), type: 'date', required: true },
-            { name: 'clock_in', label: t('Clock In Time'), type: 'time' },
-            { name: 'clock_out', label: t('Clock Out Time'), type: 'time' },
-            { name: 'break_hours', label: t('Break Hours'), type: 'number', min: 0, step: 0.5, defaultValue: 1 },
+            { name: 'date', label: 'Date', type: 'date', required: true },
+            { name: 'clock_in', label: 'Clock In Time', type: 'time' },
+            { name: 'clock_out', label: 'Clock Out Time', type: 'time' },
+            { name: 'break_hours', label: 'Break Hours', type: 'number', min: 0, step: 0.5, defaultValue: 1 },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'present', label: t('Present') },
-                { value: 'absent', label: t('Absent') },
-                { value: 'half_day', label: t('Half Day') },
-                { value: 'on_leave', label: t('On Leave') },
-                { value: 'holiday', label: t('Holiday') }
+                { value: 'present', label: 'Present' },
+                { value: 'absent', label: 'Absent' },
+                { value: 'half_day', label: 'Half Day' },
+                { value: 'on_leave', label: 'On Leave' },
+                { value: 'holiday', label: 'Holiday' }
               ]
             },
-            { name: 'is_holiday', label: t('Holiday'), type: 'checkbox', defaultValue: false },
-            { name: 'notes', label: t('Notes'), type: 'textarea' }
+            { name: 'is_holiday', label: 'Holiday', type: 'checkbox', defaultValue: false },
+            { name: 'notes', label: 'Notes', type: 'textarea' }
           ],
           modalSize: 'lg'
         }}
@@ -503,10 +497,10 @@ export default function AttendanceRecords() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Attendance Record')
+            ? 'Add New Attendance Record'
             : formMode === 'edit'
-              ? t('Edit Attendance Record')
-              : t('View Attendance Record')
+              ? 'Edit Attendance Record'
+              : 'View Attendance Record'
         }
         mode={formMode}
       />

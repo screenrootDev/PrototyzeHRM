@@ -1,3 +1,4 @@
+import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 import laravel from 'laravel-vite-plugin';
 import { resolve } from 'node:path';
@@ -30,6 +31,7 @@ export default defineConfig({
             ssr: 'resources/js/ssr.tsx',
             refresh: true,
         }),
+        react(),
         stripUseClientDirective(),
         tailwindcss(),
     ],
@@ -58,9 +60,20 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: {
-                    vendor: ['react', 'react-dom'],
-                    ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
-                    utils: ['date-fns', 'clsx']
+                    'react-vendor': ['react', 'react-dom', '@inertiajs/react'],
+                    'ui-radix': [
+                        '@radix-ui/react-dialog',
+                        '@radix-ui/react-dropdown-menu',
+                        '@radix-ui/react-popover',
+                        '@radix-ui/react-select',
+                        '@radix-ui/react-tooltip',
+                        '@radix-ui/react-scroll-area',
+                        '@radix-ui/react-tabs'
+                    ],
+                    'lucide': ['lucide-react'],
+                    'charts': ['recharts'],
+                    'calendar': ['@fullcalendar/react', '@fullcalendar/daygrid', '@fullcalendar/timegrid', '@fullcalendar/interaction'],
+                    'utils': ['date-fns', 'clsx', 'tailwind-merge']
                 }
             },
         },

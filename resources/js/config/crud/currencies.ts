@@ -1,6 +1,5 @@
 // config/crud/currencies.ts
 import { CrudConfig } from '@/types/crud';
-import { t } from '@/utils/i18n';
 
 export const currenciesConfig: CrudConfig = {
   entity: {
@@ -17,39 +16,39 @@ export const currenciesConfig: CrudConfig = {
     columns: [
       { 
         key: 'name', 
-        label: t('Name'), 
+        label: 'Name', 
         sortable: true 
       },
       { 
         key: 'code', 
-        label: t('Code'), 
+        label: 'Code', 
         sortable: true 
       },
       { 
         key: 'symbol', 
-        label: t('Symbol'), 
+        label: 'Symbol', 
         sortable: true 
       },
       { 
         key: 'description', 
-        label: t('Description') 
+        label: 'Description' 
       },
       { 
         key: 'is_default', 
-        label: t('Default'), 
+        label: 'Default', 
         type: 'boolean'
       }
     ],
     actions: [
       { 
-        label: t('Edit'), 
+        label: 'Edit', 
         icon: 'Edit', 
         action: 'edit', 
         className: 'text-amber-500',
         requiredPermission: 'manage-currencies'
       },
       { 
-        label: t('Delete'), 
+        label: 'Delete', 
         icon: 'Trash2', 
         action: 'delete', 
         className: 'text-red-500',
@@ -63,32 +62,32 @@ export const currenciesConfig: CrudConfig = {
     fields: [
       { 
         name: 'name', 
-        label: t('Currency Name'), 
+        label: 'Currency Name', 
         type: 'text', 
         required: true 
       },
       { 
         name: 'code', 
-        label: t('Currency Code'), 
+        label: 'Currency Code', 
         type: 'text', 
         required: true,
         placeholder: 'e.g. USD, EUR, GBP'
       },
       { 
         name: 'symbol', 
-        label: t('Currency Symbol'), 
+        label: 'Currency Symbol', 
         type: 'text', 
         required: true,
         placeholder: 'e.g. $, €, £'
       },
       { 
         name: 'description', 
-        label: t('Description'), 
+        label: 'Description', 
         type: 'textarea' 
       },
       { 
         name: 'is_default', 
-        label: t('Set as Default Currency'), 
+        label: 'Set as Default Currency', 
         type: 'checkbox' 
       }
     ]

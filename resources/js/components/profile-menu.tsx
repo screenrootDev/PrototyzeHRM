@@ -11,10 +11,10 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Link, router, usePage } from '@inertiajs/react';
 import { LogOut, Settings, User } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 export function ProfileMenu() {
-  const { t } = useTranslation();
+  
   const { auth } = usePage().props as any;
   const user = auth?.user;
   // Get avatar URL
@@ -64,7 +64,7 @@ export function ProfileMenu() {
           <DropdownMenuItem asChild>
             <Link href={route('profile')}>
               <User className="mr-2 h-4 w-4" />
-              <span>{t("Profile")}</span>
+              <span>{"Profile"}</span>
             </Link>
           </DropdownMenuItem>
 
@@ -72,7 +72,7 @@ export function ProfileMenu() {
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>{t("Log out")}</span>
+          <span>{"Log out"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

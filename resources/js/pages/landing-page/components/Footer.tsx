@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 interface FooterProps {
   brandColor?: string;
@@ -32,7 +32,7 @@ interface FooterProps {
 }
 
 export default function Footer({ settings, sectionData = {}, brandColor = '#3b82f6' }: FooterProps) {
-  const { t } = useTranslation();
+  
   const { globalSettings } = usePage().props as any;
   const currentYear = new Date().getFullYear();
 
@@ -100,7 +100,7 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
                 {settings.company_name}
               </Link>
               <p className="text-gray-400 mb-8 leading-relaxed">
-                {sectionData.description || t('Simplifying HR management with an all-in-one modern platform. Connect, share, and grow your network effortlessly.')}
+                {sectionData.description || 'Simplifying HR management with an all-in-one modern platform. Connect, share, and grow your network effortlessly.'}
               </p>
 
               {/* Contact Info */}
@@ -122,7 +122,7 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
 
             {/* Product Links */}
             <div>
-              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.product || t('Product')}</h3>
+              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.product || 'Product'}</h3>
               <ul className="space-y-3">
                 {(footerLinks.product || []).map((link) => (
                   <li key={link.name}>
@@ -139,7 +139,7 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
 
             {/* Company Links */}
             <div>
-              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.company || t('Company')}</h3>
+              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.company || 'Company'}</h3>
               <ul className="space-y-3">
                 {(footerLinks.company || []).map((link) => (
                   <li key={link.name}>
@@ -156,7 +156,7 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
 
             {/* Support Links */}
             <div>
-              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.support || t('Support')}</h3>
+              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.support || 'Support'}</h3>
               <ul className="space-y-3">
                 {(footerLinks.support || []).map((link) => (
                   <li key={link.name}>
@@ -173,7 +173,7 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
 
             {/* Legal Links */}
             <div>
-              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.legal || t('Legal')}</h3>
+              <h3 className="text-white font-semibold mb-4">{sectionData.section_titles?.legal || 'Legal'}</h3>
               <ul className="space-y-3">
                 {(footerLinks.legal || []).map((link) => (
                   <li key={link.name}>
@@ -195,19 +195,19 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
           <div className="border-t border-gray-800 py-8 sm:py-12">
             <div className="text-center max-w-2xl mx-auto">
               <h3 className="text-xl font-bold text-white mb-4">
-                {sectionData.newsletter_title || t('Stay Updated with Our Latest Features')}
+                {sectionData.newsletter_title || 'Stay Updated with Our Latest Features'}
               </h3>
               <p className="text-gray-400 mb-6">
-                {sectionData.newsletter_subtitle || t('Join our newsletter for HR tips and product updates')}
+                {sectionData.newsletter_subtitle || 'Join our newsletter for HR tips and product updates'}
               </p>
               <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
                 <input
                   type="email"
-                  placeholder={t('Enter your email')}
+                  placeholder={'Enter your email'}
                   className="flex-1 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-gray-600 focus:border-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
                 />
                 <button className="text-white px-6 py-3 rounded-lg transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-w-[120px]" style={{ backgroundColor: brandColor }}>
-                  {t('Subscribe')}
+                  {'Subscribe'}
                 </button>
               </div>
             </div>
@@ -219,13 +219,13 @@ export default function Footer({ settings, sectionData = {}, brandColor = '#3b82
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
             {/* Copyright */}
             <div className="text-gray-400 text-sm">
-              {globalSettings?.footerText || `© ${currentYear} ${settings.company_name}. ${t('All rights reserved.')}.`}
+              {globalSettings?.footerText || `© ${currentYear} ${settings.company_name}. ${'All rights reserved.'}.`}
             </div>
 
             {/* Social Links */}
             {socialLinks.length > 0 && (
               <div className="flex items-center gap-4">
-                <span className="text-gray-400 text-sm">{t('Follow us:')}</span>
+                <span className="text-gray-400 text-sm">{'Follow us:'}</span>
                 <div className="flex gap-3">
                   {socialLinks.map((social) => {
                     const IconComponent = iconMap[social.icon] || Facebook;

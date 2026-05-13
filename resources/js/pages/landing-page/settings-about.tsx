@@ -38,12 +38,12 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               <Layout className="h-5 w-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-900">{t("About Layout")}</h3>
-              <p className="text-sm text-gray-500">{t("Configure about section layout and positioning")}</p>
+              <h3 className="text-lg font-semibold text-gray-900">{"About Layout"}</h3>
+              <p className="text-sm text-gray-500">{"Configure about section layout and positioning"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Label className="text-sm">{t("Enable Section")}</Label>
+            <Label className="text-sm">{"Enable Section"}</Label>
             <Switch
               checked={data.config_sections?.section_visibility?.about !== false}
               onCheckedChange={(checked) => updateSectionVisibility('about', checked)}
@@ -53,7 +53,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="about_layout">{t("Layout Style")}</Label>
+            <Label htmlFor="about_layout">{"Layout Style"}</Label>
             <select
               id="about_layout"
               name="about_layout"
@@ -61,14 +61,14 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               onChange={(e) => updateSectionData('about', { layout: e.target.value })}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
-              <option value="image-right">{t("Content Left, Image Right")}</option>
-              <option value="image-left">{t("Image Left, Content Right")}</option>
-              <option value="centered">{t("Centered Content")}</option>
+              <option value="image-right">{"Content Left, Image Right"}</option>
+              <option value="image-left">{"Image Left, Content Right"}</option>
+              <option value="centered">{"Centered Content"}</option>
             </select>
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_image_position">{t("Image Position")}</Label>
+            <Label htmlFor="about_image_position">{"Image Position"}</Label>
             <select
               id="about_image_position"
               name="about_image_position"
@@ -76,9 +76,9 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               onChange={(e) => updateSectionData('about', { image_position: e.target.value })}
               className="w-full p-2 border border-gray-300 rounded-md"
             >
-              <option value="right">{t("Right Side")}</option>
-              <option value="left">{t("Left Side")}</option>
-              <option value="background">{t("Background")}</option>
+              <option value="right">{"Right Side"}</option>
+              <option value="left">{"Left Side"}</option>
+              <option value="background">{"Background"}</option>
             </select>
           </div>
         </div>
@@ -90,20 +90,20 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             <Type className="h-5 w-5 text-green-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("About Content")}</h3>
-            <p className="text-sm text-gray-500">{t("About section title, description and story")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"About Content"}</h3>
+            <p className="text-sm text-gray-500">{"About section title, description and story"}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="about_title">{t("About Title")}</Label>
+            <Label htmlFor="about_title">{"About Title"}</Label>
             <Input
               id="about_title"
               name="about_title"
               value={getSectionData('about').title || ''}
               onChange={(e) => updateSectionData('about', { title: e.target.value })}
-              placeholder={t("About section title")}
+              placeholder={"About section title"}
             />
             {errors.about_title && (
               <p className="text-red-600 text-sm">{errors.about_title}</p>
@@ -111,13 +111,13 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_description">{t("About Description")}</Label>
+            <Label htmlFor="about_description">{"About Description"}</Label>
             <Textarea
               id="about_description"
               name="about_description"
               value={getSectionData('about').description || ''}
               onChange={(e) => updateSectionData('about', { description: e.target.value })}
-              placeholder={t("Tell visitors about your company")}
+              placeholder={"Tell visitors about your company"}
               rows={4}
             />
             {errors.about_description && (
@@ -127,24 +127,24 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
           
 
           <div className="space-y-3">
-            <Label htmlFor="about_story_title">{t("Story Title")}</Label>
+            <Label htmlFor="about_story_title">{"Story Title"}</Label>
             <Input
               id="about_story_title"
               name="about_story_title"
               value={getSectionData('about').story_title || ''}
               onChange={(e) => updateSectionData('about', { story_title: e.target.value })}
-              placeholder={t("We are passionate about simplifying HR management for businesses of all sizes.")}
+              placeholder={"We are passionate about simplifying HR management for businesses of all sizes."}
             />
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_story_content">{t("Story Content")}</Label>
+            <Label htmlFor="about_story_content">{"Story Content"}</Label>
             <Textarea
               id="about_story_content"
               name="about_story_content"
               value={getSectionData('about').story_content || ''}
               onChange={(e) => updateSectionData('about', { story_content: e.target.value })}
-              placeholder={t("Founded by a team of networking enthusiasts...")}
+              placeholder={"Founded by a team of networking enthusiasts..."}
               rows={4}
             />
           </div>
@@ -157,25 +157,25 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             <Image className="h-5 w-5 text-purple-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("About Image & Style")}</h3>
-            <p className="text-sm text-gray-500">{t("Images, colors and visual effects")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"About Image & Style"}</h3>
+            <p className="text-sm text-gray-500">{"Images, colors and visual effects"}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-3">
             <MediaPicker
-              label={t("About Image")}
+              label={"About Image"}
               value={getDisplayUrl(getSectionData('about').image || '')}
               onChange={(value) => {
                 updateSectionData('about', { image: convertToRelativePath(value) });
               }}
-              placeholder={t("Select about section image...")}
+              placeholder={"Select about section image..."}
             />
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_background_color">{t("Background Color")}</Label>
+            <Label htmlFor="about_background_color">{"Background Color"}</Label>
             <div className="flex gap-2">
               <Input
                 id="about_background_color"
@@ -195,7 +195,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
           
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="about_parallax">{t("Parallax Effect")}</Label>
+              <Label htmlFor="about_parallax">{"Parallax Effect"}</Label>
               <Switch
                 id="about_parallax"
                 name="about_parallax"
@@ -204,7 +204,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              {t("Enable parallax scrolling effect")}
+              {"Enable parallax scrolling effect"}
             </p>
           </div>
         </div>
@@ -216,8 +216,8 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             <BarChart3 className="h-5 w-5 text-orange-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("About Statistics")}</h3>
-            <p className="text-sm text-gray-500">{t("Key metrics and achievements")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"About Statistics"}</h3>
+            <p className="text-sm text-gray-500">{"Key metrics and achievements"}</p>
           </div>
         </div>
         
@@ -227,7 +227,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               <div className="flex items-center justify-between mb-4">
                 <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                   <span className="w-6 h-6 bg-orange-100 text-orange-600 rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</span>
-                  {t("Statistic")} {index + 1}
+                  {"Statistic"} {index + 1}
                 </h4>
                 <Button
                   type="button"
@@ -244,7 +244,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor={`about_stat_${index}_value`}>{t("Value")}</Label>
+                  <Label htmlFor={`about_stat_${index}_value`}>{"Value"}</Label>
                   <Input
                     id={`about_stat_${index}_value`}
                     value={stat.value || ''}
@@ -253,11 +253,11 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
                       newStats[index] = { ...newStats[index], value: e.target.value };
                       updateSectionData('about', { stats: newStats });
                     }}
-                    placeholder={t("4+ Years")}
+                    placeholder={"4+ Years"}
                   />
                 </div>
                 <div className="space-y-3">
-                  <Label htmlFor={`about_stat_${index}_label`}>{t("Label")}</Label>
+                  <Label htmlFor={`about_stat_${index}_label`}>{"Label"}</Label>
                   <Input
                     id={`about_stat_${index}_label`}
                     value={stat.label || ''}
@@ -266,7 +266,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
                       newStats[index] = { ...newStats[index], label: e.target.value };
                       updateSectionData('about', { stats: newStats });
                     }}
-                    placeholder={t("Experience")}
+                    placeholder={"Experience"}
                   />
                 </div>
                 <div className="space-y-3">
@@ -306,7 +306,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {t('Add Statistic')}
+            {'Add Statistic'}
           </Button>
         </div>
       </div>
@@ -317,8 +317,8 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             <Users className="h-5 w-5 text-teal-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("About Values")}</h3>
-            <p className="text-sm text-gray-500">{t("Company values and mission statements")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"About Values"}</h3>
+            <p className="text-sm text-gray-500">{"Company values and mission statements"}</p>
           </div>
         </div>
         
@@ -328,7 +328,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               <div className="flex items-center justify-between mb-4">
                 <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                   <span className="w-6 h-6 bg-teal-100 text-teal-600 rounded-full flex items-center justify-center text-xs font-bold">{index + 1}</span>
-                  {t("Value")} {index + 1}
+                  {"Value"} {index + 1}
                 </h4>
                 <Button
                   type="button"
@@ -346,7 +346,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="space-y-3">
-                  <Label htmlFor={`about_value_${index}_title`}>{t("Title")}</Label>
+                  <Label htmlFor={`about_value_${index}_title`}>{"Title"}</Label>
                   <Input
                     id={`about_value_${index}_title`}
                     value={value.title || ''}
@@ -360,7 +360,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
                 </div>
                 
                 <div className="space-y-3">
-                  <Label htmlFor={`about_value_${index}_icon`}>{t("Icon")}</Label>
+                  <Label htmlFor={`about_value_${index}_icon`}>{"Icon"}</Label>
                   <select
                     id={`about_value_${index}_icon`}
                     value={value.icon || 'target'}
@@ -383,7 +383,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
                 </div>
                 
                 <div className="space-y-3 md:col-span-1">
-                  <Label htmlFor={`about_value_${index}_description`}>{t("Description")}</Label>
+                  <Label htmlFor={`about_value_${index}_description`}>{"Description"}</Label>
                   <Textarea
                     id={`about_value_${index}_description`}
                     value={value.description || ''}
@@ -411,7 +411,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             }}
           >
             <Plus className="h-4 w-4 mr-2" />
-            {t('Add Value')}
+            {'Add Value'}
           </Button>
         </div>
       </div>
@@ -422,14 +422,14 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
             <Image className="h-5 w-5 text-pink-600" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{t("Image Section")}</h3>
-            <p className="text-sm text-gray-500">{t("Image overlay content and icons")}</p>
+            <h3 className="text-lg font-semibold text-gray-900">{"Image Section"}</h3>
+            <p className="text-sm text-gray-500">{"Image overlay content and icons"}</p>
           </div>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-3">
-            <Label htmlFor="about_image_title">{t("Image Title")}</Label>
+            <Label htmlFor="about_image_title">{"Image Title"}</Label>
             <Input
               id="about_image_title"
               name="about_image_title"
@@ -440,7 +440,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_image_subtitle">{t("Image Subtitle")}</Label>
+            <Label htmlFor="about_image_subtitle">{"Image Subtitle"}</Label>
             <Input
               id="about_image_subtitle"
               name="about_image_subtitle"
@@ -451,7 +451,7 @@ export default function AboutSection({ data, setData, errors, handleInputChange,
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="about_image_icon">{t("Image Icon")}</Label>
+            <Label htmlFor="about_image_icon">{"Image Icon"}</Label>
             <Input
               id="about_image_icon"
               name="about_image_icon"

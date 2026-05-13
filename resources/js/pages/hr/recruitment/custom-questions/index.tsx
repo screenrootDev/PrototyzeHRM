@@ -6,13 +6,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function CustomQuestions() {
-  const { t } = useTranslation();
+  
   const { auth, customQuestions, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -82,17 +82,15 @@ export default function CustomQuestions() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating custom question...'));
+      toast.loading('Creating custom question...');
 
       router.post(route('hr.recruitment.custom-questions.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -104,17 +102,15 @@ export default function CustomQuestions() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating custom question...'));
+      toast.loading('Updating custom question...');
 
       router.put(route('hr.recruitment.custom-questions.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -129,17 +125,15 @@ export default function CustomQuestions() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting custom question...'));
+    toast.loading('Deleting custom question...');
 
     router.delete(route('hr.recruitment.custom-questions.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -166,7 +160,7 @@ export default function CustomQuestions() {
   
   if (hasPermission(permissions, 'create-custom-questions')) {
     pageActions.push({
-      label: t('Add Custom Question'),
+      label: 'Add Custom Question',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -174,33 +168,33 @@ export default function CustomQuestions() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.custom-questions.index') },
-    { title: t('Custom Questions') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.custom-questions.index') },
+    { title: 'Custom Questions' }
   ];
 
   const columns = [
     { 
       key: 'question', 
-      label: t('Question'), 
+      label: 'Question', 
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'required', 
-      label: t('Required'),
+      label: 'Required',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value == 1
           ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
           : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
         }`}>
-          {value == 1 ? t('Yes') : t('No')}
+          {value == 1 ? 'Yes' : 'No'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -208,21 +202,21 @@ export default function CustomQuestions() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-custom-questions'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-custom-questions'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -232,7 +226,7 @@ export default function CustomQuestions() {
 
   return (
     <PageTemplate 
-      title={t("Custom Questions")} 
+      title={"Custom Questions"} 
       url="/hr/recruitment/custom-questions"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -285,7 +279,7 @@ export default function CustomQuestions() {
           to={customQuestions?.to || 0}
           total={customQuestions?.total || 0}
           links={customQuestions?.links}
-          entityName={t("custom questions")}
+          entityName={"custom questions"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -297,14 +291,14 @@ export default function CustomQuestions() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'question', label: t('Question'), type: 'textarea', required: true },
+            { name: 'question', label: 'Question', type: 'textarea', required: true },
             {
               name: 'required',
-              label: t('Required'),
+              label: 'Required',
               type: 'select',
               options: [
-                { value: '1', label: t('Yes') },
-                { value: '0', label: t('No') }
+                { value: '1', label: 'Yes' },
+                { value: '0', label: 'No' }
               ],
               defaultValue: '0'
             }
@@ -317,10 +311,10 @@ export default function CustomQuestions() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Custom Question')
+            ? 'Add New Custom Question'
             : formMode === 'edit'
-              ? t('Edit Custom Question')
-              : t('View Custom Question')
+              ? 'Edit Custom Question'
+              : 'View Custom Question'
         }
         mode={formMode}
       />

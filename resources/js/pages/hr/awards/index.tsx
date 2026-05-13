@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Awards() {
-  const { t } = useTranslation();
+  
   const { auth, awards, awardTypes, employees, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -114,7 +114,7 @@ export default function Awards() {
     
     if (formMode === 'create') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating award...'));
+        toast.loading('Creating award...');
       }
 
       router.post(route('hr.awards.store'), data, {
@@ -124,25 +124,21 @@ export default function Awards() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create award: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create award: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating award...'));
+        toast.loading('Updating award...');
       }
       
       router.put(route('hr.awards.update', currentItem.id), data, {
@@ -152,20 +148,16 @@ export default function Awards() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update award: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update award: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -173,7 +165,7 @@ export default function Awards() {
   
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting award...'));
+      toast.loading('Deleting award...');
     }
     
     router.delete(route('hr.awards.destroy', currentItem.id), {
@@ -183,20 +175,16 @@ export default function Awards() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete award: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete award: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -221,7 +209,7 @@ export default function Awards() {
   // Add the "Add New Award" button if user has permission
   if (hasPermission(permissions, 'create-awards')) {
     pageActions.push({
-      label: t('Add Award'),
+      label: 'Add Award',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -229,16 +217,16 @@ export default function Awards() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.awards.index') },
-    { title: t('Awards') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.awards.index') },
+    { title: 'Awards' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee.name', 
-      label: t('Employee'), 
+      label: 'Employee', 
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -248,40 +236,40 @@ export default function Awards() {
     },
     { 
       key: 'award_type.name', 
-      label: t('Award Type'),
+      label: 'Award Type',
       render: (_, row) => row.award_type?.name || '-'
     },
     { 
       key: 'award_date', 
-      label: t('Award Date'),
+      label: 'Award Date',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     { 
       key: 'gift', 
-      label: t('Gift'),
+      label: 'Gift',
       render: (value) => value || '-'
     },
     { 
       key: 'monetary_value', 
-      label: t('Value'),
+      label: 'Value',
       render: (value) => value ? window.appSettings.formatCurrency(value) : '-'
     },
     { 
       key: 'files', 
-      label: t('Files'),
+      label: 'Files',
       render: (_, row) => (
         <div className="flex space-x-2">
           {row.certificate && row.certificate.trim() !== '' && (
             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 cursor-pointer"
                   onClick={() => handleAction('download-certificate', row)}>
-              {t('Certificate')}
+              {'Certificate'}
             </span>
           )}
           {row.photo && row.photo.trim() !== '' && (
             <span className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 cursor-pointer"
                   onClick={() => handleAction('download-photo', row)}>
-              {t('Photo')}
+              {'Photo'}
             </span>
           )}
         </div>
@@ -292,21 +280,21 @@ export default function Awards() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-awards'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-awards'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -316,7 +304,7 @@ export default function Awards() {
 
   // Prepare award type options for filter
   const awardTypeOptions = [
-    { value: '_empty_', label: t('All Award Types') },
+    { value: '_empty_', label: 'All Award Types' },
     ...(awardTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -325,7 +313,7 @@ export default function Awards() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '_empty_', label: t('Select Employee'), disabled: true },
+    { value: '_empty_', label: 'Select Employee', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -334,7 +322,7 @@ export default function Awards() {
 
   return (
     <PageTemplate 
-      title={t("Awards")} 
+      title={"Awards"} 
       url="/hr/awards"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -349,7 +337,7 @@ export default function Awards() {
           filters={[
             {
               name: 'award_type_id',
-              label: t('Award Type'),
+              label: 'Award Type',
               type: 'select',
               value: selectedAwardType,
               onChange: setSelectedAwardType,
@@ -358,7 +346,7 @@ export default function Awards() {
             },
             ...(hasPermission(permissions, 'manage-any-awards') ? [{
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -367,14 +355,14 @@ export default function Awards() {
             }] : []),
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -427,7 +415,7 @@ export default function Awards() {
           to={awards?.to || 0}
           total={awards?.total || 0}
           links={awards?.links}
-          entityName={t("awards")}
+          entityName={"awards"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -441,7 +429,7 @@ export default function Awards() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select', 
               required: true,
               searchable: true,
@@ -449,7 +437,7 @@ export default function Awards() {
             },
             { 
               name: 'award_type_id', 
-              label: t('Award Type'), 
+              label: 'Award Type', 
               type: 'select', 
               required: true,
               options: awardTypeOptions.filter(opt => opt.value !== ''),
@@ -458,48 +446,48 @@ export default function Awards() {
             },
             { 
               name: 'award_date', 
-              label: t('Award Date'), 
+              label: 'Award Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'gift', 
-              label: t('Gift'), 
+              label: 'Gift', 
               type: 'text' 
             },
             { 
               name: 'monetary_value', 
-              label: t('Monetary Value'), 
+              label: 'Monetary Value', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'certificate', 
-              label: t('Certificate'), 
+              label: 'Certificate', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select certificate file...')}
+                  placeholder={'Select certificate file...'}
                 />
               )
             },
             { 
               name: 'photo', 
-              label: t('Photo'), 
+              label: 'Photo', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker                  
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select photo file...')}
+                  placeholder={'Select photo file...'}
                 />
               )
             }
@@ -509,10 +497,10 @@ export default function Awards() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Award')
+            ? 'Add New Award'
             : formMode === 'edit'
-              ? t('Edit Award')
-              : t('View Award')
+              ? 'Edit Award'
+              : 'View Award'
         }
         mode={formMode}
       />

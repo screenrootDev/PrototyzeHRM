@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function CandidateAssessments() {
-  const { t } = useTranslation();
+  
   const { auth, assessments, candidates, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -89,18 +89,16 @@ export default function CandidateAssessments() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating assessment...'));
+      toast.loading('Creating assessment...');
 
       router.post(route('hr.recruitment.candidate-assessments.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Assessment created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Assessment created successfully');
           }
         },
         onError: (errors) => {
@@ -113,18 +111,16 @@ export default function CandidateAssessments() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating assessment...'));
+      toast.loading('Updating assessment...');
 
       router.put(route('hr.recruitment.candidate-assessments.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Assessment updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Assessment updated successfully');
           }
         },
         onError: (errors) => {
@@ -140,18 +136,16 @@ export default function CandidateAssessments() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting assessment...'));
+    toast.loading('Deleting assessment...');
 
     router.delete(route('hr.recruitment.candidate-assessments.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Assessment deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Assessment deleted successfully');
         }
       },
       onError: (errors) => {
@@ -181,7 +175,7 @@ export default function CandidateAssessments() {
   
   if (hasPermission(permissions, 'create-candidate-assessments')) {
     pageActions.push({
-      label: t('Add Assessment'),
+      label: 'Add Assessment',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -189,9 +183,9 @@ export default function CandidateAssessments() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidate-assessments.index') },
-    { title: t('Candidate Assessments') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidate-assessments.index') },
+    { title: 'Candidate Assessments' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -206,7 +200,7 @@ export default function CandidateAssessments() {
   const columns = [
     { 
       key: 'candidate.full_name', 
-      label: t('Candidate'),
+      label: 'Candidate',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.candidate?.first_name} {row.candidate?.last_name}</div>
@@ -215,13 +209,13 @@ export default function CandidateAssessments() {
     },
     { 
       key: 'assessment_name', 
-      label: t('Assessment'),
+      label: 'Assessment',
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'score', 
-      label: t('Score'),
+      label: 'Score',
       render: (_, row) => {
         if (!row.score || !row.max_score) return '-';
         const percentage = Math.round((row.score / row.max_score) * 100);
@@ -235,21 +229,21 @@ export default function CandidateAssessments() {
     },
     { 
       key: 'pass_fail_status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'conductor.name', 
-      label: t('Conducted By'),
+      label: 'Conducted By',
       render: (_, row) => row.conductor?.name || '-'
     },
     { 
       key: 'assessment_date', 
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -257,21 +251,21 @@ export default function CandidateAssessments() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-candidate-assessments'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-candidate-assessments'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -280,14 +274,14 @@ export default function CandidateAssessments() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses')  ,disabled: true},
-    { value: 'Pass', label: t('Pass') },
-    { value: 'Fail', label: t('Fail') },
-    { value: 'Pending', label: t('Pending') }
+    { value: '_empty_', label: 'All Statuses'  ,disabled: true},
+    { value: 'Pass', label: 'Pass' },
+    { value: 'Fail', label: 'Fail' },
+    { value: 'Pending', label: 'Pending' }
   ];
 
   const candidateOptions = [
-    { value: '_empty_', label: t('All Candidates') , disabled: true},
+    { value: '_empty_', label: 'All Candidates' , disabled: true},
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -295,7 +289,7 @@ export default function CandidateAssessments() {
   ];
 
   const candidateSelectOptions = [
-    { value: '_empty_', label: t('Select Candidate') },
+    { value: '_empty_', label: 'Select Candidate' },
     ...(candidates || []).map((candidate: any) => ({
       value: candidate.id.toString(),
       label: `${candidate.first_name} ${candidate.last_name}`
@@ -311,7 +305,7 @@ export default function CandidateAssessments() {
 
   return (
     <PageTemplate 
-      title={t("Candidate Assessments")} 
+      title={"Candidate Assessments"} 
       url="/hr/recruitment/candidate-assessments"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -325,7 +319,7 @@ export default function CandidateAssessments() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -333,7 +327,7 @@ export default function CandidateAssessments() {
             },
             {
               name: 'candidate_id',
-              label: t('Candidate'),
+              label: 'Candidate',
               type: 'select',
               value: candidateFilter,
               onChange: setCandidateFilter,
@@ -384,7 +378,7 @@ export default function CandidateAssessments() {
           to={assessments?.to || 0}
           total={assessments?.total || 0}
           links={assessments?.links}
-          entityName={t("assessments")}
+          entityName={"assessments"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -397,7 +391,7 @@ export default function CandidateAssessments() {
           fields: [
             { 
               name: 'candidate_id', 
-              label: t('Candidate'), 
+              label: 'Candidate', 
               type: 'select', 
               required: true,
               options: candidateSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -405,47 +399,47 @@ export default function CandidateAssessments() {
             },
             { 
               name: 'assessment_name', 
-              label: t('Assessment Name'), 
+              label: 'Assessment Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'score', 
-              label: t('Score'), 
+              label: 'Score', 
               type: 'number',
               min: 0
             },
             { 
               name: 'max_score', 
-              label: t('Max Score'), 
+              label: 'Max Score', 
               type: 'number',
               min: 1
             },
             { 
               name: 'pass_fail_status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'conducted_by', 
-              label: t('Conducted By'), 
+              label: 'Conducted By', 
               type: 'select', 
               required: true,
               options: employeeOptions,
-              placeholder: t('Select Employee'),
+              placeholder: 'Select Employee',
               searchable: true
             },
             { 
               name: 'assessment_date', 
-              label: t('Assessment Date'), 
+              label: 'Assessment Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'comments', 
-              label: t('Comments'), 
+              label: 'Comments', 
               type: 'textarea' 
             }
           ],
@@ -457,10 +451,10 @@ export default function CandidateAssessments() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Assessment')
+            ? 'Add New Assessment'
             : formMode === 'edit'
-              ? t('Edit Assessment')
-              : t('View Assessment')
+              ? 'Edit Assessment'
+              : 'View Assessment'
         }
         mode={formMode}
       />

@@ -127,10 +127,7 @@ export interface PaymentFormData {
 }
 
 export function formatPaymentAmount(amount: number, currency: string = 'USD'): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: currency.toUpperCase(),
-  }).format(amount);
+  return new Intl.NumberFormat('en-US').format(amount);
 }
 
 export function validatePaymentMethodCredentials(method: PaymentMethod, config: any): string[] {

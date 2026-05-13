@@ -3,13 +3,13 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Edit, Users, Calendar, BarChart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 
 export default function TrainingProgramShow() {
-  const { t } = useTranslation();
+  
   const { trainingProgram, statistics } = usePage().props as any;
   
   const handleBack = () => {
@@ -27,13 +27,13 @@ export default function TrainingProgramShow() {
   
   const pageActions = [
     {
-      label: t('Back to List'),
+      label: 'Back to List',
       icon: <ArrowLeft className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleBack
     },
     {
-      label: t('Edit Program'),
+      label: 'Edit Program',
       icon: <Edit className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleEdit
@@ -41,9 +41,9 @@ export default function TrainingProgramShow() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-programs.index') },
-    { title: t('Training Programs'), href: route('hr.training-programs.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-programs.index') },
+    { title: 'Training Programs', href: route('hr.training-programs.index') },
     { title: trainingProgram.name }
   ];
 
@@ -65,33 +65,33 @@ export default function TrainingProgramShow() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle>{t('Program Details')}</CardTitle>
+            <CardTitle>{'Program Details'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Training Type')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Training Type'}</label>
               <p className="mt-1">{trainingProgram.training_type?.name || '-'}</p>
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Description')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Description'}</label>
               <p className="mt-1">{trainingProgram.description || '-'}</p>
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Prerequisites')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Prerequisites'}</label>
               <p className="mt-1">{trainingProgram.prerequisites || '-'}</p>
             </div>
             
             <div className="flex flex-wrap gap-2">
               {trainingProgram.is_mandatory && (
                 <Badge variant="outline" className="bg-red-50 text-red-700">
-                  {t('Mandatory')}
+                  {'Mandatory'}
                 </Badge>
               )}
               {trainingProgram.is_self_enrollment && (
                 <Badge variant="outline" className="bg-blue-50 text-blue-700">
-                  {t('Self-Enrollment')}
+                  {'Self-Enrollment'}
                 </Badge>
               )}
             </div>
@@ -100,11 +100,11 @@ export default function TrainingProgramShow() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t('Program Info')}</CardTitle>
+            <CardTitle>{'Program Info'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Status')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Status'}</label>
               <div className="mt-1">
                 <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusClasses[trainingProgram.status] || ''}`}>
                   {trainingProgram.status.charAt(0).toUpperCase() + trainingProgram.status.slice(1)}
@@ -113,17 +113,17 @@ export default function TrainingProgramShow() {
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Duration')}</label>
-              <p className="mt-1">{trainingProgram.duration ? `${trainingProgram.duration} ${t('hours')}` : '-'}</p>
+              <label className="text-sm font-medium text-gray-500">{'Duration'}</label>
+              <p className="mt-1">{trainingProgram.duration ? `${trainingProgram.duration} ${'hours'}` : '-'}</p>
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Cost')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Cost'}</label>
               <p className="mt-1">{trainingProgram.cost ? window.appSettings?.formatCurrency(parseFloat(trainingProgram.cost)) : '-'}</p>
             </div>
             
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Capacity')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Capacity'}</label>
               <p className="mt-1">{trainingProgram.capacity || '-'}</p>
             </div>
           </CardContent>
@@ -134,7 +134,7 @@ export default function TrainingProgramShow() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Sessions')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Sessions'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{statistics.totalSessions}</div>
@@ -143,19 +143,19 @@ export default function TrainingProgramShow() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Completed Sessions')}</CardTitle>
+            <CardTitle className="text-lg">{'Completed Sessions'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600">{statistics.completedSessions}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {statistics.totalSessions > 0 ? Math.round((statistics.completedSessions / statistics.totalSessions) * 100) : 0}% {t('completion rate')}
+              {statistics.totalSessions > 0 ? Math.round((statistics.completedSessions / statistics.totalSessions) * 100) : 0}% {'completion rate'}
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Employees')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Employees'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{statistics.totalTrainings}</div>
@@ -164,12 +164,12 @@ export default function TrainingProgramShow() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Completed Trainings')}</CardTitle>
+            <CardTitle className="text-lg">{'Completed Trainings'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600">{statistics.completedTrainings}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {statistics.totalTrainings > 0 ? Math.round((statistics.completedTrainings / statistics.totalTrainings) * 100) : 0}% {t('completion rate')}
+              {statistics.totalTrainings > 0 ? Math.round((statistics.completedTrainings / statistics.totalTrainings) * 100) : 0}% {'completion rate'}
             </div>
           </CardContent>
         </Card>
@@ -179,17 +179,17 @@ export default function TrainingProgramShow() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t('Session Progress')}</CardTitle>
+            <CardTitle>{'Session Progress'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>{t('Sessions Completed')}</span>
+                <span>{'Sessions Completed'}</span>
                 <span>{statistics.completedSessions || 0}/{statistics.totalSessions || 0}</span>
               </div>
               <Progress value={statistics.totalSessions > 0 ? (statistics.completedSessions / statistics.totalSessions) * 100 : 0} className="h-2" />
               <div className="text-xs text-gray-500">
-                {statistics.totalSessions > 0 ? Math.round((statistics.completedSessions / statistics.totalSessions) * 100) : 0}% {t('of sessions completed')}
+                {statistics.totalSessions > 0 ? Math.round((statistics.completedSessions / statistics.totalSessions) * 100) : 0}% {'of sessions completed'}
               </div>
             </div>
           </CardContent>
@@ -197,17 +197,17 @@ export default function TrainingProgramShow() {
         
         <Card>
           <CardHeader>
-            <CardTitle>{t('Employee Progress')}</CardTitle>
+            <CardTitle>{'Employee Progress'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>{t('Employees Completed')}</span>
+                <span>{'Employees Completed'}</span>
                 <span>{statistics.completedTrainings || 0}/{statistics.totalTrainings || 0}</span>
               </div>
               <Progress value={statistics.totalTrainings > 0 ? (statistics.completedTrainings / statistics.totalTrainings) * 100 : 0} className="h-2" />
               <div className="text-xs text-gray-500">
-                {statistics.totalTrainings > 0 ? Math.round((statistics.completedTrainings / statistics.totalTrainings) * 100) : 0}% {t('of employees completed')}
+                {statistics.totalTrainings > 0 ? Math.round((statistics.completedTrainings / statistics.totalTrainings) * 100) : 0}% {'of employees completed'}
               </div>
             </div>
           </CardContent>

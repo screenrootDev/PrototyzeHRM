@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,7 +27,7 @@ export function MolliePaymentForm({
   onSuccess,
   onCancel
 }: MolliePaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
   const [customerDetails, setCustomerDetails] = useState({
     firstName: '',
@@ -38,7 +38,7 @@ export function MolliePaymentForm({
   const handleSubmit = (e: React.FormEvent) => {
     if (!customerDetails.firstName || !customerDetails.lastName || !customerDetails.email) {
       e.preventDefault();
-      alert(t('Please fill in all customer details'));
+      alert('Please fill in all customer details');
       return;
     }
     setIsProcessing(true);
@@ -49,7 +49,7 @@ export function MolliePaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Mollie Payment')}
+          {'Mollie Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -61,54 +61,54 @@ export function MolliePaymentForm({
           <input type="hidden" name="payment_id" value={`mollie_${Date.now()}`} />
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="firstName">{t('First Name')}</Label>
+              <Label htmlFor="firstName">{'First Name'}</Label>
               <Input
                 id="firstName"
                 name="customer_details[firstName]"
                 value={customerDetails.firstName}
                 onChange={(e) => setCustomerDetails(prev => ({ ...prev, firstName: e.target.value }))}
-                placeholder={t('Enter first name')}
+                placeholder={'Enter first name'}
                 required
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="lastName">{t('Last Name')}</Label>
+              <Label htmlFor="lastName">{'Last Name'}</Label>
               <Input
                 id="lastName"
                 name="customer_details[lastName]"
                 value={customerDetails.lastName}
                 onChange={(e) => setCustomerDetails(prev => ({ ...prev, lastName: e.target.value }))}
-                placeholder={t('Enter last name')}
+                placeholder={'Enter last name'}
                 required
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">{t('Email Address')}</Label>
+            <Label htmlFor="email">{'Email Address'}</Label>
             <Input
               id="email"
               name="customer_details[email]"
               type="email"
               value={customerDetails.email}
               onChange={(e) => setCustomerDetails(prev => ({ ...prev, email: e.target.value }))}
-              placeholder={t('Enter email address')}
+              placeholder={'Enter email address'}
               required
             />
           </div>
 
           <div className="flex gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onCancel} className="flex-1">
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button type="submit" disabled={isProcessing} className="flex-1">
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('Processing...')}
+                  {'Processing...'}
                 </>
               ) : (
-                t('Pay {{amount}}', { amount: `€${planPrice}` })
+                `Pay €${planPrice}`
               )}
             </Button>
           </div>

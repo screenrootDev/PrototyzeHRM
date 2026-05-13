@@ -8,13 +8,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function AssetTypes() {
-  const { t } = useTranslation();
+  
   const { auth, assetTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -77,72 +77,60 @@ export default function AssetTypes() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating asset type...'));
+      toast.loading('Creating asset type...');
 
       router.post(route('hr.asset-types.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create asset type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create asset type: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating asset type...'));
+      toast.loading('Updating asset type...');
 
       router.put(route('hr.asset-types.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update asset type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update asset type: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting asset type...'));
+    toast.loading('Deleting asset type...');
     
     router.delete(route('hr.asset-types.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete asset type: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete asset type: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -163,7 +151,7 @@ export default function AssetTypes() {
   // Add the "Add New Asset Type" button if user has permission
   if (hasPermission(permissions, 'create-asset-types')) {
     pageActions.push({
-      label: t('Add Asset Type'),
+      label: 'Add Asset Type',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -171,28 +159,28 @@ export default function AssetTypes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.asset-types.index') },
-    { title: t('Asset Management'), href: route('hr.asset-types.index') },
-    { title: t('Asset Types') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.asset-types.index') },
+    { title: 'Asset Management', href: route('hr.asset-types.index') },
+    { title: 'Asset Types' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value) => value || '-'
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value) => value || '-'
     },
     { 
       key: 'assets_count', 
-      label: t('Assets'),
+      label: 'Assets',
       render: (_, row) => row.assets_count || '0'
     }
   ];
@@ -200,21 +188,21 @@ export default function AssetTypes() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-asset-types'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-asset-types'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -224,7 +212,7 @@ export default function AssetTypes() {
 
   return (
     <PageTemplate 
-      title={t("Asset Types")} 
+      title={"Asset Types"} 
       url="/hr/assets/types"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -280,7 +268,7 @@ export default function AssetTypes() {
           to={assetTypes?.to || 0}
           total={assetTypes?.total || 0}
           links={assetTypes?.links}
-          entityName={t("asset types")}
+          entityName={"asset types"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -294,13 +282,13 @@ export default function AssetTypes() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea'
             }
           ],
@@ -309,10 +297,10 @@ export default function AssetTypes() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Asset Type')
+            ? 'Add New Asset Type'
             : formMode === 'edit'
-              ? t('Edit Asset Type')
-              : t('View Asset Type')
+              ? 'Edit Asset Type'
+              : 'View Asset Type'
         }
         mode={formMode}
       />

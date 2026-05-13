@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function Candidates() {
-  const { t } = useTranslation();
+  
   const { auth, candidates, jobPostings, sources, employees, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -89,7 +89,7 @@ export default function Candidates() {
         break;
       case 'convert-to-employee':
         if (!globalSettings?.is_demo) {
-          toast.loading(t('Loading conversion form...'));
+          toast.loading('Loading conversion form...');
         }
         router.get(route('hr.recruitment.candidates.convert-to-employee', item.id), {}, {
           onSuccess: (page) => {
@@ -97,20 +97,16 @@ export default function Candidates() {
               toast.dismiss();
             }
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (!globalSettings?.is_demo) {
               toast.dismiss();
             }
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t('Failed to load conversion form: {{errors}}', { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to load conversion form: ${Object.values(errors).join(', ')}`);            }
           }
         });
         break;
@@ -125,72 +121,60 @@ export default function Candidates() {
 
   // Need to Remove - const handleFormSubmit = (formData: any) => {
   //   if (formMode === 'create') {
-  //     toast.loading(t('Creating candidate...'));
+  //     toast.loading('Creating candidate...');
 
   //     router.post(route('hr.recruitment.candidates.store'), formData, {
   //       onSuccess: (page) => {
   //         setIsFormModalOpen(false);
   //         toast.dismiss();
   //         if (page.props.flash.success) {
-  //           toast.success(t(page.props.flash.success));
-  //         } else if (page.props.flash.error) {
-  //           toast.error(t(page.props.flash.error));
-  //         }
+  //           toast.success(page.props.flash.success);  //         } else if (page.props.flash.error) {
+  //           toast.error(page.props.flash.error);  //         }
   //       },
   //       onError: (errors) => {
   //         toast.dismiss();
   //         if (typeof errors === 'string') {
-  //           toast.error(t(errors));
-  //         } else {
-  //           toast.error(t('Failed to create candidate: {{errors}}', { errors: Object.values(errors).join(', ') }));
-  //         }
+  //           toast.error(errors);  //         } else {
+  //           toast.error(`Failed to create candidate: ${Object.values(errors).join(', ')}`);  //         }
   //       }
   //     });
   //   } else if (formMode === 'edit') {
-  //     toast.loading(t('Updating candidate...'));
+  //     toast.loading('Updating candidate...');
 
   //     router.put(route('hr.recruitment.candidates.update', currentItem.id), formData, {
   //       onSuccess: (page) => {
   //         setIsFormModalOpen(false);
   //         toast.dismiss();
   //         if (page.props.flash.success) {
-  //           toast.success(t(page.props.flash.success));
-  //         } else if (page.props.flash.error) {
-  //           toast.error(t(page.props.flash.error));
-  //         }
+  //           toast.success(page.props.flash.success);  //         } else if (page.props.flash.error) {
+  //           toast.error(page.props.flash.error);  //         }
   //       },
   //       onError: (errors) => {
   //         toast.dismiss();
   //         if (typeof errors === 'string') {
-  //           toast.error(t(errors));
-  //         } else {
-  //           toast.error(t('Failed to update candidate: {{errors}}', { errors: Object.values(errors).join(', ') }));
-  //         }
+  //           toast.error(errors);  //         } else {
+  //           toast.error(`Failed to update candidate: ${Object.values(errors).join(', ')}`);  //         }
   //       }
   //     });
   //   }
   // };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting candidate...'));
+    toast.loading('Deleting candidate...');
 
     router.delete(route('hr.recruitment.candidates.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete candidate: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete candidate: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -198,25 +182,21 @@ export default function Candidates() {
   const handleStatusUpdate = (formData: any) => {
     if (!formData.status) return;
 
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
 
     router.put(route('hr.recruitment.candidates.update-status', currentItem.id), { status: formData.status }, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -238,7 +218,7 @@ export default function Candidates() {
 
   // Need to Remove - if (hasPermission(permissions, 'create-candidates')) {
   //   pageActions.push({
-  //     label: t('Add Candidate'),
+  //     label: 'Add Candidate',
   //     icon: <Plus className="h-4 w-4 mr-2" />,
   //     variant: 'default',
   //     onClick: () => handleAddNew()
@@ -246,9 +226,9 @@ export default function Candidates() {
   // }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidates.index') },
-    { title: t('Candidates') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidates.index') },
+    { title: 'Candidates' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -266,7 +246,7 @@ export default function Candidates() {
   const columns = [
     {
       key: 'full_name',
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (_, row) => (
         <div>
@@ -277,7 +257,7 @@ export default function Candidates() {
     },
     {
       key: 'job.title',
-      label: t('Job'),
+      label: 'Job',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.job?.title || '-'}</div>
@@ -287,43 +267,43 @@ export default function Candidates() {
     },
     {
       key: 'source.name',
-      label: t('Source'),
+      label: 'Source',
       render: (_, row) => row.source?.name || '-'
     },
     {
       key: 'experience_years',
-      label: t('Experience'),
-      render: (value) => `${value} ${t('years')}`
+      label: 'Experience',
+      render: (value) => `${value} ${'years'}`
     },
     {
       key: 'expected_salary',
-      label: t('Expected Salary'),
+      label: 'Expected Salary',
       render: (value) => value ? window.appSettings?.formatCurrency(value) : '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     {
       key: 'is_employee',
-      label: t('Employee Converted'),
+      label: 'Employee Converted',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${value
           ? 'bg-green-50 text-green-700 ring-green-600/20'
           : 'bg-gray-50 text-gray-600 ring-gray-500/10'
           }`}>
-          {value ? t('Yes') : t('No')}
+          {value ? 'Yes' : 'No'}
         </span>
       )
     },
     {
       key: 'application_date',
-      label: t('Applied'),
+      label: 'Applied',
       sortable: false,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -331,21 +311,21 @@ export default function Candidates() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-candidates'
     },
     // Need to Remove - { 
-    //   label: t('Edit'), 
+    //   label: 'Edit', 
     //   icon: 'Edit', 
     //   action: 'edit', 
     //   className: 'text-amber-500',
     //   requiredPermission: 'edit-candidates'
     // },
     {
-      label: t('Update Status'),
+      label: 'Update Status',
       icon: 'RefreshCw',
       action: 'update-status',
       className: 'text-green-500',
@@ -353,7 +333,7 @@ export default function Candidates() {
       condition: (item: any) => !['Hired', 'Rejected'].includes(item.status)
     },
     {
-      label: t('Convert to Employee'),
+      label: 'Convert to Employee',
       icon: 'UserPlus',
       action: 'convert-to-employee',
       className: 'text-purple-500',
@@ -361,7 +341,7 @@ export default function Candidates() {
       condition: (item: any) => item.status === 'Hired' && !item.is_employee
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -370,17 +350,17 @@ export default function Candidates() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'New', label: t('New') },
-    { value: 'Screening', label: t('Screening') },
-    { value: 'Interview', label: t('Interview') },
-    { value: 'Offer', label: t('Offer') },
-    { value: 'Hired', label: t('Hired') },
-    { value: 'Rejected', label: t('Rejected') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'New', label: 'New' },
+    { value: 'Screening', label: 'Screening' },
+    { value: 'Interview', label: 'Interview' },
+    { value: 'Offer', label: 'Offer' },
+    { value: 'Hired', label: 'Hired' },
+    { value: 'Rejected', label: 'Rejected' }
   ];
 
   const jobOptions = [
-    { value: '_empty_', label: t('All Jobs') },
+    { value: '_empty_', label: 'All Jobs' },
     ...(jobPostings || []).map((job: any) => ({
       value: job.id.toString(),
       label: `${job.job_code} - ${job.title}`
@@ -388,7 +368,7 @@ export default function Candidates() {
   ];
 
   const sourceOptions = [
-    { value: '_empty_', label: t('All Sources') },
+    { value: '_empty_', label: 'All Sources' },
     ...(sources || []).map((source: any) => ({
       value: source.id.toString(),
       label: source.name
@@ -396,7 +376,7 @@ export default function Candidates() {
   ];
 
   const jobPostingOptions = [
-    { value: '_empty_', label: t('Select Job') },
+    { value: '_empty_', label: 'Select Job' },
     ...(jobPostings || []).map((job: any) => ({
       value: job.id.toString(),
       label: `${job.job_code} - ${job.title}`
@@ -404,7 +384,7 @@ export default function Candidates() {
   ];
 
   const candidateSourceOptions = [
-    { value: '_empty_', label: t('Select Source') },
+    { value: '_empty_', label: 'Select Source' },
     ...(sources || []).map((source: any) => ({
       value: source.id.toString(),
       label: source.name
@@ -412,7 +392,7 @@ export default function Candidates() {
   ];
 
   const employeeOptions = [
-    { value: 'none', label: t('Select Employee') },
+    { value: 'none', label: 'Select Employee' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -421,7 +401,7 @@ export default function Candidates() {
 
   return (
     <PageTemplate
-      title={t("Candidates")}
+      title={"Candidates"}
       url="/hr/recruitment/candidates"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -435,7 +415,7 @@ export default function Candidates() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -443,7 +423,7 @@ export default function Candidates() {
             },
             {
               name: 'job_id',
-              label: t('Job'),
+              label: 'Job',
               type: 'select',
               value: jobFilter,
               onChange: setJobFilter,
@@ -452,7 +432,7 @@ export default function Candidates() {
             },
             {
               name: 'source_id',
-              label: t('Source'),
+              label: 'Source',
               type: 'select',
               value: sourceFilter,
               onChange: setSourceFilter,
@@ -504,7 +484,7 @@ export default function Candidates() {
           to={candidates?.to || 0}
           total={candidates?.total || 0}
           links={candidates?.links}
-          entityName={t("candidates")}
+          entityName={"candidates"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -518,7 +498,7 @@ export default function Candidates() {
           fields: [
             { 
               name: 'job_id', 
-              label: t('Job'), 
+              label: 'Job', 
               type: 'select', 
               required: true,
               options: jobPostingOptions.filter(opt => opt.value !== '_empty_'),
@@ -526,7 +506,7 @@ export default function Candidates() {
             },
             { 
               name: 'source_id', 
-              label: t('Source'), 
+              label: 'Source', 
               type: 'select', 
               required: true,
               options: candidateSourceOptions.filter(opt => opt.value !== '_empty_'),
@@ -534,93 +514,93 @@ export default function Candidates() {
             },
             { 
               name: 'first_name', 
-              label: t('First Name'), 
+              label: 'First Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'last_name', 
-              label: t('Last Name'), 
+              label: 'Last Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'email', 
-              label: t('Email'), 
+              label: 'Email', 
               type: 'email', 
               required: true 
             },
             { 
               name: 'phone', 
-              label: t('Phone'), 
+              label: 'Phone', 
               type: 'text' 
             },
             { 
               name: 'current_company', 
-              label: t('Current Company'), 
+              label: 'Current Company', 
               type: 'text' 
             },
             { 
               name: 'current_position', 
-              label: t('Current Position'), 
+              label: 'Current Position', 
               type: 'text' 
             },
             { 
               name: 'experience_years', 
-              label: t('Experience (Years)'), 
+              label: 'Experience (Years)', 
               type: 'number', 
               required: true,
               min: 0
             },
             { 
               name: 'current_salary', 
-              label: t('Current Salary'), 
+              label: 'Current Salary', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'expected_salary', 
-              label: t('Expected Salary'), 
+              label: 'Expected Salary', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'notice_period', 
-              label: t('Notice Period'), 
+              label: 'Notice Period', 
               type: 'text' 
             },
             { 
               name: 'application_date', 
-              label: t('Application Date'), 
+              label: 'Application Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'referral_employee_id', 
-              label: t('Referred By'), 
+              label: 'Referred By', 
               type: 'select',
               options: employeeOptions
             },
             { 
               name: 'skills', 
-              label: t('Skills'), 
+              label: 'Skills', 
               type: 'textarea' 
             },
             { 
               name: 'education', 
-              label: t('Education'), 
+              label: 'Education', 
               type: 'textarea' 
             },
             { 
               name: 'portfolio_url', 
-              label: t('Portfolio URL'), 
+              label: 'Portfolio URL', 
               type: 'text' 
             },
             { 
               name: 'linkedin_url', 
-              label: t('LinkedIn URL'), 
+              label: 'LinkedIn URL', 
               type: 'text' 
             }
           ],
@@ -629,10 +609,10 @@ export default function Candidates() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Candidate')
+            ? 'Add New Candidate'
             : formMode === 'edit'
-              ? t('Edit Candidate')
-              : t('View Candidate')
+              ? 'Edit Candidate'
+              : 'View Candidate'
         }
         mode={formMode}
       /> */}
@@ -654,7 +634,7 @@ export default function Candidates() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -662,9 +642,9 @@ export default function Candidates() {
           ]
         }}
         initialData={{ status: selectedStatus }}
-        title={t('Update Candidate Status')}
+        title={'Update Candidate Status'}
         mode="edit"
-        submitLabel={t('Update Status')}
+        submitLabel={'Update Status'}
       />
     </PageTemplate>
   );

@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function Shifts() {
-  const { t } = useTranslation();
+  
   const { auth, shifts, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -95,17 +95,15 @@ export default function Shifts() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating shift...'));
+      toast.loading('Creating shift...');
 
       router.post(route('hr.shifts.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -117,17 +115,15 @@ export default function Shifts() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating shift...'));
+      toast.loading('Updating shift...');
 
       router.put(route('hr.shifts.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -142,17 +138,15 @@ export default function Shifts() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting shift...'));
+    toast.loading('Deleting shift...');
 
     router.delete(route('hr.shifts.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -167,16 +161,14 @@ export default function Shifts() {
 
   const handleToggleStatus = (shift: any) => {
     const newStatus = shift.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} shift...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} shift...`);
 
     router.put(route('hr.shifts.toggle-status', shift.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -207,7 +199,7 @@ export default function Shifts() {
   // Add the "Add New Shift" button if user has permission
   if (hasPermission(permissions, 'create-shifts')) {
     pageActions.push({
-      label: t('Add Shift'),
+      label: 'Add Shift',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -215,42 +207,42 @@ export default function Shifts() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Shift Management'), href: route('hr.shifts.index') },
-    { title: t('Shifts') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Shift Management', href: route('hr.shifts.index') },
+    { title: 'Shifts' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Shift Name'),
+      label: 'Shift Name',
       sortable: true
     },
     {
       key: 'start_time',
-      label: t('Start Time'),
+      label: 'Start Time',
       render: (value: string) => (
         <span className="font-mono">{window.appSettings.formatTime(value) || '-'}</span>
       )
     },
     {
       key: 'end_time',
-      label: t('End Time'),
+      label: 'End Time',
       render: (value: string) => (
         <span className="font-mono">{window.appSettings.formatTime(value) || '-'}</span>
       )
     },
     {
       key: 'break_duration',
-      label: t('Break (mins)'),
+      label: 'Break (mins)',
       render: (value: number) => (
         <span className="font-mono">{value}</span>
       )
     },
     {
       key: 'working_hours',
-      label: t('Working Hours'),
+      label: 'Working Hours',
       render: (value: any, row: any) => {
         // Calculate working hours from start_time and end_time
         if (row.start_time && row.end_time) {
@@ -275,33 +267,33 @@ export default function Shifts() {
     },
     {
       key: 'grace_period',
-      label: t('Grace (mins)'),
+      label: 'Grace (mins)',
       render: (value: number) => (
         <span className="font-mono text-blue-600">{value}</span>
       )
     },
     {
       key: 'is_night_shift',
-      label: t('Type'),
+      label: 'Type',
       render: (value: boolean) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value
           ? 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
           : 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
           }`}>
-          {value ? t('Night') : t('Day')}
+          {value ? 'Night' : 'Day'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
@@ -311,28 +303,28 @@ export default function Shifts() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-shifts'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-shifts'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-shifts'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -342,30 +334,30 @@ export default function Shifts() {
 
   // Prepare options for filters
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') , disabled : true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' , disabled : true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const shiftTypeOptions = [
-    { value: 'all', label: t('All Types') , disabled : true},
-    { value: 'day', label: t('Day Shift') },
-    { value: 'night', label: t('Night Shift') }
+    { value: 'all', label: 'All Types' , disabled : true},
+    { value: 'day', label: 'Day Shift' },
+    { value: 'night', label: 'Night Shift' }
   ];
 
   const workingDayOptions = [
-    { value: 'monday', label: t('Monday') },
-    { value: 'tuesday', label: t('Tuesday') },
-    { value: 'wednesday', label: t('Wednesday') },
-    { value: 'thursday', label: t('Thursday') },
-    { value: 'friday', label: t('Friday') },
-    { value: 'saturday', label: t('Saturday') },
-    { value: 'sunday', label: t('Sunday') }
+    { value: 'monday', label: 'Monday' },
+    { value: 'tuesday', label: 'Tuesday' },
+    { value: 'wednesday', label: 'Wednesday' },
+    { value: 'thursday', label: 'Thursday' },
+    { value: 'friday', label: 'Friday' },
+    { value: 'saturday', label: 'Saturday' },
+    { value: 'sunday', label: 'Sunday' }
   ];
 
   return (
     <PageTemplate
-      title={t("Shifts")}
+      title={"Shifts"}
       url="/hr/shifts"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -380,7 +372,7 @@ export default function Shifts() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -388,7 +380,7 @@ export default function Shifts() {
             },
             {
               name: 'shift_type',
-              label: t('Shift Type'),
+              label: 'Shift Type',
               type: 'select',
               value: selectedShiftType,
               onChange: setSelectedShiftType,
@@ -440,7 +432,7 @@ export default function Shifts() {
           to={shifts?.to || 0}
           total={shifts?.total || 0}
           links={shifts?.links}
-          entityName={t("shifts")}
+          entityName={"shifts"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -452,18 +444,18 @@ export default function Shifts() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Shift Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
-            { name: 'start_time', label: t('Start Time'), type: 'time', required: true },
-            { name: 'end_time', label: t('End Time'), type: 'time', required: true },
-            { name: 'break_duration', label: t('Break Duration (minutes)'), type: 'number', required: true, min: 0, defaultValue: 60 },
-            { name: 'break_start_time', label: t('Break Start Time'), type: 'time' },
-            { name: 'break_end_time', label: t('Break End Time'), type: 'time' },
-            { name: 'grace_period', label: t('Grace Period (minutes)'), type: 'number', required: true, min: 0, defaultValue: 15 },
-            { name: 'is_night_shift', label: t('Night Shift'), type: 'checkbox', defaultValue: false },
+            { name: 'name', label: 'Shift Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'start_time', label: 'Start Time', type: 'time', required: true },
+            { name: 'end_time', label: 'End Time', type: 'time', required: true },
+            { name: 'break_duration', label: 'Break Duration (minutes)', type: 'number', required: true, min: 0, defaultValue: 60 },
+            { name: 'break_start_time', label: 'Break Start Time', type: 'time' },
+            { name: 'break_end_time', label: 'Break End Time', type: 'time' },
+            { name: 'grace_period', label: 'Grace Period (minutes)', type: 'number', required: true, min: 0, defaultValue: 15 },
+            { name: 'is_night_shift', label: 'Night Shift', type: 'checkbox', defaultValue: false },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
                 { value: 'active', label: 'Active' },
@@ -477,10 +469,10 @@ export default function Shifts() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Shift')
+            ? 'Add New Shift'
             : formMode === 'edit'
-              ? t('Edit Shift')
-              : t('View Shift')
+              ? 'Edit Shift'
+              : 'View Shift'
         }
         mode={formMode}
       />

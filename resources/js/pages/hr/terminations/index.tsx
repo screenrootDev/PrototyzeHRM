@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Terminations() {
-  const { t } = useTranslation();
+  
   const { auth, terminations, employees, terminationTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -123,96 +123,80 @@ export default function Terminations() {
     const data = formData;
 
     if (formMode === 'create') {
-      toast.loading(t('Creating termination...'));
+      toast.loading('Creating termination...');
 
       router.post(route('hr.terminations.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create termination: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create termination: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating termination...'));
+      toast.loading('Updating termination...');
 
       router.put(route('hr.terminations.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update termination: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update termination: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
 
   const handleStatusChange = (formData: any) => {
-    toast.loading(t('Updating termination status...'));
+    toast.loading('Updating termination status...');
 
     router.put(route('hr.terminations.change-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update termination status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update termination status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting termination...'));
+    toast.loading('Deleting termination...');
 
     router.delete(route('hr.terminations.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete termination: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete termination: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -238,7 +222,7 @@ export default function Terminations() {
   // Add the "Add New Termination" button if user has permission
   if (hasPermission(permissions, 'create-terminations')) {
     pageActions.push({
-      label: t('Add Termination'),
+      label: 'Add Termination',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -246,16 +230,16 @@ export default function Terminations() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.terminations.index') },
-    { title: t('Terminations') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.terminations.index') },
+    { title: 'Terminations' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee.name',
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -265,29 +249,29 @@ export default function Terminations() {
     },
     {
       key: 'termination_type',
-      label: t('Type'),
+      label: 'Type',
       render: (value) => value || '-'
     },
     {
       key: 'termination_date',
-      label: t('Termination Date'),
+      label: 'Termination Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'notice_date',
-      label: t('Notice Date'),
+      label: 'Notice Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'reason',
-      label: t('Reason'),
+      label: 'Reason',
       render: (value) => value || '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           'planned': 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -304,7 +288,7 @@ export default function Terminations() {
     },
     {
       key: 'documents',
-      label: t('Documents'),
+      label: 'Documents',
       render: (value, row) => value && value.trim() !== '' ? (
         <span
           className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 cursor-pointer"
@@ -313,7 +297,7 @@ export default function Terminations() {
             handleAction('download-document', row);
           }}
         >
-          {t('View Document')}
+          {'View Document'}
         </span>
       ) : '-'
     }
@@ -322,28 +306,28 @@ export default function Terminations() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-terminations'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-terminations'
     },
     {
-      label: t('Change Status'),
+      label: 'Change Status',
       icon: 'RefreshCw',
       action: 'change-status',
       className: 'text-green-500',
       requiredPermission: 'edit-terminations'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -353,7 +337,7 @@ export default function Terminations() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees') },
+    { value: '', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -362,7 +346,7 @@ export default function Terminations() {
 
   // Prepare termination type options for filter
   const terminationTypeOptions = [
-    { value: '', label: t('All Types') },
+    { value: '', label: 'All Types' },
     ...(terminationTypes || []).map((type: string) => ({
       value: type,
       label: type
@@ -371,27 +355,27 @@ export default function Terminations() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'planned', label: t('Planned') },
-    { value: 'in progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'planned', label: 'Planned' },
+    { value: 'in progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' }
   ];
 
   // Prepare termination type options for form
   const terminationTypeFormOptions = [
-    { value: 'Voluntary', label: t('Voluntary') },
-    { value: 'Involuntary', label: t('Involuntary') },
-    { value: 'Layoff', label: t('Layoff') },
-    { value: 'Retirement', label: t('Retirement') },
-    { value: 'Contract Completion', label: t('Contract Completion') },
-    { value: 'Probation Failure', label: t('Probation Failure') },
-    { value: 'Misconduct', label: t('Misconduct') },
-    { value: 'Performance Issues', label: t('Performance Issues') }
+    { value: 'Voluntary', label: 'Voluntary' },
+    { value: 'Involuntary', label: 'Involuntary' },
+    { value: 'Layoff', label: 'Layoff' },
+    { value: 'Retirement', label: 'Retirement' },
+    { value: 'Contract Completion', label: 'Contract Completion' },
+    { value: 'Probation Failure', label: 'Probation Failure' },
+    { value: 'Misconduct', label: 'Misconduct' },
+    { value: 'Performance Issues', label: 'Performance Issues' }
   ];
 
   return (
     <PageTemplate
-      title={t("Terminations")}
+      title={"Terminations"}
       url="/hr/terminations"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -406,7 +390,7 @@ export default function Terminations() {
           filters={[
             ...(hasPermission(permissions, 'manage-any-terminations') ? [{
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -415,7 +399,7 @@ export default function Terminations() {
             }] : []),
             {
               name: 'termination_type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: selectedTerminationType,
               onChange: setSelectedTerminationType,
@@ -423,7 +407,7 @@ export default function Terminations() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -431,14 +415,14 @@ export default function Terminations() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -492,7 +476,7 @@ export default function Terminations() {
           to={terminations?.to || 0}
           total={terminations?.total || 0}
           links={terminations?.links}
-          entityName={t("terminations")}
+          entityName={"terminations"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -506,7 +490,7 @@ export default function Terminations() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -514,7 +498,7 @@ export default function Terminations() {
             },
             {
               name: 'termination_type',
-              label: t('Termination Type'),
+              label: 'Termination Type',
               type: 'select',
               required: true,
               options: terminationTypeFormOptions,
@@ -522,69 +506,69 @@ export default function Terminations() {
             },
             {
               name: 'notice_date',
-              label: t('Notice Date'),
+              label: 'Notice Date',
               type: 'date',
               required: true
             },
             {
               name: 'termination_date',
-              label: t('Termination Date'),
+              label: 'Termination Date',
               type: 'date',
               required: true
             },
             {
               name: 'notice_period',
-              label: t('Notice Period'),
+              label: 'Notice Period',
               type: 'text',
               placeholder: 'e.g. 1 month, 2 weeks'
             },
             {
               name: 'reason',
-              label: t('Reason'),
+              label: 'Reason',
               type: 'text'
             },
             {
               name: 'description',
-              label: t('Description'),
+              label: 'Description',
               type: 'textarea'
             },
             {
               name: 'documents',
-              label: t('Documents'),
+              label: 'Documents',
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             ...(formMode === 'edit' ? [
               {
                 name: 'status',
-                label: t('Status'),
+                label: 'Status',
                 type: 'select',
                 options: [
-                  { value: 'planned', label: t('Planned') },
-                  { value: 'in progress', label: t('In Progress') },
-                  { value: 'completed', label: t('Completed') }
+                  { value: 'planned', label: 'Planned' },
+                  { value: 'in progress', label: 'In Progress' },
+                  { value: 'completed', label: 'Completed' }
                 ]
               },
               {
                 name: 'exit_interview_conducted',
-                label: t('Exit Interview Conducted'),
+                label: 'Exit Interview Conducted',
                 type: 'checkbox'
               },
               {
                 name: 'exit_interview_date',
-                label: t('Exit Interview Date'),
+                label: 'Exit Interview Date',
                 type: 'date',
                 showWhen: (formData) => formData.exit_interview_conducted
               },
               {
                 name: 'exit_feedback',
-                label: t('Exit Feedback'),
+                label: 'Exit Feedback',
                 type: 'textarea',
                 showWhen: (formData) => formData.status === 'completed'
               }
@@ -599,10 +583,10 @@ export default function Terminations() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Termination')
+            ? 'Add New Termination'
             : formMode === 'edit'
-              ? t('Edit Termination')
-              : t('View Termination')
+              ? 'Edit Termination'
+              : 'View Termination'
         }
         mode={formMode}
       />
@@ -616,31 +600,31 @@ export default function Terminations() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'planned', label: t('Planned') },
-                { value: 'in progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') }
+                { value: 'planned', label: 'Planned' },
+                { value: 'in progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' }
               ],
               defaultValue: currentItem?.status
             },
             {
               name: 'exit_interview_conducted',
-              label: t('Exit Interview Conducted'),
+              label: 'Exit Interview Conducted',
               type: 'checkbox',
               showWhen: (formData) => formData.status === 'completed'
             },
             {
               name: 'exit_interview_date',
-              label: t('Exit Interview Date'),
+              label: 'Exit Interview Date',
               type: 'date',
               showWhen: (formData) => formData.status === 'completed' && formData.exit_interview_conducted
             },
             {
               name: 'exit_feedback',
-              label: t('Exit Feedback'),
+              label: 'Exit Feedback',
               type: 'textarea',
               showWhen: (formData) => formData.status === 'completed'
             }
@@ -648,7 +632,7 @@ export default function Terminations() {
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Change Termination Status')}
+        title={'Change Termination Status'}
         mode="edit"
       />
 

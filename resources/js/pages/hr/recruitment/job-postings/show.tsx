@@ -1,19 +1,19 @@
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Edit, Calendar, MapPin, Building, DollarSign, Clock, Star } from 'lucide-react';
 
 export default function ShowJobPosting() {
-  const { t } = useTranslation();
+  
   const { jobPosting, customQuestions } = usePage().props as any;
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.job-postings.index') },
-    { title: t('Job Postings'), href: route('hr.recruitment.job-postings.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.job-postings.index') },
+    { title: 'Job Postings', href: route('hr.recruitment.job-postings.index') },
     { title: jobPosting.title }
   ];
 
@@ -32,13 +32,13 @@ export default function ShowJobPosting() {
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: t('Back to List'),
+          label: 'Back to List',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.recruitment.job-postings.index'))
         },
         {
-          label: t('Edit'),
+          label: 'Edit',
           icon: <Edit className="h-4 w-4 mr-2" />,
           variant: 'default',
           onClick: () => router.get(route('hr.recruitment.job-postings.edit', jobPosting.id))
@@ -56,12 +56,12 @@ export default function ShowJobPosting() {
                   {jobPosting.is_featured && <Star className="h-5 w-5 text-yellow-500 fill-current" />}
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {t('Job Code')}: {jobPosting.job_code}
+                  {'Job Code'}: {jobPosting.job_code}
                 </p>
               </div>
               <div className="flex gap-2">
                 <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(jobPosting.status)}`}>
-                  {t(jobPosting.status)}
+                  {jobPosting.status}
                 </span>
               </div>
             </div>
@@ -71,7 +71,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <Building className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Job Type')}</p>
+                  <p className="text-sm font-medium">{'Job Type'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.job_type?.name || '-'}</p>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Location')}</p>
+                  <p className="text-sm font-medium">{'Location'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.location?.name || '-'}</p>
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <Building className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Branch')}</p>
+                  <p className="text-sm font-medium">{'Branch'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.branch?.name || '-'}</p>
                 </div>
               </div>
@@ -95,7 +95,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <Building className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Department')}</p>
+                  <p className="text-sm font-medium">{'Department'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.department?.name || '-'}</p>
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <Building className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Priority')}</p>
+                  <p className="text-sm font-medium">{'Priority'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.priority || '-'}</p>
                 </div>
               </div>
@@ -111,7 +111,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Positions')}</p>
+                  <p className="text-sm font-medium">{'Positions'}</p>
                   <p className="text-sm text-muted-foreground">{jobPosting.positions || '-'}</p>
                 </div>
               </div>
@@ -122,16 +122,16 @@ export default function ShowJobPosting() {
         {/* Experience & Salary */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Experience & Salary')}</CardTitle>
+            <CardTitle>{'Experience & Salary'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Experience Required')}</p>
+                  <p className="text-sm font-medium">{'Experience Required'}</p>
                   <p className="text-sm text-muted-foreground">
-                    {jobPosting.min_experience} - {jobPosting.max_experience || '+'} {t('years')}
+                    {jobPosting.min_experience} - {jobPosting.max_experience || '+'} {'years'}
                   </p>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function ShowJobPosting() {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
                 <div>
-                  <p className="text-sm font-medium">{t('Salary Range')}</p>
+                  <p className="text-sm font-medium">{'Salary Range'}</p>
                   <p className="text-sm text-muted-foreground">
                     {jobPosting.min_salary && jobPosting.max_salary
                       ? `${window.appSettings?.formatCurrency(jobPosting.min_salary)} - ${window.appSettings?.formatCurrency(jobPosting.max_salary)}`
@@ -158,16 +158,16 @@ export default function ShowJobPosting() {
         {jobPosting.requisition && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Job Requisition')}</CardTitle>
+              <CardTitle>{'Job Requisition'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span className="text-sm font-semibold text-gray-900 min-w-fit">{t('Requisition Code')}:</span>
+                  <span className="text-sm font-semibold text-gray-900 min-w-fit">{'Requisition Code'}:</span>
                   <span className="text-sm text-gray-700 font-mono bg-gray-50 px-2 py-1 rounded">{jobPosting.requisition.requisition_code}</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-2">
-                  <span className="text-sm font-semibold text-gray-900 min-w-fit">{t('Title')}:</span>
+                  <span className="text-sm font-semibold text-gray-900 min-w-fit">{'Title'}:</span>
                   <span className="text-sm text-gray-700">{jobPosting.requisition.title}</span>
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function ShowJobPosting() {
         {jobPosting.description && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">{t('Job Description')}</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-900">{'Job Description'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div 
@@ -194,7 +194,7 @@ export default function ShowJobPosting() {
         {jobPosting.requirements && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">{t('Requirements')}</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-900">{'Requirements'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div 
@@ -209,7 +209,7 @@ export default function ShowJobPosting() {
         {jobPosting.benefits && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg font-semibold text-gray-900">{t('Benefits')}</CardTitle>
+              <CardTitle className="text-lg font-semibold text-gray-900">{'Benefits'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div 
@@ -224,7 +224,7 @@ export default function ShowJobPosting() {
         {jobPosting.skills && jobPosting.skills.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Required Skills')}</CardTitle>
+              <CardTitle>{'Required Skills'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
@@ -242,7 +242,7 @@ export default function ShowJobPosting() {
         {jobPosting.custom_question && jobPosting.custom_question.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Custom Questions')}</CardTitle>
+              <CardTitle>{'Custom Questions'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
@@ -270,15 +270,15 @@ export default function ShowJobPosting() {
         {jobPosting.applicant && jobPosting.applicant.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Need to Ask?')}</CardTitle>
+              <CardTitle>{'Need to Ask?'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {jobPosting.applicant.map((item: string, index: number) => (
                   <Badge key={index} variant="secondary">
-                    {item === 'gender' && t('Gender')}
-                    {item === 'date_of_birth' && t('Date Of Birth')}
-                    {item === 'address' && t('Address')}
+                    {item === 'gender' && 'Gender'}
+                    {item === 'date_of_birth' && 'Date Of Birth'}
+                    {item === 'address' && 'Address'}
                   </Badge>
                 ))}
               </div>
@@ -290,16 +290,16 @@ export default function ShowJobPosting() {
         {jobPosting.visibility && jobPosting.visibility.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>{t('Need to Show Option?')}</CardTitle>
+              <CardTitle>{'Need to Show Option?'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {jobPosting.visibility.map((item: string, index: number) => (
                   <Badge key={index} variant="secondary">
-                    {item === 'profile_image' && t('Profile Image')}
-                    {item === 'resume' && t('Resume')}
-                    {item === 'cover_letter' && t('Cover Letter')}
-                    {item === 'terms_and_conditions' && t('Terms And Conditions')}
+                    {item === 'profile_image' && 'Profile Image'}
+                    {item === 'resume' && 'Resume'}
+                    {item === 'cover_letter' && 'Cover Letter'}
+                    {item === 'terms_and_conditions' && 'Terms And Conditions'}
                   </Badge>
                 ))}
               </div>
@@ -310,14 +310,14 @@ export default function ShowJobPosting() {
         {/* Dates */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900">{t('Important Dates')}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">{'Important Dates'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="flex items-start gap-3">
                 <Calendar className="h-5 w-5 text-blue-600 mt-0.5 shrink-0" />
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-gray-900">{t('Start Date')}</p>
+                  <p className="text-sm font-semibold text-gray-900">{'Start Date'}</p>
                   <p className="text-sm text-gray-700 font-medium">
                     {jobPosting.start_date 
                       ? new Date(jobPosting.start_date).toLocaleDateString('en-US', {
@@ -334,7 +334,7 @@ export default function ShowJobPosting() {
               <div className="flex items-start gap-3">
                 <Calendar className="h-5 w-5 text-red-600 mt-0.5 shrink-0" />
                 <div className="space-y-1">
-                  <p className="text-sm font-semibold text-gray-900">{t('Application Deadline')}</p>
+                  <p className="text-sm font-semibold text-gray-900">{'Application Deadline'}</p>
                   <p className="text-sm text-gray-700 font-medium">
                     {jobPosting.application_deadline 
                       ? new Date(jobPosting.application_deadline).toLocaleDateString('en-US', {
@@ -353,12 +353,12 @@ export default function ShowJobPosting() {
         
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg font-semibold text-gray-900">{t('Additional Information')}</CardTitle>
+            <CardTitle className="text-lg font-semibold text-gray-900">{'Additional Information'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="space-y-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Created At')}</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{'Created At'}</p>
                 <p className="text-sm text-gray-900 font-medium">
                   {window.appSettings?.formatDateTimeSimple(jobPosting.created_at) || 
                    new Date(jobPosting.created_at).toLocaleDateString('en-US', {
@@ -371,7 +371,7 @@ export default function ShowJobPosting() {
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Updated At')}</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{'Updated At'}</p>
                 <p className="text-sm text-gray-900 font-medium">
                   {window.appSettings?.formatDateTimeSimple(jobPosting.updated_at) || 
                    new Date(jobPosting.updated_at).toLocaleDateString('en-US', {
@@ -385,7 +385,7 @@ export default function ShowJobPosting() {
               </div>
               {jobPosting.publish_date && (
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{t('Published At')}</p>
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{'Published At'}</p>
                   <p className="text-sm text-gray-900 font-medium">
                     {window.appSettings?.formatDateTimeSimple(jobPosting.publish_date) || 
                      new Date(jobPosting.publish_date).toLocaleDateString('en-US', {

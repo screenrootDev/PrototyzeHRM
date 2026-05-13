@@ -1,7 +1,6 @@
 // config/crud/permissions.ts
 import { CrudConfig } from '@/types/crud';
 import { columnRenderers } from '@/utils/columnRenderers';
-import { t } from '@/utils/i18n';
 
 export const permissionsConfig: CrudConfig = {
   entity: {
@@ -14,49 +13,49 @@ export const permissionsConfig: CrudConfig = {
       delete: 'delete-permissions'
     }
   },
-  description: t('Manage system permissions for different modules'),
+  description: 'Manage system permissions for different modules',
   table: {
     columns: [
       { 
         key: 'module', 
-        label: t('Module'), 
+        label: 'Module', 
         sortable: true,
         render: columnRenderers.status({
-          [t('Products')]: 'bg-blue-100 text-blue-800',
-          [t('Categories')]: 'bg-green-100 text-green-800',
-          [t('Contacts')]: 'bg-purple-100 text-purple-800',
-          [t('Permissions')]: 'bg-amber-100 text-amber-800',
-          [t('Roles')]: 'bg-red-100 text-red-800',
-          [t('Users')]: 'bg-indigo-100 text-indigo-800'
+          ['Products']: 'bg-blue-100 text-blue-800',
+          ['Categories']: 'bg-green-100 text-green-800',
+          ['Contacts']: 'bg-purple-100 text-purple-800',
+          ['Permissions']: 'bg-amber-100 text-amber-800',
+          ['Roles']: 'bg-red-100 text-red-800',
+          ['Users']: 'bg-indigo-100 text-indigo-800'
         })
       },
-      { key: 'name', label: t('Name'), sortable: true },
-      { key: 'label', label: t('Label'), sortable: true },
-      { key: 'description', label: t('Description') },
+      { key: 'name', label: 'Name', sortable: true },
+      { key: 'label', label: 'Label', sortable: true },
+      { key: 'description', label: 'Description' },
       { 
         key: 'created_at', 
-        label: t('Created At'), 
+        label: 'Created At', 
         sortable: true, 
         render: (value) => `${window.appSettings.formatDateTime(value, false)}` 
       }
     ],
     actions: [
       { 
-        label: t('View'), 
+        label: 'View', 
         icon: 'Eye', 
         action: 'view', 
         className: 'text-blue-500',
         requiredPermission: 'view-permissions'
       },
       { 
-        label: t('Edit'), 
+        label: 'Edit', 
         icon: 'Edit', 
         action: 'edit', 
         className: 'text-amber-500',
         requiredPermission: 'edit-permissions'
       },
       { 
-        label: t('Delete'), 
+        label: 'Delete', 
         icon: 'Trash2', 
         action: 'delete', 
         className: 'text-red-500',
@@ -67,22 +66,22 @@ export const permissionsConfig: CrudConfig = {
   filters: [
     {
       key: 'module',
-      label: t('Module'),
+      label: 'Module',
       type: 'select',
       options: []
     }
   ],
   form: {
     fields: [
-      { name: 'module', label: t('Module'), type: 'text', required: true },
+      { name: 'module', label: 'Module', type: 'text', required: true },
       { 
         name: 'label', 
-        label: t('Label'), 
+        label: 'Label', 
         type: 'text', 
         required: true, 
-        description: t('The name field will be automatically generated from this label') 
+        description: 'The name field will be automatically generated from this label' 
       },
-      { name: 'description', label: t('Description'), type: 'textarea' }
+      { name: 'description', label: 'Description', type: 'textarea' }
     ]
   }
 };

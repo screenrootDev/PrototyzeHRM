@@ -6,7 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { useTranslation } from 'react-i18next';
+
 import { useState } from 'react';
 import { Plus, Check, X } from 'lucide-react';
 import { useForm } from '@inertiajs/react';
@@ -21,7 +21,7 @@ interface PayoutRequestsProps {
 }
 
 export default function PayoutRequests({ userType, payoutRequests, settings, stats,currencySymbol }: PayoutRequestsProps) {
-  const { t } = useTranslation();
+  
 
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showRejectDialog, setShowRejectDialog] = useState(false);
@@ -42,15 +42,12 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
         setShowCreateDialog(false);
         reset();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        }
+          toast.error(errors);        }
       }
     });
   };
@@ -59,15 +56,12 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
     post(route('referral.payout-request.approve', request.id), {
       onSuccess: (page) => {
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        }
+          toast.error(errors);        }
       }
     });
   };
@@ -81,15 +75,12 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
           setSelectedRequest(null);
           setRejectData('notes', '');
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          }
+            toast.error(errors);          }
         }
       });
     }
@@ -110,7 +101,7 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
 
     return (
       <Badge className={colors[status as keyof typeof colors] || colors.pending}>
-        {t(status.charAt(0).toUpperCase() + status.slice(1))}
+        {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>
     );
   };
@@ -120,21 +111,21 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
       {userType === 'company' && (
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>{t('Create Payout Request')}</CardTitle>
+            <CardTitle>{'Create Payout Request'}</CardTitle>
             <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
               <DialogTrigger asChild>
                 <Button disabled={stats.availableBalance < settings.threshold_amount}>
                   <Plus className="h-4 w-4 mr-2" />
-                  {t('Request Payout')}
+                  {'Request Payout'}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>{t('Create Payout Request')}</DialogTitle>
+                  <DialogTitle>{'Create Payout Request'}</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleCreatePayout} className="space-y-4">
                   <div>
-                    <Label htmlFor="amount">{t('Amount')}</Label>
+                    <Label htmlFor="amount">{'Amount'}</Label>
                     <Input
                       id="amount"
                       type="number"
@@ -148,15 +139,15 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
                     {errors.amount && <p className="text-sm text-red-500">{errors.amount}</p>}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    <p>{t('Available Balance')}: {currencySymbol}{stats.availableBalance}</p>
-                    <p>{t('Minimum Amount')}: {currencySymbol}{settings.threshold_amount}</p>
+                    <p>{'Available Balance'}: {currencySymbol}{stats.availableBalance}</p>
+                    <p>{'Minimum Amount'}: {currencySymbol}{settings.threshold_amount}</p>
                   </div>
                   <div className="flex justify-end space-x-2">
                     <Button type="button" variant="outline" onClick={() => setShowCreateDialog(false)}>
-                      {t('Cancel')}
+                      {'Cancel'}
                     </Button>
                     <Button type="submit" disabled={processing}>
-                      {t('Submit Request')}
+                      Submit Request
                     </Button>
                   </div>
                 </form>
@@ -166,8 +157,8 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
           <CardContent>
             <p className="text-sm text-muted-foreground">
               {stats.availableBalance < settings.threshold_amount
-                ? t('You need at least {{amount}} to request a payout', { amount: `${currencySymbol}${settings.threshold_amount}` })
-                : t('You can request up to {{amount}} for payout', { amount: `${currencySymbol}${stats.availableBalance}` })}
+                ? `You need at least ${currencySymbol}${settings.threshold_amount} to request a payout`
+                : `You can request up to ${currencySymbol}${stats.availableBalance} for payout`}
             </p>
           </CardContent>
         </Card>
@@ -176,18 +167,18 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
       <Card>
         <CardHeader>
           <CardTitle>
-            {userType === 'superadmin' ? t('All Payout Requests') : t('Your Payout Requests')}
+            {userType === 'superadmin' ? 'All Payout Requests' : 'Your Payout Requests'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow className="dark:bg-gray-800 dark:border-gray-700">
-                {userType === 'superadmin' && <TableHead>{t('Company')}</TableHead>}
-                <TableHead>{t('Amount')}</TableHead>
-                <TableHead>{t('Status')}</TableHead>
-                <TableHead>{t('Date')}</TableHead>
-                {userType === 'superadmin' && <TableHead>{t('Actions')}</TableHead>}
+                {userType === 'superadmin' && <TableHead>{'Company'}</TableHead>}
+                <TableHead>{'Amount'}</TableHead>
+                <TableHead>{'Status'}</TableHead>
+                <TableHead>{'Date'}</TableHead>
+                {userType === 'superadmin' && <TableHead>{'Actions'}</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -213,7 +204,7 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
                           onClick={() => handleApprove(request)}
                         >
                           <Check className="h-4 w-4 mr-1" />
-                          {t('Approve')}
+                          {'Approve'}
                         </Button>
                         <Button
                           size="sm"
@@ -224,7 +215,7 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
                           }}
                         >
                           <X className="h-4 w-4 mr-1" />
-                          {t('Reject')}
+                          {'Reject'}
                         </Button>
                       </div>
                     </TableCell>
@@ -239,24 +230,24 @@ export default function PayoutRequests({ userType, payoutRequests, settings, sta
       <Dialog open={showRejectDialog} onOpenChange={setShowRejectDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('Reject Payout Request')}</DialogTitle>
+            <DialogTitle>{'Reject Payout Request'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleReject} className="space-y-4">
             <div>
-              <Label htmlFor="notes">{t('Rejection Reason')}</Label>
+              <Label htmlFor="notes">{'Rejection Reason'}</Label>
               <Textarea
                 id="notes"
                 value={rejectData.notes}
                 onChange={(e) => setRejectData('notes', e.target.value)}
-                placeholder={t('Enter reason for rejection...')}
+                placeholder={'Enter reason for rejection...'}
               />
             </div>
             <div className="flex justify-end space-x-2">
               <Button type="button" variant="outline" onClick={() => setShowRejectDialog(false)}>
-                {t('Cancel')}
+                {'Cancel'}
               </Button>
               <Button type="submit" variant="destructive" disabled={rejectProcessing}>
-                {t('Reject Request')}
+                {'Reject Request'}
               </Button>
             </div>
           </form>

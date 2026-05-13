@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Calendar, FileText, Download } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 export default function Holidays() {
-  const { t } = useTranslation();
+  
   const { auth, holidays, branches, categories, years, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -115,18 +115,16 @@ export default function Holidays() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating holiday...'));
+      toast.loading('Creating holiday...');
 
       router.post(route('hr.holidays.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Holiday created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Holiday created successfully');
           }
         },
         onError: (errors) => {
@@ -134,23 +132,21 @@ export default function Holidays() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to create holiday: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to create holiday: ${Object.values(errors).join(', ')}`);
           }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating holiday...'));
+      toast.loading('Updating holiday...');
 
       router.put(route('hr.holidays.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Holiday updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Holiday updated successfully');
           }
         },
         onError: (errors) => {
@@ -158,7 +154,7 @@ export default function Holidays() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to update holiday: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to update holiday: ${Object.values(errors).join(', ')}`);
           }
         }
       });
@@ -166,18 +162,16 @@ export default function Holidays() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting holiday...'));
+    toast.loading('Deleting holiday...');
     
     router.delete(route('hr.holidays.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Holiday deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Holiday deleted successfully');
         }
       },
       onError: (errors) => {
@@ -185,7 +179,7 @@ export default function Holidays() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to delete holiday: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to delete holiday: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -243,7 +237,7 @@ export default function Holidays() {
   
   // Add the "View Calendar" button
   pageActions.push({
-    label: t('Calendar View'),
+    label: 'Calendar View',
     icon: <Calendar className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleViewCalendar
@@ -251,14 +245,14 @@ export default function Holidays() {
   
   // Add export buttons
   pageActions.push({
-    label: t('Export PDF'),
+    label: 'Export PDF',
     icon: <FileText className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleExportPdf
   });
   
   pageActions.push({
-    label: t('Export iCal'),
+    label: 'Export iCal',
     icon: <Download className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleExportIcal
@@ -267,7 +261,7 @@ export default function Holidays() {
   // Add the "Add New Holiday" button if user has permission
   if (hasPermission(permissions, 'create-holidays')) {
     pageActions.push({
-      label: t('Add Holiday'),
+      label: 'Add Holiday',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -275,22 +269,22 @@ export default function Holidays() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.holidays.index') },
-    { title: t('Holidays') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.holidays.index') },
+    { title: 'Holidays' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Holiday Name'),
+      label: 'Holiday Name',
       sortable: true,
       render: (value) => value || '-'
     },
     { 
       key: 'date', 
-      label: t('Date'),
+      label: 'Date',
       sortable: true,
       render: (_, row) => {
         if (row.end_date && row.start_date !== row.end_date) {
@@ -310,7 +304,7 @@ export default function Holidays() {
     },
     { 
       key: 'category', 
-      label: t('Category'),
+      label: 'Category',
       render: (value) => {
         const categoryClasses = {
           'national': 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -330,7 +324,7 @@ export default function Holidays() {
     },
     { 
       key: 'branches', 
-      label: t('Branches'),
+      label: 'Branches',
       render: (_, row) => {
         if (!row.branches || row.branches.length === 0) return '-';
         
@@ -354,14 +348,14 @@ export default function Holidays() {
     },
     { 
       key: 'type', 
-      label: t('Type'),
+      label: 'Type',
       render: (_, row) => {
         const badges = [];
         
         if (row.is_recurring) {
           badges.push(
             <Badge key="recurring" variant="secondary" className="bg-indigo-50 text-indigo-700 hover:bg-indigo-50">
-              {t('Recurring')}
+              {'Recurring'}
             </Badge>
           );
         }
@@ -369,7 +363,7 @@ export default function Holidays() {
         if (row.is_half_day) {
           badges.push(
             <Badge key="half-day" variant="secondary" className="bg-orange-50 text-orange-700 hover:bg-orange-50">
-              {t('Half Day')}
+              {'Half Day'}
             </Badge>
           );
         }
@@ -377,13 +371,13 @@ export default function Holidays() {
         if (row.is_paid) {
           badges.push(
             <Badge key="paid" variant="secondary" className="bg-green-50 text-green-700 hover:bg-green-50">
-              {t('Paid')}
+              {'Paid'}
             </Badge>
           );
         } else {
           badges.push(
             <Badge key="unpaid" variant="secondary" className="bg-red-50 text-red-700 hover:bg-red-50">
-              {t('Unpaid')}
+              {'Unpaid'}
             </Badge>
           );
         }
@@ -400,21 +394,21 @@ export default function Holidays() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-holidays'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-holidays'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -424,7 +418,7 @@ export default function Holidays() {
 
   // Prepare category options for filter
   const categoryOptions = [
-    { value: '', label: t('All Categories') },
+    { value: '', label: 'All Categories' },
     ...(categories || []).map((category: string) => ({
       value: category,
       label: category.charAt(0).toUpperCase() + category.slice(1)
@@ -433,7 +427,7 @@ export default function Holidays() {
 
   // Prepare branch options for filter
   const branchOptions = [
-    { value: '', label: t('All Branches') },
+    { value: '', label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -450,15 +444,15 @@ export default function Holidays() {
 
   // Prepare category options for form
   const categoryFormOptions = [
-    { value: 'national', label: t('National') },
-    { value: 'religious', label: t('Religious') },
-    { value: 'company-specific', label: t('Company Specific') },
-    { value: 'regional', label: t('Regional') }
+    { value: 'national', label: 'National' },
+    { value: 'religious', label: 'Religious' },
+    { value: 'company-specific', label: 'Company Specific' },
+    { value: 'regional', label: 'Regional' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Holidays")} 
+      title={"Holidays"} 
       url="/hr/holidays"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -473,7 +467,7 @@ export default function Holidays() {
           filters={[
             {
               name: 'category',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: selectedCategory,
               onChange: setSelectedCategory,
@@ -481,7 +475,7 @@ export default function Holidays() {
             },
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -489,7 +483,7 @@ export default function Holidays() {
             },
             {
               name: 'year',
-              label: t('Year'),
+              label: 'Year',
               type: 'select',
               value: selectedYear,
               onChange: setSelectedYear,
@@ -497,14 +491,14 @@ export default function Holidays() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -558,7 +552,7 @@ export default function Holidays() {
           to={holidays?.to || 0}
           total={holidays?.total || 0}
           links={holidays?.links}
-          entityName={t("holidays")}
+          entityName={"holidays"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -572,48 +566,48 @@ export default function Holidays() {
           fields: [
             { 
               name: 'name', 
-              label: t('Holiday Name'), 
+              label: 'Holiday Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'category', 
-              label: t('Category'), 
+              label: 'Category', 
               type: 'select',
               required: true,
               options: categoryFormOptions
             },
             { 
               name: 'start_date', 
-              label: t('Start Date'), 
+              label: 'Start Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date',
-              helpText: t('Leave empty for single-day holiday')
+              helpText: 'Leave empty for single-day holiday'
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'is_paid', 
-              label: t('Paid Holiday'), 
+              label: 'Paid Holiday', 
               type: 'checkbox',
               defaultValue: true
             },
             { 
               name: 'is_half_day', 
-              label: t('Half Day'), 
+              label: 'Half Day', 
               type: 'checkbox'
             },
             { 
               name: 'branch_ids', 
-              label: t('Applicable Branches'), 
+              label: 'Applicable Branches', 
               type: 'multi-select',
               required: true,
               options: branchOptions.filter(opt => opt.value !== '')
@@ -629,10 +623,10 @@ export default function Holidays() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Holiday')
+            ? 'Add New Holiday'
             : formMode === 'edit'
-              ? t('Edit Holiday')
-              : t('View Holiday')
+              ? 'Edit Holiday'
+              : 'View Holiday'
         }
         mode={formMode}
       />

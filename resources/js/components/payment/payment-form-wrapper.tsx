@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { Loader2 } from 'lucide-react';
 import { StripePaymentForm } from './stripe-payment-form';
 import { RazorpayPaymentForm } from './razorpay-payment-form';
@@ -33,7 +33,7 @@ export function PaymentFormWrapper({
   onSuccess,
   onCancel
 }: PaymentFormWrapperProps) {
-  const { t } = useTranslation();
+  
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [selectedMethod, setSelectedMethod] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -184,7 +184,7 @@ export function PaymentFormWrapper({
       <Card>
         <CardContent className="flex items-center justify-center p-6">
           <Loader2 className="h-6 w-6 animate-spin mr-2" />
-          {t('Loading payment methods...')}
+          {'Loading payment methods...'}
         </CardContent>
       </Card>
     );
@@ -194,9 +194,9 @@ export function PaymentFormWrapper({
     return (
       <Card>
         <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">{t('No payment methods available')}</p>
+          <p className="text-muted-foreground">{'No payment methods available'}</p>
           <Button variant="outline" onClick={onCancel} className="mt-4">
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
         </CardContent>
       </Card>
@@ -206,9 +206,9 @@ export function PaymentFormWrapper({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{t('Choose Payment Method')}</CardTitle>
+        <CardTitle>{'Choose Payment Method'}</CardTitle>
         <CardDescription>
-          {t('Select your preferred payment method to complete the subscription')}
+          {'Select your preferred payment method to complete the subscription'}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -6,41 +6,41 @@ import { useEffect, useRef, useState } from 'react';
 import { BarChart3, DollarSign, Users, Gift, Settings as SettingsIcon, Copy, Check } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Toaster } from '@/components/ui/toaster';
-import { useTranslation } from 'react-i18next';
+
 import { usePage } from '@inertiajs/react';
 import ReferralDashboard from './components/referral-dashboard';
 import PayoutRequests from './components/payout-requests';
 import ReferralSettings from './components/referral-settings';
 
 export default function Referral() {
-  const { t } = useTranslation();
+  
   const { props } = usePage();
   const { userType, settings, stats, payoutRequests, referralLink, currencySymbol, globalSettings } = props as any;
   const [activeSection, setActiveSection] = useState('dashboard');
   
    const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Referral Program') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Referral Program' }
   ]
   const sidebarNavItems: NavItem[] = [
     {
-      title: t('Dashboard'),
+      title: 'Dashboard',
       href: '#dashboard',
       icon: <BarChart3 className="h-4 w-4 mr-2" />,
     },
     {
-      title: t('Referred Users'),
+      title: 'Referred Users',
       href: route('referral.referred-users'),
       icon: <Users className="h-4 w-4 mr-2" />,
       external: true,
     },
     {
-      title: t('Payout Requests'),
+      title: 'Payout Requests',
       href: '#payout-requests',
       icon: <DollarSign className="h-4 w-4 mr-2" />,
     },
     ...(userType === 'superadmin' ? [{
-      title: t('Settings'),
+      title: 'Settings',
       href: '#settings',
       icon: <SettingsIcon className="h-4 w-4 mr-2" />,
     }] : [])
@@ -95,7 +95,7 @@ export default function Referral() {
   return (
     <PageTemplate 
     breadcrumbs={breadcrumbs}
-      title={t('Referral Program')} 
+      title={'Referral Program'} 
       url="/referral"
     >
       <div className="flex flex-col md:flex-row gap-8">
@@ -137,7 +137,7 @@ export default function Referral() {
 
         <div className="flex-1">
           <section id="dashboard" ref={dashboardRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">{t('Dashboard')}</h2>
+            <h2 className="text-xl font-semibold mb-4">{'Dashboard'}</h2>
             <ReferralDashboard 
               userType={userType}
               stats={stats}
@@ -148,7 +148,7 @@ export default function Referral() {
           </section>
 
           <section id="payout-requests" ref={payoutRequestsRef} className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">{t('Payout Requests')}</h2>
+            <h2 className="text-xl font-semibold mb-4">{'Payout Requests'}</h2>
             <PayoutRequests 
               userType={userType}
               payoutRequests={payoutRequests}
@@ -160,7 +160,7 @@ export default function Referral() {
 
           {userType === 'superadmin' && (
             <section id="settings" ref={settingsRef} className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">{t('Settings')}</h2>
+              <h2 className="text-xl font-semibold mb-4">{'Settings'}</h2>
               <ReferralSettings settings={settings} currencySymbol={currencySymbol} globalSettings={globalSettings} />
             </section>
           )}

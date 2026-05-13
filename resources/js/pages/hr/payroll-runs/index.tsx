@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function PayrollRuns() {
-  const { t } = useTranslation();
+  
   const { auth, payrollRuns, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -100,17 +100,15 @@ export default function PayrollRuns() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating payroll run...'));
+      toast.loading('Creating payroll run...');
 
       router.post(route('hr.payroll-runs.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -122,17 +120,15 @@ export default function PayrollRuns() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating payroll run...'));
+      toast.loading('Updating payroll run...');
 
       router.put(route('hr.payroll-runs.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -147,17 +143,15 @@ export default function PayrollRuns() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting payroll run...'));
+    toast.loading('Deleting payroll run...');
 
     router.delete(route('hr.payroll-runs.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -171,16 +165,14 @@ export default function PayrollRuns() {
   };
 
   const handleProcessPayroll = (payrollRun: any) => {
-    toast.loading(t('Processing payroll...'));
+    toast.loading('Processing payroll...');
 
     router.put(route('hr.payroll-runs.process', payrollRun.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -194,7 +186,7 @@ export default function PayrollRuns() {
   };
 
   const handleGeneratePayslips = (payrollRun: any) => {
-    toast.loading(t('Generating payslips...'));
+    toast.loading('Generating payslips...');
 
     router.post(route('hr.payslips.bulk-generate'), {
       payroll_run_id: payrollRun.id
@@ -202,14 +194,12 @@ export default function PayrollRuns() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-          // Redirect to payslips page to see generated payslips
+          toast.success(page.props.flash.success);          // Redirect to payslips page to see generated payslips
           setTimeout(() => {
             router.get(route('hr.payslips.index'));
           }, 1000);
         } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -241,7 +231,7 @@ export default function PayrollRuns() {
   // Add the "Add New Payroll Run" button if user has permission
   if (hasPermission(permissions, 'create-payroll-runs')) {
     pageActions.push({
-      label: t('Add Payroll Run'),
+      label: 'Add Payroll Run',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -249,30 +239,30 @@ export default function PayrollRuns() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Payroll Management'), href: route('hr.payroll-runs.index') },
-    { title: t('Payroll Runs') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Payroll Management', href: route('hr.payroll-runs.index') },
+    { title: 'Payroll Runs' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'title',
-      label: t('Title'),
+      label: 'Title',
       sortable: true
     },
     {
       key: 'payroll_frequency',
-      label: t('Frequency'),
+      label: 'Frequency',
       render: (value: string) => (
         <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-          {value === 'weekly' ? t('Weekly') : value === 'biweekly' ? t('Bi-Weekly') : t('Monthly')}
+          {value === 'weekly' ? 'Weekly' : value === 'biweekly' ? 'Bi-Weekly' : 'Monthly'}
         </span>
       )
     },
     {
       key: 'pay_period',
-      label: t('Pay Period'),
+      label: 'Pay Period',
       render: (value: any, row: any) => (
         <div className="text-sm">
           <div>{window.appSettings?.formatDateTimeSimple(row.pay_period_start, false) || new Date(row.pay_period_start).toLocaleDateString()}</div>
@@ -282,34 +272,34 @@ export default function PayrollRuns() {
     },
     {
       key: 'pay_date',
-      label: t('Pay Date'),
+      label: 'Pay Date',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'employee_count',
-      label: t('Employees'),
+      label: 'Employees',
       render: (value: number) => (
         <span className="font-mono">{value}</span>
       )
     },
     {
       key: 'total_gross_pay',
-      label: t('Gross Pay'),
+      label: 'Gross Pay',
       render: (value: number) => (
         <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value)}</span>
       )
     },
     {
       key: 'total_net_pay',
-      label: t('Net Pay'),
+      label: 'Net Pay',
       render: (value: number) => (
         <span className="font-mono text-blue-600">{window.appSettings?.formatCurrency(value)}</span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         const statusColors = {
           draft: 'bg-gray-50 text-gray-700 ring-gray-600/20',
@@ -319,7 +309,7 @@ export default function PayrollRuns() {
         };
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusColors[value as keyof typeof statusColors]}`}>
-            {t(value)}
+            {value}
           </span>
         );
       }
@@ -329,14 +319,14 @@ export default function PayrollRuns() {
   // Define table actions
   const actions = [
     {
-      label: t('View Details'),
+      label: 'View Details',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-payroll-runs'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -344,7 +334,7 @@ export default function PayrollRuns() {
       condition: (item: any) => item.status === 'draft'
     },
     {
-      label: t('Process'),
+      label: 'Process',
       icon: 'Play',
       action: 'process',
       className: 'text-green-500',
@@ -352,7 +342,7 @@ export default function PayrollRuns() {
       condition: (item: any) => item.status === 'draft'
     },
     {
-      label: t('Generate Payslips'),
+      label: 'Generate Payslips',
       icon: 'FileText',
       action: 'generate-payslips',
       className: 'text-purple-500',
@@ -360,7 +350,7 @@ export default function PayrollRuns() {
       condition: (item: any) => item.status === 'completed'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -371,16 +361,16 @@ export default function PayrollRuns() {
 
   // Prepare options for filters
   const statusOptions = [
-    { value: 'all', label: t('All Statuses'), disabled: true },
-    { value: 'draft', label: t('Draft') },
-    { value: 'processing', label: t('Processing') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'cancelled', label: t('Cancelled') }
+    { value: 'all', label: 'All Statuses', disabled: true },
+    { value: 'draft', label: 'Draft' },
+    { value: 'processing', label: 'Processing' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   return (
     <PageTemplate
-      title={t("Payroll Runs")}
+      title={"Payroll Runs"}
       url="/hr/payroll-runs"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -395,7 +385,7 @@ export default function PayrollRuns() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -403,14 +393,14 @@ export default function PayrollRuns() {
             },
             {
               name: 'date_from',
-              label: t('Period From'),
+              label: 'Period From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Period To'),
+              label: 'Period To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -462,7 +452,7 @@ export default function PayrollRuns() {
           to={payrollRuns?.to || 0}
           total={payrollRuns?.total || 0}
           links={payrollRuns?.links}
-          entityName={t("payroll runs")}
+          entityName={"payroll runs"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -474,32 +464,32 @@ export default function PayrollRuns() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'title', label: t('Title'), type: 'text', required: true },
+            { name: 'title', label: 'Title', type: 'text', required: true },
             {
               name: 'payroll_frequency',
-              label: t('Payroll Frequency'),
+              label: 'Payroll Frequency',
               type: 'select',
               required: true,
               options: [
-                { value: 'weekly', label: t('Weekly') },
-                { value: 'biweekly', label: t('Bi-Weekly') },
-                { value: 'monthly', label: t('Monthly') }
+                { value: 'weekly', label: 'Weekly' },
+                { value: 'biweekly', label: 'Bi-Weekly' },
+                { value: 'monthly', label: 'Monthly' }
               ]
             },
-            { name: 'pay_period_start', label: t('Pay Period Start'), type: 'date', required: true },
-            { name: 'pay_period_end', label: t('Pay Period End'), type: 'date', required: true },
-            { name: 'pay_date', label: t('Pay Date'), type: 'date', required: true },
-            { name: 'notes', label: t('Notes'), type: 'textarea' }
+            { name: 'pay_period_start', label: 'Pay Period Start', type: 'date', required: true },
+            { name: 'pay_period_end', label: 'Pay Period End', type: 'date', required: true },
+            { name: 'pay_date', label: 'Pay Date', type: 'date', required: true },
+            { name: 'notes', label: 'Notes', type: 'textarea' }
           ],
           modalSize: 'lg'
         }}
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Payroll Run')
+            ? 'Add New Payroll Run'
             : formMode === 'edit'
-              ? t('Edit Payroll Run')
-              : t('View Payroll Run')
+              ? 'Edit Payroll Run'
+              : 'View Payroll Run'
         }
         mode={formMode}
       />

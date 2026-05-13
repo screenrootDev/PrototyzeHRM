@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Promotions() {
-  const { t } = useTranslation();
+  
   const { auth, promotions, employees, designations, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -119,96 +119,80 @@ export default function Promotions() {
     const data = formData;
 
     if (formMode === 'create') {
-      toast.loading(t('Creating promotion...'));
+      toast.loading('Creating promotion...');
 
       router.post(route('hr.promotions.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create promotion: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create promotion: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating promotion...'));
+      toast.loading('Updating promotion...');
 
       router.put(route('hr.promotions.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update promotion: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update promotion: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
 
   const handleStatusUpdate = (status: string) => {
-    toast.loading(t('Updating promotion status...'));
+    toast.loading('Updating promotion status...');
 
     router.put(route('hr.promotions.update-status', currentItem.id), { status }, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update promotion status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update promotion status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting promotion...'));
+    toast.loading('Deleting promotion...');
 
     router.delete(route('hr.promotions.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete promotion: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete promotion: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -234,7 +218,7 @@ export default function Promotions() {
   // Add the "Add New Promotion" button if user has permission
   if (hasPermission(permissions, 'create-promotions')) {
     pageActions.push({
-      label: t('Add Promotion'),
+      label: 'Add Promotion',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -242,16 +226,16 @@ export default function Promotions() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.promotions.index') },
-    { title: t('Promotions') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.promotions.index') },
+    { title: 'Promotions' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee.name',
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -261,34 +245,34 @@ export default function Promotions() {
     },
     {
       key: 'previous_designation',
-      label: t('Previous Designation'),
+      label: 'Previous Designation',
       render: (value) => value || '-'
     },
     {
       key: 'designation.name',
-      label: t('New Designation'),
+      label: 'New Designation',
       render: (_, row) => row.designation?.name || '-'
     },
     {
       key: 'promotion_date',
-      label: t('Promotion Date'),
+      label: 'Promotion Date',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'effective_date',
-      label: t('Effective Date'),
+      label: 'Effective Date',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'salary_adjustment',
-      label: t('Salary Adjustment'),
+      label: 'Salary Adjustment',
       render: (value) => value ? window.appSettings.formatCurrency(value) : '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         let badgeClass = '';
         switch (value) {
@@ -314,7 +298,7 @@ export default function Promotions() {
     },
     {
       key: 'document',
-      label: t('Document'),
+      label: 'Document',
       render: (value, row) => (
         <div>
           {value && value.trim() !== '' && (
@@ -322,7 +306,7 @@ export default function Promotions() {
               className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 cursor-pointer"
               onClick={() => handleAction('download-document', row)}
             >
-              {t('Document')}
+              {'Document'}
             </span>
           )}
         </div>
@@ -333,28 +317,28 @@ export default function Promotions() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-promotions'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-promotions'
     },
     {
-      label: t('Update Status'),
+      label: 'Update Status',
       icon: 'RefreshCw',
       action: 'update-status',
       className: 'text-green-500',
       requiredPermission: 'edit-promotions'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -364,7 +348,7 @@ export default function Promotions() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees') },
+    { value: '', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -373,7 +357,7 @@ export default function Promotions() {
 
   // Prepare designation options for filter
   const designationOptions = [
-    { value: '', label: t('All Designations') },
+    { value: '', label: 'All Designations' },
     ...(designations || []).map((des: any) => ({
       value: des.id.toString(),
       label: `${des.name} - ${des.department?.name || ''} (${des.department?.branch?.name || ''})`
@@ -382,15 +366,15 @@ export default function Promotions() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
   ];
 
   return (
     <PageTemplate
-      title={t("Promotions")}
+      title={"Promotions"}
       url="/hr/promotions"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -405,7 +389,7 @@ export default function Promotions() {
           filters={[
             ...(hasPermission(permissions, 'manage-any-promotions') ? [{
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -414,7 +398,7 @@ export default function Promotions() {
             }] : []),
             {
               name: 'designation_id',
-              label: t('Designation'),
+              label: 'Designation',
               type: 'select',
               value: selectedDesignation,
               onChange: setSelectedDesignation,
@@ -423,7 +407,7 @@ export default function Promotions() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -431,14 +415,14 @@ export default function Promotions() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -492,7 +476,7 @@ export default function Promotions() {
           to={promotions?.to || 0}
           total={promotions?.total || 0}
           links={promotions?.links}
-          entityName={t("promotions")}
+          entityName={"promotions"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -506,7 +490,7 @@ export default function Promotions() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -514,13 +498,13 @@ export default function Promotions() {
             },
             {
               name: 'previous_designation',
-              label: t('Previous Designation'),
+              label: 'Previous Designation',
               type: 'text',
               required: true
             },
             {
               name: 'designation_id',
-              label: t('New Designation'),
+              label: 'New Designation',
               type: 'select',
               required: true,
               searchable: true,
@@ -531,48 +515,48 @@ export default function Promotions() {
             },
             {
               name: 'promotion_date',
-              label: t('Promotion Date'),
+              label: 'Promotion Date',
               type: 'date',
               required: true
             },
             {
               name: 'effective_date',
-              label: t('Effective Date'),
+              label: 'Effective Date',
               type: 'date',
               required: true
             },
             {
               name: 'salary_adjustment',
-              label: t('Salary Adjustment'),
+              label: 'Salary Adjustment',
               type: 'number',
               min: 0,
               step: 0.01
             },
             {
               name: 'reason',
-              label: t('Reason for Promotion'),
+              label: 'Reason for Promotion',
               type: 'textarea'
             },
             {
               name: 'document',
-              label: t('Document'),
+              label: 'Document',
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'pending', label: t('Pending') },
-                { value: 'approved', label: t('Approved') },
-                { value: 'rejected', label: t('Rejected') }
+                { value: 'pending', label: 'Pending' },
+                { value: 'approved', label: 'Approved' },
+                { value: 'rejected', label: 'Rejected' }
               ],
               defaultValue: 'pending'
             }
@@ -582,10 +566,10 @@ export default function Promotions() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Promotion')
+            ? 'Add New Promotion'
             : formMode === 'edit'
-              ? t('Edit Promotion')
-              : t('View Promotion')
+              ? 'Edit Promotion'
+              : 'View Promotion'
         }
         mode={formMode}
       />
@@ -608,13 +592,13 @@ export default function Promotions() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'pending', label: t('Pending') },
-                { value: 'approved', label: t('Approved') },
-                { value: 'rejected', label: t('Rejected') }
+                { value: 'pending', label: 'Pending' },
+                { value: 'approved', label: 'Approved' },
+                { value: 'rejected', label: 'Rejected' }
               ],
               defaultValue: currentItem?.status || 'pending'
             }
@@ -622,7 +606,7 @@ export default function Promotions() {
           modalSize: 'sm'
         }}
         initialData={currentItem ? { status: currentItem.status } : { status: 'pending' }}
-        title={t('Update Promotion Status')}
+        title={'Update Promotion Status'}
         mode="edit"
       />
     </PageTemplate>

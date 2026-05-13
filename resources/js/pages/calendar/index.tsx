@@ -4,7 +4,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { useTranslation } from 'react-i18next';
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 
@@ -25,13 +25,13 @@ interface CalendarProps {
 }
 
 export default function CalendarIndex({ events, canManage }: CalendarProps) {
-  const { t } = useTranslation();
+  
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Calendar') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Calendar' }
   ];
 
   const pageActions = [];
@@ -46,7 +46,7 @@ export default function CalendarIndex({ events, canManage }: CalendarProps) {
 
   return (
     <PageTemplate
-      title={t('Calendar')}
+      title={'Calendar'}
       url="/calendar"
       breadcrumbs={breadcrumbs}
       actions={pageActions}
@@ -56,15 +56,15 @@ export default function CalendarIndex({ events, canManage }: CalendarProps) {
           <div className="flex gap-2">
             <div className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 bg-blue-500 rounded"></div>
-              <span>{t('Meetings')}</span>
+              <span>{'Meetings'}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 bg-green-500 rounded"></div>
-              <span>{t('Holidays')}</span>
+              <span>{'Holidays'}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-              <span>{t('Leaves')}</span>
+              <span>{'Leaves'}</span>
             </div>
           </div>
         </div>
@@ -106,29 +106,29 @@ export default function CalendarIndex({ events, canManage }: CalendarProps) {
                 ${selectedEvent?.type === 'holiday' ? 'bg-green-50 text-green-700' : ''}
                 ${selectedEvent?.type === 'leave' ? 'bg-yellow-50 text-yellow-700' : ''}
               `}>
-                {selectedEvent?.type === 'meeting' && t('Meeting')}
-                {selectedEvent?.type === 'holiday' && t('Holiday')}
-                {selectedEvent?.type === 'leave' && t('Leave')}
+                {selectedEvent?.type === 'meeting' && 'Meeting'}
+                {selectedEvent?.type === 'holiday' && 'Holiday'}
+                {selectedEvent?.type === 'leave' && 'Leave'}
               </Badge>
               {selectedEvent?.status && (
                 <Badge variant="secondary">{selectedEvent.status}</Badge>
               )}
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">{t('Start Date')}</p>
+              <p className="text-sm text-muted-foreground">{'Start Date'}</p>
               <p className="font-medium">
                 {selectedEvent?.start ? new Date(selectedEvent.start).toLocaleString() : ''}
               </p>
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">{t('End Date')}</p>
+              <p className="text-sm text-muted-foreground">{'End Date'}</p>
               <p className="font-medium">
                 {selectedEvent?.end ? new Date(selectedEvent.end).toLocaleString() : ''}
               </p>
             </div>
             {selectedEvent?.allDay && (
               <div>
-                <Badge variant="outline">{t('All Day Event')}</Badge>
+                <Badge variant="outline">{'All Day Event'}</Badge>
               </div>
             )}
           </div>

@@ -4,7 +4,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { IndeterminateCheckbox } from '@/components/ui/indeterminate-checkbox';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
+
 
 interface Permission {
   id: string | number;
@@ -23,7 +23,7 @@ export function RolePermissionCheckboxGroup({
   selectedPermissions,
   onChange
 }: RolePermissionCheckboxGroupProps) {
-  const { t } = useTranslation();
+  
   const [selected, setSelected] = useState<string[]>([]);
   
   // Use permissions directly as they are already filtered by backend
@@ -165,11 +165,11 @@ export function RolePermissionCheckboxGroup({
               onCheckedChange={(checked) => handleSelectAll(checked === true)}
             />
             <Label htmlFor="select-all-permissions-checkbox" className="font-medium">
-              {t("Select All Permissions")}
+              {"Select All Permissions"}
             </Label>
           </div>
           <div className="text-xs text-gray-500">
-            {selected.length} {t("of")} {getAllPermissionIds().length} {t("selected")}
+            {selected.length} {"of"} {getAllPermissionIds().length} {"selected"}
           </div>
         </div>
       </div>
@@ -192,7 +192,7 @@ export function RolePermissionCheckboxGroup({
                 </Label>
               </div>
               <div className="text-xs text-gray-500">
-                {modulePermissions.filter(p => selected.includes(p.id.toString())).length} of {modulePermissions.length} {t("selected")}
+                {modulePermissions.filter(p => selected.includes(p.id.toString())).length} of {modulePermissions.length} {"selected"}
               </div>
             </div>
             

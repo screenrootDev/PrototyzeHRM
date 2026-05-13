@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, Download, Eye, AlertTriangle, Clock, CheckCircle } from 'lucide-react';
@@ -14,7 +14,7 @@ import MediaPicker from '@/components/MediaPicker';
 import { format } from 'date-fns';
 
 export default function HrDocuments() {
-  const { t } = useTranslation();
+  
   const { auth, hrDocuments, categories, filters: pageFilters = {}, errors, flash } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -98,72 +98,60 @@ export default function HrDocuments() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Uploading document...'));
+      toast.loading('Uploading document...');
 
       router.post(route('hr.documents.hr-documents.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to upload document: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to upload document: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating document...'));
+      toast.loading('Updating document...');
 
       router.put(route('hr.documents.hr-documents.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update document: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update document: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting document...'));
+    toast.loading('Deleting document...');
 
     router.delete(route('hr.documents.hr-documents.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete document: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete document: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -181,25 +169,21 @@ export default function HrDocuments() {
   };
   
   const handleStatusUpdate = (formData: any) => {
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
 
     router.put(route('hr.documents.hr-documents.update-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -208,7 +192,7 @@ export default function HrDocuments() {
   
   if (hasPermission(permissions, 'create-hr-documents')) {
     pageActions.push({
-      label: t('Upload Document'),
+      label: 'Upload Document',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -216,9 +200,9 @@ export default function HrDocuments() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Document Management'), href: route('hr.documents.hr-documents.index') },
-    { title: t('HR Documents') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Document Management', href: route('hr.documents.hr-documents.index') },
+    { title: 'HR Documents' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -262,7 +246,7 @@ export default function HrDocuments() {
   const columns = [
     { 
       key: 'title', 
-      label: t('Document'), 
+      label: 'Document', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -288,28 +272,28 @@ export default function HrDocuments() {
     },
     { 
       key: 'category.name', 
-      label: t('Category'),
+      label: 'Category',
       render: (_, row) => row.category?.name || '-'
     },
     { 
       key: 'file_size', 
-      label: t('Size'),
+      label: 'Size',
       render: (value) => formatFileSize(value)
     },
 
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
           {getStatusIcon(value)}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'download_count', 
-      label: t('Downloads'),
+      label: 'Downloads',
       render: (value) => (
         <div className="flex items-center gap-1">
           <Download className="h-4 w-4 text-gray-500" />
@@ -319,7 +303,7 @@ export default function HrDocuments() {
     },
     { 
       key: 'expiry_date', 
-      label: t('Expires'),
+      label: 'Expires',
       sortable: true,
       render: (value) => {
         if (!value) return '-';
@@ -336,42 +320,42 @@ export default function HrDocuments() {
     },
     { 
       key: 'uploader.name', 
-      label: t('Uploaded By'),
+      label: 'Uploaded By',
       render: (_, row) => row.uploader?.name || '-'
     }
   ];
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-hr-documents'
     },
     { 
-      label: t('Download'), 
+      label: 'Download', 
       icon: 'Download', 
       action: 'download', 
       className: 'text-green-500',
       requiredPermission: 'view-hr-documents'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-hr-documents'
     },
     { 
-      label: t('Update Status'), 
+      label: 'Update Status', 
       icon: 'RefreshCw', 
       action: 'update-status', 
       className: 'text-purple-500',
       requiredPermission: 'edit-hr-documents'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -380,7 +364,7 @@ export default function HrDocuments() {
   ];
 
   const categoryOptions = [
-    { value: '_empty_', label: t('All Categories') , disabled: true },
+    { value: '_empty_', label: 'All Categories' , disabled: true },
     ...(categories || []).map((cat: any) => ({
       value: cat.id.toString(),
       label: cat.name
@@ -388,19 +372,19 @@ export default function HrDocuments() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true },
-    { value: 'Draft', label: t('Draft') },
-    { value: 'Under Review', label: t('Under Review') },
-    { value: 'Approved', label: t('Approved') },
-    { value: 'Published', label: t('Published') },
-    { value: 'Archived', label: t('Archived') },
-    { value: 'Expired', label: t('Expired') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true },
+    { value: 'Draft', label: 'Draft' },
+    { value: 'Under Review', label: 'Under Review' },
+    { value: 'Approved', label: 'Approved' },
+    { value: 'Published', label: 'Published' },
+    { value: 'Archived', label: 'Archived' },
+    { value: 'Expired', label: 'Expired' }
   ];
 
 
 
   const categorySelectOptions = [
-    { value: '_empty_', label: t('Select Category') },
+    { value: '_empty_', label: 'Select Category' },
     ...(categories || []).map((cat: any) => ({
       value: cat.id.toString(),
       label: cat.name
@@ -409,7 +393,7 @@ export default function HrDocuments() {
 
   return (
     <PageTemplate 
-      title={t("HR Documents")} 
+      title={"HR Documents"} 
       url="/hr/documents/hr-documents"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -423,7 +407,7 @@ export default function HrDocuments() {
           filters={[
             {
               name: 'category_id',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: categoryFilter,
               onChange: setCategoryFilter,
@@ -432,7 +416,7 @@ export default function HrDocuments() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -483,7 +467,7 @@ export default function HrDocuments() {
           to={hrDocuments?.to || 0}
           total={hrDocuments?.total || 0}
           links={hrDocuments?.links}
-          entityName={t("documents")}
+          entityName={"documents"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -497,19 +481,19 @@ export default function HrDocuments() {
           fields: [
             { 
               name: 'title', 
-              label: t('Document Title'), 
+              label: 'Document Title', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea',
               rows: 3
             },
             { 
               name: 'category_id', 
-              label: t('Category'), 
+              label: 'Category', 
               type: 'select', 
               required: true,
               options: categorySelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -517,7 +501,7 @@ export default function HrDocuments() {
             },
             { 
               name: 'file', 
-              label: t('File'), 
+              label: 'File', 
               type: 'custom',
               required: formMode === 'create',
               render: (field, formData, handleChange) => (
@@ -525,28 +509,28 @@ export default function HrDocuments() {
                   <MediaPicker
                     value={String(formData[field.name] || formData.file_path || '')}
                     onChange={(url) => handleChange(field.name, url)}
-                    placeholder={t('Select document file...')}
+                    placeholder={'Select document file...'}
                   />
                 </div>
               ),
-              helpText: t('Max file size: 10MB. Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT')
+              helpText: 'Max file size: 10MB. Supported formats: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX, TXT'
             },
 
             { 
               name: 'effective_date', 
-              label: t('Effective Date'), 
+              label: 'Effective Date', 
               type: 'date'
             },
             { 
               name: 'expiry_date', 
-              label: t('Expiry Date'), 
+              label: 'Expiry Date', 
               type: 'date'
             },
             { 
               name: 'requires_acknowledgment', 
-              label: t('Requires Acknowledgment'), 
+              label: 'Requires Acknowledgment', 
               type: 'checkbox',
-              helpText: t('Users must acknowledge reading this document')
+              helpText: 'Users must acknowledge reading this document'
             }
           ],
           modalSize: 'xl'
@@ -557,10 +541,10 @@ export default function HrDocuments() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Upload New Document')
+            ? 'Upload New Document'
             : formMode === 'edit'
-              ? t('Edit Document')
-              : t('View Document')
+              ? 'Edit Document'
+              : 'View Document'
         }
         mode={formMode}
       />
@@ -581,22 +565,22 @@ export default function HrDocuments() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Draft', label: t('Draft') },
-                { value: 'Under Review', label: t('Under Review') },
-                { value: 'Approved', label: t('Approved') },
-                { value: 'Published', label: t('Published') },
-                { value: 'Archived', label: t('Archived') },
-                { value: 'Expired', label: t('Expired') }
+                { value: 'Draft', label: 'Draft' },
+                { value: 'Under Review', label: 'Under Review' },
+                { value: 'Approved', label: 'Approved' },
+                { value: 'Published', label: 'Published' },
+                { value: 'Archived', label: 'Archived' },
+                { value: 'Expired', label: 'Expired' }
               ]
             }
           ]
         }}
         initialData={{ status: currentItem?.status }}
-        title={t('Update Document Status')}
+        title={'Update Document Status'}
         mode="edit"
         errors={errors}
       />

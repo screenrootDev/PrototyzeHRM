@@ -7,10 +7,10 @@ import { Save, CreditCard, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTranslation } from 'react-i18next';
+
 
 export default function StripeSettings() {
-  const { t } = useTranslation();
+  
   // Stripe Settings form state
   const [stripeSettings, setStripeSettings] = useState({
     enabled: false,
@@ -41,12 +41,12 @@ export default function StripeSettings() {
 
   return (
     <SettingsSection
-      title={t("Stripe Payment Settings")}
-      description={t("Configure Stripe payment gateway integration for online payments")}
+      title={"Stripe Payment Settings"}
+      description={"Configure Stripe payment gateway integration for online payments"}
       action={
         <Button type="submit" form="stripe-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
@@ -56,8 +56,8 @@ export default function StripeSettings() {
             <div className="flex items-start gap-3">
               <CreditCard className="h-5 w-5 text-primary mt-0.5" />
               <div>
-                <Label htmlFor="stripeEnabled" className="text-base font-medium">{t("Stripe Payment Gateway")}</Label>
-                <p className="text-sm text-muted-foreground mt-1">{t("Enable or disable Stripe payment processing")}</p>
+                <Label htmlFor="stripeEnabled" className="text-base font-medium">{"Stripe Payment Gateway"}</Label>
+                <p className="text-sm text-muted-foreground mt-1">{"Enable or disable Stripe payment processing"}</p>
               </div>
             </div>
             <Switch
@@ -71,22 +71,22 @@ export default function StripeSettings() {
             <Alert variant="info" className="mb-6">
               <AlertCircle className="h-4 w-4" />
               <AlertDescription>
-                {t("You need to set up a Stripe account and obtain API keys before enabling this integration.")}
+                {"You need to set up a Stripe account and obtain API keys before enabling this integration."}
                 <a 
                   href="https://dashboard.stripe.com/apikeys" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="ml-1 underline"
                 >
-                  {t("Get your API keys")}
+                  {"Get your API keys"}
                 </a>
               </AlertDescription>
             </Alert>
 
             <div className="flex items-center justify-between p-4 border rounded-md">
               <div>
-                <Label htmlFor="testMode" className="font-medium">{t("Test Mode")}</Label>
-                <p className="text-xs text-muted-foreground mt-1">{t("Use Stripe test environment for development")}</p>
+                <Label htmlFor="testMode" className="font-medium">{"Test Mode"}</Label>
+                <p className="text-xs text-muted-foreground mt-1">{"Use Stripe test environment for development"}</p>
               </div>
               <Switch
                 id="testMode"
@@ -108,7 +108,7 @@ export default function StripeSettings() {
                         <AlertCircle className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("Starts with")} {stripeSettings.testMode ? 'pk_test_' : 'pk_live_'}</p>
+                        <p>{"Starts with"} {stripeSettings.testMode ? 'pk_test_' : 'pk_live_'}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -134,7 +134,7 @@ export default function StripeSettings() {
                         <AlertCircle className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("Starts with")} {stripeSettings.testMode ? 'sk_test_' : 'sk_live_'}</p>
+                        <p>{"Starts with"} {stripeSettings.testMode ? 'sk_test_' : 'sk_live_'}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -164,14 +164,14 @@ export default function StripeSettings() {
 
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
-                  <Label htmlFor="webhookSecret" className="font-medium">{t("Webhook Signing Secret")}</Label>
+                  <Label htmlFor="webhookSecret" className="font-medium">{"Webhook Signing Secret"}</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <AlertCircle className="h-4 w-4 text-muted-foreground" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{t("Starts with whsec_")}</p>
+                        <p>{"Starts with whsec_"}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -182,7 +182,7 @@ export default function StripeSettings() {
                     type={showWebhookSecret ? 'text' : 'password'}
                     value={stripeSettings.webhookSecret}
                     onChange={(e) => handleStripeSettingsChange('webhookSecret', e.target.value)}
-                    placeholder={t("whsec_...")}
+                    placeholder={"whsec_..."}
                     className="font-mono text-sm pr-10"
                     disabled={!stripeSettings.enabled}
                   />
@@ -198,21 +198,21 @@ export default function StripeSettings() {
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t("Used to verify webhook events sent by Stripe")}
+                  {"Used to verify webhook events sent by Stripe"}
                 </p>
               </div>
             </div>
 
             <div className="bg-muted/30 p-4 rounded-md border">
-              <h4 className="text-sm font-medium mb-2">{t("Webhook Configuration")}</h4>
+              <h4 className="text-sm font-medium mb-2">{"Webhook Configuration"}</h4>
               <p className="text-sm text-muted-foreground mb-2">
-                {t("Set up a webhook in your Stripe dashboard to receive event notifications")}:
+                {"Set up a webhook in your Stripe dashboard to receive event notifications"}:
               </p>
               <div className="bg-muted p-2 rounded border text-xs font-mono mb-2 break-all">
                 {window.location.origin}/api/webhooks/stripe
               </div>
               <p className="text-xs text-muted-foreground">
-                {t("Required events: payment_intent.succeeded, payment_intent.payment_failed, checkout.session.completed")}
+                {"Required events: payment_intent.succeeded, payment_intent.payment_failed, checkout.session.completed"}
               </p>
             </div>
           </div>

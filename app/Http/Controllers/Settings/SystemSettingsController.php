@@ -15,7 +15,6 @@ class SystemSettingsController extends Controller
     {
         try {
             $rules = [
-                'defaultLanguage' => 'required|string',
                 'dateFormat' => 'required|string',
                 'timeFormat' => 'required|string',
                 'calendarStartDay' => 'required|string',
@@ -64,7 +63,6 @@ class SystemSettingsController extends Controller
                 'settings.customColor' => 'nullable|string|regex:/^#[0-9A-Fa-f]{6}$/',
                 'settings.sidebarVariant' => 'nullable|string|in:inset,floating,minimal',
                 'settings.sidebarStyle' => 'nullable|string|in:plain,colored,gradient',
-                'settings.layoutDirection' => 'nullable|string|in:left,right',
                 'settings.themeMode' => 'nullable|string|in:light,dark,system',
             ]);
 

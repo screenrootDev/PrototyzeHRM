@@ -7,14 +7,14 @@ import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, ClipboardList } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export default function EmployeeReviews() {
-  const { t } = useTranslation();
+  
   const { auth, reviews, employees, reviewCycles, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -113,25 +113,21 @@ export default function EmployeeReviews() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee review...'));
+    toast.loading('Deleting employee review...');
     
     router.delete(route('hr.performance.employee-reviews.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete review: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete review: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -147,24 +143,19 @@ export default function EmployeeReviews() {
       nextStatus = 'scheduled';
     }
     
-    toast.loading(t('Updating review status to {{status}}...', { status: t(nextStatus) }));
-    
+    toast.loading(`Updating review status to ${nextStatus}...`);    
     router.put(route('hr.performance.employee-reviews.update-status', review.id), { status: nextStatus }, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update review status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update review status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -191,7 +182,7 @@ export default function EmployeeReviews() {
   // Add the "Schedule Review" button if user has permission
   if (hasPermission(permissions, 'create-employee-reviews')) {
     pageActions.push({
-      label: t('Schedule Review'),
+      label: 'Schedule Review',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -199,17 +190,17 @@ export default function EmployeeReviews() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Employee Reviews') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Employee Reviews' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee.full_name', 
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: string, row: any) => {
         const firstName = row.employee?.name || '';
         const employeeId = row.employee?.employee?.employee_id || '';
@@ -218,7 +209,7 @@ export default function EmployeeReviews() {
     },
     { 
       key: 'reviewer.full_name', 
-      label: t('Reviewer'),
+      label: 'Reviewer',
       render: (value: string, row: any) => {
         const firstName = row.reviewer?.name || '';
         const employeeId = row.reviewer?.employee?.employee_id || '';
@@ -227,23 +218,23 @@ export default function EmployeeReviews() {
     },
     { 
       key: 'review_cycle.name', 
-      label: t('Review Cycle'),
+      label: 'Review Cycle',
       render: (value: string, row: any) => row.review_cycle?.name || '-'
     },
     { 
       key: 'review_date', 
-      label: t('Review Date'),
+      label: 'Review Date',
       sortable: true,
       render: (value: string) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     },
     { 
       key: 'overall_rating', 
-      label: t('Rating'),
+      label: 'Rating',
       render: (value: number) => value ? value.toFixed(1) : '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         let statusClass = '';
         let statusText = '';
@@ -251,15 +242,15 @@ export default function EmployeeReviews() {
         switch(value) {
           case 'scheduled':
             statusClass = 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20';
-            statusText = t('Scheduled');
+            statusText = 'Scheduled';
             break;
           case 'in_progress':
             statusClass = 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20';
-            statusText = t('In Progress');
+            statusText = 'In Progress';
             break;
           case 'completed':
             statusClass = 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20';
-            statusText = t('Completed');
+            statusText = 'Completed';
             break;
           default:
             statusClass = 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20';
@@ -278,14 +269,14 @@ export default function EmployeeReviews() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-employee-reviews'
     },
     { 
-      label: t('Conduct Review'), 
+      label: 'Conduct Review', 
       icon: 'ClipboardList', 
       action: 'conduct', 
       className: 'text-green-500',
@@ -293,14 +284,14 @@ export default function EmployeeReviews() {
       condition: (item: any) => item.status !== 'completed'
     },
     { 
-      label: t('Update Status'), 
+      label: 'Update Status', 
       icon: 'RefreshCw', 
       action: 'update-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-reviews'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -311,15 +302,15 @@ export default function EmployeeReviews() {
 
   // Prepare filter options
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'scheduled', label: t('Scheduled') },
-    { value: 'in_progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'scheduled', label: 'Scheduled' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' }
   ];
 
   // Prepare employee options
   const employeeOptions = [
-    { value: '', label: t('Select Employee'), disabled: true },
+    { value: '', label: 'Select Employee', disabled: true },
     ...(employees || []).map((employee: any) => ({
       value: employee.id.toString(),
       label: `${employee.name}  (${employee.employee_id})`
@@ -328,7 +319,7 @@ export default function EmployeeReviews() {
 
   // Prepare review cycle options
   const reviewCycleOptions = [
-    { value: '', label: t('Select Review Cycle'), disabled: true },
+    { value: '', label: 'Select Review Cycle', disabled: true },
     ...(reviewCycles || []).map((cycle: any) => ({
       value: cycle.id.toString(),
       label: cycle.name
@@ -337,7 +328,7 @@ export default function EmployeeReviews() {
 
   return (
     <PageTemplate 
-      title={t("Employee Reviews")} 
+      title={"Employee Reviews"} 
       url="/hr/performance/employee-reviews"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -352,7 +343,7 @@ export default function EmployeeReviews() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -361,7 +352,7 @@ export default function EmployeeReviews() {
             },
             {
               name: 'reviewer_id',
-              label: t('Reviewer'),
+              label: 'Reviewer',
               type: 'select',
               value: selectedReviewer,
               onChange: setSelectedReviewer,
@@ -370,7 +361,7 @@ export default function EmployeeReviews() {
             },
             {
               name: 'review_cycle_id',
-              label: t('Review Cycle'),
+              label: 'Review Cycle',
               type: 'select',
               value: selectedReviewCycle,
               onChange: setSelectedReviewCycle,
@@ -379,7 +370,7 @@ export default function EmployeeReviews() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -387,14 +378,14 @@ export default function EmployeeReviews() {
             },
             {
               name: 'date_from',
-              label: t('From Date'),
+              label: 'From Date',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('To Date'),
+              label: 'To Date',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -449,7 +440,7 @@ export default function EmployeeReviews() {
           to={reviews?.to || 0}
           total={reviews?.total || 0}
           links={reviews?.links}
-          entityName={t("employee reviews")}
+          entityName={"employee reviews"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

@@ -13,7 +13,7 @@ import { FormField } from '@/types/crud';
 import { MultiSelectField } from '@/components/multi-select-field';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
+
 import MediaPicker from '@/components/MediaPicker';
 import DependentDropdown from '@/components/DependentDropdown';
 
@@ -50,7 +50,7 @@ export function CrudFormModal({
   description,
   errors: backendErrors = {}
 }: CrudFormModalProps) {
-  const { t } = useTranslation();
+  
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [relationOptions, setRelationOptions] = useState<Record<string, any[]>>({});
@@ -251,7 +251,7 @@ export function CrudFormModal({
           {field.type === 'select' && field.options ?
             field.options.find(opt => opt.value === String(formData[field.name]))?.label || formData[field.name] || '-' :
             field.type === 'checkbox' ?
-              (formData[field.name] === true || formData[field.name] === 1 || formData[field.name] === '1' ? t('Yes') : t('No')) :
+              (formData[field.name] === true || formData[field.name] === 1 || formData[field.name] === '1' ? 'Yes' : 'No') :
               formData[field.name] || '-'}
         </div>
       );
@@ -469,10 +469,10 @@ export function CrudFormModal({
             {field.fileValidation && (
               <div className="text-xs text-gray-500 mt-1">
                 {field.fileValidation.extensions && (
-                  <span>{t("Allowed extensions")}: {field.fileValidation.extensions.join(', ')} </span>
+                  <span>{"Allowed extensions"}: {field.fileValidation.extensions.join(', ')} </span>
                 )}
                 {field.fileValidation.maxSize && (
-                  <span>{t("Max size")}: {(field.fileValidation.maxSize / (1024 * 1024)).toFixed(1)}MB</span>
+                  <span>{"Max size"}: {(field.fileValidation.maxSize / (1024 * 1024)).toFixed(1)}MB</span>
                 )}
               </div>
             )}
@@ -483,7 +483,7 @@ export function CrudFormModal({
                 {formData[field.name] && formData[field.name] instanceof File ? (
                   // Preview for newly selected file
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">{t("Preview")}:</p>
+                    <p className="text-xs text-gray-500 mb-1">{"Preview"}:</p>
                     <img
                       src={URL.createObjectURL(formData[field.name])}
                       alt="Preview"
@@ -493,7 +493,7 @@ export function CrudFormModal({
                 ) : mode === 'edit' && initialData[field.name] && (
                   // Show existing image in edit mode
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">{t("Current image")}:</p>
+                    <p className="text-xs text-gray-500 mb-1">{"Current image"}:</p>
                     <img
                       src={typeof initialData[field.name] === 'string' && initialData[field.name].startsWith && initialData[field.name].startsWith('http')
                         ? initialData[field.name]
@@ -598,16 +598,16 @@ export function CrudFormModal({
             {formConfig.priceSummary && (
               <div className="bg-gray-50 p-4 rounded-lg mb-4">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">{t("Unit Price")}:</span>
+                  <span className="text-sm text-gray-600">{"Unit Price"}:</span>
                   <span className="font-medium">${formConfig.priceSummary.unitPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">{t("Quantity")}:</span>
+                  <span className="text-sm text-gray-600">{"Quantity"}:</span>
                   <span className="font-medium">{formData[formConfig.priceSummary.quantityFieldName || 'quantity'] || formConfig.priceSummary.quantity || 1}</span>
                 </div>
                 <div className="border-t pt-2">
                   <div className="flex justify-between items-center">
-                    <span className="font-semibold">{t("Total Price")}:</span>
+                    <span className="font-semibold">{"Total Price"}:</span>
                     <span className="font-bold text-lg text-primary">
                       ${calculateTotal().toFixed(2)}
                     </span>
@@ -698,10 +698,10 @@ export function CrudFormModal({
         </ScrollArea>
         <DialogFooter className="sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>
-            {t("Cancel")}
+            {"Cancel"}
           </Button>
           {mode !== 'view' && (
-            <Button type="button" onClick={handleSubmit}>{t("Save")}</Button>
+            <Button type="button" onClick={handleSubmit}>{"Save"}</Button>
           )}
         </DialogFooter>
       </DialogContent>

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { Search, Eye } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
+
 
 interface EmailTemplate {
   id: number
@@ -44,7 +44,7 @@ interface Props {
 }
 
 export default function EmailTemplatesIndex({ templates, filters: pageFilters = {} }: Props) {
-  const { t } = useTranslation()
+  
   const [searchTerm, setSearchTerm] = useState(pageFilters.search || '')
 
   const handleAction = (action: string, item: EmailTemplate) => {
@@ -95,21 +95,21 @@ export default function EmailTemplatesIndex({ templates, filters: pageFilters = 
 
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Email Templates') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Email Templates' }
   ]
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true
     }
   ]
 
   return (
     <PageTemplate 
-      title={t('Email Templates')} 
+      title={'Email Templates'} 
       url={route('email-templates.index')}
       breadcrumbs={breadcrumbs}
       noPadding
@@ -166,7 +166,7 @@ export default function EmailTemplatesIndex({ templates, filters: pageFilters = 
                   </th>
                 ))}
                 <th className="px-4 py-3 text-right font-medium text-gray-500">
-                  {t("Actions")}
+                  {"Actions"}
                 </th>
               </tr>
             </thead>
@@ -188,7 +188,7 @@ export default function EmailTemplatesIndex({ templates, filters: pageFilters = 
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TooltipTrigger>
-                      <TooltipContent>{t('View')}</TooltipContent>
+                      <TooltipContent>{'View'}</TooltipContent>
                     </Tooltip>
                   </td>
                 </tr>
@@ -197,7 +197,7 @@ export default function EmailTemplatesIndex({ templates, filters: pageFilters = 
               {(!templates?.data || templates.data.length === 0) && (
                 <tr>
                   <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                    {t("No email templates found")}
+                    {"No email templates found"}
                   </td>
                 </tr>
               )}
@@ -211,7 +211,7 @@ export default function EmailTemplatesIndex({ templates, filters: pageFilters = 
           to={templates?.to || 0}
           total={templates?.total || 0}
           links={templates?.links}
-          entityName={t("templates")}
+          entityName={"templates"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

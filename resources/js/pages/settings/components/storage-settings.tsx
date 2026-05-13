@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useState, useMemo } from 'react';
 import { Save, HardDrive, Search } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
-import { useTranslation } from 'react-i18next';
+
 import { router } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 
@@ -38,7 +38,7 @@ interface StorageSettingsProps {
 }
 
 export default function StorageSettings({ settings = {} }: StorageSettingsProps) {
-  const { t } = useTranslation();
+  
   
   const fileExtensions = {
     '3dmf': '3dmf',
@@ -239,7 +239,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         }
       },
       onError: (errors) => {
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to update storage settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to update storage settings';
         toast.error(errorMessage);
       }
     });
@@ -247,13 +247,13 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
 
   const renderFileTypeSelector = () => (
     <div className="space-y-2">
-      <Label>{t("Allowed File Types")}</Label>
+      <Label>{"Allowed File Types"}</Label>
       <div className="space-y-3">
         <div className="flex gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
-              placeholder={t("Search file types...")}
+              placeholder={"Search file types..."}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
@@ -265,7 +265,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
             size="sm"
             onClick={handleSelectAll}
           >
-            {t("Select All")}
+            {"Select All"}
           </Button>
           <Button
             type="button"
@@ -273,7 +273,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
             size="sm"
             onClick={handleUnselectAll}
           >
-            {t("Unselect All")}
+            {"Unselect All"}
           </Button>
         </div>
         <div className="grid grid-cols-4 gap-2 p-4 border rounded-md max-h-48 overflow-y-auto">
@@ -297,7 +297,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
       {renderFileTypeSelector()}
       
       <div className="space-y-2">
-        <Label htmlFor="maxUploadSize">{t("Max Upload Size (KB)")}</Label>
+        <Label htmlFor="maxUploadSize">{"Max Upload Size (KB)"}</Label>
         <Input
           id="maxUploadSize"
           type="number"
@@ -313,7 +313,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="awsAccessKeyId">{t("AWS Access Key ID")}</Label>
+          <Label htmlFor="awsAccessKeyId">{"AWS Access Key ID"}</Label>
           <Input
             id="awsAccessKeyId"
             value={storageSettings.awsAccessKeyId}
@@ -323,7 +323,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="awsSecretAccessKey">{t("AWS Secret Access Key")}</Label>
+          <Label htmlFor="awsSecretAccessKey">{"AWS Secret Access Key"}</Label>
           <Input
             id="awsSecretAccessKey"
             type="password"
@@ -334,7 +334,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="awsDefaultRegion">{t("AWS Default Region")}</Label>
+          <Label htmlFor="awsDefaultRegion">{"AWS Default Region"}</Label>
           <Input
             id="awsDefaultRegion"
             value={storageSettings.awsDefaultRegion}
@@ -344,7 +344,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="awsBucket">{t("AWS Bucket")}</Label>
+          <Label htmlFor="awsBucket">{"AWS Bucket"}</Label>
           <Input
             id="awsBucket"
             value={storageSettings.awsBucket}
@@ -354,7 +354,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="awsUrl">{t("AWS URL")}</Label>
+          <Label htmlFor="awsUrl">{"AWS URL"}</Label>
           <Input
             id="awsUrl"
             value={storageSettings.awsUrl}
@@ -364,7 +364,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="awsEndpoint">{t("AWS Endpoint")}</Label>
+          <Label htmlFor="awsEndpoint">{"AWS Endpoint"}</Label>
           <Input
             id="awsEndpoint"
             value={storageSettings.awsEndpoint}
@@ -379,7 +379,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
           <div className="space-y-2">
-            <Label htmlFor="awsMaxUploadSize">{t("Max Upload Size (KB)")}</Label>
+            <Label htmlFor="awsMaxUploadSize">{"Max Upload Size (KB)"}</Label>
             <Input
               id="awsMaxUploadSize"
               type="number"
@@ -397,7 +397,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="wasabiAccessKey">{t("Wasabi Access Key")}</Label>
+          <Label htmlFor="wasabiAccessKey">{"Wasabi Access Key"}</Label>
           <Input
             id="wasabiAccessKey"
             value={storageSettings.wasabiAccessKey}
@@ -407,7 +407,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="wasabiSecretKey">{t("Wasabi Secret Key")}</Label>
+          <Label htmlFor="wasabiSecretKey">{"Wasabi Secret Key"}</Label>
           <Input
             id="wasabiSecretKey"
             type="password"
@@ -418,7 +418,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="wasabiRegion">{t("Wasabi Region")}</Label>
+          <Label htmlFor="wasabiRegion">{"Wasabi Region"}</Label>
           <Input
             id="wasabiRegion"
             value={storageSettings.wasabiRegion}
@@ -428,7 +428,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="wasabiBucket">{t("Wasabi Bucket")}</Label>
+          <Label htmlFor="wasabiBucket">{"Wasabi Bucket"}</Label>
           <Input
             id="wasabiBucket"
             value={storageSettings.wasabiBucket}
@@ -438,7 +438,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="wasabiUrl">{t("Wasabi URL")}</Label>
+          <Label htmlFor="wasabiUrl">{"Wasabi URL"}</Label>
           <Input
             id="wasabiUrl"
             value={storageSettings.wasabiUrl}
@@ -448,7 +448,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
         </div>
         
         <div className="space-y-2">
-          <Label htmlFor="wasabiRoot">{t("Wasabi Root")}</Label>
+          <Label htmlFor="wasabiRoot">{"Wasabi Root"}</Label>
           <Input
             id="wasabiRoot"
             value={storageSettings.wasabiRoot}
@@ -461,7 +461,7 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
       <div className="space-y-6">
         {renderFileTypeSelector()}
         <div className="space-y-2">
-          <Label htmlFor="wasabiMaxUploadSize">{t("Max Upload Size (KB)")}</Label>
+          <Label htmlFor="wasabiMaxUploadSize">{"Max Upload Size (KB)"}</Label>
           <Input
             id="wasabiMaxUploadSize"
             type="number"
@@ -476,12 +476,12 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
 
   return (
     <SettingsSection
-      title={t("Storage Settings")}
-      description={t("Configure file storage settings for your application")}
+      title={"Storage Settings"}
+      description={"Configure file storage settings for your application"}
       action={
         <Button type="submit" form="storage-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
@@ -494,30 +494,30 @@ export default function StorageSettings({ settings = {} }: StorageSettingsProps)
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="local" className="flex items-center gap-2">
               <HardDrive className="h-4 w-4" />
-              {t("Local Storage")}
+              {"Local Storage"}
             </TabsTrigger>
             <TabsTrigger value="aws_s3" className="flex items-center gap-2">
               <span>☁️</span>
-              {t("AWS S3")}
+              {"AWS S3"}
             </TabsTrigger>
             <TabsTrigger value="wasabi" className="flex items-center gap-2">
               <span>🗄️</span>
-              {t("Wasabi")}
+              {"Wasabi"}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="local" className="mt-6">
-            <h3 className="text-base font-medium mb-4">{t("Local Storage Settings")}</h3>
+            <h3 className="text-base font-medium mb-4">{"Local Storage Settings"}</h3>
             {renderLocalStorageFields()}
           </TabsContent>
           
           <TabsContent value="aws_s3" className="mt-6">
-            <h3 className="text-base font-medium mb-4">{t("AWS S3 Storage Settings")}</h3>
+            <h3 className="text-base font-medium mb-4">{"AWS S3 Storage Settings"}</h3>
             {renderAwsS3Fields()}
           </TabsContent>
           
           <TabsContent value="wasabi" className="mt-6">
-            <h3 className="text-base font-medium mb-4">{t("Wasabi Storage Settings")}</h3>
+            <h3 className="text-base font-medium mb-4">{"Wasabi Storage Settings"}</h3>
             {renderWasabiFields()}
           </TabsContent>
         </Tabs>

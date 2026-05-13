@@ -2,14 +2,14 @@
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 import { List, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Progress } from '@/components/ui/progress';
 
 export default function EmployeeTrainingDashboard() {
-  const { t } = useTranslation();
+  
   const { statistics, programStats, recentCompletions, upcomingTrainings } = usePage().props as any;
   
   const handleViewList = () => {
@@ -19,7 +19,7 @@ export default function EmployeeTrainingDashboard() {
   // Define page actions
   const pageActions = [
     {
-      label: t('List View'),
+      label: 'List View',
       icon: <List className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewList
@@ -27,16 +27,16 @@ export default function EmployeeTrainingDashboard() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.employee-trainings.index') },
-    { title: t('Training Management'), href: route('hr.employee-trainings.index') },
-    { title: t('Employee Trainings'), href: route('hr.employee-trainings.index') },
-    { title: t('Dashboard') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.employee-trainings.index') },
+    { title: 'Training Management', href: route('hr.employee-trainings.index') },
+    { title: 'Employee Trainings', href: route('hr.employee-trainings.index') },
+    { title: 'Dashboard' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Training Dashboard")} 
+      title={"Training Dashboard"} 
       url="/hr/training/employee-trainings/dashboard"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -45,7 +45,7 @@ export default function EmployeeTrainingDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Trainings')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Trainings'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold">{statistics.totalTrainings}</div>
@@ -54,19 +54,19 @@ export default function EmployeeTrainingDashboard() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Completed')}</CardTitle>
+            <CardTitle className="text-lg">{'Completed'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-green-600">{statistics.completedTrainings}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {statistics.completionRate}% {t('completion rate')}
+              {statistics.completionRate}% {'completion rate'}
             </div>
           </CardContent>
         </Card>
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('In Progress')}</CardTitle>
+            <CardTitle className="text-lg">{'In Progress'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-blue-600">{statistics.inProgressTrainings}</div>
@@ -75,7 +75,7 @@ export default function EmployeeTrainingDashboard() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Assigned')}</CardTitle>
+            <CardTitle className="text-lg">{'Assigned'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-amber-600">{statistics.assignedTrainings}</div>
@@ -84,7 +84,7 @@ export default function EmployeeTrainingDashboard() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Failed')}</CardTitle>
+            <CardTitle className="text-lg">{'Failed'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-3xl font-bold text-red-600">{statistics.failedTrainings}</div>
@@ -96,7 +96,7 @@ export default function EmployeeTrainingDashboard() {
         {/* Program Completion Rates */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Program Completion Rates')}</CardTitle>
+            <CardTitle>{'Program Completion Rates'}</CardTitle>
           </CardHeader>
           <CardContent>
             {programStats && programStats.length > 0 ? (
@@ -120,7 +120,7 @@ export default function EmployeeTrainingDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No program data available')}</div>
+              <div className="text-center py-4 text-gray-500">{'No program data available'}</div>
             )}
           </CardContent>
         </Card>
@@ -128,7 +128,7 @@ export default function EmployeeTrainingDashboard() {
         {/* Recent Completions */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Recent Completions')}</CardTitle>
+            <CardTitle>{'Recent Completions'}</CardTitle>
           </CardHeader>
           <CardContent>
             {recentCompletions && recentCompletions.length > 0 ? (
@@ -139,16 +139,16 @@ export default function EmployeeTrainingDashboard() {
                       <div className="font-medium">{training.employee?.name}</div>
                       <div className="text-sm text-gray-500">{training.training_program?.name}</div>
                       <div className="text-xs text-gray-500">
-                        {t('Completed')}: {window.appSettings?.formatDateTimeSimple(training.completion_date, false) || format(new Date(training.completion_date), 'MMM dd, yyyy')}
+                        {'Completed'}: {window.appSettings?.formatDateTimeSimple(training.completion_date, false) || format(new Date(training.completion_date), 'MMM dd, yyyy')}
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="font-medium">{training.score ? `${training.score}%` : '-'}</div>
                       <div className="text-xs text-gray-500">
                         {training.is_passed ? (
-                          <span className="text-green-600">{t('Passed')}</span>
+                          <span className="text-green-600">{'Passed'}</span>
                         ) : (
-                          <span className="text-red-600">{t('Failed')}</span>
+                          <span className="text-red-600">{'Failed'}</span>
                         )}
                       </div>
                     </div>
@@ -156,7 +156,7 @@ export default function EmployeeTrainingDashboard() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-gray-500">{t('No recent completions')}</div>
+              <div className="text-center py-4 text-gray-500">{'No recent completions'}</div>
             )}
           </CardContent>
         </Card>
@@ -165,7 +165,7 @@ export default function EmployeeTrainingDashboard() {
       {/* Upcoming Trainings */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('Upcoming Trainings')}</CardTitle>
+          <CardTitle>{'Upcoming Trainings'}</CardTitle>
         </CardHeader>
         <CardContent>
           {upcomingTrainings && upcomingTrainings.length > 0 ? (
@@ -178,7 +178,7 @@ export default function EmployeeTrainingDashboard() {
                   </CardHeader>
                   <CardContent className="pb-2">
                     <div className="text-sm">
-                      <span className="font-medium">{t('Assigned')}:</span> {window.appSettings?.formatDateTimeSimple(training.assigned_date, false) || format(new Date(training.assigned_date), 'MMM dd, yyyy')}
+                      <span className="font-medium">{'Assigned'}:</span> {window.appSettings?.formatDateTimeSimple(training.assigned_date, false) || format(new Date(training.assigned_date), 'MMM dd, yyyy')}
                     </div>
                   </CardContent>
                   <CardFooter>
@@ -188,14 +188,14 @@ export default function EmployeeTrainingDashboard() {
                       className="w-full"
                       onClick={() => router.get(route('hr.employee-trainings.show', training.id))}
                     >
-                      {t('View Details')}
+                      {'View Details'}
                     </Button>
                   </CardFooter>
                 </Card>
               ))}
             </div>
           ) : (
-            <div className="text-center py-4 text-gray-500">{t('No upcoming trainings')}</div>
+            <div className="text-center py-4 text-gray-500">{'No upcoming trainings'}</div>
           )}
         </CardContent>
       </Card>

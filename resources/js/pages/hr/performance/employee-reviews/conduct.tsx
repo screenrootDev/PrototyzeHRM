@@ -8,11 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Star } from 'lucide-react';
 
 export default function ConductEmployeeReview() {
-  const { t } = useTranslation();
+  
   const { review, indicators } = usePage().props as any;
   
   // State
@@ -49,7 +49,7 @@ export default function ConductEmployeeReview() {
     const validationErrors: any = {};
     ratings.forEach((rating, index) => {
       if (!rating.rating) {
-        validationErrors[`ratings.${index}.rating`] = t('Rating is required');
+        validationErrors[`ratings.${index}.rating`] = 'Rating is required';
       }
     });
     
@@ -58,7 +58,7 @@ export default function ConductEmployeeReview() {
       return;
     }
     
-    toast.loading(t('Submitting review...'));
+    toast.loading('Submitting review...');
     
     router.post(route('hr.performance.employee-reviews.submit-ratings', review.id), {
       ratings,
@@ -67,17 +67,15 @@ export default function ConductEmployeeReview() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        }
+          toast.success(page.props.flash.success);        }
         router.visit(route('hr.performance.employee-reviews.show', review.id));
       },
       onError: (errors) => {
         toast.dismiss();
         setErrors(errors);
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to submit review'));
+          toast.error(errors);        } else {
+          toast.error('Failed to submit review');
         }
       }
     });
@@ -88,11 +86,11 @@ export default function ConductEmployeeReview() {
   };
   
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Employee Reviews'), href: route('hr.performance.employee-reviews.index') },
-    { title: t('Conduct Review') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Employee Reviews', href: route('hr.performance.employee-reviews.index') },
+    { title: 'Conduct Review' }
   ];
 
   // Group indicators by category
@@ -109,7 +107,7 @@ export default function ConductEmployeeReview() {
 
   return (
     <PageTemplate 
-      title={t("Conduct Performance Review")} 
+      title={"Conduct Performance Review"} 
       url={`/hr/performance/employee-reviews/${review.id}/conduct`}
       breadcrumbs={breadcrumbs}
     >
@@ -119,28 +117,28 @@ export default function ConductEmployeeReview() {
           <div className="flex justify-between">
             <Button type="button" variant="outline" onClick={handleBack}>
               <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('Back to Review')}
+              {'Back to Review'}
             </Button>
           </div>
           
           {/* Review Details */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('Review Information')}</CardTitle>
-              <CardDescription>{t('You are conducting a performance review for:')}</CardDescription>
+              <CardTitle>{'Review Information'}</CardTitle>
+              <CardDescription>{'You are conducting a performance review for:'}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Employee')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Employee'}</h3>
                     <p className="mt-1 text-base font-semibold">
                       {review.employee?.name}
                     </p>
                   </div>
                   
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Review Cycle')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Review Cycle'}</h3>
                     <p className="mt-1 text-base font-semibold">
                       {review.review_cycle?.name}
                     </p>
@@ -149,7 +147,7 @@ export default function ConductEmployeeReview() {
                 
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{t('Review Date')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">{'Review Date'}</h3>
                     <p className="mt-1 text-base font-semibold">
                       {review.review_date ? (window.appSettings?.formatDateTimeSimple(review.review_date, false) || new Date(review.review_date).toLocaleString()) : '-'  }
                     </p>
@@ -162,8 +160,8 @@ export default function ConductEmployeeReview() {
           {/* Rating Form */}
           <Card>
             <CardHeader>
-              <CardTitle>{t('Performance Ratings')}</CardTitle>
-              <CardDescription>{t('Rate the employee on each performance indicator')}</CardDescription>
+              <CardTitle>{'Performance Ratings'}</CardTitle>
+              <CardDescription>{'Rate the employee on each performance indicator'}</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-8">
@@ -180,28 +178,28 @@ export default function ConductEmployeeReview() {
                               <div>
                                 <h4 className="font-medium">{indicator.name}</h4>
                                 <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                                  {indicator.description || t('No description')}
+                                  {indicator.description || 'No description'}
                                 </p>
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   {indicator.measurement_unit && (
                                     <Badge variant="outline">
-                                      {t('Measurement')}: {indicator.measurement_unit}
+                                      {'Measurement'}: {indicator.measurement_unit}
                                     </Badge>
                                   )}
                                   {indicator.target_value && (
                                     <Badge variant="outline">
-                                      {t('Target')}: {indicator.target_value}
+                                      {'Target'}: {indicator.target_value}
                                     </Badge>
                                   )}
                                   <Badge variant="outline">
-                                    {t('Weight')}: {indicator.weight}
+                                    {'Weight'}: {indicator.weight}
                                   </Badge>
                                 </div>
                               </div>
                               
                               <div className="space-y-2">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-sm font-medium">{t('Rating')}</span>
+                                  <span className="text-sm font-medium">{'Rating'}</span>
                                   <div className="flex items-center">
                                     <span className="text-lg font-bold mr-1">{ratings[ratingIndex]?.rating}</span>
                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -217,21 +215,21 @@ export default function ConductEmployeeReview() {
                                   className="w-full"
                                 />
                                 <div className="flex justify-between text-xs text-gray-500">
-                                  <span>{t('Poor')}</span>
-                                  <span>{t('Average')}</span>
-                                  <span>{t('Excellent')}</span>
+                                  <span>{'Poor'}</span>
+                                  <span>{'Average'}</span>
+                                  <span>{'Excellent'}</span>
                                 </div>
                               </div>
                               
                               <div className="space-y-2">
                                 <label htmlFor={`comments-${indicator.id}`} className="text-sm font-medium">
-                                  {t('Comments')}
+                                  {'Comments'}
                                 </label>
                                 <Textarea
                                   id={`comments-${indicator.id}`}
                                   value={ratings[ratingIndex]?.comments}
                                   onChange={(e) => handleCommentsChange(ratingIndex, e.target.value)}
-                                  placeholder={t('Add specific feedback for this indicator')}
+                                  placeholder={'Add specific feedback for this indicator'}
                                   rows={2}
                                 />
                               </div>
@@ -246,13 +244,13 @@ export default function ConductEmployeeReview() {
                 <div className="pt-4 border-t">
                   <div className="space-y-2">
                     <label htmlFor="overall-comments" className="text-sm font-medium">
-                      {t('Overall Comments')}
+                      {'Overall Comments'}
                     </label>
                     <Textarea
                       id="overall-comments"
                       value={overallComments}
                       onChange={(e) => setOverallComments(e.target.value)}
-                      placeholder={t('Add overall feedback and recommendations')}
+                      placeholder={'Add overall feedback and recommendations'}
                       rows={4}
                     />
                   </div>
@@ -261,10 +259,10 @@ export default function ConductEmployeeReview() {
             </CardContent>
             <CardFooter className="flex justify-between">
               <Button type="button" variant="outline" onClick={handleBack}>
-                {t('Cancel')}
+                {'Cancel'}
               </Button>
               <Button type="submit">
-                {t('Submit Review')}
+                {'Submit Review'}
               </Button>
             </CardFooter>
           </Card>

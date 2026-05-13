@@ -13,7 +13,7 @@ import { MultiSelectField } from '@/components/multi-select-field';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { MediaPicker } from '@/components/MediaPicker';
-import { useTranslation } from 'react-i18next';
+
 
 interface CrudFormModalProps {
   isOpen: boolean;
@@ -41,7 +41,7 @@ export function CrudFormModal({
   mode,
   description
 }: CrudFormModalProps) {
-  const { t } = useTranslation();
+  
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [relationOptions, setRelationOptions] = useState<Record<string, any[]>>({});
@@ -367,16 +367,16 @@ export function CrudFormModal({
             />
             {mode === 'edit' && initialData[field.name] && (
               <div className="text-xs text-gray-500 mt-1">
-                {t("Current file:")} {initialData.featured_image_original_name || initialData[field.name]}
+                {"Current file:"} {initialData.featured_image_original_name || initialData[field.name]}
               </div>
             )}
             {field.fileValidation && (
               <div className="text-xs text-gray-500 mt-1">
                 {field.fileValidation.extensions && (
-                  <span>{t("Allowed extensions:")} {field.fileValidation.extensions.join(', ')} </span>
+                  <span>{"Allowed extensions:"} {field.fileValidation.extensions.join(', ')} </span>
                 )}
                 {field.fileValidation.maxSize && (
-                  <span>{t("Max size:")} {(field.fileValidation.maxSize / (1024 * 1024)).toFixed(1)}MB</span>
+                  <span>{"Max size:"} {(field.fileValidation.maxSize / (1024 * 1024)).toFixed(1)}MB</span>
                 )}
               </div>
             )}
@@ -397,7 +397,7 @@ export function CrudFormModal({
                 ) : mode === 'edit' && initialData[field.name] && (
                   // Show existing image in edit mode
                   <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">{t("Current image:")}</p>
+                    <p className="text-xs text-gray-500 mb-1">{"Current image:"}</p>
                     <img 
                       src={typeof initialData[field.name] === 'string' && initialData[field.name].startsWith && initialData[field.name].startsWith('http') 
                         ? initialData[field.name] 
@@ -532,10 +532,10 @@ export function CrudFormModal({
         </ScrollArea>
         <DialogFooter className="sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>
-            {t("Cancel")}
+            {"Cancel"}
           </Button>
           {mode !== 'view' && (
-            <Button type="button" onClick={handleSubmit}>{t("Save")}</Button>
+            <Button type="button" onClick={handleSubmit}>{"Save"}</Button>
           )}
         </DialogFooter>
       </DialogContent>

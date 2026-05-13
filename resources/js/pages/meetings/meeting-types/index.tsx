@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function MeetingTypes() {
-  const { t } = useTranslation();
+  
   const { auth, meetingTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -89,17 +89,15 @@ export default function MeetingTypes() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating meeting type...'));
+      toast.loading('Creating meeting type...');
       
       router.post(route('meetings.meeting-types.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -111,17 +109,15 @@ export default function MeetingTypes() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating meeting type...'));
+      toast.loading('Updating meeting type...');
       
       router.put(route('meetings.meeting-types.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -136,17 +132,15 @@ export default function MeetingTypes() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting meeting type...'));
+    toast.loading('Deleting meeting type...');
     
     router.delete(route('meetings.meeting-types.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -161,16 +155,14 @@ export default function MeetingTypes() {
   
   const handleToggleStatus = (meetingType: any) => {
     const newStatus = meetingType.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} meeting type...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} meeting type...`);
     
     router.put(route('meetings.meeting-types.toggle-status', meetingType.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -198,7 +190,7 @@ export default function MeetingTypes() {
   
   if (hasPermission(permissions, 'create-meeting-types')) {
     pageActions.push({
-      label: t('Add Meeting Type'),
+      label: 'Add Meeting Type',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -206,15 +198,15 @@ export default function MeetingTypes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.meeting-types.index') },
-    { title: t('Meeting Types') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.meeting-types.index') },
+    { title: 'Meeting Types' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-3">
@@ -228,25 +220,25 @@ export default function MeetingTypes() {
     },
     { 
       key: 'default_duration', 
-      label: t('Default Duration'),
+      label: 'Default Duration',
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-          {value} {t('minutes')}
+          {value} {'minutes'}
         </span>
       )
     },
     { 
       key: 'meetings_count', 
-      label: t('Meetings'),
+      label: 'Meetings',
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          {value || 0} {t('meetings')}
+          {value || 0} {'meetings'}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
@@ -254,14 +246,14 @@ export default function MeetingTypes() {
               ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
               : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -269,28 +261,28 @@ export default function MeetingTypes() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-meeting-types'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-types'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-types'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -299,14 +291,14 @@ export default function MeetingTypes() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Meeting Types")} 
+      title={"Meeting Types"} 
       url="/meetings/meeting-types"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -320,7 +312,7 @@ export default function MeetingTypes() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -369,7 +361,7 @@ export default function MeetingTypes() {
           to={meetingTypes?.to || 0}
           total={meetingTypes?.total || 0}
           links={meetingTypes?.links}
-          entityName={t("meeting types")}
+          entityName={"meeting types"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -382,34 +374,34 @@ export default function MeetingTypes() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'color', 
-              label: t('Color'), 
+              label: 'Color', 
               type: 'color', 
               required: true,
-              helpText: t('Color for calendar display')
+              helpText: 'Color for calendar display'
             },
             { 
               name: 'default_duration', 
-              label: t('Default Duration (minutes)'), 
+              label: 'Default Duration (minutes)', 
               type: 'number', 
               required: true,
               min: 15,
               max: 480,
-              helpText: t('Default meeting duration in minutes')
+              helpText: 'Default meeting duration in minutes'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -419,10 +411,10 @@ export default function MeetingTypes() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Meeting Type')
+            ? 'Add New Meeting Type'
             : formMode === 'edit'
-              ? t('Edit Meeting Type')
-              : t('View Meeting Type')
+              ? 'Edit Meeting Type'
+              : 'View Meeting Type'
         }
         mode={formMode}
       />

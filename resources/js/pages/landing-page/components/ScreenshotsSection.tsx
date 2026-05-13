@@ -1,6 +1,6 @@
 import React from 'react';
 import { Monitor } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 import { getImagePath } from '@/utils/helpers';
 
@@ -20,7 +20,7 @@ interface ScreenshotsSectionProps {
 }
 
 export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, globalSettings, sectionData }: ScreenshotsSectionProps) {
-  const { t } = useTranslation();
+  
   const { ref, isVisible } = useScrollAnimation();
 
   // Helper to get full URL for images
@@ -37,39 +37,39 @@ export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, g
   const defaultScreenshots = [
     {
       src: `${screenshotPath}hero.png`,
-      alt: t('HRMGo Dashboard Overview'),
-      title: t('Dashboard Overview'),
-      description: t('Get a complete overview of employee data, payroll, and HR activities in one unified dashboard.')
+      alt: 'HRMGo Dashboard Overview',
+      title: 'Dashboard Overview',
+      description: 'Get a complete overview of employee data, payroll, and HR activities in one unified dashboard.'
     },
     {
       src: `${screenshotPath}employee-management.png`,
-      alt: t('Employee Management Module'),
-      title: t('Employee Management'),
-      description: t('Centralized employee profiles with personal details, documents, and job history.')
+      alt: 'Employee Management Module',
+      title: 'Employee Management',
+      description: 'Centralized employee profiles with personal details, documents, and job history.'
     },
     {
       src: `${screenshotPath}payroll-payslip.png`,
-      alt: t('Payroll Automation'),
-      title: t('Payroll & Payslips'),
-      description: t('Automated payroll processing with tax calculations, allowances, and downloadable payslips.')
+      alt: 'Payroll Automation',
+      title: 'Payroll & Payslips',
+      description: 'Automated payroll processing with tax calculations, allowances, and downloadable payslips.'
     },
     {
       src: `${screenshotPath}leave.png`,
-      alt: t('Leave Management'),
-      title: t('Leave Management'),
-      description: t('Easily apply, approve, and track employee leave requests with proper workflows and policies.')
+      alt: 'Leave Management',
+      title: 'Leave Management',
+      description: 'Easily apply, approve, and track employee leave requests with proper workflows and policies.'
     },
     {
       src: `${screenshotPath}attendance.png`,
-      alt: t('Attendance Tracking'),
-      title: t('Attendance Tracking'),
-      description: t('Monitor employee check-ins, check-outs, and shifts with automated attendance logs.')
+      alt: 'Attendance Tracking',
+      title: 'Attendance Tracking',
+      description: 'Monitor employee check-ins, check-outs, and shifts with automated attendance logs.'
     },
     {
       src: `${screenshotPath}recruitment.png`,
-      alt: t('Recruitment & Onboarding'),
-      title: t('Recruitment & Onboarding'),
-      description: t('Streamline hiring with applicant tracking and digital onboarding.')
+      alt: 'Recruitment & Onboarding',
+      title: 'Recruitment & Onboarding',
+      description: 'Streamline hiring with applicant tracking and digital onboarding.'
     },
   ];
 
@@ -88,10 +88,10 @@ export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, g
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('See HRM Saas in Action')}
+            {sectionData?.title || 'See HRM Saas in Action'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-            {sectionData?.subtitle || t('Discover how our modern HRM SaaS platform helps you manage employees, payroll, attendance, and performance — all in one place.')}
+            {sectionData?.subtitle || 'Discover how our modern HRM SaaS platform helps you manage employees, payroll, attendance, and performance — all in one place.'}
           </p>
         </div>
 
@@ -135,13 +135,13 @@ export default function ScreenshotsSection({ brandColor = '#3b82f6', settings, g
             <div className="text-gray-400 mb-4">
               <Monitor className="w-16 h-16 mx-auto" />
             </div>
-            <p className="text-gray-500">{t('No screenshots configured yet. Add some in the admin settings.')}</p>
+            <p className="text-gray-500">{'No screenshots configured yet. Add some in the admin settings.'}</p>
           </div>
         )}
 
         <div className={`text-center mt-12 transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <div className="inline-flex items-center px-6 py-3 rounded-full text-sm font-medium border-2" style={{ borderColor: brandColor, color: brandColor }}>
-            {t('✨ And many more features to discover')}
+            {'✨ And many more features to discover'}
           </div>
         </div>
       </div>

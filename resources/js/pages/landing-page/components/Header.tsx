@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { Menu, X } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 interface CustomPage {
   id: number;
@@ -19,7 +19,7 @@ interface HeaderProps {
 }
 
 export default function Header({ settings, sectionData, customPages = [], brandColor = '#3b82f6' }: HeaderProps) {
-  const { t } = useTranslation();
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const { props } = usePage();
@@ -85,7 +85,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
               onMouseEnter={(e) => e.currentTarget.style.color = brandColor}
               onMouseLeave={(e) => e.currentTarget.style.color = ''}
             >
-              {t('Home')}
+              {'Home'}
               <span 
                 className="absolute -bottom-1 left-0 w-0 h-0.5 transition-all group-hover:w-full" 
                 style={{ backgroundColor: brandColor }}
@@ -119,7 +119,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
               onMouseEnter={(e) => e.currentTarget.style.color = brandColor}
               onMouseLeave={(e) => e.currentTarget.style.color = ''}
             >
-              {t('Login')}
+              {'Login'}
             </Link>
             {isSaas && (
               <Link
@@ -139,7 +139,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
                   e.currentTarget.style.color = 'white';
                 }}
               >
-                {t('Get Started')}
+                {'Get Started'}
               </Link>
             )}
           </div>
@@ -170,7 +170,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
                 className="block text-gray-600 hover:text-gray-900 text-base font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                {t('Home')}
+                {'Home'}
               </Link>
               {menuItems.map((item) => (
                 <Link
@@ -189,7 +189,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
                   onMouseEnter={(e) => e.currentTarget.style.color = brandColor}
                   onMouseLeave={(e) => e.currentTarget.style.color = ''}
                 >
-                  {t('Login')}
+                  {'Login'}
                 </Link>
                 {isSaas && (
                   <Link
@@ -209,7 +209,7 @@ export default function Header({ settings, sectionData, customPages = [], brandC
                       e.currentTarget.style.color = 'white';
                     }}
                   >
-                    {t('Get Started')}
+                    {'Get Started'}
                   </Link>
                 )}
               </div>

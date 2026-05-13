@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useState, useEffect } from 'react';
 import { Save, Search, Upload, X } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
-import { useTranslation } from 'react-i18next';
+
 import { router, usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 
@@ -14,7 +14,7 @@ interface SeoSettingsProps {
 }
 
 export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
-  const { t } = useTranslation();
+  
   const pageProps = usePage().props as any;
   
   // Default settings
@@ -110,17 +110,17 @@ export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
     
     // Client-side validation
     if (!seoSettings.metaKeywords.trim()) {
-      toast.error(t('Meta Keywords is required'));
+      toast.error('Meta Keywords is required');
       return;
     }
     
     if (!seoSettings.metaDescription.trim()) {
-      toast.error(t('Meta Description is required'));
+      toast.error('Meta Description is required');
       return;
     }
     
     if (!seoSettings.metaImage.trim()) {
-      toast.error(t('Meta Image is required'));
+      toast.error('Meta Image is required');
       return;
     }
     
@@ -138,7 +138,7 @@ export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
         }
       },
       onError: (errors) => {
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to update SEO settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to update SEO settings';
         toast.error(errorMessage);
       }
     });
@@ -146,36 +146,36 @@ export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
 
   return (
     <SettingsSection
-      title={t("SEO Settings")}
-      description={t("Configure SEO settings to improve your website's search engine visibility")}
+      title={"SEO Settings"}
+      description={"Configure SEO settings to improve your website's search engine visibility"}
       action={
         <Button type="submit" form="seo-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
       <form id="seo-settings-form" onSubmit={submitSeoSettings} className="space-y-6">
         <div className="grid grid-cols-1 gap-6">
           <div className="grid gap-2">
-            <Label htmlFor="metaKeywords">{t("Meta Keywords")} <span className="text-red-500">*</span></Label>
+            <Label htmlFor="metaKeywords">{"Meta Keywords"} <span className="text-red-500">*</span></Label>
             <Input
               id="metaKeywords"
               type="text"
               value={seoSettings.metaKeywords}
               onChange={(e) => handleSeoSettingsChange('metaKeywords', e.target.value)}
-              placeholder={t("Enter keywords separated by commas")}
+              placeholder={"Enter keywords separated by commas"}
               required
             />
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="metaDescription">{t("Meta Description")} <span className="text-red-500">*</span></Label>
+            <Label htmlFor="metaDescription">{"Meta Description"} <span className="text-red-500">*</span></Label>
             <Textarea
               id="metaDescription"
               value={seoSettings.metaDescription}
               onChange={(e) => handleSeoSettingsChange('metaDescription', e.target.value)}
-              placeholder={t("Enter a brief description for search engines (max 160 characters)")}
+              placeholder={"Enter a brief description for search engines (max 160 characters)"}
               maxLength={160}
               rows={3}
               required
@@ -186,13 +186,13 @@ export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="metaImage">{t("Meta Image")} <span className="text-red-500">*</span></Label>
+            <Label htmlFor="metaImage">{"Meta Image"} <span className="text-red-500">*</span></Label>
             <div className="space-y-4">
               {/* Image Preview */}
               {(seoSettings.metaImage || imagePreview) && (
                 <div className="border rounded-md p-4 bg-muted/30">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium">{t("Current Image")}</span>
+                    <span className="text-sm font-medium">{"Current Image"}</span>
                     <Button
                       type="button"
                       variant="ghost"
@@ -237,14 +237,14 @@ export default function SeoSettings({ settings = {} }: SeoSettingsProps) {
                       className="w-full justify-start"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      {seoSettings.metaImage ? t("Change Image") : t("Upload Image")}
+                      {seoSettings.metaImage ? "Change Image" : "Upload Image"}
                     </Button>
                   </div>
                 </div>
               </div>
               
               <p className="text-xs text-muted-foreground">
-                {t("Recommended size: 1200x630px for optimal social media sharing. Max file size: 5MB")}
+                {"Recommended size: 1200x630px for optimal social media sharing. Max file size: 5MB"}
               </p>
             </div>
           </div>

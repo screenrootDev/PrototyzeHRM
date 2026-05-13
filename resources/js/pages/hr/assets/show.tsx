@@ -4,7 +4,7 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Edit, Trash, UserPlus, ArrowDownLeft, Wrench, QrCode, Download, Image } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -18,7 +18,7 @@ import { Progress } from '@/components/ui/progress';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function AssetShow() {
-  const { t } = useTranslation();
+  
   const { auth, asset, assetTypes, employees } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -73,145 +73,121 @@ export default function AssetShow() {
   };
   
   const handleFormSubmit = (formData: any) => {
-    toast.loading(t('Updating asset...'));
+    toast.loading('Updating asset...');
 
     router.put(route('hr.assets.update', asset.id), formData, {
       onSuccess: (page) => {
         setIsFormModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update asset: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update asset: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleAssignSubmit = (formData: any) => {
-    toast.loading(t('Assigning asset...'));
+    toast.loading('Assigning asset...');
     
     router.post(route('hr.assets.assign', asset.id), formData, {
       onSuccess: (page) => {
         setIsAssignModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to assign asset: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to assign asset: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleReturnSubmit = (formData: any) => {
-    toast.loading(t('Returning asset...'));
+    toast.loading('Returning asset...');
     
     router.post(route('hr.assets.return', asset.id), formData, {
       onSuccess: (page) => {
         setIsReturnModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to return asset: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to return asset: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleMaintenanceSubmit = (formData: any) => {
-    toast.loading(t('Scheduling maintenance...'));
+    toast.loading('Scheduling maintenance...');
     
     router.post(route('hr.assets.schedule-maintenance', asset.id), formData, {
       onSuccess: (page) => {
         setIsMaintenanceModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to schedule maintenance: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to schedule maintenance: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleUpdateMaintenanceSubmit = (formData: any) => {
-    toast.loading(t('Updating maintenance...'));
+    toast.loading('Updating maintenance...');
     
     router.put(route('hr.assets.update-maintenance', currentMaintenance.id), formData, {
       onSuccess: (page) => {
         setIsUpdateMaintenanceModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update maintenance: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update maintenance: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting asset...'));
+    toast.loading('Deleting asset...');
     
     router.delete(route('hr.assets.destroy', asset.id), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
         router.get(route('hr.assets.index'));
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete asset: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete asset: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -221,7 +197,7 @@ export default function AssetShow() {
   
   // Add the "Back to List" button
   pageActions.push({
-    label: t('Back to List'),
+    label: 'Back to List',
     icon: <ArrowLeft className="h-4 w-4 mr-2" />,
     variant: 'outline' as const,
     onClick: handleBackToList
@@ -230,7 +206,7 @@ export default function AssetShow() {
   // Add action buttons based on permissions and asset status
   if (hasPermission(permissions, 'edit-assets')) {
     pageActions.push({
-      label: t('Edit'),
+      label: 'Edit',
       icon: <Edit className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleEdit
@@ -239,7 +215,7 @@ export default function AssetShow() {
   
   if (hasPermission(permissions, 'assign-assets') && asset.status === 'available') {
     pageActions.push({
-      label: t('Assign'),
+      label: 'Assign',
       icon: <UserPlus className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleAssign
@@ -248,7 +224,7 @@ export default function AssetShow() {
   
   if (hasPermission(permissions, 'assign-assets') && asset.status === 'assigned') {
     pageActions.push({
-      label: t('Return'),
+      label: 'Return',
       icon: <ArrowDownLeft className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleReturn
@@ -257,7 +233,7 @@ export default function AssetShow() {
   
   if (hasPermission(permissions, 'manage-asset-maintenance') && asset.status !== 'disposed') {
     pageActions.push({
-      label: t('Maintenance'),
+      label: 'Maintenance',
       icon: <Wrench className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: handleMaintenance
@@ -266,7 +242,7 @@ export default function AssetShow() {
   
   if (asset.qr_code) {
     pageActions.push({
-      label: t('QR Code'),
+      label: 'QR Code',
       icon: <QrCode className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleDownloadQrCode
@@ -275,7 +251,7 @@ export default function AssetShow() {
   
   if (hasPermission(permissions, 'delete-assets') && asset.status !== 'assigned') {
     pageActions.push({
-      label: t('Delete'),
+      label: 'Delete',
       icon: <Trash className="h-4 w-4 mr-2" />,
       variant: 'destructive' as const,
       onClick: handleDelete
@@ -283,10 +259,10 @@ export default function AssetShow() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.assets.index') },
-    { title: t('Asset Management'), href: route('hr.assets.index') },
-    { title: t('Assets'), href: route('hr.assets.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.assets.index') },
+    { title: 'Asset Management', href: route('hr.assets.index') },
+    { title: 'Assets', href: route('hr.assets.index') },
     { title: asset.name }
   ];
   
@@ -300,10 +276,10 @@ export default function AssetShow() {
   
   // Status labels
   const statusLabels = {
-    'available': t('Available'),
-    'assigned': t('Assigned'),
-    'under_maintenance': t('Under Maintenance'),
-    'disposed': t('Disposed')
+    'available': 'Available',
+    'assigned': 'Assigned',
+    'under_maintenance': 'Under Maintenance',
+    'disposed': 'Disposed'
   };
   
   // Condition colors for badges
@@ -344,7 +320,7 @@ export default function AssetShow() {
                 <div>
                   <CardTitle className="text-2xl">{asset.name}</CardTitle>
                   <CardDescription className="mt-2">
-                    {asset.asset_type?.name || t('Unknown Type')}
+                    {asset.asset_type?.name || 'Unknown Type'}
                   </CardDescription>
                 </div>
                 <div>
@@ -357,23 +333,23 @@ export default function AssetShow() {
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Asset Code')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Asset Code'}</h3>
                   <p>{asset.asset_code || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Serial Number')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Serial Number'}</h3>
                   <p>{asset.serial_number || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Purchase Date')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Purchase Date'}</h3>
                   <p>{asset.purchase_date ? (window.appSettings?.formatDateTimeSimple(asset.purchase_date, false) || new Date(asset.purchase_date).toLocaleDateString()) : '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Purchase Cost')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Purchase Cost'}</h3>
                   <p>{window.appSettings?.formatCurrency(asset.purchase_cost) || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Condition')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Condition'}</h3>
                   <p>
                     {asset.condition ? (
                       <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${conditionColors[asset.condition] || ''}`}>
@@ -383,20 +359,20 @@ export default function AssetShow() {
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Location')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Location'}</h3>
                   <p>{asset.location || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Supplier')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Supplier'}</h3>
                   <p>{asset.supplier || '-'}</p>
                 </div>
                 <div>
-                  <h3 className="text-sm font-medium text-gray-500">{t('Warranty')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Warranty'}</h3>
                   <p>
                     {asset.warranty_info || '-'}
                     {asset.warranty_expiry_date && (
                       <span className="block text-xs text-gray-500">
-                        {t('Expires')}: {window.appSettings?.formatDateTimeSimple(asset.warranty_expiry_date, false) || format(new Date(asset.warranty_expiry_date), 'MMM dd, yyyy')}
+                        {'Expires'}: {window.appSettings?.formatDateTimeSimple(asset.warranty_expiry_date, false) || format(new Date(asset.warranty_expiry_date), 'MMM dd, yyyy')}
                       </span>
                     )}
                   </p>
@@ -405,7 +381,7 @@ export default function AssetShow() {
               
               {asset.description && (
                 <div className="mt-4">
-                  <h3 className="text-sm font-medium text-gray-500">{t('Description')}</h3>
+                  <h3 className="text-sm font-medium text-gray-500">{'Description'}</h3>
                   <p className="mt-1">{asset.description}</p>
                 </div>
               )}
@@ -420,7 +396,7 @@ export default function AssetShow() {
                     className="flex items-center"
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    {t('Download Document')}
+                    {'Download Document'}
                   </Button>
                 )}
                 
@@ -432,7 +408,7 @@ export default function AssetShow() {
                     className="flex items-center"
                   >
                     <Image className="h-4 w-4 mr-2" />
-                    {t('View Image')}
+                    {'View Image'}
                   </Button>
                 )}
               </div>
@@ -442,26 +418,26 @@ export default function AssetShow() {
           {/* Tabs for different sections */}
           <Tabs defaultValue="assignments" className="w-full">
             <TabsList className="grid grid-cols-3 mb-4">
-              <TabsTrigger value="assignments">{t('Assignments')}</TabsTrigger>
-              <TabsTrigger value="maintenance">{t('Maintenance')}</TabsTrigger>
-              <TabsTrigger value="depreciation">{t('Depreciation')}</TabsTrigger>
+              <TabsTrigger value="assignments">{'Assignments'}</TabsTrigger>
+              <TabsTrigger value="maintenance">{'Maintenance'}</TabsTrigger>
+              <TabsTrigger value="depreciation">{'Depreciation'}</TabsTrigger>
             </TabsList>
             
             {/* Assignments Tab */}
             <TabsContent value="assignments">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Assignment History')}</CardTitle>
+                  <CardTitle>{'Assignment History'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {asset.assignments && asset.assignments.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>{t('Employee')}</TableHead>
-                          <TableHead>{t('Checkout Date')}</TableHead>
-                          <TableHead>{t('Return Date')}</TableHead>
-                          <TableHead>{t('Status')}</TableHead>
+                          <TableHead>{'Employee'}</TableHead>
+                          <TableHead>{'Checkout Date'}</TableHead>
+                          <TableHead>{'Return Date'}</TableHead>
+                          <TableHead>{'Status'}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -477,13 +453,13 @@ export default function AssetShow() {
                               {assignment.checkin_date 
                                 ? (window.appSettings?.formatDateTimeSimple(assignment.checkin_date, false) || format(new Date(assignment.checkin_date), 'MMM dd, yyyy')) 
                                 : assignment.expected_return_date 
-                                  ? `${t('Expected')}: ${window.appSettings?.formatDateTimeSimple(assignment.expected_return_date, false) || format(new Date(assignment.expected_return_date), 'MMM dd, yyyy')}` 
+                                  ? `${'Expected'}: ${window.appSettings?.formatDateTimeSimple(assignment.expected_return_date, false) || format(new Date(assignment.expected_return_date), 'MMM dd, yyyy')}` 
                                   : '-'}
                             </TableCell>
                             <TableCell>
                               {assignment.checkin_date 
-                                ? <Badge variant="outline" className="bg-green-50 text-green-700">{t('Returned')}</Badge>
-                                : <Badge variant="outline" className="bg-blue-50 text-blue-700">{t('Assigned')}</Badge>}
+                                ? <Badge variant="outline" className="bg-green-50 text-green-700">{'Returned'}</Badge>
+                                : <Badge variant="outline" className="bg-blue-50 text-blue-700">{'Assigned'}</Badge>}
                             </TableCell>
                           </TableRow>
                         ))}
@@ -491,7 +467,7 @@ export default function AssetShow() {
                     </Table>
                   ) : (
                     <div className="text-center py-4 text-gray-500">
-                      {t('No assignment history available')}
+                      {'No assignment history available'}
                     </div>
                   )}
                 </CardContent>
@@ -502,19 +478,19 @@ export default function AssetShow() {
             <TabsContent value="maintenance">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Maintenance History')}</CardTitle>
+                  <CardTitle>{'Maintenance History'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {asset.maintenances && asset.maintenances.length > 0 ? (
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>{t('Type')}</TableHead>
-                          <TableHead>{t('Start Date')}</TableHead>
-                          <TableHead>{t('End Date')}</TableHead>
-                          <TableHead>{t('Status')}</TableHead>
-                          <TableHead>{t('Cost')}</TableHead>
-                          <TableHead>{t('Actions')}</TableHead>
+                          <TableHead>{'Type'}</TableHead>
+                          <TableHead>{'Start Date'}</TableHead>
+                          <TableHead>{'End Date'}</TableHead>
+                          <TableHead>{'Status'}</TableHead>
+                          <TableHead>{'Cost'}</TableHead>
+                          <TableHead>{'Actions'}</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -547,7 +523,7 @@ export default function AssetShow() {
                                   size="sm"
                                   onClick={() => handleUpdateMaintenance(maintenance)}
                                 >
-                                  {t('Update')}
+                                  {'Update'}
                                 </Button>
                               )}
                             </TableCell>
@@ -557,7 +533,7 @@ export default function AssetShow() {
                     </Table>
                   ) : (
                     <div className="text-center py-4 text-gray-500">
-                      {t('No maintenance history available')}
+                      {'No maintenance history available'}
                     </div>
                   )}
                 </CardContent>
@@ -568,37 +544,37 @@ export default function AssetShow() {
             <TabsContent value="depreciation">
               <Card>
                 <CardHeader>
-                  <CardTitle>{t('Depreciation Information')}</CardTitle>
+                  <CardTitle>{'Depreciation Information'}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {asset.depreciation ? (
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Depreciation Method')}</h3>
+                          <h3 className="text-sm font-medium text-gray-500">{'Depreciation Method'}</h3>
                           <p>
-                            {asset.depreciation.method === 'straight_line' ? t('Straight Line') : 
-                             asset.depreciation.method === 'reducing_balance' ? t('Reducing Balance') : '-'}
+                            {asset.depreciation.method === 'straight_line' ? 'Straight Line' : 
+                             asset.depreciation.method === 'reducing_balance' ? 'Reducing Balance' : '-'}
                           </p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Useful Life')}</h3>
-                          <p>{asset.depreciation.useful_life_years} {t('years')}</p>
+                          <h3 className="text-sm font-medium text-gray-500">{'Useful Life'}</h3>
+                          <p>{asset.depreciation.useful_life_years} {'years'}</p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Purchase Value')}</h3>
+                          <h3 className="text-sm font-medium text-gray-500">{'Purchase Value'}</h3>
                           <p>{window.appSettings?.formatCurrency(asset.purchase_cost || 0)}</p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Salvage Value')}</h3>
+                          <h3 className="text-sm font-medium text-gray-500">{'Salvage Value'}</h3>
                           <p>{window.appSettings?.formatCurrency(asset.depreciation.salvage_value || 0)}</p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Current Value')}</h3>
+                          <h3 className="text-sm font-medium text-gray-500">{'Current Value'}</h3>
                           <p>{window.appSettings?.formatCurrency(asset.depreciation.current_value || 0)}</p>
                         </div>
                         <div>
-                          <h3 className="text-sm font-medium text-gray-500">{t('Last Calculated')}</h3>
+                          <h3 className="text-sm font-medium text-gray-500">{'Last Calculated'}</h3>
                           <p>
                             {asset.depreciation.last_calculated_date 
                               ? (window.appSettings?.formatDateTimeSimple(asset.depreciation.last_calculated_date, false) || format(new Date(asset.depreciation.last_calculated_date), 'MMM dd, yyyy')) 
@@ -608,10 +584,10 @@ export default function AssetShow() {
                       </div>
                       
                       <div>
-                        <h3 className="text-sm font-medium text-gray-500 mb-1">{t('Depreciation Progress')}</h3>
+                        <h3 className="text-sm font-medium text-gray-500 mb-1">{'Depreciation Progress'}</h3>
                         <div className="flex justify-between mb-1">
-                          <span className="text-xs">{t('Current Value')}</span>
-                          <span className="text-xs">{calculateDepreciationPercentage().toFixed(2)}% {t('depreciated')}</span>
+                          <span className="text-xs">{'Current Value'}</span>
+                          <span className="text-xs">{calculateDepreciationPercentage().toFixed(2)}% {'depreciated'}</span>
                         </div>
                         <Progress 
                           value={calculateDepreciationPercentage()} 
@@ -621,7 +597,7 @@ export default function AssetShow() {
                     </div>
                   ) : (
                     <div className="text-center py-4 text-gray-500">
-                      {t('No depreciation information available')}
+                      {'No depreciation information available'}
                     </div>
                   )}
                 </CardContent>
@@ -636,27 +612,27 @@ export default function AssetShow() {
           {asset.status === 'assigned' && asset.current_assignment && (
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle>{t('Current Assignment')}</CardTitle>
+                <CardTitle>{'Current Assignment'}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">{t('Assigned To')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500">{'Assigned To'}</h3>
                     <p className="font-medium">{asset.current_assignment.employee?.name || '-'}</p>
                   </div>
                   <div>
-                    <h3 className="text-sm font-medium text-gray-500">{t('Checkout Date')}</h3>
+                    <h3 className="text-sm font-medium text-gray-500">{'Checkout Date'}</h3>
                     <p>{window.appSettings?.formatDateTimeSimple(asset.current_assignment.checkout_date, false) || format(new Date(asset.current_assignment.checkout_date), 'MMM dd, yyyy')}</p>
                   </div>
                   {asset.current_assignment.expected_return_date && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('Expected Return')}</h3>
+                      <h3 className="text-sm font-medium text-gray-500">{'Expected Return'}</h3>
                       <p>{window.appSettings?.formatDateTimeSimple(asset.current_assignment.expected_return_date, false) || format(new Date(asset.current_assignment.expected_return_date), 'MMM dd, yyyy')}</p>
                     </div>
                   )}
                   {asset.current_assignment.notes && (
                     <div>
-                      <h3 className="text-sm font-medium text-gray-500">{t('Notes')}</h3>
+                      <h3 className="text-sm font-medium text-gray-500">{'Notes'}</h3>
                       <p className="text-sm">{asset.current_assignment.notes}</p>
                     </div>
                   )}
@@ -670,7 +646,7 @@ export default function AssetShow() {
                     className="w-full"
                   >
                     <ArrowDownLeft className="h-4 w-4 mr-2" />
-                    {t('Return Asset')}
+                    {'Return Asset'}
                   </Button>
                 </CardFooter>
               )}
@@ -681,7 +657,7 @@ export default function AssetShow() {
           {asset.qr_code && (
             <Card>
               <CardHeader>
-                <CardTitle>{t('Asset QR Code')}</CardTitle>
+                <CardTitle>{'Asset QR Code'}</CardTitle>
               </CardHeader>
               <CardContent className="flex justify-center">
                 <img 
@@ -697,7 +673,7 @@ export default function AssetShow() {
                   className="w-full"
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {t('Download QR Code')}
+                  {'Download QR Code'}
                 </Button>
               </CardFooter>
             </Card>
@@ -714,13 +690,13 @@ export default function AssetShow() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'asset_type_id', 
-              label: t('Asset Type'), 
+              label: 'Asset Type', 
               type: 'select',
               required: true,
               options: (assetTypes || []).map((type: any) => ({
@@ -730,114 +706,114 @@ export default function AssetShow() {
             },
             { 
               name: 'serial_number', 
-              label: t('Serial Number'), 
+              label: 'Serial Number', 
               type: 'text'
             },
             { 
               name: 'asset_code', 
-              label: t('Asset Code'), 
+              label: 'Asset Code', 
               type: 'text'
             },
             { 
               name: 'purchase_date', 
-              label: t('Purchase Date'), 
+              label: 'Purchase Date', 
               type: 'date'
             },
             { 
               name: 'purchase_cost', 
-              label: t('Purchase Cost'), 
+              label: 'Purchase Cost', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'available', label: t('Available') },
-                { value: 'assigned', label: t('Assigned') },
-                { value: 'under_maintenance', label: t('Under Maintenance') },
-                { value: 'disposed', label: t('Disposed') }
+                { value: 'available', label: 'Available' },
+                { value: 'assigned', label: 'Assigned' },
+                { value: 'under_maintenance', label: 'Under Maintenance' },
+                { value: 'disposed', label: 'Disposed' }
               ]
             },
             { 
               name: 'condition', 
-              label: t('Condition'), 
+              label: 'Condition', 
               type: 'select',
               options: [
-                { value: 'new', label: t('New') },
-                { value: 'good', label: t('Good') },
-                { value: 'fair', label: t('Fair') },
-                { value: 'poor', label: t('Poor') }
+                { value: 'new', label: 'New' },
+                { value: 'good', label: 'Good' },
+                { value: 'fair', label: 'Fair' },
+                { value: 'poor', label: 'Poor' }
               ]
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea'
             },
             { 
               name: 'location', 
-              label: t('Location'), 
+              label: 'Location', 
               type: 'text'
             },
             { 
               name: 'supplier', 
-              label: t('Supplier'), 
+              label: 'Supplier', 
               type: 'text'
             },
             { 
               name: 'warranty_info', 
-              label: t('Warranty Information'), 
+              label: 'Warranty Information', 
               type: 'text'
             },
             { 
               name: 'warranty_expiry_date', 
-              label: t('Warranty Expiry Date'), 
+              label: 'Warranty Expiry Date', 
               type: 'date'
             },
             { 
               name: 'images', 
-              label: t('Images'), 
+              label: 'Images', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select image file...')}
+                  placeholder={'Select image file...'}
                 />
               ),
-              helpText: t('Upload image file (max 5MB)')
+              helpText: 'Upload image file (max 5MB)'
             },
             { 
               name: 'documents', 
-              label: t('Documents'), 
+              label: 'Documents', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               ),
-              helpText: t('Upload PDF or Word document (max 5MB)')
+              helpText: 'Upload PDF or Word document (max 5MB)'
             },
             { 
               name: 'depreciation_method', 
-              label: t('Depreciation Method'), 
+              label: 'Depreciation Method', 
               type: 'select',
               options: [
-                { value: 'none', label: t('No Depreciation') },
-                { value: 'straight_line', label: t('Straight Line') },
-                { value: 'reducing_balance', label: t('Reducing Balance') }
+                { value: 'none', label: 'No Depreciation' },
+                { value: 'straight_line', label: 'Straight Line' },
+                { value: 'reducing_balance', label: 'Reducing Balance' }
               ],
               showWhen: (formData) => formData.purchase_cost && formData.purchase_date
             },
             { 
               name: 'useful_life_years', 
-              label: t('Useful Life (Years)'), 
+              label: 'Useful Life (Years)', 
               type: 'number',
               min: 1,
               step: 1,
@@ -845,7 +821,7 @@ export default function AssetShow() {
             },
             { 
               name: 'salvage_value', 
-              label: t('Salvage Value'), 
+              label: 'Salvage Value', 
               type: 'number',
               min: 0,
               step: 0.01,
@@ -860,7 +836,7 @@ export default function AssetShow() {
           useful_life_years: asset.depreciation?.useful_life_years || 5,
           salvage_value: asset.depreciation?.salvage_value || 0
         }}
-        title={t('Edit Asset')}
+        title={'Edit Asset'}
         mode="edit"
       />
       
@@ -873,7 +849,7 @@ export default function AssetShow() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select',
               required: true,
               options: (employees || []).map((emp: any) => ({
@@ -883,38 +859,38 @@ export default function AssetShow() {
             },
             { 
               name: 'checkout_date', 
-              label: t('Checkout Date'), 
+              label: 'Checkout Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'expected_return_date', 
-              label: t('Expected Return Date'), 
+              label: 'Expected Return Date', 
               type: 'date'
             },
             { 
               name: 'checkout_condition', 
-              label: t('Checkout Condition'), 
+              label: 'Checkout Condition', 
               type: 'select',
               options: [
-                { value: 'new', label: t('New') },
-                { value: 'good', label: t('Good') },
-                { value: 'fair', label: t('Fair') },
-                { value: 'poor', label: t('Poor') }
+                { value: 'new', label: 'New' },
+                { value: 'good', label: 'Good' },
+                { value: 'fair', label: 'Fair' },
+                { value: 'poor', label: 'Poor' }
               ],
               defaultValue: asset.condition
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             }
           ],
           modalSize: 'md'
         }}
         initialData={{}}
-        title={t('Assign Asset')}
+        title={'Assign Asset'}
         mode="create"
       />
       
@@ -927,33 +903,33 @@ export default function AssetShow() {
           fields: [
             { 
               name: 'checkin_date', 
-              label: t('Check-in Date'), 
+              label: 'Check-in Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'checkin_condition', 
-              label: t('Check-in Condition'), 
+              label: 'Check-in Condition', 
               type: 'select',
               options: [
-                { value: 'new', label: t('New') },
-                { value: 'good', label: t('Good') },
-                { value: 'fair', label: t('Fair') },
-                { value: 'poor', label: t('Poor') }
+                { value: 'new', label: 'New' },
+                { value: 'good', label: 'Good' },
+                { value: 'fair', label: 'Fair' },
+                { value: 'poor', label: 'Poor' }
               ],
               defaultValue: asset.condition
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             }
           ],
           modalSize: 'md'
         }}
         initialData={{}}
-        title={t('Return Asset')}
+        title={'Return Asset'}
         mode="create"
       />
       
@@ -966,51 +942,51 @@ export default function AssetShow() {
           fields: [
             { 
               name: 'maintenance_type', 
-              label: t('Maintenance Type'), 
+              label: 'Maintenance Type', 
               type: 'select',
               required: true,
               options: [
-                { value: 'repair', label: t('Repair') },
-                { value: 'preventive', label: t('Preventive') },
-                { value: 'calibration', label: t('Calibration') },
-                { value: 'software update', label: t('Software Update') },
-                { value: 'hardware upgrade', label: t('Hardware Upgrade') }
+                { value: 'repair', label: 'Repair' },
+                { value: 'preventive', label: 'Preventive' },
+                { value: 'calibration', label: 'Calibration' },
+                { value: 'software update', label: 'Software Update' },
+                { value: 'hardware upgrade', label: 'Hardware Upgrade' }
               ]
             },
             { 
               name: 'start_date', 
-              label: t('Start Date'), 
+              label: 'Start Date', 
               type: 'date',
               required: true,
               defaultValue: new Date().toISOString().split('T')[0]
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date'
             },
             { 
               name: 'cost', 
-              label: t('Cost'), 
+              label: 'Cost', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'details', 
-              label: t('Details'), 
+              label: 'Details', 
               type: 'textarea'
             },
             { 
               name: 'supplier', 
-              label: t('Supplier'), 
+              label: 'Supplier', 
               type: 'text'
             }
           ],
           modalSize: 'md'
         }}
         initialData={{}}
-        title={t('Schedule Maintenance')}
+        title={'Schedule Maintenance'}
         mode="create"
       />
       
@@ -1023,31 +999,31 @@ export default function AssetShow() {
           fields: [
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'scheduled', label: t('Scheduled') },
-                { value: 'in_progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'cancelled', label: t('Cancelled') }
+                { value: 'scheduled', label: 'Scheduled' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
               ]
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date',
               showWhen: (formData) => ['completed', 'cancelled'].includes(formData.status)
             },
             { 
               name: 'completion_notes', 
-              label: t('Completion Notes'), 
+              label: 'Completion Notes', 
               type: 'textarea',
               showWhen: (formData) => ['completed', 'cancelled'].includes(formData.status)
             },
             { 
               name: 'cost', 
-              label: t('Cost'), 
+              label: 'Cost', 
               type: 'number',
               min: 0,
               step: 0.01
@@ -1056,7 +1032,7 @@ export default function AssetShow() {
           modalSize: 'md'
         }}
         initialData={currentMaintenance}
-        title={t('Update Maintenance')}
+        title={'Update Maintenance'}
         mode="edit"
       />
       

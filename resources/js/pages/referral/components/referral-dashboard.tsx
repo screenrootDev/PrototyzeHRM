@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
 import { useState } from 'react';
 import { Copy, Check, Users, DollarSign, FileText, TrendingUp, Award, Clock } from 'lucide-react';
 import { toast } from '@/components/custom-toast';
@@ -16,7 +16,7 @@ interface ReferralDashboardProps {
 }
 
 export default function ReferralDashboard({ userType, stats, referralLink, recentReferredUsers,currencySymbol }: ReferralDashboardProps) {
-  const { t } = useTranslation();
+  
 
   const [copied, setCopied] = useState(false);
 
@@ -24,7 +24,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
     if (referralLink) {
       await navigator.clipboard.writeText(referralLink);
       setCopied(true);
-      toast.success(t('Referral link copied to clipboard'));
+      toast.success('Referral link copied to clipboard');
       setTimeout(() => setCopied(false), 2000);
     }
   };
@@ -35,7 +35,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('Total Referral Users')}</CardTitle>
+              <CardTitle className="text-sm font-medium">{'Total Referral Users'}</CardTitle>
               <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -45,7 +45,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('Pending Payouts')}</CardTitle>
+              <CardTitle className="text-sm font-medium">{'Pending Payouts'}</CardTitle>
               <Clock className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -55,7 +55,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('Total Commission Paid')}</CardTitle>
+              <CardTitle className="text-sm font-medium">{'Total Commission Paid'}</CardTitle>
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -65,7 +65,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{t('Active Companies')}</CardTitle>
+              <CardTitle className="text-sm font-medium">{'Active Companies'}</CardTitle>
               <TrendingUp className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -77,7 +77,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader>
-              <CardTitle>{t('Top Referring Companies')}</CardTitle>
+              <CardTitle>{'Top Referring Companies'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -104,23 +104,23 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
 
           <Card>
             <CardHeader>
-              <CardTitle>{t('Monthly Performance')}</CardTitle>
+              <CardTitle>{'Monthly Performance'}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
-                  <h4 className="font-medium mb-2">{t('Referral Signups')}</h4>
+                  <h4 className="font-medium mb-2">{'Referral Signups'}</h4>
                   <div className="text-2xl font-bold">
                     {Object.values(stats.monthlyReferrals || {}).reduce((a: any, b: any) => a + b, 0)}
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('This year')}</p>
+                  <p className="text-sm text-muted-foreground">{'This year'}</p>
                 </div>
                 <div>
-                  <h4 className="font-medium mb-2">{t('Payouts Processed')}</h4>
+                  <h4 className="font-medium mb-2">{'Payouts Processed'}</h4>
                   <div className="text-2xl font-bold">
                     {currencySymbol}{Object.values(stats.monthlyPayouts || {}).reduce((a: any, b: any) => a + b, 0)}
                   </div>
-                  <p className="text-sm text-muted-foreground">{t('This year')}</p>
+                  <p className="text-sm text-muted-foreground">{'This year'}</p>
                 </div>
               </div>
             </CardContent>
@@ -137,7 +137,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Total Referrals')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Total Referrals'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{stats.totalReferrals}</h3>
               </div>
               <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
@@ -151,7 +151,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Referred Users')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Referred Users'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{stats.referredUsersCount || 0}</h3>
               </div>
               <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -165,7 +165,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Total Earned')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Total Earned'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{currencySymbol}{stats.totalEarned}</h3>
               </div>
               <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
@@ -179,7 +179,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">{t('Available Balance')}</p>
+                <p className="text-sm font-medium text-muted-foreground">{'Available Balance'}</p>
                 <h3 className="mt-2 text-2xl font-bold">{currencySymbol}{stats.availableBalance.toFixed(2)}</h3>
               </div>
               <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
@@ -193,7 +193,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t('Your Referral Link')}</CardTitle>
+            <CardTitle>{'Your Referral Link'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex space-x-2">
@@ -211,17 +211,17 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
               </Button>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              {t('Share this link to earn commissions when users sign up and purchase plans')}
+              {'Share this link to earn commissions when users sign up and purchase plans'}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>{t('Recent Referred Users')}</CardTitle>
+            <CardTitle>{'Recent Referred Users'}</CardTitle>
             <Button variant="outline" size="sm" asChild>
               <a href={route('referral.referred-users')}>
-                {t('View All')}
+                {'View All'}
               </a>
             </Button>
           </CardHeader>
@@ -248,7 +248,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
                         </Badge>
                       ) : (
                         <Badge variant="secondary" className="text-xs">
-                          {t('No Plan')}
+                          {'No Plan'}
                         </Badge>
                       )}
                     </div>
@@ -259,7 +259,7 @@ export default function ReferralDashboard({ userType, stats, referralLink, recen
               <div className="text-center py-4">
                 <Users className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
                 <p className="text-sm text-muted-foreground">
-                  {t('No referred users yet')}
+                  {'No referred users yet'}
                 </p>
               </div>
             )}

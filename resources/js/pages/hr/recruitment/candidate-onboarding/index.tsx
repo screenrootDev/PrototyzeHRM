@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function CandidateOnboarding() {
-  const { t } = useTranslation();
+  
   const { auth, candidateOnboarding, employees, checklists, buddyEmployees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -97,96 +97,80 @@ export default function CandidateOnboarding() {
     );
     
     if (formMode === 'create') {
-      toast.loading(t('Creating candidate onboarding...'));
+      toast.loading('Creating candidate onboarding...');
 
       router.post(route('hr.recruitment.candidate-onboarding.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create candidate onboarding: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create candidate onboarding: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating candidate onboarding...'));
+      toast.loading('Updating candidate onboarding...');
 
       router.put(route('hr.recruitment.candidate-onboarding.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update candidate onboarding: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update candidate onboarding: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting candidate onboarding...'));
+    toast.loading('Deleting candidate onboarding...');
 
     router.delete(route('hr.recruitment.candidate-onboarding.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete candidate onboarding: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete candidate onboarding: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleStatusUpdate = (formData: any) => {
-    toast.loading(t('Updating status...'));
+    toast.loading('Updating status...');
 
     router.put(route('hr.recruitment.candidate-onboarding.update-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -207,7 +191,7 @@ export default function CandidateOnboarding() {
 
   if (hasPermission(permissions, 'create-candidate-onboarding')) {
     pageActions.push({
-      label: t('Start Onboarding'),
+      label: 'Start Onboarding',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -215,9 +199,9 @@ export default function CandidateOnboarding() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.candidate-onboarding.index') },
-    { title: t('Candidate Onboarding') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.candidate-onboarding.index') },
+    { title: 'Candidate Onboarding' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -232,7 +216,7 @@ export default function CandidateOnboarding() {
   const columns = [
     {
       key: 'employee.name',
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         row.employee?.name ? (
           <div>
@@ -244,32 +228,32 @@ export default function CandidateOnboarding() {
     },
     {
       key: 'checklist.name',
-      label: t('Checklist'),
+      label: 'Checklist',
       render: (_, row) => row.checklist?.name || '-'
     },
     {
       key: 'start_date',
-      label: t('Start Date'),
+      label: 'Start Date',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'buddy_employee.name',
-      label: t('Buddy'),
+      label: 'Buddy',
       render: (_, row) => row.buddy_employee?.name || '-'
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     {
       key: 'created_at',
-      label: t('Created'),
+      label: 'Created',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -277,28 +261,28 @@ export default function CandidateOnboarding() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-candidate-onboarding'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-candidate-onboarding'
     },
     {
-      label: t('Update Status'),
+      label: 'Update Status',
       icon: 'RefreshCw',
       action: 'update-status',
       className: 'text-green-500',
       requiredPermission: 'manage-candidate-onboarding-status'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -307,14 +291,14 @@ export default function CandidateOnboarding() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'Pending', label: t('Pending') },
-    { value: 'In Progress', label: t('In Progress') },
-    { value: 'Completed', label: t('Completed') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'Pending', label: 'Pending' },
+    { value: 'In Progress', label: 'In Progress' },
+    { value: 'Completed', label: 'Completed' }
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('All Employees') , disabled: true},
+    { value: '_empty_', label: 'All Employees' , disabled: true},
     ...(employees || []).map((employee: any) => ({
       value: employee.id.toString(),
       label: employee.name
@@ -322,7 +306,7 @@ export default function CandidateOnboarding() {
   ];
 
   const employeeSelectOptions = [
-    { value: '_empty_', label: t('Select Employee') },
+    { value: '_empty_', label: 'Select Employee' },
     ...(employees || []).map((employee: any) => ({
       value: employee.id.toString(),
       label: employee.name
@@ -330,7 +314,7 @@ export default function CandidateOnboarding() {
   ];
 
   const checklistOptions = [
-    { value: '_empty_', label: t('Select Checklist') },
+    { value: '_empty_', label: 'Select Checklist' },
     ...(checklists || []).map((checklist: any) => ({
       value: checklist.id.toString(),
       label: checklist.name
@@ -338,7 +322,7 @@ export default function CandidateOnboarding() {
   ];
 
   const buddyEmployeeOptions = [
-    { value: '_empty_', label: t('Select Buddy') },
+    { value: '_empty_', label: 'Select Buddy' },
     ...(buddyEmployees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -347,7 +331,7 @@ export default function CandidateOnboarding() {
 
   return (
     <PageTemplate
-      title={t("Candidate Onboarding")}
+      title={"Candidate Onboarding"}
       url="/hr/recruitment/candidate-onboarding"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -361,7 +345,7 @@ export default function CandidateOnboarding() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -370,7 +354,7 @@ export default function CandidateOnboarding() {
             },
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: employeeFilter,
               onChange: setEmployeeFilter,
@@ -421,7 +405,7 @@ export default function CandidateOnboarding() {
           to={candidateOnboarding?.to || 0}
           total={candidateOnboarding?.total || 0}
           links={candidateOnboarding?.links}
-          entityName={t("onboarding records")}
+          entityName={"onboarding records"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -434,7 +418,7 @@ export default function CandidateOnboarding() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employeeSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -449,7 +433,7 @@ export default function CandidateOnboarding() {
             },
             {
               name: 'checklist_id',
-              label: t('Onboarding Checklist'),
+              label: 'Onboarding Checklist',
               type: 'select',
               required: true,
               options: checklistOptions.filter(opt => opt.value !== '_empty_'),
@@ -457,13 +441,13 @@ export default function CandidateOnboarding() {
             },
             {
               name: 'start_date',
-              label: t('Start Date'),
+              label: 'Start Date',
               type: 'date',
               required: true
             },
             {
               name: 'buddy_employee_id',
-              label: t('Buddy Employee'),
+              label: 'Buddy Employee',
               type: 'select',
               required: true,
               options: buddyEmployeeOptions.filter(opt => opt.value !== '_empty_'),
@@ -481,7 +465,7 @@ export default function CandidateOnboarding() {
                     value={formData[field.name] || ''}
                     onChange={(e) => handleChange(field.name, e.target.value)}
                   >
-                    <option value="" selected disabled>{t('Select Buddy')}</option>
+                    <option value="" selected disabled>{'Select Buddy'}</option>
                     {filteredOptions.map((opt) => (
                       <option key={opt.value} value={opt.value}>
                         {opt.label}
@@ -496,10 +480,10 @@ export default function CandidateOnboarding() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Start New Onboarding')
+            ? 'Start New Onboarding'
             : formMode === 'edit'
-              ? t('Edit Onboarding')
-              : t('View Onboarding')
+              ? 'Edit Onboarding'
+              : 'View Onboarding'
         }
         mode={formMode}
       />
@@ -520,19 +504,19 @@ export default function CandidateOnboarding() {
           fields: [
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'Pending', label: t('Pending') },
-                { value: 'In Progress', label: t('In Progress') },
-                { value: 'Completed', label: t('Completed') }
+                { value: 'Pending', label: 'Pending' },
+                { value: 'In Progress', label: 'In Progress' },
+                { value: 'Completed', label: 'Completed' }
               ]
             }
           ]
         }}
         initialData={currentItem ? { status: currentItem.status } : {}}
-        title={t('Update Onboarding Status')}
+        title={'Update Onboarding Status'}
         mode="edit"
       />
     </PageTemplate>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 import { router } from '@inertiajs/react';
 
@@ -17,7 +17,7 @@ interface UsePaymentProcessorOptions {
 }
 
 export function usePaymentProcessor(options: UsePaymentProcessorOptions = {}) {
-  const { t } = useTranslation();
+  
   const [processing, setProcessing] = useState(false);
 
   const processPayment = async (paymentMethod: string, data: PaymentData) => {
@@ -36,7 +36,7 @@ export function usePaymentProcessor(options: UsePaymentProcessorOptions = {}) {
     const routeName = routes[paymentMethod as keyof typeof routes];
     
     if (!routeName) {
-      toast.error(t('Invalid payment method'));
+      toast.error('Invalid payment method');
       setProcessing(false);
       return;
     }
@@ -47,14 +47,13 @@ export function usePaymentProcessor(options: UsePaymentProcessorOptions = {}) {
       onSuccess: (page) => {
         // Check if there's a success message in the response
         if (page.props?.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else {
-          toast.success(t('Payment successful'));
+          toast.success(page.props.flash.success);        } else {
+          toast.success('Payment successful');
         }
         options.onSuccess?.();
       },
       onError: (errors) => {
-        const errorMessage = errors?.message || errors?.error || t('Payment failed');
+        const errorMessage = errors?.message || errors?.error || 'Payment failed';
         toast.error(errorMessage);
         options.onError?.(errorMessage);
       },
@@ -79,7 +78,7 @@ export function usePaymentProcessor(options: UsePaymentProcessorOptions = {}) {
     
     for (const field of required) {
       if (!data[field]) {
-        toast.error(t(`${field} is required`));
+        toast.error(`${field} is required`);
         return false;
       }
     }

@@ -5,7 +5,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle2, CreditCard, Circle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/switch';
 
 interface Plan {
@@ -40,7 +39,6 @@ export function UpgradePlanModal({
   currentPlanId,
   companyName
 }: UpgradePlanModalProps) {
-  const { t } = useTranslation();
   const [selectedPlanId, setSelectedPlanId] = useState<number | null>(null);
   const [isYearly, setIsYearly] = useState(false);
   
@@ -86,9 +84,9 @@ export function UpgradePlanModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{t("Upgrade Plan for")} {companyName}</DialogTitle>
+          <DialogTitle>Upgrade Plan for {companyName}</DialogTitle>
           <DialogDescription>
-            {t("Select a new plan for this company")}
+            Select a new plan for this company
           </DialogDescription>
         </DialogHeader>
         
@@ -96,7 +94,7 @@ export function UpgradePlanModal({
           {/* Billing Period Toggle */}
           <div className="flex items-center justify-center space-x-4 mb-6 p-4 bg-gray-50 rounded-lg">
             <span className={`text-sm font-medium ${!isYearly ? 'text-primary' : 'text-gray-500'}`}>
-              {t('Monthly')}
+              Monthly
             </span>
             <Switch
               checked={isYearly}
@@ -104,11 +102,11 @@ export function UpgradePlanModal({
               className="data-[state=checked]:bg-primary"
             />
             <span className={`text-sm font-medium ${isYearly ? 'text-primary' : 'text-gray-500'}`}>
-              {t('Yearly')}
+              Yearly
             </span>
             {isYearly && (
               <Badge variant="secondary" className="ml-2 bg-green-100 text-green-800">
-                {t('Save up to 20%')}
+                Save up to 20%
               </Badge>
             )}
           </div>
@@ -138,7 +136,7 @@ export function UpgradePlanModal({
                     </div>
                     {plan.is_current && (
                       <Badge variant="outline" className="bg-blue-100 text-blue-800 border-blue-200">
-                        {t("Current")}
+                        Current
                       </Badge>
                     )}
                   </div>
@@ -160,19 +158,19 @@ export function UpgradePlanModal({
                       {plan.max_employees && (
                         <div className="text-center">
                           <div className="font-bold text-gray-900">{plan.max_employees}</div>
-                          <div className="text-xs text-gray-500">{t('Employees')}</div>
+                          <div className="text-xs text-gray-500">Employees</div>
                         </div>
                       )}
                       {plan.max_users && (
                         <div className="text-center">
                           <div className="font-bold text-gray-900">{plan.max_users}</div>
-                          <div className="text-xs text-gray-500">{t('Users')}</div>
+                          <div className="text-xs text-gray-500">Users</div>
                         </div>
                       )}
                       {plan.storage_limit && (
                         <div className="text-center">
                           <div className="font-bold text-gray-900">{plan.storage_limit}</div>
-                          <div className="text-xs text-gray-500">{t('Storage')}</div>
+                          <div className="text-xs text-gray-500">Storage</div>
                         </div>
                       )}
                     </div>
@@ -194,7 +192,7 @@ export function UpgradePlanModal({
                 </div>
               )) : (
                 <div className="col-span-full text-center py-8 text-gray-500">
-                  <p>{t('No plans available for')} {isYearly ? t('yearly') : t('monthly')} {t('billing')}</p>
+                  <p>No plans available for {isYearly ? 'yearly' : 'monthly'} billing</p>
                 </div>
               )}
             </div>
@@ -203,13 +201,13 @@ export function UpgradePlanModal({
         
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            {t("Cancel")}
+            Cancel
           </Button>
           <Button 
             onClick={handleConfirm} 
             disabled={!selectedPlanId || filteredPlans.length === 0}
           >
-            {t("Upgrade Plan")}
+            Upgrade Plan
           </Button>
         </DialogFooter>
       </DialogContent>

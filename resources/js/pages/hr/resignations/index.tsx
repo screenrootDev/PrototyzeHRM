@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Resignations() {
-  const { t } = useTranslation();
+  
   const { auth, resignations, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -114,42 +114,37 @@ export default function Resignations() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Creating resignation...'));
+      toast.loading('Creating resignation...');
 
       router.post(route('hr.resignations.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Resignation created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Resignation created successfully');
           }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t(`Failed to create resignation: ${Object.values(errors).join(', ')}`));
+            toast.error(errors);          } else {
+            toast.error(`Failed to create resignation: ${Object.values(errors).join(', ')}`);
           }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating resignation...'));
+      toast.loading('Updating resignation...');
       
       router.put(route('hr.resignations.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Resignation updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Resignation updated successfully');
           }
         },
         onError: (errors) => {
@@ -157,7 +152,7 @@ export default function Resignations() {
           if (typeof errors === 'string') {
             toast.error(errors);
           } else {
-            toast.error(t(`Failed to update resignation: ${Object.values(errors).join(', ')}`));
+            toast.error(`Failed to update resignation: ${Object.values(errors).join(', ')}`);
           }
         }
       });
@@ -165,18 +160,16 @@ export default function Resignations() {
   };
   
   const handleStatusChange = (formData: any) => {
-    toast.loading(t('Updating resignation status...'));
+    toast.loading('Updating resignation status...');
     
     router.put(route('hr.resignations.change-status', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsStatusModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Resignation status updated successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Resignation status updated successfully');
         }
       },
       onError: (errors) => {
@@ -184,25 +177,23 @@ export default function Resignations() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to update resignation status: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to update resignation status: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting resignation...'));
+    toast.loading('Deleting resignation...');
     
     router.delete(route('hr.resignations.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Resignation deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Resignation deleted successfully');
         }
       },
       onError: (errors) => {
@@ -210,7 +201,7 @@ export default function Resignations() {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t(`Failed to delete resignation: ${Object.values(errors).join(', ')}`));
+          toast.error(`Failed to delete resignation: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -236,7 +227,7 @@ export default function Resignations() {
   // Add the "Add New Resignation" button if user has permission
   if (hasPermission(permissions, 'create-resignations')) {
     pageActions.push({
-      label: t('Add Resignation'),
+      label: 'Add Resignation',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -244,16 +235,16 @@ export default function Resignations() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.resignations.index') },
-    { title: t('Resignations') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.resignations.index') },
+    { title: 'Resignations' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'employee.name', 
-      label: t('Employee'), 
+      label: 'Employee', 
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.employee?.name || '-'}</div>
@@ -263,29 +254,29 @@ export default function Resignations() {
     },
     { 
       key: 'resignation_date', 
-      label: t('Resignation Date'),
+      label: 'Resignation Date',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     },
     { 
       key: 'last_working_day', 
-      label: t('Last Working Day'),
+      label: 'Last Working Day',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
     },
     { 
       key: 'notice_period', 
-      label: t('Notice Period'),
+      label: 'Notice Period',
       render: (value) => value || '-'
     },
     { 
       key: 'reason', 
-      label: t('Reason'),
+      label: 'Reason',
       render: (value) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => {
         const statusClasses = {
           pending: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -303,7 +294,7 @@ export default function Resignations() {
     },
     { 
       key: 'documents', 
-      label: t('Documents'),
+      label: 'Documents',
       render: (value, row) => value && value.trim() !== '' ? (
         <span 
           className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20 cursor-pointer"
@@ -312,7 +303,7 @@ export default function Resignations() {
             handleAction('download-document', row);
           }}
         >
-          {t('View Document')}
+          {'View Document'}
         </span>
       ) : '-'
     }
@@ -321,28 +312,28 @@ export default function Resignations() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-resignations'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-resignations'
     },
     { 
-      label: t('Change Status'), 
+      label: 'Change Status', 
       icon: 'RefreshCw', 
       action: 'change-status', 
       className: 'text-green-500',
       requiredPermission: 'edit-resignations'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -352,7 +343,7 @@ export default function Resignations() {
 
   // Prepare employee options for filter
   const employeeOptions = [
-    { value: '', label: t('All Employees') },
+    { value: '', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: `${emp.name} (${emp.employee_id})`
@@ -361,16 +352,16 @@ export default function Resignations() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') },
-    { value: 'completed', label: t('Completed') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' },
+    { value: 'completed', label: 'Completed' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Resignations")} 
+      title={"Resignations"} 
       url="/hr/resignations"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -385,7 +376,7 @@ export default function Resignations() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -394,7 +385,7 @@ export default function Resignations() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -402,14 +393,14 @@ export default function Resignations() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -462,7 +453,7 @@ export default function Resignations() {
           to={resignations?.to || 0}
           total={resignations?.total || 0}
           links={resignations?.links}
-          entityName={t("resignations")}
+          entityName={"resignations"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -476,7 +467,7 @@ export default function Resignations() {
           fields: [
             { 
               name: 'employee_id', 
-              label: t('Employee'), 
+              label: 'Employee', 
               type: 'select', 
               required: true,
               options: employeeOptions.filter(opt => opt.value !== ''),
@@ -484,48 +475,48 @@ export default function Resignations() {
             },
             { 
               name: 'resignation_date', 
-              label: t('Resignation Date'), 
+              label: 'Resignation Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'last_working_day', 
-              label: t('Last Working Day'), 
+              label: 'Last Working Day', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'notice_period', 
-              label: t('Notice Period'), 
+              label: 'Notice Period', 
               type: 'text',
               placeholder: 'e.g. 1 month, 2 weeks'
             },
             { 
               name: 'reason', 
-              label: t('Reason'), 
+              label: 'Reason', 
               type: 'text' 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'documents', 
-              label: t('Documents'), 
+              label: 'Documents', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select document file...')}
+                  placeholder={'Select document file...'}
                 />
               )
             },
             ...(formMode === 'edit' ? [
               { 
                 name: 'status', 
-                label: t('Status'), 
+                label: 'Status', 
                 type: 'select',
                 options: [
                   { value: 'pending', label: 'Pending' },
@@ -536,18 +527,18 @@ export default function Resignations() {
               },
               { 
                 name: 'exit_interview_conducted', 
-                label: t('Exit Interview Conducted'), 
+                label: 'Exit Interview Conducted', 
                 type: 'checkbox'
               },
               { 
                 name: 'exit_interview_date', 
-                label: t('Exit Interview Date'), 
+                label: 'Exit Interview Date', 
                 type: 'date',
                 showWhen: (formData) => formData.exit_interview_conducted
               },
               { 
                 name: 'exit_feedback', 
-                label: t('Exit Feedback'), 
+                label: 'Exit Feedback', 
                 type: 'textarea',
                 showWhen: (formData) => formData.status === 'completed'
               }
@@ -562,10 +553,10 @@ export default function Resignations() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Resignation')
+            ? 'Add New Resignation'
             : formMode === 'edit'
-              ? t('Edit Resignation')
-              : t('View Resignation')
+              ? 'Edit Resignation'
+              : 'View Resignation'
         }
         mode={formMode}
       />
@@ -579,7 +570,7 @@ export default function Resignations() {
           fields: [
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
@@ -592,19 +583,19 @@ export default function Resignations() {
             },
             { 
               name: 'exit_interview_conducted', 
-              label: t('Exit Interview Conducted'), 
+              label: 'Exit Interview Conducted', 
               type: 'checkbox',
               showWhen: (formData) => formData.status === 'completed'
             },
             { 
               name: 'exit_interview_date', 
-              label: t('Exit Interview Date'), 
+              label: 'Exit Interview Date', 
               type: 'date',
               showWhen: (formData) => formData.status === 'completed' && formData.exit_interview_conducted
             },
             { 
               name: 'exit_feedback', 
-              label: t('Exit Feedback'), 
+              label: 'Exit Feedback', 
               type: 'textarea',
               showWhen: (formData) => formData.status === 'completed'
             }
@@ -612,7 +603,7 @@ export default function Resignations() {
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Change Resignation Status')}
+        title={'Change Resignation Status'}
         mode="edit"
       />
 

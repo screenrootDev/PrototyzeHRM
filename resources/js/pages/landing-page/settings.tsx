@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useForm, usePage, router } from "@inertiajs/react";
-import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,7 +71,8 @@ interface PageProps {
 }
 
 export default function LandingPageSettings() {
-  const { t } = useTranslation();
+  const t = (key: string) => key;
+  
   const { settings, flash, globalSettings } = usePage<PageProps>().props;
   const { themeColor, customColor } = useBrand();
   const isSaas = globalSettings?.is_saas;
@@ -251,7 +251,7 @@ export default function LandingPageSettings() {
         setIsLoading(false);
         const successMessage =
           page.props.flash?.success ||
-          t("Landing page settings saved successfully");
+          "Landing page settings saved successfully";
         const errorMessage = page.props.flash?.error;
 
         if (successMessage && !errorMessage) {
@@ -265,7 +265,7 @@ export default function LandingPageSettings() {
         const errorMessage =
           errors.error ||
           Object.values(errors).join(", ") ||
-          t("Failed to save landing page settings");
+          "Failed to save landing page settings";
         toast.error(errorMessage);
       },
     });
@@ -273,11 +273,11 @@ export default function LandingPageSettings() {
 
   return (
     <PageTemplate
-      title={t("Landing Page Settings")}
+      title={"Landing Page Settings"}
       url="/landing-page/settings"
       breadcrumbs={[
-        { title: t("Dashboard"), href: route("dashboard") },
-        { title: t("Landing Page Settings") },
+        { title: "Dashboard", href: route("dashboard") },
+        { title: "Landing Page Settings" },
       ]}
       action={
         <div className="flex gap-2">
@@ -287,18 +287,18 @@ export default function LandingPageSettings() {
             style={{ backgroundColor: brandColor }}
           >
             <Eye className="w-4 h-4" />
-            {t("View Landing Page")}
+            {"View Landing Page"}
           </Link>
         </div>
       }
     >
       <SettingsSection
-        title={t("Landing Page Settings")}
-        description={t("Customize your landing page content and appearance")}
+        title={"Landing Page Settings"}
+        description={"Customize your landing page content and appearance"}
         action={
           <Button onClick={saveSettings} disabled={isLoading} size="sm">
             <Save className="h-4 w-4 mr-2" />
-            {isLoading ? t("Saving...") : t("Save Changes")}
+            {isLoading ? "Saving..." : "Save Changes"}
           </Button>
         }
       >
@@ -309,27 +309,27 @@ export default function LandingPageSettings() {
               {[
                 {
                   key: "setup",
-                  label: t("Setup"),
+                  label: "Setup",
                   sections: ["general", "order", "advanced"],
                 },
                 {
                   key: "layout",
-                  label: t("Layout"),
+                  label: "Layout",
                   sections: ["header", "hero", "footer"],
                 },
                 {
                   key: "content",
-                  label: t("Content"),
+                  label: "Content",
                   sections: ["features", "screenshots", "whychooseus", "about"],
                 },
                 {
                   key: "social",
-                  label: t("Social"),
+                  label: "Social",
                   sections: ["team", "testimonials", "plans"],
                 },
                 {
                   key: "engagement",
-                  label: t("Engagement"),
+                  label: "Engagement",
                   sections: ["faq", "newsletter", "contact"],
                 },
               ].map((tab) => (
@@ -363,30 +363,30 @@ export default function LandingPageSettings() {
               {(() => {
                 const tabSections = {
                   setup: [
-                    { key: "general", label: t("General") },
-                    { key: "order", label: t("Order") },
-                    { key: "advanced", label: t("Advanced") },
+                    { key: "general", label: "General" },
+                    { key: "order", label: "Order" },
+                    { key: "advanced", label: "Advanced" },
                   ],
                   layout: [
-                    { key: "header", label: t("Header") },
-                    { key: "hero", label: t("Hero") },
-                    { key: "footer", label: t("Footer") },
+                    { key: "header", label: "Header" },
+                    { key: "hero", label: "Hero" },
+                    { key: "footer", label: "Footer" },
                   ],
                   content: [
-                    { key: "features", label: t("Features") },
-                    { key: "screenshots", label: t("Screenshots") },
-                    { key: "whychooseus", label: t("Why Us") },
-                    { key: "about", label: t("About") },
+                    { key: "features", label: "Features" },
+                    { key: "screenshots", label: "Screenshots" },
+                    { key: "whychooseus", label: "Why Us" },
+                    { key: "about", label: "About" },
                   ],
                   social: [
-                    { key: "team", label: t("Team") },
-                    { key: "testimonials", label: t("Reviews") },
-                    ...(isSaas ? [{ key: "plans", label: t("Plans") }] : []),
+                    { key: "team", label: "Team" },
+                    { key: "testimonials", label: "Reviews" },
+                    ...(isSaas ? [{ key: "plans", label: "Plans" }] : []),
                   ],
                   engagement: [
-                    { key: "faq", label: t("FAQ") },
-                    { key: "newsletter", label: t("Newsletter") },
-                    { key: "contact", label: t("Contact") },
+                    { key: "faq", label: "FAQ" },
+                    { key: "newsletter", label: "Newsletter" },
+                    { key: "contact", label: "Contact" },
                   ],
                 };
                 return tabSections[activeTab].map((section) => (
@@ -426,10 +426,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                        {t("Company Information")}
+                        {"Company Information"}
                       </h3>
                       <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {t("Basic company details for your landing page")}
+                        {"Basic company details for your landing page"}
                       </p>
                     </div>
                   </div>
@@ -444,14 +444,14 @@ export default function LandingPageSettings() {
                           className="h-4 w-4"
                           style={{ color: brandColor }}
                         />
-                        {t("Company Name")}
+                        {"Company Name"}
                       </Label>
                       <Input
                         id="company_name"
                         name="company_name"
                         value={data.company_name}
                         onChange={handleInputChange}
-                        placeholder={t("Your Company Name")}
+                        placeholder={"Your Company Name"}
                         className="h-10 border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-100"
                         style={
                           {
@@ -469,7 +469,7 @@ export default function LandingPageSettings() {
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_email">
-                        {t("Contact Email")}
+                        {"Contact Email"}
                       </Label>
                       <Input
                         id="contact_email"
@@ -477,33 +477,33 @@ export default function LandingPageSettings() {
                         type="email"
                         value={data.contact_email}
                         onChange={handleInputChange}
-                        placeholder={t("support@company.com")}
+                        placeholder={"support@company.com"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_phone">
-                        {t("Contact Phone")}
+                        {"Contact Phone"}
                       </Label>
                       <Input
                         id="contact_phone"
                         name="contact_phone"
                         value={data.contact_phone}
                         onChange={handleInputChange}
-                        placeholder={t("+1 (555) 123-4567")}
+                        placeholder={"+1 (555) 123-4567"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_address">
-                        {t("Contact Address")}
+                        {"Contact Address"}
                       </Label>
                       <Input
                         id="contact_address"
                         name="contact_address"
                         value={data.contact_address}
                         onChange={handleInputChange}
-                        placeholder={t("123 Business Ave, City, State")}
+                        placeholder={"123 Business Ave, City, State"}
                       />
                     </div>
                   </div>
@@ -519,12 +519,12 @@ export default function LandingPageSettings() {
                       className="text-sm font-medium mb-3"
                       style={{ color: brandColor }}
                     >
-                      {t("Theme Colors")}
+                      {"Theme Colors"}
                     </h4>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="space-y-3">
                         <Label htmlFor="general_primary_color">
-                          {t("Primary Color")}
+                          {"Primary Color"}
                         </Label>
                         <div className="flex gap-2">
                           <Input
@@ -554,7 +554,7 @@ export default function LandingPageSettings() {
 
                       <div className="space-y-3">
                         <Label htmlFor="general_secondary_color">
-                          {t("Secondary Color")}
+                          {"Secondary Color"}
                         </Label>
                         <div className="flex gap-2">
                           <Input
@@ -588,7 +588,7 @@ export default function LandingPageSettings() {
 
                       <div className="space-y-3">
                         <Label htmlFor="general_accent_color">
-                          {t("Accent Color")}
+                          {"Accent Color"}
                         </Label>
                         <div className="flex gap-2">
                           <Input
@@ -632,15 +632,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Header Style")}
+                          {"Header Style"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Customize your header appearance and behavior")}
+                          {"Customize your header appearance and behavior"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.header !==
@@ -657,7 +657,7 @@ export default function LandingPageSettings() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="header_transparent">
-                          {t("Transparent Header")}
+                          {"Transparent Header"}
                         </Label>
                         <Switch
                           id="header_transparent"
@@ -672,13 +672,13 @@ export default function LandingPageSettings() {
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {t("Make header background transparent")}
+                        {"Make header background transparent"}
                       </p>
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="header_background_color">
-                        {t("Background Color")}
+                        {"Background Color"}
                       </Label>
                       <div className="flex gap-2">
                         <Input
@@ -714,7 +714,7 @@ export default function LandingPageSettings() {
 
                     <div className="space-y-3">
                       <Label htmlFor="header_text_color">
-                        {t("Text Color")}
+                        {"Text Color"}
                       </Label>
                       <div className="flex gap-2">
                         <Input
@@ -746,7 +746,7 @@ export default function LandingPageSettings() {
 
                     <div className="space-y-3">
                       <Label htmlFor="header_button_style">
-                        {t("Button Style")}
+                        {"Button Style"}
                       </Label>
                       <select
                         id="header_button_style"
@@ -781,15 +781,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Hero Layout")}
+                          {"Hero Layout"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Configure hero section layout and dimensions")}
+                          {"Configure hero section layout and dimensions"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.hero !==
@@ -804,7 +804,7 @@ export default function LandingPageSettings() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="hero_layout">{t("Layout Style")}</Label>
+                      <Label htmlFor="hero_layout">{"Layout Style"}</Label>
                       <select
                         id="hero_layout"
                         value={getSectionData("hero").layout || "image-right"}
@@ -825,7 +825,7 @@ export default function LandingPageSettings() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="hero_height">{t("Section Height")}</Label>
+                      <Label htmlFor="hero_height">{"Section Height"}</Label>
                       <Input
                         id="hero_height"
                         type="number"
@@ -839,7 +839,7 @@ export default function LandingPageSettings() {
                         max="1000"
                       />
                       <p className="text-xs text-muted-foreground">
-                        {t("Height in pixels (300-1000)")}
+                        {"Height in pixels (300-1000)"}
                       </p>
                     </div>
                   </div>
@@ -852,10 +852,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Hero Content")}
+                        {"Hero Content"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Main headline and supporting text")}
+                        {"Main headline and supporting text"}
                       </p>
                     </div>
                   </div>
@@ -870,7 +870,7 @@ export default function LandingPageSettings() {
                           className="h-4 w-4"
                           style={{ color: brandColor }}
                         />
-                        {t("Hero Title")}
+                        {"Hero Title"}
                       </Label>
                       <Input
                         id="hero_title"
@@ -878,7 +878,7 @@ export default function LandingPageSettings() {
                         onChange={(e) =>
                           updateSectionData("hero", { title: e.target.value })
                         }
-                        placeholder={t("Your main headline")}
+                        placeholder={"Your main headline"}
                         className="h-10 border-gray-200"
                         style={
                           {
@@ -903,7 +903,7 @@ export default function LandingPageSettings() {
                           className="h-4 w-4"
                           style={{ color: brandColor }}
                         />
-                        {t("Hero Subtitle")}
+                        {"Hero Subtitle"}
                       </Label>
                       <Textarea
                         id="hero_subtitle"
@@ -913,7 +913,7 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t("Supporting text for your headline")}
+                        placeholder={"Supporting text for your headline"}
                         rows={3}
                         className="border-gray-200 resize-none"
                         style={
@@ -932,7 +932,7 @@ export default function LandingPageSettings() {
 
                     <div className="space-y-3">
                       <Label htmlFor="hero_announcement_text">
-                        {t("Announcement Badge")}
+                        {"Announcement Badge"}
                       </Label>
                       <Input
                         id="hero_announcement_text"
@@ -942,19 +942,17 @@ export default function LandingPageSettings() {
                             announcement_text: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "📢 New: Smart Leave & Attendance Tracking Launched!",
-                        )}
+                        placeholder={"📢 New: Smart Leave & Attendance Tracking Launched!"}
                       />
                       <p className="text-xs text-muted-foreground">
-                        {t("Small announcement text shown above the title")}
+                        {"Small announcement text shown above the title"}
                       </p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-3">
                         <Label htmlFor="hero_primary_button_text">
-                          {t("Primary Button Text")}
+                          {"Primary Button Text"}
                         </Label>
                         <Input
                           id="hero_primary_button_text"
@@ -966,13 +964,13 @@ export default function LandingPageSettings() {
                               primary_button_text: e.target.value,
                             })
                           }
-                          placeholder={t("Start Free Trial")}
+                          placeholder={"Start Free Trial"}
                         />
                       </div>
 
                       <div className="space-y-3">
                         <Label htmlFor="hero_secondary_button_text">
-                          {t("Secondary Button Text")}
+                          {"Secondary Button Text"}
                         </Label>
                         <Input
                           id="hero_secondary_button_text"
@@ -984,7 +982,7 @@ export default function LandingPageSettings() {
                               secondary_button_text: e.target.value,
                             })
                           }
-                          placeholder={t("Login")}
+                          placeholder={"Login"}
                         />
                       </div>
                     </div>
@@ -998,10 +996,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Hero Statistics")}
+                        {"Hero Statistics"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Add compelling statistics to your hero section")}
+                        {"Add compelling statistics to your hero section"}
                       </p>
                     </div>
                   </div>
@@ -1014,7 +1012,7 @@ export default function LandingPageSettings() {
                       >
                         <div className="space-y-3">
                           <Label htmlFor={`hero_stats_${index}_value`}>
-                            {t("Value")}
+                            {"Value"}
                           </Label>
                           <Input
                             id={`hero_stats_${index}_value`}
@@ -1034,7 +1032,7 @@ export default function LandingPageSettings() {
                         </div>
                         <div className="space-y-3">
                           <Label htmlFor={`hero_stats_${index}_label`}>
-                            {t("Label")}
+                            {"Label"}
                           </Label>
                           <div className="flex gap-2">
                             <Input
@@ -1050,7 +1048,7 @@ export default function LandingPageSettings() {
                                 };
                                 updateSectionData("hero", { stats: newStats });
                               }}
-                              placeholder={t("Active Users")}
+                              placeholder={"Active Users"}
                             />
                             <Button
                               type="button"
@@ -1085,7 +1083,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Statistic")}
+                      {"Add Statistic"}
                     </Button>
                   </div>
                 </div>
@@ -1097,10 +1095,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Hero Image")}
+                        {"Hero Image"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Configure hero section imagery")}
+                        {"Configure hero section imagery"}
                       </p>
                     </div>
                   </div>
@@ -1108,7 +1106,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <MediaPicker
-                        label={t("Hero Image")}
+                        label={"Hero Image"}
                         value={getDisplayUrl(
                           getSectionData("hero").image ||
                             getImageUrl(
@@ -1122,13 +1120,13 @@ export default function LandingPageSettings() {
                             image: convertToRelativePath(value),
                           });
                         }}
-                        placeholder={t("Select hero image...")}
+                        placeholder={"Select hero image..."}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="hero_image_position">
-                        {t("Image Position")}
+                        {"Image Position"}
                       </Label>
                       <select
                         id="hero_image_position"
@@ -1140,10 +1138,10 @@ export default function LandingPageSettings() {
                         }
                         className="w-full p-2 border border-gray-300 rounded-md"
                       >
-                        <option value="right">{t("Right Side")}</option>
-                        <option value="left">{t("Left Side")}</option>
-                        <option value="center">{t("Center")}</option>
-                        <option value="background">{t("Background")}</option>
+                        <option value="right">{"Right Side"}</option>
+                        <option value="left">{"Left Side"}</option>
+                        <option value="center">{"Center"}</option>
+                        <option value="background">{"Background"}</option>
                       </select>
                     </div>
                   </div>
@@ -1156,10 +1154,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Hero Colors")}
+                        {"Hero Colors"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Customize hero section colors and overlays")}
+                        {"Customize hero section colors and overlays"}
                       </p>
                     </div>
                   </div>
@@ -1167,7 +1165,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="hero_background_color">
-                        {t("Background Color")}
+                        {"Background Color"}
                       </Label>
                       <div className="flex gap-2">
                         <Input
@@ -1198,7 +1196,7 @@ export default function LandingPageSettings() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="hero_text_color">{t("Text Color")}</Label>
+                      <Label htmlFor="hero_text_color">{"Text Color"}</Label>
                       <div className="flex gap-2">
                         <Input
                           id="hero_text_color"
@@ -1226,7 +1224,7 @@ export default function LandingPageSettings() {
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
                         <Label htmlFor="hero_overlay">
-                          {t("Background Overlay")}
+                          {"Background Overlay"}
                         </Label>
                         <Switch
                           id="hero_overlay"
@@ -1237,13 +1235,13 @@ export default function LandingPageSettings() {
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        {t("Add overlay on background image")}
+                        {"Add overlay on background image"}
                       </p>
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="hero_overlay_color">
-                        {t("Overlay Color")}
+                        {"Overlay Color"}
                       </Label>
                       <Input
                         id="hero_overlay_color"
@@ -1290,15 +1288,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Screenshots Content")}
+                          {"Screenshots Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Section title and description")}
+                          {"Section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility
@@ -1314,7 +1312,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="screenshots_title">
-                        {t("Section Title")}
+                        {"Section Title"}
                       </Label>
                       <Input
                         id="screenshots_title"
@@ -1324,13 +1322,13 @@ export default function LandingPageSettings() {
                             title: e.target.value,
                           })
                         }
-                        placeholder={t("See HRM Saas in Action")}
+                        placeholder={"See HRM Saas in Action"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="screenshots_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="screenshots_subtitle"
@@ -1340,9 +1338,7 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Explore our intuitive interface and powerful features...",
-                        )}
+                        placeholder={"Explore our intuitive interface and powerful features..."}
                         rows={3}
                       />
                     </div>
@@ -1356,10 +1352,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Screenshots Gallery")}
+                        {"Screenshots Gallery"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Manage application screenshots")}
+                        {"Manage application screenshots"}
                       </p>
                     </div>
                   </div>
@@ -1376,7 +1372,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Screenshot")} {index + 1}
+                              {"Screenshot"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -1400,7 +1396,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-3">
                               <MediaPicker
-                                label={t("Screenshot Image")}
+                                label={"Screenshot Image"}
                                 value={getDisplayUrl(screenshot.src || "")}
                                 onChange={(value) => {
                                   const newScreenshots = [
@@ -1415,14 +1411,14 @@ export default function LandingPageSettings() {
                                     screenshots_list: newScreenshots,
                                   });
                                 }}
-                                placeholder={t("Select screenshot image...")}
+                                placeholder={"Select screenshot image..."}
                               />
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div className="space-y-3">
                                 <Label htmlFor={`screenshot_${index}_title`}>
-                                  {t("Title")}
+                                  {"Title"}
                                 </Label>
                                 <Input
                                   id={`screenshot_${index}_title`}
@@ -1440,13 +1436,13 @@ export default function LandingPageSettings() {
                                       screenshots_list: newScreenshots,
                                     });
                                   }}
-                                  placeholder={t("Dashboard Overview")}
+                                  placeholder={"Dashboard Overview"}
                                 />
                               </div>
 
                               <div className="space-y-3">
                                 <Label htmlFor={`screenshot_${index}_alt`}>
-                                  {t("Alt Text")}
+                                  {"Alt Text"}
                                 </Label>
                                 <Input
                                   id={`screenshot_${index}_alt`}
@@ -1464,7 +1460,7 @@ export default function LandingPageSettings() {
                                       screenshots_list: newScreenshots,
                                     });
                                   }}
-                                  placeholder={t("HRMGo Dashboard Overview")}
+                                  placeholder={"HRMGo Dashboard Overview"}
                                 />
                               </div>
                             </div>
@@ -1473,7 +1469,7 @@ export default function LandingPageSettings() {
                               <Label
                                 htmlFor={`screenshot_${index}_description`}
                               >
-                                {t("Description")}
+                                {"Description"}
                               </Label>
                               <Textarea
                                 id={`screenshot_${index}_description`}
@@ -1491,9 +1487,7 @@ export default function LandingPageSettings() {
                                     screenshots_list: newScreenshots,
                                   });
                                 }}
-                                placeholder={t(
-                                  "Get a complete overview of employee data, payroll, and HR activities in one unified dashboard.",
-                                )}
+                                placeholder={"Get a complete overview of employee data, payroll, and HR activities in one unified dashboard."}
                                 rows={2}
                               />
                             </div>
@@ -1519,7 +1513,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Screenshot")}
+                      {"Add Screenshot"}
                     </Button>
                   </div>
                 </div>
@@ -1551,15 +1545,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Why Choose Us Content")}
+                          {"Why Choose Us Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Main section title and description")}
+                          {"Main section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility
@@ -1579,7 +1573,7 @@ export default function LandingPageSettings() {
                         className="text-sm font-medium text-gray-900 flex items-center gap-2"
                       >
                         <Type className="h-4 w-4 text-emerald-600" />
-                        {t("Section Title")}
+                        {"Section Title"}
                       </Label>
                       <Input
                         id="why_choose_us_title"
@@ -1589,14 +1583,14 @@ export default function LandingPageSettings() {
                             title: e.target.value,
                           })
                         }
-                        placeholder={t("Why Choose HRM SaaS ? ")}
+                        placeholder={"Why Choose HRM SaaS ? "}
                         className="h-10 border-gray-200 focus:border-emerald-500 focus:ring-emerald-500/20"
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="why_choose_us_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="why_choose_us_subtitle"
@@ -1606,9 +1600,7 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "We're not just another digital business card platform...",
-                        )}
+                        placeholder={"We're not just another digital business card platform..."}
                         rows={3}
                       />
                     </div>
@@ -1622,10 +1614,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Reasons to Choose Us")}
+                        {"Reasons to Choose Us"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Key benefits and advantages")}
+                        {"Key benefits and advantages"}
                       </p>
                     </div>
                   </div>
@@ -1642,7 +1634,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Reason")} {index + 1}
+                              {"Reason"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -1665,7 +1657,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-3">
                               <Label htmlFor={`reason_${index}_title`}>
-                                {t("Title")}
+                                {"Title"}
                               </Label>
                               <Input
                                 id={`reason_${index}_title`}
@@ -1683,13 +1675,13 @@ export default function LandingPageSettings() {
                                     reasons: newReasons,
                                   });
                                 }}
-                                placeholder={t("All-in-One HR Solution")}
+                                placeholder={"All-in-One HR Solution"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`reason_${index}_icon`}>
-                                {t("Icon")}
+                                {"Icon"}
                               </Label>
                               <select
                                 id={`reason_${index}_icon`}
@@ -1726,7 +1718,7 @@ export default function LandingPageSettings() {
 
                             <div className="space-y-3 md:col-span-1">
                               <Label htmlFor={`reason_${index}_description`}>
-                                {t("Description")}
+                                {"Description"}
                               </Label>
                               <Textarea
                                 id={`reason_${index}_description`}
@@ -1744,9 +1736,7 @@ export default function LandingPageSettings() {
                                     reasons: newReasons,
                                   });
                                 }}
-                                placeholder={t(
-                                  "Manage employees, payroll, attendance, recruitment, and performance from a single platform...",
-                                )}
+                                placeholder={"Manage employees, payroll, attendance, recruitment, and performance from a single platform..."}
                                 rows={3}
                               />
                             </div>
@@ -1771,7 +1761,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Reason")}
+                      {"Add Reason"}
                     </Button>
                   </div>
                 </div>
@@ -1783,10 +1773,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Statistics Section")}
+                        {"Statistics Section"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Trust indicators and key metrics")}
+                        {"Trust indicators and key metrics"}
                       </p>
                     </div>
                   </div>
@@ -1794,7 +1784,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4 mb-6">
                     <div className="space-y-3">
                       <Label htmlFor="why_choose_us_stats_title">
-                        {t("Statistics Title")}
+                        {"Statistics Title"}
                       </Label>
                       <Input
                         id="why_choose_us_stats_title"
@@ -1806,13 +1796,13 @@ export default function LandingPageSettings() {
                             stats_title: e.target.value,
                           })
                         }
-                        placeholder={t("Trusted by Industry Leaders")}
+                        placeholder={"Trusted by Industry Leaders"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="why_choose_us_stats_subtitle">
-                        {t("Statistics Subtitle")}
+                        {"Statistics Subtitle"}
                       </Label>
                       <Input
                         id="why_choose_us_stats_subtitle"
@@ -1824,9 +1814,7 @@ export default function LandingPageSettings() {
                             stats_subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Join the growing community of professionals",
-                        )}
+                        placeholder={"Join the growing community of professionals"}
                       />
                     </div>
                   </div>
@@ -1840,7 +1828,7 @@ export default function LandingPageSettings() {
                         >
                           <div className="space-y-3">
                             <Label htmlFor={`stat_${index}_value`}>
-                              {t("Value")}
+                              {"Value"}
                             </Label>
                             <Input
                               id={`stat_${index}_value`}
@@ -1863,7 +1851,7 @@ export default function LandingPageSettings() {
                           </div>
                           <div className="space-y-3">
                             <Label htmlFor={`stat_${index}_label`}>
-                              {t("Label")}
+                              {"Label"}
                             </Label>
                             <Input
                               id={`stat_${index}_label`}
@@ -1881,12 +1869,12 @@ export default function LandingPageSettings() {
                                   stats: newStats,
                                 });
                               }}
-                              placeholder={t("Active Users")}
+                              placeholder={"Active Users"}
                             />
                           </div>
                           <div className="space-y-3">
                             <Label htmlFor={`stat_${index}_color`}>
-                              {t("Color")}
+                              {"Color"}
                             </Label>
                             <div className="flex gap-2">
                               <select
@@ -1950,7 +1938,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Statistic")}
+                      {"Add Statistic"}
                     </Button>
                   </div>
                 </div>
@@ -1962,10 +1950,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Call to Action")}
+                        {"Call to Action"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Encourage user engagement")}
+                        {"Encourage user engagement"}
                       </p>
                     </div>
                   </div>
@@ -1973,7 +1961,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="why_choose_us_cta_title">
-                        {t("CTA Title")}
+                        {"CTA Title"}
                       </Label>
                       <Input
                         id="why_choose_us_cta_title"
@@ -1983,13 +1971,13 @@ export default function LandingPageSettings() {
                             cta_title: e.target.value,
                           })
                         }
-                        placeholder={t("Ready to get started?")}
+                        placeholder={"Ready to get started?"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="why_choose_us_cta_subtitle">
-                        {t("CTA Subtitle")}
+                        {"CTA Subtitle"}
                       </Label>
                       <Input
                         id="why_choose_us_cta_subtitle"
@@ -2001,9 +1989,7 @@ export default function LandingPageSettings() {
                             cta_subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Join thousands of satisfied users today",
-                        )}
+                        placeholder={"Join thousands of satisfied users today"}
                       />
                     </div>
                   </div>
@@ -2036,15 +2022,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Team Content")}
+                          {"Team Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Team section title and description")}
+                          {"Team section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.team !==
@@ -2059,20 +2045,20 @@ export default function LandingPageSettings() {
 
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="team_title">{t("Team Title")}</Label>
+                      <Label htmlFor="team_title">{"Team Title"}</Label>
                       <Input
                         id="team_title"
                         value={getSectionData("team").title || ""}
                         onChange={(e) =>
                           updateSectionData("team", { title: e.target.value })
                         }
-                        placeholder={t("Meet Our Team")}
+                        placeholder={"Meet Our Team"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="team_subtitle">
-                        {t("Team Subtitle")}
+                        {"Team Subtitle"}
                       </Label>
                       <Textarea
                         id="team_subtitle"
@@ -2082,7 +2068,7 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t("We're a diverse team of innovators...")}
+                        placeholder={"We're a diverse team of innovators..."}
                         rows={3}
                       />
                     </div>
@@ -2096,10 +2082,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Team Members")}
+                        {"Team Members"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Add and manage team member profiles")}
+                        {"Add and manage team member profiles"}
                       </p>
                     </div>
                   </div>
@@ -2116,7 +2102,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Member")} {index + 1}
+                              {"Member"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -2139,7 +2125,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-3">
                               <Label htmlFor={`member_${index}_name`}>
-                                {t("Name")}
+                                {"Name"}
                               </Label>
                               <Input
                                 id={`member_${index}_name`}
@@ -2156,13 +2142,13 @@ export default function LandingPageSettings() {
                                     members: newMembers,
                                   });
                                 }}
-                                placeholder={t("John Doe")}
+                                placeholder={"John Doe"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`member_${index}_role`}>
-                                {t("Role")}
+                                {"Role"}
                               </Label>
                               <Input
                                 id={`member_${index}_role`}
@@ -2179,13 +2165,13 @@ export default function LandingPageSettings() {
                                     members: newMembers,
                                   });
                                 }}
-                                placeholder={t("CEO & Founder")}
+                                placeholder={"CEO & Founder"}
                               />
                             </div>
 
                             <div className="space-y-3 md:col-span-2">
                               <MediaPicker
-                                label={t("Profile Image")}
+                                label={"Profile Image"}
                                 value={getDisplayUrl(member.image || "")}
                                 onChange={(value) => {
                                   const newMembers = [
@@ -2199,13 +2185,13 @@ export default function LandingPageSettings() {
                                     members: newMembers,
                                   });
                                 }}
-                                placeholder={t("Select profile image...")}
+                                placeholder={"Select profile image..."}
                               />
                             </div>
 
                             <div className="space-y-3 md:col-span-2">
                               <Label htmlFor={`member_${index}_bio`}>
-                                {t("Bio")}
+                                {"Bio"}
                               </Label>
                               <Textarea
                                 id={`member_${index}_bio`}
@@ -2222,16 +2208,14 @@ export default function LandingPageSettings() {
                                     members: newMembers,
                                   });
                                 }}
-                                placeholder={t(
-                                  "Brief description about the team member...",
-                                )}
+                                placeholder={"Brief description about the team member..."}
                                 rows={2}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`member_${index}_linkedin`}>
-                                {t("LinkedIn")}
+                                {"LinkedIn"}
                               </Label>
                               <Input
                                 id={`member_${index}_linkedin`}
@@ -2254,7 +2238,7 @@ export default function LandingPageSettings() {
 
                             <div className="space-y-3">
                               <Label htmlFor={`member_${index}_email`}>
-                                {t("Email")}
+                                {"Email"}
                               </Label>
                               <Input
                                 id={`member_${index}_email`}
@@ -2301,7 +2285,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Team Member")}
+                      {"Add Team Member"}
                     </Button>
                   </div>
                 </div>
@@ -2313,17 +2297,17 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Join Team CTA")}
+                        {"Join Team CTA"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Call-to-action for team recruitment")}
+                        {"Call-to-action for team recruitment"}
                       </p>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="team_cta_title">{t("CTA Title")}</Label>
+                      <Label htmlFor="team_cta_title">{"CTA Title"}</Label>
                       <Input
                         id="team_cta_title"
                         value={getSectionData("team").cta_title || ""}
@@ -2332,13 +2316,13 @@ export default function LandingPageSettings() {
                             cta_title: e.target.value,
                           })
                         }
-                        placeholder={t("Want to Join Our Team?")}
+                        placeholder={"Want to Join Our Team?"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="team_cta_description">
-                        {t("CTA Description")}
+                        {"CTA Description"}
                       </Label>
                       <Textarea
                         id="team_cta_description"
@@ -2348,16 +2332,14 @@ export default function LandingPageSettings() {
                             cta_description: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "We're always looking for talented individuals...",
-                        )}
+                        placeholder={"We're always looking for talented individuals..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="team_cta_button_text">
-                        {t("Button Text")}
+                        {"Button Text"}
                       </Label>
                       <Input
                         id="team_cta_button_text"
@@ -2367,7 +2349,7 @@ export default function LandingPageSettings() {
                             cta_button_text: e.target.value,
                           })
                         }
-                        placeholder={t("View Open Positions")}
+                        placeholder={"View Open Positions"}
                       />
                     </div>
                   </div>
@@ -2386,15 +2368,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Testimonials Content")}
+                          {"Testimonials Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Section title and description")}
+                          {"Section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility
@@ -2410,7 +2392,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="testimonials_title">
-                        {t("Section Title")}
+                        {"Section Title"}
                       </Label>
                       <Input
                         id="testimonials_title"
@@ -2420,13 +2402,13 @@ export default function LandingPageSettings() {
                             title: e.target.value,
                           })
                         }
-                        placeholder={t("What Our Clients Say")}
+                        placeholder={"What Our Clients Say"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="testimonials_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="testimonials_subtitle"
@@ -2436,7 +2418,7 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t("Don't just take our word for it...")}
+                        placeholder={"Don't just take our word for it..."}
                         rows={3}
                       />
                     </div>
@@ -2450,10 +2432,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Trust Indicators")}
+                        {"Trust Indicators"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Statistics that build credibility")}
+                        {"Statistics that build credibility"}
                       </p>
                     </div>
                   </div>
@@ -2461,7 +2443,7 @@ export default function LandingPageSettings() {
                   <div className="space-y-4">
                     <div className="space-y-3">
                       <Label htmlFor="testimonials_trust_title">
-                        {t("Trust Section Title")}
+                        {"Trust Section Title"}
                       </Label>
                       <Input
                         id="testimonials_trust_title"
@@ -2471,7 +2453,7 @@ export default function LandingPageSettings() {
                             trust_title: e.target.value,
                           })
                         }
-                        placeholder={t("Trusted by HR Professionals Worldwide")}
+                        placeholder={"Trusted by HR Professionals Worldwide"}
                       />
                     </div>
 
@@ -2483,7 +2465,7 @@ export default function LandingPageSettings() {
                         >
                           <div className="space-y-3">
                             <Label htmlFor={`trust_stat_${index}_value`}>
-                              {t("Value")}
+                              {"Value"}
                             </Label>
                             <Input
                               id={`trust_stat_${index}_value`}
@@ -2506,7 +2488,7 @@ export default function LandingPageSettings() {
                           </div>
                           <div className="space-y-3">
                             <Label htmlFor={`trust_stat_${index}_label`}>
-                              {t("Label")}
+                              {"Label"}
                             </Label>
                             <Input
                               id={`trust_stat_${index}_label`}
@@ -2524,12 +2506,12 @@ export default function LandingPageSettings() {
                                   trust_stats: newStats,
                                 });
                               }}
-                              placeholder={t("Average Rating")}
+                              placeholder={"Average Rating"}
                             />
                           </div>
                           <div className="space-y-3">
                             <Label htmlFor={`trust_stat_${index}_color`}>
-                              {t("Color")}
+                              {"Color"}
                             </Label>
                             <div className="flex gap-2">
                               <select
@@ -2595,7 +2577,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Trust Statistic")}
+                      {"Add Trust Statistic"}
                     </Button>
                   </div>
                 </div>
@@ -2607,10 +2589,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Default Testimonials")}
+                        {"Default Testimonials"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Customer reviews and feedback")}
+                        {"Customer reviews and feedback"}
                       </p>
                     </div>
                   </div>
@@ -2627,7 +2609,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-lime-100 text-lime-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Testimonial")} {index + 1}
+                              {"Testimonial"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -2651,7 +2633,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-3">
                               <Label htmlFor={`testimonial_${index}_name`}>
-                                {t("Name")}
+                                {"Name"}
                               </Label>
                               <Input
                                 id={`testimonial_${index}_name`}
@@ -2669,13 +2651,13 @@ export default function LandingPageSettings() {
                                     testimonials: newTestimonials,
                                   });
                                 }}
-                                placeholder={t("John Doe")}
+                                placeholder={"John Doe"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`testimonial_${index}_role`}>
-                                {t("Role")}
+                                {"Role"}
                               </Label>
                               <Input
                                 id={`testimonial_${index}_role`}
@@ -2693,13 +2675,13 @@ export default function LandingPageSettings() {
                                     testimonials: newTestimonials,
                                   });
                                 }}
-                                placeholder={t("CEO")}
+                                placeholder={"CEO"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`testimonial_${index}_company`}>
-                                {t("Company")}
+                                {"Company"}
                               </Label>
                               <Input
                                 id={`testimonial_${index}_company`}
@@ -2717,13 +2699,13 @@ export default function LandingPageSettings() {
                                     testimonials: newTestimonials,
                                   });
                                 }}
-                                placeholder={t("Company Name")}
+                                placeholder={"Company Name"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`testimonial_${index}_rating`}>
-                                {t("Rating")}
+                                {"Rating"}
                               </Label>
                               <select
                                 id={`testimonial_${index}_rating`}
@@ -2743,17 +2725,17 @@ export default function LandingPageSettings() {
                                 }}
                                 className="w-full p-2 border border-gray-300 rounded-md"
                               >
-                                <option value={1}>{t("1 Star")}</option>
-                                <option value={2}>{t("2 Stars")}</option>
-                                <option value={3}>{t("3 Stars")}</option>
-                                <option value={4}>{t("4 Stars")}</option>
-                                <option value={5}>{t("5 Stars")}</option>
+                                <option value={1}>{"1 Star"}</option>
+                                <option value={2}>{"2 Stars"}</option>
+                                <option value={3}>{"3 Stars"}</option>
+                                <option value={4}>{"4 Stars"}</option>
+                                <option value={5}>{"5 Stars"}</option>
                               </select>
                             </div>
 
                             <div className="space-y-3 md:col-span-2">
                               <Label htmlFor={`testimonial_${index}_content`}>
-                                {t("Content")}
+                                {"Content"}
                               </Label>
                               <Textarea
                                 id={`testimonial_${index}_content`}
@@ -2771,7 +2753,7 @@ export default function LandingPageSettings() {
                                     testimonials: newTestimonials,
                                   });
                                 }}
-                                placeholder={t("Testimonial content...")}
+                                placeholder={"Testimonial content..."}
                                 rows={3}
                               />
                             </div>
@@ -2803,7 +2785,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Default Testimonial")}
+                      {"Add Default Testimonial"}
                     </Button>
                   </div>
                 </div>
@@ -2821,15 +2803,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Plans Section Content")}
+                          {"Plans Section Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Pricing section title and description")}
+                          {"Pricing section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.plans !==
@@ -2844,20 +2826,20 @@ export default function LandingPageSettings() {
 
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="plans_title">{t("Section Title")}</Label>
+                      <Label htmlFor="plans_title">{"Section Title"}</Label>
                       <Input
                         id="plans_title"
                         value={getSectionData("plans").title || ""}
                         onChange={(e) =>
                           updateSectionData("plans", { title: e.target.value })
                         }
-                        placeholder={t("Choose Your Plan")}
+                        placeholder={"Choose Your Plan"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="plans_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="plans_subtitle"
@@ -2867,15 +2849,13 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Start with our free plan and upgrade as you grow...",
-                        )}
+                        placeholder={"Start with our free plan and upgrade as you grow..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="plans_faq_text">{t("FAQ Text")}</Label>
+                      <Label htmlFor="plans_faq_text">{"FAQ Text"}</Label>
                       <Input
                         id="plans_faq_text"
                         value={getSectionData("plans").faq_text || ""}
@@ -2884,9 +2864,7 @@ export default function LandingPageSettings() {
                             faq_text: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Have questions about our plans? Reach out to our sales team for guidance.",
-                        )}
+                        placeholder={"Have questions about our plans? Reach out to our sales team for guidance."}
                       />
                     </div>
                   </div>
@@ -2900,15 +2878,13 @@ export default function LandingPageSettings() {
                         className="text-sm font-medium mb-1"
                         style={{ color: brandColor }}
                       >
-                        {t("Plans Management")}
+                        {"Plans Management"}
                       </h4>
                       <p
                         className="text-sm"
                         style={{ color: brandColor + "cc" }}
                       >
-                        {t(
-                          "The actual plans displayed on the landing page are managed through the Plans module. Go to Plans section to create, edit, or manage your subscription plans.",
-                        )}
+                        {"The actual plans displayed on the landing page are managed through the Plans module. Go to Plans section to create, edit, or manage your subscription plans."}
                       </p>
                     </div>
                   </div>
@@ -2927,15 +2903,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("FAQ Section Content")}
+                          {"FAQ Section Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Section title, subtitle and CTA")}
+                          {"Section title, subtitle and CTA"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.faq !==
@@ -2950,20 +2926,20 @@ export default function LandingPageSettings() {
 
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
-                      <Label htmlFor="faq_title">{t("Section Title")}</Label>
+                      <Label htmlFor="faq_title">{"Section Title"}</Label>
                       <Input
                         id="faq_title"
                         value={getSectionData("faq").title || ""}
                         onChange={(e) =>
                           updateSectionData("faq", { title: e.target.value })
                         }
-                        placeholder={t("Frequently Asked Questions")}
+                        placeholder={"Frequently Asked Questions"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="faq_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="faq_subtitle"
@@ -2971,26 +2947,26 @@ export default function LandingPageSettings() {
                         onChange={(e) =>
                           updateSectionData("faq", { subtitle: e.target.value })
                         }
-                        placeholder={t("Got questions? We've got answers...")}
+                        placeholder={"Got questions? We've got answers..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="faq_cta_text">{t("CTA Text")}</Label>
+                      <Label htmlFor="faq_cta_text">{"CTA Text"}</Label>
                       <Input
                         id="faq_cta_text"
                         value={getSectionData("faq").cta_text || ""}
                         onChange={(e) =>
                           updateSectionData("faq", { cta_text: e.target.value })
                         }
-                        placeholder={t("Still have questions?")}
+                        placeholder={"Still have questions?"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="faq_button_text">
-                        {t("Button Text")}
+                        {"Button Text"}
                       </Label>
                       <Input
                         id="faq_button_text"
@@ -3000,7 +2976,7 @@ export default function LandingPageSettings() {
                             button_text: e.target.value,
                           })
                         }
-                        placeholder={t("Contact Support")}
+                        placeholder={"Contact Support"}
                       />
                     </div>
                   </div>
@@ -3013,10 +2989,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Default FAQs")}
+                        {"Default FAQs"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Frequently asked questions and answers")}
+                        {"Frequently asked questions and answers"}
                       </p>
                     </div>
                   </div>
@@ -3032,7 +3008,7 @@ export default function LandingPageSettings() {
                             <span className="w-6 h-6 bg-slate-100 text-slate-600 rounded-full flex items-center justify-center text-xs font-bold">
                               {index + 1}
                             </span>
-                            {t("FAQ")} {index + 1}
+                            {"FAQ"} {index + 1}
                           </h4>
                           <Button
                             type="button"
@@ -3053,7 +3029,7 @@ export default function LandingPageSettings() {
                         <div className="space-y-4">
                           <div className="space-y-3">
                             <Label htmlFor={`faq_${index}_question`}>
-                              {t("Question")}
+                              {"Question"}
                             </Label>
                             <Input
                               id={`faq_${index}_question`}
@@ -3068,13 +3044,13 @@ export default function LandingPageSettings() {
                                 };
                                 updateSectionData("faq", { faqs: newFaqs });
                               }}
-                              placeholder={t("How does HRM work?")}
+                              placeholder={"How does HRM work?"}
                             />
                           </div>
 
                           <div className="space-y-3">
                             <Label htmlFor={`faq_${index}_answer`}>
-                              {t("Answer")}
+                              {"Answer"}
                             </Label>
                             <Textarea
                               id={`faq_${index}_answer`}
@@ -3089,9 +3065,7 @@ export default function LandingPageSettings() {
                                 };
                                 updateSectionData("faq", { faqs: newFaqs });
                               }}
-                              placeholder={t(
-                                "HRM SaaS allows you to manage employees, payroll, attendance, and performance all in one modern platform.",
-                              )}
+                              placeholder={"HRM SaaS allows you to manage employees, payroll, attendance, and performance all in one modern platform."}
                               rows={3}
                             />
                           </div>
@@ -3113,7 +3087,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add FAQ")}
+                      {"Add FAQ"}
                     </Button>
                   </div>
                 </div>
@@ -3131,15 +3105,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Newsletter Content")}
+                          {"Newsletter Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Newsletter section title and description")}
+                          {"Newsletter section title and description"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility
@@ -3155,7 +3129,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="newsletter_title">
-                        {t("Section Title")}
+                        {"Section Title"}
                       </Label>
                       <Input
                         id="newsletter_title"
@@ -3165,13 +3139,13 @@ export default function LandingPageSettings() {
                             title: e.target.value,
                           })
                         }
-                        placeholder={t("Stay Updated with HRM SaaS")}
+                        placeholder={"Stay Updated with HRM SaaS"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="newsletter_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="newsletter_subtitle"
@@ -3181,16 +3155,14 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Get the latest updates, networking tips...",
-                        )}
+                        placeholder={"Get the latest updates, networking tips..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="newsletter_privacy_text">
-                        {t("Privacy Text")}
+                        {"Privacy Text"}
                       </Label>
                       <Input
                         id="newsletter_privacy_text"
@@ -3200,7 +3172,7 @@ export default function LandingPageSettings() {
                             privacy_text: e.target.value,
                           })
                         }
-                        placeholder={t("No spam, unsubscribe at any time...")}
+                        placeholder={"No spam, unsubscribe at any time..."}
                       />
                     </div>
                   </div>
@@ -3213,10 +3185,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Newsletter Benefits")}
+                        {"Newsletter Benefits"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Benefits of subscribing to newsletter")}
+                        {"Benefits of subscribing to newsletter"}
                       </p>
                     </div>
                   </div>
@@ -3233,7 +3205,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Benefit")} {index + 1}
+                              {"Benefit"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -3256,7 +3228,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-3">
                               <Label htmlFor={`benefit_${index}_icon`}>
-                                {t("Icon (Emoji)")}
+                                {"Icon (Emoji)"}
                               </Label>
                               <Input
                                 id={`benefit_${index}_icon`}
@@ -3299,13 +3271,13 @@ export default function LandingPageSettings() {
                                     benefits: newBenefits,
                                   });
                                 }}
-                                placeholder={t("Weekly Updates")}
+                                placeholder={"Weekly Updates"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`benefit_${index}_description`}>
-                                {t("Description")}
+                                {"Description"}
                               </Label>
                               <Input
                                 id={`benefit_${index}_description`}
@@ -3323,9 +3295,7 @@ export default function LandingPageSettings() {
                                     benefits: newBenefits,
                                   });
                                 }}
-                                placeholder={t(
-                                  "Stay informed about the latest HRM SaaS features and improvements.",
-                                )}
+                                placeholder={"Stay informed about the latest HRM SaaS features and improvements."}
                               />
                             </div>
                           </div>
@@ -3349,7 +3319,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Benefit")}
+                      {"Add Benefit"}
                     </Button>
                   </div>
                 </div>
@@ -3367,15 +3337,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Contact Section Content")}
+                          {"Contact Section Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Contact section titles and descriptions")}
+                          {"Contact section titles and descriptions"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.contact !==
@@ -3391,7 +3361,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="contact_title">
-                        {t("Section Title")}
+                        {"Section Title"}
                       </Label>
                       <Input
                         id="contact_title"
@@ -3401,13 +3371,13 @@ export default function LandingPageSettings() {
                             title: e.target.value,
                           })
                         }
-                        placeholder={t("Get in Touch")}
+                        placeholder={"Get in Touch"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_subtitle">
-                        {t("Section Subtitle")}
+                        {"Section Subtitle"}
                       </Label>
                       <Textarea
                         id="contact_subtitle"
@@ -3417,14 +3387,14 @@ export default function LandingPageSettings() {
                             subtitle: e.target.value,
                           })
                         }
-                        placeholder={t("Have questions about HRM SaaS ?...")}
+                        placeholder={"Have questions about HRM SaaS ?..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_form_title">
-                        {t("Form Title")}
+                        {"Form Title"}
                       </Label>
                       <Input
                         id="contact_form_title"
@@ -3434,13 +3404,13 @@ export default function LandingPageSettings() {
                             form_title: e.target.value,
                           })
                         }
-                        placeholder={t("Send us a Message")}
+                        placeholder={"Send us a Message"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_info_title">
-                        {t("Contact Info Title")}
+                        {"Contact Info Title"}
                       </Label>
                       <Input
                         id="contact_info_title"
@@ -3450,13 +3420,13 @@ export default function LandingPageSettings() {
                             info_title: e.target.value,
                           })
                         }
-                        placeholder={t("Contact Information")}
+                        placeholder={"Contact Information"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="contact_info_description">
-                        {t("Contact Info Description")}
+                        {"Contact Info Description"}
                       </Label>
                       <Textarea
                         id="contact_info_description"
@@ -3466,9 +3436,7 @@ export default function LandingPageSettings() {
                             info_description: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "We're here to help and answer any question...",
-                        )}
+                        placeholder={"We're here to help and answer any question..."}
                         rows={3}
                       />
                     </div>
@@ -3482,10 +3450,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Contact Information")}
+                        {"Contact Information"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Company contact details")}
+                        {"Company contact details"}
                       </p>
                     </div>
                   </div>
@@ -3493,7 +3461,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="contact_email">
-                        {t("Email Address")}
+                        {"Email Address"}
                       </Label>
                       <Input
                         id="contact_email"
@@ -3506,26 +3474,24 @@ export default function LandingPageSettings() {
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="contact_phone">{t("Phone Number")}</Label>
+                      <Label htmlFor="contact_phone">{"Phone Number"}</Label>
                       <Input
                         id="contact_phone"
                         name="contact_phone"
                         value={data.contact_phone || ""}
                         onChange={handleInputChange}
-                        placeholder={t("+1 (555) 123-4567")}
+                        placeholder={"+1 (555) 123-4567"}
                       />
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="contact_address">{t("Address")}</Label>
+                      <Label htmlFor="contact_address">{"Address"}</Label>
                       <Textarea
                         id="contact_address"
                         name="contact_address"
                         value={data.contact_address || ""}
                         onChange={handleInputChange}
-                        placeholder={t(
-                          "123 Business Ave, Suite 100, San Francisco, CA 94105",
-                        )}
+                        placeholder={"123 Business Ave, Suite 100, San Francisco, CA 94105"}
                         rows={2}
                       />
                     </div>
@@ -3539,10 +3505,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Contact FAQs")}
+                        {"Contact FAQs"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Contact-related frequently asked questions")}
+                        {"Contact-related frequently asked questions"}
                       </p>
                     </div>
                   </div>
@@ -3556,7 +3522,7 @@ export default function LandingPageSettings() {
                         >
                           <div className="flex items-center justify-between">
                             <h4 className="font-medium">
-                              {t("FAQ")} {index + 1}
+                              {"FAQ"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -3594,7 +3560,7 @@ export default function LandingPageSettings() {
                                     faqs: newFaqs,
                                   });
                                 }}
-                                placeholder={t("How quickly do you respond?")}
+                                placeholder={"How quickly do you respond?"}
                               />
                             </div>
 
@@ -3617,9 +3583,7 @@ export default function LandingPageSettings() {
                                     faqs: newFaqs,
                                   });
                                 }}
-                                placeholder={t(
-                                  "We typically respond within 24 hours...",
-                                )}
+                                placeholder={"We typically respond within 24 hours..."}
                                 rows={2}
                               />
                             </div>
@@ -3642,7 +3606,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add FAQ")}
+                      {"Add FAQ"}
                     </Button>
                   </div>
                 </div>
@@ -3660,15 +3624,15 @@ export default function LandingPageSettings() {
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold text-gray-900">
-                          {t("Footer Content")}
+                          {"Footer Content"}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          {t("Footer description and newsletter content")}
+                          {"Footer description and newsletter content"}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Label className="text-sm">{t("Enable Section")}</Label>
+                      <Label className="text-sm">{"Enable Section"}</Label>
                       <Switch
                         checked={
                           data.config_sections?.section_visibility?.footer !==
@@ -3684,7 +3648,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-1 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="footer_description">
-                        {t("Company Description")}
+                        {"Company Description"}
                       </Label>
                       <Textarea
                         id="footer_description"
@@ -3694,16 +3658,14 @@ export default function LandingPageSettings() {
                             description: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Transforming professional networking...",
-                        )}
+                        placeholder={"Transforming professional networking..."}
                         rows={3}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="footer_newsletter_title">
-                        {t("Newsletter Title")}
+                        {"Newsletter Title"}
                       </Label>
                       <Input
                         id="footer_newsletter_title"
@@ -3713,13 +3675,13 @@ export default function LandingPageSettings() {
                             newsletter_title: e.target.value,
                           })
                         }
-                        placeholder={t("Stay Updated with Our Latest Features")}
+                        placeholder={"Stay Updated with Our Latest Features"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="footer_newsletter_subtitle">
-                        {t("Newsletter Subtitle")}
+                        {"Newsletter Subtitle"}
                       </Label>
                       <Input
                         id="footer_newsletter_subtitle"
@@ -3731,9 +3693,7 @@ export default function LandingPageSettings() {
                             newsletter_subtitle: e.target.value,
                           })
                         }
-                        placeholder={t(
-                          "Join our newsletter for product updates...",
-                        )}
+                        placeholder={"Join our newsletter for product updates..."}
                       />
                     </div>
                   </div>
@@ -3746,10 +3706,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Social Links")}
+                        {"Social Links"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Social media links and profiles")}
+                        {"Social media links and profiles"}
                       </p>
                     </div>
                   </div>
@@ -3766,7 +3726,7 @@ export default function LandingPageSettings() {
                               <span className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-bold">
                                 {index + 1}
                               </span>
-                              {t("Social Link")} {index + 1}
+                              {"Social Link"} {index + 1}
                             </h4>
                             <Button
                               type="button"
@@ -3789,7 +3749,7 @@ export default function LandingPageSettings() {
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div className="space-y-3">
                               <Label htmlFor={`social_${index}_name`}>
-                                {t("Name")}
+                                {"Name"}
                               </Label>
                               <Input
                                 id={`social_${index}_name`}
@@ -3807,13 +3767,13 @@ export default function LandingPageSettings() {
                                     social_links: newSocials,
                                   });
                                 }}
-                                placeholder={t("Facebook")}
+                                placeholder={"Facebook"}
                               />
                             </div>
 
                             <div className="space-y-3">
                               <Label htmlFor={`social_${index}_icon`}>
-                                {t("Icon")}
+                                {"Icon"}
                               </Label>
                               <select
                                 id={`social_${index}_icon`}
@@ -3842,7 +3802,7 @@ export default function LandingPageSettings() {
 
                             <div className="space-y-3">
                               <Label htmlFor={`social_${index}_href`}>
-                                {t("URL")}
+                                {"URL"}
                               </Label>
                               <Input
                                 id={`social_${index}_href`}
@@ -3884,7 +3844,7 @@ export default function LandingPageSettings() {
                       }}
                     >
                       <Plus className="h-4 w-4 mr-2" />
-                      {t("Add Social Link")}
+                      {"Add Social Link"}
                     </Button>
                   </div>
                 </div>
@@ -3896,10 +3856,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Footer Links")}
+                        {"Footer Links"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t("Footer navigation links by category")}
+                        {"Footer navigation links by category"}
                       </p>
                     </div>
                   </div>
@@ -3910,7 +3870,7 @@ export default function LandingPageSettings() {
                         <div key={category} className="space-y-4">
                           <div className="space-y-3">
                             <Label htmlFor={`${category}_title`}>
-                              {t("Section Title")}
+                              {"Section Title"}
                             </Label>
                             <Input
                               id={`${category}_title`}
@@ -3951,7 +3911,7 @@ export default function LandingPageSettings() {
                             >
                               <div className="space-y-3">
                                 <Label htmlFor={`${category}_${index}_name`}>
-                                  {t("Name")}
+                                  {"Name"}
                                 </Label>
                                 <Input
                                   id={`${category}_${index}_name`}
@@ -3970,12 +3930,12 @@ export default function LandingPageSettings() {
                                       links: newLinks,
                                     });
                                   }}
-                                  placeholder={t("Features")}
+                                  placeholder={"Features"}
                                 />
                               </div>
                               <div className="space-y-3">
                                 <Label htmlFor={`${category}_${index}_href`}>
-                                  {t("URL")}
+                                  {"URL"}
                                 </Label>
                                 <div className="flex gap-2">
                                   <Input
@@ -4043,13 +4003,13 @@ export default function LandingPageSettings() {
                             }}
                           >
                             <Plus className="h-4 w-4 mr-2" />
-                            {t("Add")}{" "}
+                            {"Add"}{" "}
                             {getSectionData("footer").section_titles?.[
                               category
                             ] ||
                               category.charAt(0).toUpperCase() +
                                 category.slice(1)}{" "}
-                            {t("Link")}
+                            {"Link"}
                           </Button>
                         </div>
                       ),
@@ -4066,7 +4026,7 @@ export default function LandingPageSettings() {
                   <div className="flex items-center">
                     <Palette className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">
-                      {t("Colors & Theme")}
+                      {"Colors & Theme"}
                     </h3>
                   </div>
                   <Separator className="my-2" />
@@ -4074,7 +4034,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-3 gap-4">
                     <div className="space-y-3">
                       <Label htmlFor="primary_color">
-                        {t("Primary Color")}
+                        {"Primary Color"}
                       </Label>
                       <div className="flex gap-2">
                         <Input
@@ -4103,7 +4063,7 @@ export default function LandingPageSettings() {
                     </div>
                     <div className="space-y-3">
                       <Label htmlFor="secondary_color">
-                        {t("Secondary Color")}
+                        {"Secondary Color"}
                       </Label>
                       <div className="flex gap-2">
                         <Input
@@ -4131,7 +4091,7 @@ export default function LandingPageSettings() {
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <Label htmlFor="accent_color">{t("Accent Color")}</Label>
+                      <Label htmlFor="accent_color">{"Accent Color"}</Label>
                       <div className="flex gap-2">
                         <Input
                           id="accent_color"
@@ -4164,7 +4124,7 @@ export default function LandingPageSettings() {
                   <div className="flex items-center">
                     <Image className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">
-                      {t("Images & Logos")}
+                      {"Images & Logos"}
                     </h3>
                   </div>
                   <Separator className="my-2" />
@@ -4172,7 +4132,7 @@ export default function LandingPageSettings() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-3">
                       <MediaPicker
-                        label={t("Logo (Light)")}
+                        label={"Logo (Light)"}
                         value={getDisplayUrl(
                           data.config_sections?.theme?.logo_light || "",
                         )}
@@ -4181,12 +4141,12 @@ export default function LandingPageSettings() {
                             logo_light: convertToRelativePath(value),
                           });
                         }}
-                        placeholder={t("Select light logo...")}
+                        placeholder={"Select light logo..."}
                       />
                     </div>
                     <div className="space-y-3">
                       <MediaPicker
-                        label={t("Logo (Dark)")}
+                        label={"Logo (Dark)"}
                         value={getDisplayUrl(
                           data.config_sections?.theme?.logo_dark || "",
                         )}
@@ -4195,7 +4155,7 @@ export default function LandingPageSettings() {
                             logo_dark: convertToRelativePath(value),
                           });
                         }}
-                        placeholder={t("Select dark logo...")}
+                        placeholder={"Select dark logo..."}
                       />
                     </div>
                   </div>
@@ -4213,12 +4173,10 @@ export default function LandingPageSettings() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        {t("Section Order")}
+                        {"Section Order"}
                       </h3>
                       <p className="text-sm text-gray-500">
-                        {t(
-                          "Drag and drop to reorder sections on your landing page",
-                        )}
+                        {"Drag and drop to reorder sections on your landing page"}
                       </p>
                     </div>
                   </div>
@@ -4227,19 +4185,19 @@ export default function LandingPageSettings() {
                     {(data.config_sections?.section_order || []).map(
                       (sectionKey, index) => {
                         const sectionNames = {
-                          header: t("Header"),
-                          hero: t("Hero"),
-                          features: t("Features"),
-                          screenshots: t("Screenshots"),
-                          why_choose_us: t("Why Choose Us"),
-                          about: t("About"),
-                          team: t("Team"),
-                          testimonials: t("Testimonials"),
-                          plans: t("Plans"),
-                          faq: t("FAQ"),
-                          newsletter: t("Newsletter"),
-                          contact: t("Contact"),
-                          footer: t("Footer"),
+                          header: "Header",
+                          hero: "Hero",
+                          features: "Features",
+                          screenshots: "Screenshots",
+                          why_choose_us: "Why Choose Us",
+                          about: "About",
+                          team: "Team",
+                          testimonials: "Testimonials",
+                          plans: "Plans",
+                          faq: "FAQ",
+                          newsletter: "Newsletter",
+                          contact: "Contact",
+                          footer: "Footer",
                         };
 
                         const isEnabled =
@@ -4271,12 +4229,12 @@ export default function LandingPageSettings() {
                                     {sectionNames[sectionKey] || sectionKey}
                                   </h4>
                                   <p className="text-sm text-gray-500">
-                                    {isEnabled ? t("Enabled") : t("Disabled")}
+                                    {isEnabled ? "Enabled" : "Disabled"}
                                   </p>
                                 </div>
                               </div>
                               <div className="flex items-center gap-2">
-                                <Label className="text-sm">{t("Enable")}</Label>
+                                <Label className="text-sm">{"Enable"}</Label>
                                 <Switch
                                   checked={isEnabled}
                                   onCheckedChange={(checked) =>
@@ -4296,12 +4254,10 @@ export default function LandingPageSettings() {
                       <Info className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                       <div>
                         <h4 className="text-sm font-medium text-blue-900 mb-1">
-                          {t("How to reorder")}
+                          {"How to reorder"}
                         </h4>
                         <p className="text-sm text-blue-700">
-                          {t(
-                            "Click and drag any section to change its position. Disabled sections will still appear in the order but won't be visible on the landing page.",
-                          )}
+                          {"Click and drag any section to change its position. Disabled sections will still appear in the order but won't be visible on the landing page."}
                         </p>
                       </div>
                     </div>
@@ -4317,27 +4273,27 @@ export default function LandingPageSettings() {
                   <div className="flex items-center">
                     <Search className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">
-                      {t("SEO Settings")}
+                      {"SEO Settings"}
                     </h3>
                   </div>
                   <Separator className="my-2" />
 
                   <div className="space-y-4">
                     <div className="space-y-3">
-                      <Label htmlFor="meta_title">{t("Meta Title")}</Label>
+                      <Label htmlFor="meta_title">{"Meta Title"}</Label>
                       <Input
                         id="meta_title"
                         value={data.config_sections?.seo?.meta_title || ""}
                         onChange={(e) =>
                           updateSeoData({ meta_title: e.target.value })
                         }
-                        placeholder={t("Landing Page Title")}
+                        placeholder={"Landing Page Title"}
                       />
                     </div>
 
                     <div className="space-y-3">
                       <Label htmlFor="meta_description">
-                        {t("Meta Description")}
+                        {"Meta Description"}
                       </Label>
                       <Textarea
                         id="meta_description"
@@ -4347,9 +4303,7 @@ export default function LandingPageSettings() {
                         onChange={(e) =>
                           updateSeoData({ meta_description: e.target.value })
                         }
-                        placeholder={t(
-                          "Landing page description for search engines",
-                        )}
+                        placeholder={"Landing page description for search engines"}
                         rows={3}
                       />
                     </div>
@@ -4359,12 +4313,12 @@ export default function LandingPageSettings() {
                 <div className="space-y-4">
                   <div className="flex items-center">
                     <Code className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">{t("Custom CSS")}</h3>
+                    <h3 className="text-base font-medium">{"Custom CSS"}</h3>
                   </div>
                   <Separator className="my-2" />
 
                   <div className="space-y-3">
-                    <Label htmlFor="custom_css">{t("Custom CSS")}</Label>
+                    <Label htmlFor="custom_css">{"Custom CSS"}</Label>
                     <Textarea
                       id="custom_css"
                       value={data.config_sections?.custom_css || ""}
@@ -4374,12 +4328,12 @@ export default function LandingPageSettings() {
                           custom_css: e.target.value,
                         })
                       }
-                      placeholder={t("Add your custom CSS here")}
+                      placeholder={"Add your custom CSS here"}
                       rows={6}
                       className="font-mono text-sm"
                     />
                     <p className="text-xs text-muted-foreground">
-                      {t("Add custom CSS to override default styles")}
+                      {"Add custom CSS to override default styles"}
                     </p>
                   </div>
                 </div>
@@ -4388,13 +4342,13 @@ export default function LandingPageSettings() {
                   <div className="flex items-center">
                     <Code className="h-5 w-5 mr-2 text-muted-foreground" />
                     <h3 className="text-base font-medium">
-                      {t("Custom JavaScript")}
+                      {"Custom JavaScript"}
                     </h3>
                   </div>
                   <Separator className="my-2" />
 
                   <div className="space-y-3">
-                    <Label htmlFor="custom_js">{t("Custom JavaScript")}</Label>
+                    <Label htmlFor="custom_js">{"Custom JavaScript"}</Label>
                     <Textarea
                       id="custom_js"
                       value={data.config_sections?.custom_js || ""}
@@ -4404,12 +4358,12 @@ export default function LandingPageSettings() {
                           custom_js: e.target.value,
                         })
                       }
-                      placeholder={t("Add your custom JavaScript here")}
+                      placeholder={"Add your custom JavaScript here"}
                       rows={6}
                       className="font-mono text-sm"
                     />
                     <p className="text-xs text-muted-foreground">
-                      {t("Add custom JavaScript for advanced functionality")}
+                      {"Add custom JavaScript for advanced functionality"}
                     </p>
                   </div>
                 </div>

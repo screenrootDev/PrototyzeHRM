@@ -4,7 +4,7 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { List, BarChart, Download, Printer } from 'lucide-react';
 import { format } from 'date-fns';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
@@ -12,7 +12,7 @@ import { Pagination } from '@/components/ui/pagination';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 export default function DepreciationReport() {
-  const { t } = useTranslation();
+  
   const { 
     assets, 
     assetTypes, 
@@ -103,26 +103,26 @@ export default function DepreciationReport() {
   // Define page actions
   const pageActions = [
     {
-      label: t('Asset List'),
+      label: 'Asset List',
       icon: <List className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewAssets
     },
     {
-      label: t('Dashboard'),
+      label: 'Dashboard',
       icon: <BarChart className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleViewDashboard
     },
     {
-      label: t('Print'),
+      label: 'Print',
       icon: <Printer className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handlePrint,
       className: 'print:hidden'
     },
     {
-      label: t('Export CSV'),
+      label: 'Export CSV',
       icon: <Download className="h-4 w-4 mr-2" />,
       variant: 'outline' as const,
       onClick: handleExportCSV,
@@ -131,15 +131,15 @@ export default function DepreciationReport() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.assets.index') },
-    { title: t('Asset Management'), href: route('hr.assets.index') },
-    { title: t('Depreciation Report') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.assets.index') },
+    { title: 'Asset Management', href: route('hr.assets.index') },
+    { title: 'Depreciation Report' }
   ];
   
   // Prepare asset type options for filter
   const assetTypeOptions = [
-    { value: '', label: t('All Types') },
+    { value: '', label: 'All Types' },
     ...(assetTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -154,7 +154,7 @@ export default function DepreciationReport() {
   
   return (
     <PageTemplate 
-      title={t("Asset Depreciation Report")} 
+      title={"Asset Depreciation Report"} 
       url="/hr/assets/depreciation-report"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -168,7 +168,7 @@ export default function DepreciationReport() {
           filters={[
             {
               name: 'asset_type_id',
-              label: t('Asset Type'),
+              label: 'Asset Type',
               type: 'select',
               value: selectedAssetType,
               onChange: setSelectedAssetType,
@@ -176,14 +176,14 @@ export default function DepreciationReport() {
             },
             {
               name: 'purchase_date_from',
-              label: t('Purchase Date From'),
+              label: 'Purchase Date From',
               type: 'date',
               value: purchaseDateFrom,
               onChange: setPurchaseDateFrom
             },
             {
               name: 'purchase_date_to',
-              label: t('Purchase Date To'),
+              label: 'Purchase Date To',
               type: 'date',
               value: purchaseDateTo,
               onChange: setPurchaseDateTo
@@ -213,7 +213,7 @@ export default function DepreciationReport() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Purchase Value')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Purchase Value'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{window.appSettings?.formatCurrency(totalPurchaseValue || 0)}</div>
@@ -222,7 +222,7 @@ export default function DepreciationReport() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Current Value')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Current Value'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{window.appSettings?.formatCurrency(totalCurrentValue || 0)}</div>
@@ -231,12 +231,12 @@ export default function DepreciationReport() {
         
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">{t('Total Depreciation')}</CardTitle>
+            <CardTitle className="text-lg">{'Total Depreciation'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{window.appSettings?.formatCurrency(totalDepreciation || 0)}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {totalPurchaseValue > 0 ? Math.round((totalDepreciation / totalPurchaseValue) * 100) : 0}% {t('of purchase value')}
+              {totalPurchaseValue > 0 ? Math.round((totalDepreciation / totalPurchaseValue) * 100) : 0}% {'of purchase value'}
             </div>
           </CardContent>
         </Card>
@@ -245,19 +245,19 @@ export default function DepreciationReport() {
       {/* Report Table */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('Asset Depreciation Details')}</CardTitle>
+          <CardTitle>{'Asset Depreciation Details'}</CardTitle>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>{t('Asset Name')}</TableHead>
-                <TableHead>{t('Purchase Date')}</TableHead>
-                <TableHead className="text-right">{t('Purchase Cost')}</TableHead>
-                <TableHead>{t('Depreciation Method')}</TableHead>
-                <TableHead className="text-right">{t('Current Value')}</TableHead>
-                <TableHead className="text-right">{t('Depreciation')}</TableHead>
-                <TableHead className="text-right">{t('Depreciation %')}</TableHead>
+                <TableHead>{'Asset Name'}</TableHead>
+                <TableHead>{'Purchase Date'}</TableHead>
+                <TableHead className="text-right">{'Purchase Cost'}</TableHead>
+                <TableHead>{'Depreciation Method'}</TableHead>
+                <TableHead className="text-right">{'Current Value'}</TableHead>
+                <TableHead className="text-right">{'Depreciation'}</TableHead>
+                <TableHead className="text-right">{'Depreciation %'}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -276,8 +276,8 @@ export default function DepreciationReport() {
                       </TableCell>
                       <TableCell className="text-right">{window.appSettings?.formatCurrency(purchaseCost)}</TableCell>
                       <TableCell>
-                        {asset.depreciation?.method === 'straight_line' ? t('Straight Line') : 
-                         asset.depreciation?.method === 'reducing_balance' ? t('Reducing Balance') : '-'}
+                        {asset.depreciation?.method === 'straight_line' ? 'Straight Line' : 
+                         asset.depreciation?.method === 'reducing_balance' ? 'Reducing Balance' : '-'}
                       </TableCell>
                       <TableCell className="text-right">{window.appSettings?.formatCurrency(currentValue)}</TableCell>
                       <TableCell className="text-right">{window.appSettings?.formatCurrency(depreciation)}</TableCell>
@@ -288,7 +288,7 @@ export default function DepreciationReport() {
               ) : (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-4">
-                    {t('No assets with depreciation data found')}
+                    {'No assets with depreciation data found'}
                   </TableCell>
                 </TableRow>
               )}
@@ -304,7 +304,7 @@ export default function DepreciationReport() {
           to={assets?.to || 0}
           total={assets?.total || 0}
           links={assets?.links}
-          entityName={t("assets")}
+          entityName={"assets"}
           onPageChange={(url) => router.get(url)}
         />
       </div>

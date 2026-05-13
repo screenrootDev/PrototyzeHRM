@@ -13,9 +13,7 @@ import { initializeTheme } from './hooks/use-appearance';
 import { CustomToast } from './components/custom-toast';
 import { initializeGlobalSettings } from './utils/globalSettings';
 import { initPerformanceMonitoring, lazyLoadImages } from './utils/performance';
-import './i18n'; // Import i18n configuration
 import './utils/axios-config'; // Import axios configuration
-import i18n from './i18n'; // Import i18n configuration
 
 // Initialize performance monitoring
 initPerformanceMonitoring();
@@ -58,24 +56,9 @@ createInertiaApp({
             // Ignore errors
         }
 
-        // Sync language from database when not in demo mode
-        const syncLanguage = (pageProps: any) => {
-            const userLanguage = pageProps?.props?.userLanguage;
-            const layoutDirection = pageProps?.props?.globalSettings?.layoutDirection;
-            if (userLanguage) {
-                // Always keep dir=ltr for proper sidebar functionality
-                // RTL content will be handled by CSS and layoutDirection setting
-                document.documentElement.dir = 'ltr';
-                document.documentElement.setAttribute('dir', 'ltr');
-
-                if (i18n.language !== userLanguage) {
-                    i18n.changeLanguage(userLanguage);
-                }
-            }
-        };
-
-        // Initial language sync
-        syncLanguage(props.initialPage);
+        // Direction initialization
+        document.documentElement.dir = 'ltr';
+        document.documentElement.setAttribute('dir', 'ltr');
 
         // Initialize global settings from shared data
         const globalSettings = props.initialPage.props.globalSettings || {};

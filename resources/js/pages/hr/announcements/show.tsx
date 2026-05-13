@@ -3,7 +3,7 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Download, BarChart, Edit, Trash } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -14,7 +14,7 @@ import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 
 export default function AnnouncementShow() {
-  const { t } = useTranslation();
+  
   const { auth, announcement, viewCount, totalEmployees, viewPercentage } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -39,7 +39,7 @@ export default function AnnouncementShow() {
         setTimeout(() => {
           const editButton = document.querySelector(`[data-announcement-id="${announcement.id}"][data-action="edit"]`);
           if (editButton) {
-            editButton.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+            editButton.dispatchEvent(new MouseEvent('click'));
           }
         }, 500);
       }
@@ -62,18 +62,16 @@ export default function AnnouncementShow() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting announcement...'));
+    toast.loading('Deleting announcement...');
 
     router.delete(route('hr.announcements.destroy', announcement.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Announcement deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Announcement deleted successfully');
         }
         router.get(route('hr.announcements.index'));
       },
@@ -93,7 +91,7 @@ export default function AnnouncementShow() {
 
   // Add the "Back to List" button
   pageActions.push({
-    label: t('Back to List'),
+    label: 'Back to List',
     icon: <ArrowLeft className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleBackToList
@@ -101,7 +99,7 @@ export default function AnnouncementShow() {
 
   // Add the "Back to Dashboard" button
   pageActions.push({
-    label: t('Dashboard'),
+    label: 'Dashboard',
     icon: <ArrowLeft className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleBackToDashboard
@@ -110,7 +108,7 @@ export default function AnnouncementShow() {
   // Add the "View Statistics" button if user has permission
   if (hasPermission(permissions, 'view-announcements')) {
     pageActions.push({
-      label: t('Statistics'),
+      label: 'Statistics',
       icon: <BarChart className="h-4 w-4 mr-2" />,
       variant: 'outline',
       onClick: handleViewStatistics
@@ -120,7 +118,7 @@ export default function AnnouncementShow() {
   // Add the "Edit" button if user has permission
   if (hasPermission(permissions, 'edit-announcements')) {
     pageActions.push({
-      label: t('Edit'),
+      label: 'Edit',
       icon: <Edit className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: handleEdit
@@ -130,7 +128,7 @@ export default function AnnouncementShow() {
   // Add the "Delete" button if user has permission
   if (hasPermission(permissions, 'delete-announcements')) {
     pageActions.push({
-      label: t('Delete'),
+      label: 'Delete',
       icon: <Trash className="h-4 w-4 mr-2" />,
       variant: 'destructive',
       onClick: handleDelete
@@ -138,9 +136,9 @@ export default function AnnouncementShow() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.announcements.index') },
-    { title: t('Announcements'), href: route('hr.announcements.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.announcements.index') },
+    { title: 'Announcements', href: route('hr.announcements.index') },
     { title: announcement.title }
   ];
 
@@ -178,27 +176,27 @@ export default function AnnouncementShow() {
               </span>
               {announcement.is_featured && (
                 <Badge variant="secondary" className="bg-purple-50 text-purple-700 hover:bg-purple-50">
-                  {t('Featured')}
+                  {'Featured'}
                 </Badge>
               )}
               {announcement.is_high_priority && (
                 <Badge variant="secondary" className="bg-red-50 text-red-700 hover:bg-red-50">
-                  {t('High Priority')}
+                  {'High Priority'}
                 </Badge>
               )}
             </div>
           </div>
           <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-500">
             <div>
-              <span className="font-medium">{t('Start Date')}:</span> {announcement.start_date ? (window.appSettings?.formatDateTimeSimple(announcement.start_date, false) || new Date(announcement.start_date).toLocaleString()) : '-'}
+              <span className="font-medium">{'Start Date'}:</span> {announcement.start_date ? (window.appSettings?.formatDateTimeSimple(announcement.start_date, false) || new Date(announcement.start_date).toLocaleString()) : '-'}
             </div>
             {announcement.end_date && (
               <div>
-                <span className="font-medium">{t('End Date')}:</span> {announcement.end_date ? (window.appSettings?.formatDateTimeSimple(announcement.end_date,false) || new Date(announcement.end_date).toLocaleString()) : '-'}
+                <span className="font-medium">{'End Date'}:</span> {announcement.end_date ? (window.appSettings?.formatDateTimeSimple(announcement.end_date,false) || new Date(announcement.end_date).toLocaleString()) : '-'}
               </div>
             )}
             <div>
-              <span className="font-medium">{t('Audience')}:</span> {announcement.is_company_wide ? t('Company-wide') : t('Targeted')}
+              <span className="font-medium">{'Audience'}:</span> {announcement.is_company_wide ? 'Company-wide' : 'Targeted'}
             </div>
           </div>
         </CardHeader>
@@ -217,7 +215,7 @@ export default function AnnouncementShow() {
               className="flex items-center"
             >
               <Download className="h-4 w-4 mr-2" />
-              {t('Download Attachment')}
+              {'Download Attachment'}
             </Button>
           </CardFooter>
         )}
@@ -227,13 +225,13 @@ export default function AnnouncementShow() {
       {!announcement.is_company_wide && (announcement.departments.length > 0 || announcement.branches.length > 0) && (
         <Card className="mb-6">
           <CardHeader>
-            <CardTitle>{t('Target Audience')}</CardTitle>
+            <CardTitle>{'Target Audience'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {announcement.departments.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-medium mb-2">{t('Departments')}</h3>
+                  <h3 className="text-lg font-medium mb-2">{'Departments'}</h3>
                   <div className="flex flex-wrap gap-2">
                     {announcement.departments.map((dept: any) => (
                       <Badge key={dept.id} variant="outline">
@@ -246,7 +244,7 @@ export default function AnnouncementShow() {
 
               {announcement.branches.length > 0 && (
                 <div>
-                  <h3 className="text-lg font-medium mb-2">{t('Branches')}</h3>
+                  <h3 className="text-lg font-medium mb-2">{'Branches'}</h3>
                   <div className="flex flex-wrap gap-2">
                     {announcement.branches.map((branch: any) => (
                       <Badge key={branch.id} variant="outline">
@@ -265,13 +263,13 @@ export default function AnnouncementShow() {
       {hasPermission(permissions, 'view-announcements') && (
         <Card>
           <CardHeader>
-            <CardTitle>{t('Engagement Statistics')}</CardTitle>
+            <CardTitle>{'Engagement Statistics'}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
               <div>
                 <div className="flex justify-between mb-2">
-                  <span>{t('Views')}</span>
+                  <span>{'Views'}</span>
                   <span>{viewCount} / {totalEmployees} ({viewPercentage}%)</span>
                 </div>
                 <Progress value={viewPercentage} className="h-2" />
@@ -284,7 +282,7 @@ export default function AnnouncementShow() {
                   className="flex items-center"
                 >
                   <BarChart className="h-4 w-4 mr-2" />
-                  {t('View Detailed Statistics')}
+                  {'View Detailed Statistics'}
                 </Button>
               </div>
             </div>

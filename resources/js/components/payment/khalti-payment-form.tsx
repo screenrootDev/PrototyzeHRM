@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -28,13 +28,13 @@ export function KhaltiPaymentForm({
   onSuccess,
   onCancel,
 }: KhaltiPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handlePayment = async () => {
     if (!khaltiPublicKey) {
-      setError(t('Khalti not configured'));
+      setError('Khalti not configured');
       return;
     }
 
@@ -61,11 +61,11 @@ export function KhaltiPaymentForm({
         // Initialize Khalti checkout
         initializeKhaltiCheckout(data);
       } else {
-        throw new Error(data.error || t('Payment creation failed'));
+        throw new Error(data.error || 'Payment creation failed');
       }
     } catch (err) {
       console.error('Khalti payment error:', err);
-      setError(err instanceof Error ? err.message : t('Payment initialization failed'));
+      setError(err instanceof Error ? err.message : 'Payment initialization failed');
       setIsLoading(false);
     }
   };
@@ -103,7 +103,7 @@ export function KhaltiPaymentForm({
         },
         onError(error: any) {
           console.error('Khalti payment error:', error);
-          setError(t('Payment failed'));
+          setError('Payment failed');
           setIsLoading(false);
         },
         onClose() {
@@ -125,7 +125,7 @@ export function KhaltiPaymentForm({
       amount: amount / 100, // Convert from paisa to rupees
     }, {
       onSuccess: () => {
-        toast.success(t('Payment successful'));
+        toast.success('Payment successful');
         onSuccess();
       },
       onError: (errors) => {
@@ -137,10 +137,7 @@ export function KhaltiPaymentForm({
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-NP', {
-      style: 'currency',
-      currency: currency,
-    }).format(price);
+    return new Intl.NumberFormat('en-NP').format(price);
   };
 
   return (
@@ -148,7 +145,7 @@ export function KhaltiPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('Khalti Payment')}
+          {'Khalti Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -161,15 +158,15 @@ export function KhaltiPaymentForm({
 
         <div className="bg-muted p-4 rounded-lg">
           <div className="flex justify-between items-center">
-            <span className="font-medium">{t('Total Amount')}</span>
+            <span className="font-medium">{'Total Amount'}</span>
             <span className="text-lg font-bold">{formatPrice(planPrice)}</span>
           </div>
           <div className="text-sm text-muted-foreground mt-1">
-            {t('Billing Cycle')}: {t(billingCycle)}
+            {'Billing Cycle'}: {billingCycle}
           </div>
           {couponCode && (
             <div className="text-sm text-green-600 mt-1">
-              {t('Coupon Applied')}: {couponCode}
+              {'Coupon Applied'}: {couponCode}
             </div>
           )}
         </div>
@@ -177,12 +174,12 @@ export function KhaltiPaymentForm({
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            {t('Khalti is Nepal\'s most popular digital wallet and payment gateway.')}
+            {'Khalti is Nepal\'s most popular digital wallet and payment gateway.'}
           </AlertDescription>
         </Alert>
 
         <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-          <h4 className="font-medium text-purple-900 mb-2">{t('Supported Payment Methods')}</h4>
+          <h4 className="font-medium text-purple-900 mb-2">{'Supported Payment Methods'}</h4>
           <ul className="text-sm text-purple-800 space-y-1">
             <li>• Khalti Wallet</li>
             <li>• eBanking</li>
@@ -199,7 +196,7 @@ export function KhaltiPaymentForm({
             disabled={isLoading}
             className="flex-1"
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button
             onClick={handlePayment}
@@ -209,19 +206,19 @@ export function KhaltiPaymentForm({
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('Processing...')}
+                {'Processing...'}
               </>
             ) : (
               <>
                 <CreditCard className="mr-2 h-4 w-4" />
-                {t('Pay with Khalti')}
+                {'Pay with Khalti'}
               </>
             )}
           </Button>
         </div>
 
         <div className="text-xs text-muted-foreground text-center">
-          {t('Powered by Khalti - Nepal\'s digital wallet')}
+          {'Powered by Khalti - Nepal\'s digital wallet'}
         </div>
       </CardContent>
     </Card>

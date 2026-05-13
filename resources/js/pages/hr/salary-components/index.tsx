@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function SalaryComponents() {
-  const { t } = useTranslation();
+  
   const { auth, salaryComponents, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -98,17 +98,15 @@ export default function SalaryComponents() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating salary component...'));
+      toast.loading('Creating salary component...');
 
       router.post(route('hr.salary-components.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -120,17 +118,15 @@ export default function SalaryComponents() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating salary component...'));
+      toast.loading('Updating salary component...');
 
       router.put(route('hr.salary-components.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -145,17 +141,15 @@ export default function SalaryComponents() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting salary component...'));
+    toast.loading('Deleting salary component...');
 
     router.delete(route('hr.salary-components.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -170,16 +164,14 @@ export default function SalaryComponents() {
 
   const handleToggleStatus = (component: any) => {
     const newStatus = component.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} salary component...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} salary component...`);
 
     router.put(route('hr.salary-components.toggle-status', component.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -211,7 +203,7 @@ export default function SalaryComponents() {
   // Add the "Add New Component" button if user has permission
   if (hasPermission(permissions, 'create-salary-components')) {
     pageActions.push({
-      label: t('Add Component'),
+      label: 'Add Component',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -219,45 +211,45 @@ export default function SalaryComponents() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Payroll Management'), href: route('hr.salary-components.index') },
-    { title: t('Salary Components') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Payroll Management', href: route('hr.salary-components.index') },
+    { title: 'Salary Components' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'name',
-      label: t('Component Name'),
+      label: 'Component Name',
       sortable: true
     },
     {
       key: 'type',
-      label: t('Type'),
+      label: 'Type',
       render: (value: string) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'earning'
           ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
           : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-          {value === 'earning' ? t('Earning') : t('Deduction')}
+          {value === 'earning' ? 'Earning' : 'Deduction'}
         </span>
       )
     },
     {
       key: 'calculation_type',
-      label: t('Calculation'),
+      label: 'Calculation',
       render: (value: string) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'fixed'
           ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20'
           : 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
           }`}>
-          {value === 'fixed' ? t('Fixed') : t('Percentage')}
+          {value === 'fixed' ? 'Fixed' : 'Percentage'}
         </span>
       )
     },
     {
       key: 'amount',
-      label: t('Amount/Percentage'),
+      label: 'Amount/Percentage',
       render: (value: any, row: any) => (
         <span className="font-mono">
           {row.calculation_type === 'fixed' 
@@ -269,38 +261,38 @@ export default function SalaryComponents() {
     },
     // {
     //   key: 'is_taxable',
-    //   label: t('Taxable'),
+    //   label: 'Taxable',
     //   render: (value: boolean) => (
     //     <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value
     //       ? 'bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-600/20'
     //       : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
     //       }`}>
-    //       {value ? t('Yes') : t('No')}
+    //       {value ? 'Yes' : 'No'}
     //     </span>
     //   )
     // },
     // {
     //   key: 'is_mandatory',
-    //   label: t('Mandatory'),
+    //   label: 'Mandatory',
     //   render: (value: boolean) => (
     //     <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value
     //       ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
     //       : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
     //       }`}>
-    //       {value ? t('Yes') : t('No')}
+    //       {value ? 'Yes' : 'No'}
     //     </span>
     //   )
     // },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
             }`}>
-            {value === 'active' ? t('Active') : t('Inactive')}
+            {value === 'active' ? 'Active' : 'Inactive'}
           </span>
         );
       }
@@ -310,28 +302,28 @@ export default function SalaryComponents() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-salary-components'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-salary-components'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-salary-components'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -341,26 +333,26 @@ export default function SalaryComponents() {
 
   // Prepare options for filters
   const typeOptions = [
-    { value: 'all', label: t('All Types') , disabled : true},
-    { value: 'earning', label: t('Earning') },
-    { value: 'deduction', label: t('Deduction') }
+    { value: 'all', label: 'All Types' , disabled : true},
+    { value: 'earning', label: 'Earning' },
+    { value: 'deduction', label: 'Deduction' }
   ];
 
   const calculationTypeOptions = [
-    { value: 'all', label: t('All Calculations') , disabled : true},
-    { value: 'fixed', label: t('Fixed Amount') },
-    { value: 'percentage', label: t('Percentage') }
+    { value: 'all', label: 'All Calculations' , disabled : true},
+    { value: 'fixed', label: 'Fixed Amount' },
+    { value: 'percentage', label: 'Percentage' }
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') , disabled : true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Statuses' , disabled : true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate
-      title={t("Salary Components")}
+      title={"Salary Components"}
       url="/hr/salary-components"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -375,7 +367,7 @@ export default function SalaryComponents() {
           filters={[
             {
               name: 'type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: selectedType,
               onChange: setSelectedType,
@@ -383,7 +375,7 @@ export default function SalaryComponents() {
             },
             {
               name: 'calculation_type',
-              label: t('Calculation Type'),
+              label: 'Calculation Type',
               type: 'select',
               value: selectedCalculationType,
               onChange: setSelectedCalculationType,
@@ -391,7 +383,7 @@ export default function SalaryComponents() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -444,7 +436,7 @@ export default function SalaryComponents() {
           to={salaryComponents?.to || 0}
           total={salaryComponents?.total || 0}
           links={salaryComponents?.links}
-          entityName={t("salary components")}
+          entityName={"salary components"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -456,35 +448,35 @@ export default function SalaryComponents() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Component Name'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
+            { name: 'name', label: 'Component Name', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
             {
               name: 'type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               required: true,
               options: [
-                { value: 'earning', label: t('Earning') },
-                { value: 'deduction', label: t('Deduction') }
+                { value: 'earning', label: 'Earning' },
+                { value: 'deduction', label: 'Deduction' }
               ]
             },
             {
               name: 'calculation_type',
-              label: t('Calculation Type'),
+              label: 'Calculation Type',
               type: 'select',
               required: true,
               options: [
-                { value: 'fixed', label: t('Fixed Amount') },
-                { value: 'percentage', label: t('Percentage of Basic') }
+                { value: 'fixed', label: 'Fixed Amount' },
+                { value: 'percentage', label: 'Percentage of Basic' }
               ]
             },
-            { name: 'default_amount', label: t('Fixed Amount'), type: 'number', min: 0, step: 0.01 },
-            { name: 'percentage_of_basic', label: t('Percentage of Basic'), type: 'number', min: 0, max: 100, step: 0.01 },
-            // { name: 'is_taxable', label: t('Is Taxable'), type: 'checkbox', defaultValue: true },
-            // { name: 'is_mandatory', label: t('Is Mandatory'), type: 'checkbox', defaultValue: false },
+            { name: 'default_amount', label: 'Fixed Amount', type: 'number', min: 0, step: 0.01 },
+            { name: 'percentage_of_basic', label: 'Percentage of Basic', type: 'number', min: 0, max: 100, step: 0.01 },
+            // { name: 'is_taxable', label: 'Is Taxable', type: 'checkbox', defaultValue: true },
+            // { name: 'is_mandatory', label: 'Is Mandatory', type: 'checkbox', defaultValue: false },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
                 { value: 'active', label: 'Active' },
@@ -498,10 +490,10 @@ export default function SalaryComponents() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Salary Component')
+            ? 'Add New Salary Component'
             : formMode === 'edit'
-              ? t('Edit Salary Component')
-              : t('View Salary Component')
+              ? 'Edit Salary Component'
+              : 'View Salary Component'
         }
         mode={formMode}
       />

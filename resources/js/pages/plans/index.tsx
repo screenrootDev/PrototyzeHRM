@@ -32,7 +32,7 @@ import {
   Wallet,
   Coins
 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { useForm } from '@inertiajs/react';
@@ -73,7 +73,7 @@ interface Props {
 }
 
 export default function Plans({ plans: initialPlans, billingCycle: initialBillingCycle = 'monthly', hasDefaultPlan, isAdmin = false, currentPlan, userTrialUsed, paymentMethods = [], currency, currencySymbol }: Props) {
-  const { t } = useTranslation();
+  
   const { flash } = usePage().props as any;
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>(initialBillingCycle);
@@ -97,8 +97,8 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
   };
 
    const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Plan') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Plan' }
   ]
 
   // Update plans when initialPlans changes
@@ -115,7 +115,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
 
   // Company plan actions
   const handlePlanRequest = (planId: number) => {
-    toast.loading(t('Submitting plan request...'));
+    toast.loading('Submitting plan request...');
 
     router.post(route('plans.request'), {
       plan_id: planId,
@@ -124,24 +124,20 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to submit plan request: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to submit plan request: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
 
   const handleStartTrial = (planId: number) => {
-    toast.loading(t('Starting trial...'));
+    toast.loading('Starting trial...');
 
     router.post(route('plans.trial'), {
       plan_id: planId
@@ -149,18 +145,14 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to start trial: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to start trial: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -174,7 +166,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
         setSelectedPlan({ ...plan, paymentMethods });
         setIsSubscriptionModalOpen(true);
       } catch (error) {
-        toast.error(t('Failed to load payment methods'));
+        toast.error('Failed to load payment methods');
       }
     }
   };
@@ -185,7 +177,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_bank_enabled === true || paymentSettings?.is_bank_enabled === '1') {
       methods.push({
         id: 'bank',
-        name: t('Bank Transfer'),
+        name: 'Bank Transfer',
         icon: <Banknote className="h-5 w-5" />,
         enabled: true
       });
@@ -194,7 +186,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_stripe_enabled === true || paymentSettings?.is_stripe_enabled === '1') {
       methods.push({
         id: 'stripe',
-        name: t('Stripe'),
+        name: 'Stripe',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -203,7 +195,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paypal_enabled === true || paymentSettings?.is_paypal_enabled === '1') {
       methods.push({
         id: 'paypal',
-        name: t('PayPal'),
+        name: 'PayPal',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -212,7 +204,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_razorpay_enabled === true || paymentSettings?.is_razorpay_enabled === '1') {
       methods.push({
         id: 'razorpay',
-        name: t('Razorpay'),
+        name: 'Razorpay',
         icon: <IndianRupee className="h-5 w-5" />,
         enabled: true
       });
@@ -221,7 +213,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if ((paymentSettings?.is_mercadopago_enabled === true || paymentSettings?.is_mercadopago_enabled === '1') && paymentSettings?.mercadopago_access_token) {
       methods.push({
         id: 'mercadopago',
-        name: t('MercadoPago'),
+        name: 'MercadoPago',
         icon: <Wallet className="h-5 w-5" />,
         enabled: true
       });
@@ -230,7 +222,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paystack_enabled === true || paymentSettings?.is_paystack_enabled === '1') {
       methods.push({
         id: 'paystack',
-        name: t('Paystack'),
+        name: 'Paystack',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -239,7 +231,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_flutterwave_enabled === true || paymentSettings?.is_flutterwave_enabled === '1') {
       methods.push({
         id: 'flutterwave',
-        name: t('Flutterwave'),
+        name: 'Flutterwave',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -248,7 +240,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paytabs_enabled === true || paymentSettings?.is_paytabs_enabled === '1') {
       methods.push({
         id: 'paytabs',
-        name: t('PayTabs'),
+        name: 'PayTabs',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -257,7 +249,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_skrill_enabled === true || paymentSettings?.is_skrill_enabled === '1') {
       methods.push({
         id: 'skrill',
-        name: t('Skrill'),
+        name: 'Skrill',
         icon: <Wallet className="h-5 w-5" />,
         enabled: true
       });
@@ -266,7 +258,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_coingate_enabled === true || paymentSettings?.is_coingate_enabled === '1') {
       methods.push({
         id: 'coingate',
-        name: t('CoinGate'),
+        name: 'CoinGate',
         icon: <Coins className="h-5 w-5" />,
         enabled: true
       });
@@ -275,7 +267,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_payfast_enabled === true || paymentSettings?.is_payfast_enabled === '1') {
       methods.push({
         id: 'payfast',
-        name: t('Payfast'),
+        name: 'Payfast',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -284,7 +276,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_tap_enabled === true || paymentSettings?.is_tap_enabled === '1') {
       methods.push({
         id: 'tap',
-        name: t('Tap'),
+        name: 'Tap',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -293,7 +285,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_xendit_enabled === true || paymentSettings?.is_xendit_enabled === '1') {
       methods.push({
         id: 'xendit',
-        name: t('Xendit'),
+        name: 'Xendit',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -302,7 +294,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paytr_enabled === true || paymentSettings?.is_paytr_enabled === '1') {
       methods.push({
         id: 'paytr',
-        name: t('PayTR'),
+        name: 'PayTR',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -311,7 +303,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_mollie_enabled === true || paymentSettings?.is_mollie_enabled === '1') {
       methods.push({
         id: 'mollie',
-        name: t('Mollie'),
+        name: 'Mollie',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -320,7 +312,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_toyyibpay_enabled === true || paymentSettings?.is_toyyibpay_enabled === '1') {
       methods.push({
         id: 'toyyibpay',
-        name: t('toyyibPay'),
+        name: 'toyyibPay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -329,7 +321,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_cashfree_enabled === true || paymentSettings?.is_cashfree_enabled === '1') {
       methods.push({
         id: 'cashfree',
-        name: t('Cashfree'),
+        name: 'Cashfree',
         icon: <IndianRupee className="h-5 w-5" />,
         enabled: true
       });
@@ -338,7 +330,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_khalti_enabled === true || paymentSettings?.is_khalti_enabled === '1') {
       methods.push({
         id: 'khalti',
-        name: t('Khalti'),
+        name: 'Khalti',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -347,7 +339,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_iyzipay_enabled === true || paymentSettings?.is_iyzipay_enabled === '1') {
       methods.push({
         id: 'iyzipay',
-        name: t('Iyzipay'),
+        name: 'Iyzipay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -356,7 +348,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_benefit_enabled === true || paymentSettings?.is_benefit_enabled === '1') {
       methods.push({
         id: 'benefit',
-        name: t('Benefit'),
+        name: 'Benefit',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -365,7 +357,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_ozow_enabled === true || paymentSettings?.is_ozow_enabled === '1') {
       methods.push({
         id: 'ozow',
-        name: t('Ozow'),
+        name: 'Ozow',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -374,7 +366,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_easebuzz_enabled === true || paymentSettings?.is_easebuzz_enabled === '1') {
       methods.push({
         id: 'easebuzz',
-        name: t('Easebuzz'),
+        name: 'Easebuzz',
         icon: <IndianRupee className="h-5 w-5" />,
         enabled: true
       });
@@ -383,7 +375,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_authorizenet_enabled === true || paymentSettings?.is_authorizenet_enabled === '1') {
       methods.push({
         id: 'authorizenet',
-        name: t('AuthorizeNet'),
+        name: 'AuthorizeNet',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -392,7 +384,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_fedapay_enabled === true || paymentSettings?.is_fedapay_enabled === '1') {
       methods.push({
         id: 'fedapay',
-        name: t('FedaPay'),
+        name: 'FedaPay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -401,7 +393,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_payhere_enabled === true || paymentSettings?.is_payhere_enabled === '1') {
       methods.push({
         id: 'payhere',
-        name: t('PayHere'),
+        name: 'PayHere',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -410,7 +402,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_cinetpay_enabled === true || paymentSettings?.is_cinetpay_enabled === '1') {
       methods.push({
         id: 'cinetpay',
-        name: t('CinetPay'),
+        name: 'CinetPay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -419,7 +411,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paiement_enabled === true || paymentSettings?.is_paiement_enabled === '1') {
       methods.push({
         id: 'paiement',
-        name: t('Paiement Pro'),
+        name: 'Paiement Pro',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -428,7 +420,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_nepalste_enabled === true || paymentSettings?.is_nepalste_enabled === '1') {
       methods.push({
         id: 'nepalste',
-        name: t('Nepalste'),
+        name: 'Nepalste',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -437,7 +429,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_yookassa_enabled === true || paymentSettings?.is_yookassa_enabled === '1') {
       methods.push({
         id: 'yookassa',
-        name: t('YooKassa'),
+        name: 'YooKassa',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -446,7 +438,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_aamarpay_enabled === true || paymentSettings?.is_aamarpay_enabled === '1') {
       methods.push({
         id: 'aamarpay',
-        name: t('Aamarpay'),
+        name: 'Aamarpay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -455,7 +447,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_midtrans_enabled === true || paymentSettings?.is_midtrans_enabled === '1') {
       methods.push({
         id: 'midtrans',
-        name: t('Midtrans'),
+        name: 'Midtrans',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -464,7 +456,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_paymentwall_enabled === true || paymentSettings?.is_paymentwall_enabled === '1') {
       methods.push({
         id: 'paymentwall',
-        name: t('PaymentWall'),
+        name: 'PaymentWall',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -473,7 +465,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
     if (paymentSettings?.is_sspay_enabled === true || paymentSettings?.is_sspay_enabled === '1') {
       methods.push({
         id: 'sspay',
-        name: t('SSPay'),
+        name: 'SSPay',
         icon: <CreditCard className="h-5 w-5" />,
         enabled: true
       });
@@ -488,7 +480,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
       return (
         <Button disabled className="w-full bg-green-100 text-green-800 border-green-200">
           <Crown className="h-4 w-4 mr-2" />
-          {t('Already Subscribed')}
+          {'Already Subscribed'}
         </Button>
       );
     }
@@ -497,7 +489,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
       return (
         <Button disabled className="w-full">
           <Crown className="h-4 w-4 mr-2" />
-          {t('Current Plan')}
+          {'Current Plan'}
         </Button>
       );
     }
@@ -512,14 +504,14 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
             className="w-full"
           >
             <Zap className="h-4 w-4 mr-2" />
-            {t('Start {{days}} Day Trial', { days: plan.trial_days })}
+            {`Start ${plan.trial_days} Day Trial`}
           </Button>
           <Button
             onClick={() => handleSubscribe(plan.id)}
             disabled={processing}
             className="w-full"
           >
-            {t('Subscribe Now')}
+            {'Subscribe Now'}
           </Button>
         </div>
       );
@@ -534,7 +526,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
           className="w-full"
         >
           <Clock className="h-4 w-4 mr-2" />
-          {t('Request Plan')}
+          {'Request Plan'}
         </Button>
         <Button
           onClick={() => handleSubscribe(plan.id)}
@@ -542,8 +534,8 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
           className="w-full"
         >
           {currentPlan && currentPlan.id === plan.id && currentPlan.expires_at && new Date(currentPlan.expires_at) > new Date()
-            ? t('Already Subscribed')
-            : t('Subscribe Now')
+            ? 'Already Subscribed'
+            : 'Subscribe Now'
           }
         </Button>
       </div>
@@ -569,7 +561,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
   const togglePlanStatus = (planId: number) => {
     const plan = plans.find(p => p.id === planId);
     const newStatus = !plan?.status;
-    toast.loading(`${newStatus ? t('Activating') : t('Deactivating')} plan...`);
+    toast.loading(`${newStatus ? 'Activating' : 'Deactivating'} plan...`);
 
     router.post(route('plans.toggle-status', planId), {}, {
       preserveState: true,
@@ -579,18 +571,14 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
           plan.id === planId ? { ...plan, status: !plan.status } : plan
         ));
         if (page.props.flash?.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash?.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update plan status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update plan status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -604,7 +592,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
   // Function to handle delete confirmation
   const handleDeleteConfirm = () => {
     if (planToDelete) {
-      toast.loading(t('Deleting plan...'));
+      toast.loading('Deleting plan...');
       
       router.delete(route('plans.destroy', planToDelete.id), {
         onSuccess: (page) => {
@@ -612,18 +600,14 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
           setPlanToDelete(null);
           toast.dismiss();
           if (page.props.flash?.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash?.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash?.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to delete plan: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to delete plan: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -643,9 +627,9 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
 
   return (
     <PageTemplate
-      title={t("Plans")}
+      title={"Plans"}
       breadcrumbs={breadcrumbs}
-      description={t("Manage subscription plans for your customers")}
+      description={"Manage subscription plans for your customers"}
       url="/plans"
     >
       <div className="space-y-8">
@@ -653,12 +637,12 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight mb-2">
-              {isAdmin ? t("Subscription Plans") : t("Choose Your Plan")}
+              {isAdmin ? "Subscription Plans" : "Choose Your Plan"}
             </h1>
             <p className="text-muted-foreground max-w-2xl">
               {isAdmin
-                ? t("Create and manage subscription plans to offer different service tiers to your customers.")
-                : t("Select the perfect plan for your business needs")
+                ? "Create and manage subscription plans to offer different service tiers to your customers."
+                : "Select the perfect plan for your business needs"
               }
             </p>
           </div>
@@ -669,11 +653,11 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
               className="w-full sm:w-[400px]"
             >
               <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="monthly">{t("Monthly")}</TabsTrigger>
+                <TabsTrigger value="monthly">{"Monthly"}</TabsTrigger>
                 <TabsTrigger value="yearly">
-                  {t("Yearly")}
+                  {"Yearly"}
                   <Badge variant="outline" className="ml-2 bg-green-100 text-green-800 border-green-200">
-                    {t("Save 20%")}
+                    {"Save 20%"}
                   </Badge>
                 </TabsTrigger>
               </TabsList>
@@ -681,7 +665,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
             {isAdmin && (
               <Button className="w-full sm:w-auto" onClick={() => router.get(route('plans.create'))}>
                 <Plus className="h-4 w-4 mr-2" />
-                {t("Add Plan")}
+                {"Add Plan"}
               </Button>
             )}
           </div>
@@ -718,7 +702,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                 <div className="absolute -top-4 left-0 right-0 flex justify-center z-20">
                   <div className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full shadow-lg flex items-center gap-1.5 text-sm font-medium">
                     <Sparkles className="h-4 w-4" />
-                    {t("Recommended")}
+                    {"Recommended"}
                   </div>
                 </div>
               )}
@@ -728,7 +712,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                 <div className="absolute top-4 right-4 z-10 flex gap-2">
                   {plan.is_default && (
                     <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
-                      {t("Default")}
+                      {"Default"}
                     </div>
                   )}
                   <div className={`
@@ -742,7 +726,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                       w-2 h-2 rounded-full 
                       ${plan.status ? 'bg-emerald-500' : 'bg-red-500'}
                     `}></span>
-                    {plan.status ? t("Active") : t("Inactive")}
+                    {plan.status ? "Active" : "Inactive"}
                   </div>
                 </div>
               )}
@@ -752,7 +736,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                 <div className="absolute top-4 right-4 z-10">
                   <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary">
                     <Crown className="h-3 w-3" />
-                    {t("Current")}
+                    {"Current"}
                   </div>
                 </div>
               )}
@@ -775,7 +759,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                       {currencySymbol}{plan.price}
                     </span>
                     <span className="text-muted-foreground text-sm">
-                      /{t(plan.duration.toLowerCase())}
+                      /{plan.duration.toLowerCase()}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2 mb-3">
@@ -784,7 +768,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                   {plan.trial_days > 0 && (
                     <div className="flex items-center gap-1.5 text-sm text-primary">
                       <Sparkles className="h-3.5 w-3.5" />
-                      {t("{{days}} days free trial", { days: plan.trial_days })}
+                      {`${plan.trial_days} days free trial`}
                     </div>
                   )}
                 </div>
@@ -801,7 +785,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                 {/* Features */}
                 <div className="mb-6 flex-1">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    {t("Features")}
+                    {"Features"}
                   </h4>
                   <ul className="space-y-2.5">
                     {commonFeatures.map((feature, index) => {
@@ -819,7 +803,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                             </div>
                           )}
                           <span className={`text-sm ${included ? 'font-medium' : 'text-muted-foreground'}`}>
-                            {t(feature)}
+                            {feature}
                           </span>
                         </li>
                       );
@@ -830,7 +814,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                 {/* Usage limits */}
                 <div className="mb-6">
                   <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                    {t("Usage Limits")}
+                    {"Usage Limits"}
                   </h4>
                   <div className="grid grid-cols-3 gap-3">
                     <div className="relative overflow-hidden bg-white rounded-xl border border-gray-200 p-3 group-hover:border-primary/30 transition-colors">
@@ -844,7 +828,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                         </div>
                       </div>
                       <div className="relative text-xs font-medium text-emerald-600 uppercase tracking-wide">
-                        {t("Users")}
+                        {"Users"}
                       </div>
                     </div>
                     <div className="relative overflow-hidden bg-white rounded-xl border border-gray-200 p-3 group-hover:border-primary/30 transition-colors">
@@ -858,7 +842,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                         </div>
                       </div>
                       <div className="relative text-xs font-medium text-blue-600 uppercase tracking-wide">
-                        {t("Employees")}
+                        {"Employees"}
                       </div>
                     </div>
                     <div className="relative overflow-hidden bg-white rounded-xl border border-gray-200 p-3 group-hover:border-primary/30 transition-colors">
@@ -872,7 +856,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                         </div>
                       </div>
                       <div className="relative text-xs font-medium text-amber-600 uppercase tracking-wide">
-                        {t("Storage")}
+                        {"Storage"}
                       </div>
                     </div>
                   </div>
@@ -889,7 +873,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                           className={plan.status ? "data-[state=checked]:bg-primary" : ""}
                         />
                         <span className="text-sm text-muted-foreground">
-                          {plan.status ? t("Active") : t("Inactive")}
+                          {plan.status ? "Active" : "Inactive"}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -897,7 +881,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                           variant="outline"
                           size="sm"
                           className="h-9 w-9 p-0 border-gray-200 hover:border-primary hover:text-primary"
-                          title={t("Edit")}
+                          title={"Edit"}
                           onClick={() => router.get(route('plans.edit', plan.id))}
                         >
                           <Pencil className="h-4 w-4" />
@@ -908,7 +892,7 @@ export default function Plans({ plans: initialPlans, billingCycle: initialBillin
                             variant="outline"
                             size="sm"
                             className="h-9 w-9 p-0 border-gray-200 hover:border-red-400 hover:text-red-600"
-                            title={t("Delete")}
+                            title={"Delete"}
                             onClick={() => handleDelete(plan)}
                           >
                             <Trash2 className="h-4 w-4" />

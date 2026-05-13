@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from '@inertiajs/react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 
 interface ContactSectionProps {
@@ -29,7 +29,7 @@ interface ContactSectionProps {
 }
 
 export default function ContactSection({ flash, settings, sectionData, brandColor = '#3b82f6' }: ContactSectionProps) {
-  const { t } = useTranslation();
+  
   const { data, setData, post, processing, errors, reset } = useForm({
     name: '',
     email: '',
@@ -55,17 +55,17 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
   const contactInfo = [
     {
       icon: Mail,
-      title: t('Email Us'),
+      title: 'Email Us',
       content: settings?.contact_email || 'support@hrm.com',
     },
     {
       icon: Phone,
-      title: t('Call Us'),
+      title: 'Call Us',
       content: settings?.contact_phone || '+1 (555) 123-4567',
     },
     {
       icon: MapPin,
-      title: t('Visit Us'),
+      title: 'Visit Us',
       content: settings?.contact_address || '123 Business Ave, Suite 100',
     }
   ].filter(info => info.content); // Only show items that have content
@@ -75,10 +75,10 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-8 sm:mb-12 lg:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('Get in Touch')}
+            {sectionData?.title || 'Get in Touch'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-            {sectionData?.subtitle || t('Have questions about HRM SaaS? We\'d love to hear from you.. Send us a message and we\'ll respond as soon as possible.')}
+            {sectionData?.subtitle || 'Have questions about HRM SaaS? We\'d love to hear from you.. Send us a message and we\'ll respond as soon as possible.'}
           </p>
         </div>
 
@@ -87,7 +87,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
           <div>
             <div className="bg-white border border-gray-200 rounded-xl p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                {sectionData?.form_title || t('Send us a Message')}
+                {sectionData?.form_title || 'Send us a Message'}
               </h3>
 
               {flash?.success && (
@@ -103,7 +103,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('Full Name')} <span className="text-red-500" aria-label="required">*</span>
+                      {'Full Name'} <span className="text-red-500" aria-label="required">*</span>
                     </label>
                     <input
                       type="text"
@@ -112,7 +112,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                       onChange={(e) => setData('name', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
                       style={{ '--tw-ring-color': brandColor } as React.CSSProperties}
-                      placeholder={t('Your full name')}
+                      placeholder={'Your full name'}
                       required
                       disabled={processing}
                     />
@@ -122,7 +122,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                   </div>
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                      {t('Email Address')} <span className="text-red-500" aria-label="required">*</span>
+                      {'Email Address'} <span className="text-red-500" aria-label="required">*</span>
                     </label>
                     <input
                       type="email"
@@ -131,7 +131,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                       onChange={(e) => setData('email', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
                       style={{ '--tw-ring-color': brandColor } as React.CSSProperties}
-                      placeholder={t('your@email.com')}
+                      placeholder={'your@email.com'}
                       required
                       disabled={processing}
                     />
@@ -143,7 +143,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
 
                 <div>
                   <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Subject')} <span className="text-red-500" aria-label="required">*</span>
+                    {'Subject'} <span className="text-red-500" aria-label="required">*</span>
                   </label>
                   <input
                     type="text"
@@ -152,7 +152,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                     onChange={(e) => setData('subject', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 disabled:bg-gray-100 disabled:cursor-not-allowed"
                     style={{ '--tw-ring-color': brandColor } as React.CSSProperties}
-                    placeholder={t('What\'s this about?')}
+                    placeholder={'What\'s this about?'}
                     required
                     disabled={processing}
                   />
@@ -163,7 +163,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
 
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
-                    {t('Message')} <span className="text-red-500" aria-label="required">*</span>
+                    {'Message'} <span className="text-red-500" aria-label="required">*</span>
                   </label>
                   <textarea
                     id="message"
@@ -172,7 +172,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                     onChange={(e) => setData('message', e.target.value)}
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 resize-none disabled:bg-gray-100 disabled:cursor-not-allowed"
                     style={{ '--tw-ring-color': brandColor } as React.CSSProperties}
-                    placeholder={t('Tell us more about your inquiry...')}
+                    placeholder={'Tell us more about your inquiry...'}
                     required
                     disabled={processing}
                   />
@@ -191,12 +191,12 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
                   {processing ? (
                     <>
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      {t('Sending...')}
+                      {'Sending...'}
                     </>
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      {t('Send Message')}
+                      {'Send Message'}
                     </>
                   )}
                 </button>
@@ -209,10 +209,10 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
             <div className="space-y-8">
               <div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                  {sectionData?.info_title || t('Contact Information')}
+                  {sectionData?.info_title || 'Contact Information'}
                 </h3>
                 <p className="text-gray-600 mb-8">
-                  {sectionData?.info_description || t('We\'re here to help and answer any questions you might have about managing your HR processes efficiently. We look forward to hearing from you.')}
+                  {sectionData?.info_description || 'We\'re here to help and answer any questions you might have about managing your HR processes efficiently. We look forward to hearing from you.'}
                 </p>
               </div>
 
@@ -244,7 +244,7 @@ export default function ContactSection({ flash, settings, sectionData, brandColo
               {sectionData?.faqs && sectionData.faqs.length > 0 && (
                 <div className="bg-white rounded-xl p-6 border border-gray-200">
                   <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                    {t('Frequently Asked Questions')}
+                    {'Frequently Asked Questions'}
                   </h4>
                   <div className="space-y-4">
                     {sectionData.faqs.map((faq, index) => (

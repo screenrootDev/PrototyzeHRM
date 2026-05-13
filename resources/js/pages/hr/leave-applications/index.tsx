@@ -9,12 +9,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function LeaveApplications() {
-  const { t } = useTranslation();
+  
   const { auth, leaveApplications, employees, leaveTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -103,17 +103,15 @@ export default function LeaveApplications() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating leave application...'));
+      toast.loading('Creating leave application...');
 
       router.post(route('hr.leave-applications.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -125,17 +123,15 @@ export default function LeaveApplications() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating leave application...'));
+      toast.loading('Updating leave application...');
 
       router.put(route('hr.leave-applications.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -150,17 +146,15 @@ export default function LeaveApplications() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting leave application...'));
+    toast.loading('Deleting leave application...');
 
     router.delete(route('hr.leave-applications.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -174,7 +168,7 @@ export default function LeaveApplications() {
   };
 
   const handleStatusUpdate = (application: any, status: string) => {
-    const statusText = status === 'approved' ? t('Approving') : t('Rejecting');
+    const statusText = status === 'approved' ? 'Approving' : 'Rejecting';
     toast.loading(`${statusText} leave application...`);
 
     router.put(route('hr.leave-applications.update-status', application.id), { 
@@ -184,10 +178,8 @@ export default function LeaveApplications() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -219,7 +211,7 @@ export default function LeaveApplications() {
   // Add the "Add New Leave Application" button if user has permission
   if (hasPermission(permissions, 'create-leave-applications')) {
     pageActions.push({
-      label: t('Add Leave Application'),
+      label: 'Add Leave Application',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -227,21 +219,21 @@ export default function LeaveApplications() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Leave Management'), href: route('hr.leave-applications.index') },
-    { title: t('Leave Applications') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Leave Management', href: route('hr.leave-applications.index') },
+    { title: 'Leave Applications' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'leave_type',
-      label: t('Leave Type'),
+      label: 'Leave Type',
       render: (value: any, row: any) => (
         <div className="flex items-center gap-2">
           <div 
@@ -254,7 +246,7 @@ export default function LeaveApplications() {
     },
     {
       key: 'start_date',
-      label: t('Start Date'),
+      label: 'Start Date',
       sortable: true,
       // render: (value: string) => new Date(value).toLocaleDateString()
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
@@ -262,21 +254,21 @@ export default function LeaveApplications() {
     },
     {
       key: 'end_date',
-      label: t('End Date'),
+      label: 'End Date',
       sortable: true,
       // render: (value: string) => new Date(value).toLocaleDateString()
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     },
     {
       key: 'total_days',
-      label: t('Days'),
+      label: 'Days',
       render: (value: number) => (
         <span className="font-mono">{value}</span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         const statusColors = {
           pending: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
@@ -292,7 +284,7 @@ export default function LeaveApplications() {
     },
     {
       key: 'created_at',
-      label: t('Applied On'),
+      label: 'Applied On',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -301,14 +293,14 @@ export default function LeaveApplications() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-leave-applications'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
@@ -316,7 +308,7 @@ export default function LeaveApplications() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Approve'),
+      label: 'Approve',
       icon: 'CheckCircle',
       action: 'approve',
       className: 'text-green-500',
@@ -324,7 +316,7 @@ export default function LeaveApplications() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Reject'),
+      label: 'Reject',
       icon: 'XCircle',
       action: 'reject',
       className: 'text-red-500',
@@ -332,7 +324,7 @@ export default function LeaveApplications() {
       condition: (item: any) => item.status === 'pending'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -342,7 +334,7 @@ export default function LeaveApplications() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees') , disabled: true },
+    { value: 'all', label: 'All Employees' , disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -350,7 +342,7 @@ export default function LeaveApplications() {
   ];
 
   const leaveTypeOptions = [
-    { value: 'all', label: t('All Leave Types') , disabled: true },
+    { value: 'all', label: 'All Leave Types' , disabled: true },
     ...(leaveTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -358,15 +350,15 @@ export default function LeaveApplications() {
   ];
 
   const statusOptions = [
-    { value: 'all', label: t('All Statuses'), disabled: true },
-    { value: 'pending', label: t('Pending') },
-    { value: 'approved', label: t('Approved') },
-    { value: 'rejected', label: t('Rejected') }
+    { value: 'all', label: 'All Statuses', disabled: true },
+    { value: 'pending', label: 'Pending' },
+    { value: 'approved', label: 'Approved' },
+    { value: 'rejected', label: 'Rejected' }
   ];
 
   return (
     <PageTemplate
-      title={t("Leave Applications")}
+      title={"Leave Applications"}
       url="/hr/leave-applications"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -381,7 +373,7 @@ export default function LeaveApplications() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -390,7 +382,7 @@ export default function LeaveApplications() {
             },
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               value: selectedLeaveType,
               onChange: setSelectedLeaveType,
@@ -399,7 +391,7 @@ export default function LeaveApplications() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -452,7 +444,7 @@ export default function LeaveApplications() {
           to={leaveApplications?.to || 0}
           total={leaveApplications?.total || 0}
           links={leaveApplications?.links}
-          entityName={t("leave applications")}
+          entityName={"leave applications"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -466,7 +458,7 @@ export default function LeaveApplications() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               searchable : true,
@@ -477,7 +469,7 @@ export default function LeaveApplications() {
             },
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               required: true,
               searchable : true,
@@ -486,23 +478,23 @@ export default function LeaveApplications() {
                 label: type.name
               })) : []
             },
-            { name: 'start_date', label: t('Start Date'), type: 'date', required: true },
-            { name: 'end_date', label: t('End Date'), type: 'date', required: true },
-            { name: 'reason', label: t('Reason'), type: 'textarea', required: true },
+            { name: 'start_date', label: 'Start Date', type: 'date', required: true },
+            { name: 'end_date', label: 'End Date', type: 'date', required: true },
+            { name: 'reason', label: 'Reason', type: 'textarea', required: true },
             { 
               name: 'attachment', 
-              label: t('Attachment'), 
+              label: 'Attachment', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <div>
                   <MediaPicker
                     value={String(formData[field.name] || '')}
                     onChange={(url) => handleChange(field.name, url)}
-                    placeholder={t('Select attachment file...')}
+                    placeholder={'Select attachment file...'}
                   />
                 </div>
               ),
-              helpText: t('Upload PDF, DOC, DOCX, JPG, JPEG, PNG files')
+              helpText: 'Upload PDF, DOC, DOCX, JPG, JPEG, PNG files'
             }
           ],
           modalSize: 'lg'
@@ -514,10 +506,10 @@ export default function LeaveApplications() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Leave Application')
+            ? 'Add New Leave Application'
             : formMode === 'edit'
-              ? t('Edit Leave Application')
-              : t('View Leave Application')
+              ? 'Edit Leave Application'
+              : 'View Leave Application'
         }
         mode={formMode}
       />

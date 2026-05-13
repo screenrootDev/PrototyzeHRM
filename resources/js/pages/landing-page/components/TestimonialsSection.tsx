@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star, Quote } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 interface Testimonial {
@@ -37,7 +37,7 @@ interface TestimonialsSectionProps {
 }
 
 export default function TestimonialsSection({ testimonials, settings, sectionData, brandColor = '#3b82f6' }: TestimonialsSectionProps) {
-  const { t } = useTranslation();
+  
   const { ref, isVisible } = useScrollAnimation();
   // Fallback testimonials if none provided
   const defaultTestimonials = sectionData?.testimonials?.map((testimonial, index) => ({
@@ -106,10 +106,10 @@ export default function TestimonialsSection({ testimonials, settings, sectionDat
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('What Our Clients Say')}
+            {sectionData?.title || 'What Our Clients Say'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-            {sectionData?.subtitle || t('Hear from HR leaders who trust our platform.')}
+            {sectionData?.subtitle || 'Hear from HR leaders who trust our platform.'}
           </p>
         </div>
 
@@ -172,7 +172,7 @@ export default function TestimonialsSection({ testimonials, settings, sectionDat
           <div className="mt-8 sm:mt-12 lg:mt-16 text-center">
             <div className="bg-white rounded-xl p-8 border border-gray-200">
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                {sectionData?.trust_title || t('Trusted by HR Professionals Worldwide')}
+                {sectionData?.trust_title || 'Trusted by HR Professionals Worldwide'}
               </h3>
               <div className="flex justify-center items-center gap-8 flex-wrap">
                 {sectionData.trust_stats.map((stat, index) => (

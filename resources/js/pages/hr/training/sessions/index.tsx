@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Calendar } from 'lucide-react';
@@ -16,7 +16,7 @@ import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
 
 export default function TrainingSessions() {
-  const { t } = useTranslation();
+  
   const { auth, trainingSessions, trainingPrograms, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -122,72 +122,60 @@ export default function TrainingSessions() {
     };
     
     if (formMode === 'create') {
-      toast.loading(t('Creating training session...'));
+      toast.loading('Creating training session...');
 
       router.post(route('hr.training-sessions.store'), submitData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create training session: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create training session: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating training session...'));
+      toast.loading('Updating training session...');
 
       router.put(route('hr.training-sessions.update', currentItem.id), submitData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update training session: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update training session: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting training session...'));
+    toast.loading('Deleting training session...');
     
     router.delete(route('hr.training-sessions.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete training session: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete training session: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -212,7 +200,7 @@ export default function TrainingSessions() {
   
   // Add the "Calendar View" button
   pageActions.push({
-    label: t('Calendar View'),
+    label: 'Calendar View',
     icon: <Calendar className="h-4 w-4 mr-2" />,
     variant: 'outline' as const,
     onClick: handleViewCalendar
@@ -221,7 +209,7 @@ export default function TrainingSessions() {
   // Add the "Add New Session" button if user has permission
   if (hasPermission(permissions, 'create-training-sessions')) {
     pageActions.push({
-      label: t('Add Session'),
+      label: 'Add Session',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default' as const,
       onClick: () => handleAddNew()
@@ -229,17 +217,17 @@ export default function TrainingSessions() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Management'), href: route('hr.training-sessions.index') },
-    { title: t('Training Sessions') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Management', href: route('hr.training-sessions.index') },
+    { title: 'Training Sessions' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'program', 
-      label: t('Program'),
+      label: 'Program',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.name || row.training_program?.name || '-'}</div>
@@ -249,7 +237,7 @@ export default function TrainingSessions() {
     },
     { 
       key: 'date_time', 
-      label: t('Date & Time'),
+      label: 'Date & Time',
       sortable: true,
       sortField: 'start_date',
       render: (_, row) => (
@@ -263,19 +251,19 @@ export default function TrainingSessions() {
     },
     { 
       key: 'location', 
-      label: t('Location'),
+      label: 'Location',
       render: (value, row) => (
         <div>
           <div>{value || '-'}</div>
           <Badge variant="outline" className={row.location_type === 'virtual' ? 'bg-blue-50 text-blue-700' : 'bg-green-50 text-green-700'}>
-            {row.location_type === 'virtual' ? t('Virtual') : t('Physical')}
+            {row.location_type === 'virtual' ? 'Virtual' : 'Physical'}
           </Badge>
         </div>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       sortable: true,
       render: (value) => {
         const statusClasses = {
@@ -294,7 +282,7 @@ export default function TrainingSessions() {
     },
     { 
       key: 'trainers', 
-      label: t('Trainers'),
+      label: 'Trainers',
       render: (value) => {
         if (!value || value.length === 0) {
           return '-';
@@ -314,7 +302,7 @@ export default function TrainingSessions() {
     },
     { 
       key: 'attendance_count', 
-      label: t('Attendance'),
+      label: 'Attendance',
       render: (value) => value || '0'
     }
   ];
@@ -322,21 +310,21 @@ export default function TrainingSessions() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-training-sessions'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-training-sessions'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -346,7 +334,7 @@ export default function TrainingSessions() {
 
   // Prepare training program options for filter
   const trainingProgramOptions = [
-    { value: '', label: t('All Programs') },
+    { value: '', label: 'All Programs' },
     ...(trainingPrograms || []).map((program: any) => ({
       value: program.id.toString(),
       label: program.name
@@ -355,23 +343,23 @@ export default function TrainingSessions() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: '', label: t('All Statuses') },
-    { value: 'scheduled', label: t('Scheduled') },
-    { value: 'in_progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'cancelled', label: t('Cancelled') }
+    { value: '', label: 'All Statuses' },
+    { value: 'scheduled', label: 'Scheduled' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   // Prepare location type options for filter
   const locationTypeOptions = [
-    { value: '', label: t('All Locations') },
-    { value: 'physical', label: t('Physical') },
-    { value: 'virtual', label: t('Virtual') }
+    { value: '', label: 'All Locations' },
+    { value: 'physical', label: 'Physical' },
+    { value: 'virtual', label: 'Virtual' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Training Sessions")} 
+      title={"Training Sessions"} 
       url="/hr/training/sessions"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -386,7 +374,7 @@ export default function TrainingSessions() {
           filters={[
             {
               name: 'training_program_id',
-              label: t('Program'),
+              label: 'Program',
               type: 'select',
               value: selectedProgram,
               onChange: setSelectedProgram,
@@ -394,7 +382,7 @@ export default function TrainingSessions() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -402,7 +390,7 @@ export default function TrainingSessions() {
             },
             {
               name: 'location_type',
-              label: t('Location Type'),
+              label: 'Location Type',
               type: 'select',
               value: selectedLocationType,
               onChange: setSelectedLocationType,
@@ -410,14 +398,14 @@ export default function TrainingSessions() {
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -471,7 +459,7 @@ export default function TrainingSessions() {
           to={trainingSessions?.to || 0}
           total={trainingSessions?.total || 0}
           links={trainingSessions?.links}
-          entityName={t("training sessions")}
+          entityName={"training sessions"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -485,71 +473,71 @@ export default function TrainingSessions() {
           fields: [
             { 
               name: 'training_program_id', 
-              label: t('Training Program'), 
+              label: 'Training Program', 
               type: 'select',
               required: true,
               options: trainingProgramOptions.filter(opt => opt.value !== '')
             },
             { 
               name: 'name', 
-              label: t('Session Name'), 
+              label: 'Session Name', 
               type: 'text',
-              helpText: t('Leave blank to use program name')
+              helpText: 'Leave blank to use program name'
             },
             { 
               name: 'start_date', 
-              label: t('Start Date'), 
+              label: 'Start Date', 
               type: 'date',
               required: true
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date',
               required: true
             },
             { 
               name: 'location_type', 
-              label: t('Location Type'), 
+              label: 'Location Type', 
               type: 'select',
               required: true,
               options: [
-                { value: 'physical', label: t('Physical') },
-                { value: 'virtual', label: t('Virtual') }
+                { value: 'physical', label: 'Physical' },
+                { value: 'virtual', label: 'Virtual' }
               ]
             },
             { 
               name: 'location', 
-              label: t('Location'), 
+              label: 'Location', 
               type: 'text',
               showWhen: (formData) => formData.location_type === 'physical'
             },
             { 
               name: 'meeting_link', 
-              label: t('Meeting Link'), 
+              label: 'Meeting Link', 
               type: 'text',
               showWhen: (formData) => formData.location_type === 'virtual'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'scheduled', label: t('Scheduled') },
-                { value: 'in_progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'cancelled', label: t('Cancelled') }
+                { value: 'scheduled', label: 'Scheduled' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
               ]
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea'
             },
             { 
               name: 'trainer_ids', 
-              label: t('Trainers'), 
+              label: 'Trainers', 
               type: 'multi-select',
               options: (employees || []).map((employee: any) => ({
                 value: employee.id.toString(),
@@ -558,24 +546,24 @@ export default function TrainingSessions() {
             },
             { 
               name: 'is_recurring', 
-              label: t('Recurring Session'), 
+              label: 'Recurring Session', 
               type: 'checkbox',
               showWhen: (formData) => formMode === 'create'
             },
             { 
               name: 'recurrence_pattern', 
-              label: t('Recurrence Pattern'), 
+              label: 'Recurrence Pattern', 
               type: 'select',
               options: [
-                { value: 'daily', label: t('Daily') },
-                { value: 'weekly', label: t('Weekly') },
-                { value: 'monthly', label: t('Monthly') }
+                { value: 'daily', label: 'Daily' },
+                { value: 'weekly', label: 'Weekly' },
+                { value: 'monthly', label: 'Monthly' }
               ],
               showWhen: (formData) => formData.is_recurring
             },
             { 
               name: 'recurrence_count', 
-              label: t('Number of Occurrences'), 
+              label: 'Number of Occurrences', 
               type: 'number',
               min: 1,
               max: 52,
@@ -594,10 +582,10 @@ export default function TrainingSessions() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Training Session')
+            ? 'Add New Training Session'
             : formMode === 'edit'
-              ? t('Edit Training Session')
-              : t('View Training Session')
+              ? 'Edit Training Session'
+              : 'View Training Session'
         }
         mode={formMode}
       />

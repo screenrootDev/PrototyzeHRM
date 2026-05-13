@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 // import DeleteUser from '@/components/delete-user';
-import { useTranslation } from 'react-i18next';
+
 import { Camera } from 'lucide-react';
 
 
@@ -32,7 +32,7 @@ const sidebarNavItems: NavItem[] = [
 ];
 
 export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerifyEmail?: boolean; status?: string }) {
-  const { t } = useTranslation();
+  
   const { auth } = usePage<SharedData>().props;
   const [activeSection, setActiveSection] = useState('profile');
   
@@ -162,7 +162,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
 
   return (
     <PageTemplate 
-      title={t("Profile Settings")} 
+      title={"Profile Settings"} 
       url="/profile"
     >
       <div className="flex flex-col space-y-8">
@@ -188,9 +188,9 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
           <section id="profile" ref={profileRef} className="mb-16">
             <div className="space-y-6">
               <div className="rounded-lg border p-6">
-                <h3 className="text-lg font-medium mb-4">{t("Profile Information")}</h3>
+                <h3 className="text-lg font-medium mb-4">{"Profile Information"}</h3>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                  {t("Update your account's profile information and email address")}
+                  {"Update your account's profile information and email address"}
                 </p>
 
                 <form id="profile-form" onSubmit={submitProfile} className="space-y-6">
@@ -208,7 +208,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                     <div className="flex flex-col space-y-2">
                       <Label htmlFor="avatar" className="cursor-pointer inline-flex items-center px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md font-medium text-sm transition-colors">
                         <Camera className="h-4 w-4 mr-2" />
-                        {t("Change Avatar")}
+                        {"Change Avatar"}
                       </Label>
                       <Input
                         id="avatar"
@@ -218,14 +218,14 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                         className="hidden"
                       />
                       <p className="text-xs text-muted-foreground">
-                        {t("JPG, PNG, GIF up to 2MB")}
+                        {"JPG, PNG, GIF up to 2MB"}
                       </p>
                     </div>
                   </div>
                   <InputError className="mt-2" message={profileErrors.avatar} />
 
                   <div className="grid gap-2">
-                    <Label htmlFor="name">{t("Name")}</Label>
+                    <Label htmlFor="name">{"Name"}</Label>
                     <Input
                       id="name"
                       className="mt-1 block w-full"
@@ -233,13 +233,13 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       onChange={(e) => setProfileData('name', e.target.value)}
                       required
                       autoComplete="name"
-                      placeholder={t("Full name")}
+                      placeholder={"Full name"}
                     />
                     <InputError className="mt-2" message={profileErrors.name} />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="email">{t("Email address")}</Label>
+                    <Label htmlFor="email">{"Email address"}</Label>
                     <Input
                       id="email"
                       type="email"
@@ -248,7 +248,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       onChange={(e) => setProfileData('email', e.target.value)}
                       required
                       autoComplete="username"
-                      placeholder={t("Email address")}
+                      placeholder={"Email address"}
                     />
                     <InputError className="mt-2" message={profileErrors.email} />
                   </div>
@@ -256,26 +256,26 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   {mustVerifyEmail && auth?.user?.email_verified_at === null && (
                     <div>
                       <p className="text-muted-foreground -mt-4 text-sm">
-                        {t("Your email address is unverified.")}{' '}
+                        {"Your email address is unverified."}{' '}
                         <button
                           type="button"
                           onClick={() => route('verification.send')}
                           className="text-foreground underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current dark:decoration-neutral-500"
                         >
-                          {t("Click here to resend the verification email.")}
+                          {"Click here to resend the verification email."}
                         </button>
                       </p>
 
                       {status === 'verification-link-sent' && (
                         <div className="mt-2 text-sm font-medium text-green-600">
-                          {t("A new verification link has been sent to your email address.")}
+                          {"A new verification link has been sent to your email address."}
                         </div>
                       )}
                     </div>
                   )}
 
                   <div className="flex items-center gap-4">
-                    <Button disabled={profileProcessing}>{t("Save")}</Button>
+                    <Button disabled={profileProcessing}>{"Save"}</Button>
                     <Transition
                       show={profileRecentlySuccessful}
                       enter="transition ease-in-out"
@@ -283,7 +283,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       leave="transition ease-in-out"
                       leaveTo="opacity-0"
                     >
-                      <p className="text-sm text-neutral-600">{t("Saved")}</p>
+                      <p className="text-sm text-neutral-600">{"Saved"}</p>
                     </Transition>
                   </div>
                 </form>
@@ -297,14 +297,14 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
           <section id="password" ref={passwordRef} className="mb-16">
             <div className="space-y-6">
               <div className="rounded-lg border p-6">
-                <h3 className="text-lg font-medium mb-4">{t("Update Password")}</h3>
+                <h3 className="text-lg font-medium mb-4">{"Update Password"}</h3>
                 <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                  {t("Ensure your account is using a long, random password to stay secure")}
+                  {"Ensure your account is using a long, random password to stay secure"}
                 </p>
 
                 <form id="password-form" onSubmit={updatePassword} className="space-y-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="current_password">{t("Current password")}</Label>
+                    <Label htmlFor="current_password">{"Current password"}</Label>
                     <Input
                       id="current_password"
                       ref={currentPasswordInput}
@@ -319,7 +319,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="password">{t("New password")}</Label>
+                    <Label htmlFor="password">{"New password"}</Label>
                     <Input
                       id="password"
                       ref={passwordInput}
@@ -334,7 +334,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="password_confirmation">{t("Confirm password")}</Label>
+                    <Label htmlFor="password_confirmation">{"Confirm password"}</Label>
                     <Input
                       id="password_confirmation"
                       value={passwordData.password_confirmation}
@@ -348,7 +348,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <Button disabled={passwordProcessing}>{t("Save password")}</Button>
+                    <Button disabled={passwordProcessing}>{"Save password"}</Button>
                     <Transition
                       show={passwordRecentlySuccessful}
                       enter="transition ease-in-out"
@@ -356,7 +356,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       leave="transition ease-in-out"
                       leaveTo="opacity-0"
                     >
-                      <p className="text-sm text-neutral-600">{t("Saved")}</p>
+                      <p className="text-sm text-neutral-600">{"Saved"}</p>
                     </Transition>
                   </div>
                 </form>

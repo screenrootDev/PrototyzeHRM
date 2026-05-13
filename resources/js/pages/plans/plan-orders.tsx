@@ -4,7 +4,7 @@ import { planOrdersConfig } from '@/config/crud/plan-orders';
 import { useEffect, useState } from 'react';
 import { usePage, router } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -16,7 +16,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '
 import { Textarea } from '@/components/ui/textarea';
 
 export default function PlanOrdersPage() {
-  const { t } = useTranslation();
+  
   const { flash, planOrders, filters: pageFilters = {}, auth, currencySymbol, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -38,7 +38,7 @@ export default function PlanOrdersPage() {
   const handleAction = (action: string, item: any) => {
     if (action === 'approve') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Approving plan order...'));
+        toast.loading('Approving plan order...');
       }
 
       router.post(route("plan-orders.approve", item.id), {}, {
@@ -47,20 +47,16 @@ export default function PlanOrdersPage() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to approve plan order: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to approve plan order: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (action === 'reject') {
@@ -71,7 +67,7 @@ export default function PlanOrdersPage() {
 
   const handleRejectConfirm = (notes: string) => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Rejecting plan order...'));
+      toast.loading('Rejecting plan order...');
     }
     
     router.post(route("plan-orders.reject", currentItem.id), { notes }, {
@@ -81,20 +77,16 @@ export default function PlanOrdersPage() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to reject plan order: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to reject plan order: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -148,9 +140,9 @@ export default function PlanOrdersPage() {
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Plans'), href: route('plans.index') },
-    { title: t('Plan Orders') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Plans', href: route('plans.index') },
+    { title: 'Plan Orders' }
   ];
 
   const hasActiveFilters = () => {
@@ -161,12 +153,12 @@ export default function PlanOrdersPage() {
 
   const filteredActions = planOrdersConfig.table.actions?.map(action => ({
     ...action,
-    label: t(action.label)
+    label: action.label
   }));
 
   return (
     <PageTemplate
-      title={t('Plan Orders')}
+      title={'Plan Orders'}
       url="/plan-orders"
       breadcrumbs={breadcrumbs}
       noPadding
@@ -178,13 +170,13 @@ export default function PlanOrdersPage() {
           onSearch={handleSearch}
           filters={planOrdersConfig.filters?.map(filter => ({
             name: filter.key,
-            label: t(filter.label),
+            label: filter.label,
             type: 'select',
             value: filterValues[filter.key] || '',
             onChange: (value) => handleFilterChange(filter.key, value),
             options: filter.options?.map(option => ({
               value: option.value,
-              label: t(option.label)
+              label: option.label
             })) || []
           })) || []}
           showFilters={showFilters}
@@ -222,7 +214,7 @@ export default function PlanOrdersPage() {
         <CrudTable
           columns={planOrdersConfig.table.columns.map(col => ({
             ...col,
-            label: t(col.label),
+            label: col.label,
             render: col.key === 'original_price' || col.key === 'final_price' ? (value: any) => `${currencySymbol}${value}` : col.key === 'discount_amount' ? (value: any) => value > 0 ? `-${currencySymbol}${value}` : '-' : col.render
           }))}
           actions={filteredActions}
@@ -238,7 +230,7 @@ export default function PlanOrdersPage() {
           to={planOrders?.to || 0}
           total={planOrders?.total || 0}
           links={planOrders?.links}
-          entityName={t("plan orders")}
+          entityName={"plan orders"}
           onPageChange={(url) => {
             if (url) {
               const urlObj = new URL(url, window.location.origin);
@@ -255,7 +247,7 @@ export default function PlanOrdersPage() {
       <Dialog open={isRejectModalOpen} onOpenChange={setIsRejectModalOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{t('Reject Plan Order')}</DialogTitle>
+            <DialogTitle>{'Reject Plan Order'}</DialogTitle>
           </DialogHeader>
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -265,21 +257,21 @@ export default function PlanOrdersPage() {
           }}>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="notes">{t('Rejection Reason (Optional)')}</Label>
+                <Label htmlFor="notes">{'Rejection Reason (Optional)'}</Label>
                 <Textarea 
                   id="notes" 
                   name="notes" 
-                  placeholder={t('Enter rejection reason...')} 
+                  placeholder={'Enter rejection reason...'} 
                   className="mt-1"
                 />
               </div>
             </div>
             <DialogFooter className="mt-6">
               <Button type="button" variant="outline" onClick={() => setIsRejectModalOpen(false)}>
-                {t('Cancel')}
+                {'Cancel'}
               </Button>
               <Button type="submit" variant="destructive">
-                {t('Reject')}
+                {'Reject'}
               </Button>
             </DialogFooter>
           </form>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, CreditCard, ExternalLink } from 'lucide-react';
@@ -27,7 +27,7 @@ export function PayTabsPaymentForm({
   onSuccess,
   onCancel
 }: PayTabsPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handlePayment = async () => {
@@ -53,7 +53,7 @@ export function PayTabsPaymentForm({
       });
 
       if (response.data.success && response.data.redirect_url) {
-        toast.success(t('Redirecting to PayTabs payment page...'));
+        toast.success('Redirecting to PayTabs payment page...');
         setTimeout(() => {
           window.location.href = response.data.redirect_url;
         }, 1000);
@@ -63,18 +63,18 @@ export function PayTabsPaymentForm({
     } catch (error: any) {
       console.error('PayTabs payment error:', error);
       
-      let errorMessage = t('Payment failed. Please try again.');
+      let errorMessage = 'Payment failed. Please try again.';
       
       if (error.response?.status === 400) {
-        errorMessage = error.response.data?.message || t('Invalid payment request. Please check your details.');
+        errorMessage = error.response.data?.message || 'Invalid payment request. Please check your details.';
       } else if (error.response?.status === 500) {
-        errorMessage = t('Server error. Please try again later.');
+        errorMessage = 'Server error. Please try again later.';
       } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       } else if (error.code === 'ECONNABORTED') {
-        errorMessage = t('Request timeout. Please try again.');
+        errorMessage = 'Request timeout. Please try again.';
       }
       
       toast.error(errorMessage);
@@ -87,7 +87,7 @@ export function PayTabsPaymentForm({
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <CreditCard className="h-5 w-5" />
-          {t('PayTabs Payment')}
+          {'PayTabs Payment'}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -97,10 +97,10 @@ export function PayTabsPaymentForm({
               <ExternalLink className="h-5 w-5 text-blue-600 mt-0.5" />
               <div>
                 <h4 className="font-medium text-blue-900 mb-1">
-                  {t('Secure Payment with PayTabs')}
+                  {'Secure Payment with PayTabs'}
                 </h4>
                 <p className="text-sm text-blue-700">
-                  {t('You will be redirected to PayTabs secure payment page to complete your transaction.')}
+                  {'You will be redirected to PayTabs secure payment page to complete your transaction.'}
                 </p>
               </div>
             </div>
@@ -108,20 +108,20 @@ export function PayTabsPaymentForm({
 
           <div className="border rounded-lg p-4 bg-gray-50">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-600">{t('Plan')}:</span>
-              <span className="text-sm text-gray-900">{t('Subscription Plan')}</span>
+              <span className="text-sm font-medium text-gray-600">{'Plan'}:</span>
+              <span className="text-sm text-gray-900">{'Subscription Plan'}</span>
             </div>
             <div className="flex justify-between items-center mb-2">
-              <span className="text-sm font-medium text-gray-600">{t('Billing Cycle')}:</span>
+              <span className="text-sm font-medium text-gray-600">{'Billing Cycle'}:</span>
               <span className="text-sm text-gray-900 capitalize">{billingCycle}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium text-gray-600">{t('Amount')}:</span>
+              <span className="text-sm font-medium text-gray-600">{'Amount'}:</span>
               <span className="text-lg font-bold text-gray-900">{currency} {planPrice}</span>
             </div>
             {couponCode && (
               <div className="flex justify-between items-center mt-2 pt-2 border-t">
-                <span className="text-sm font-medium text-green-600">{t('Coupon Applied')}:</span>
+                <span className="text-sm font-medium text-green-600">{'Coupon Applied'}:</span>
                 <span className="text-sm text-green-700 font-medium">{couponCode}</span>
               </div>
             )}
@@ -135,7 +135,7 @@ export function PayTabsPaymentForm({
               className="flex-1"
               disabled={isProcessing}
             >
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button 
               type="button" 
@@ -146,12 +146,12 @@ export function PayTabsPaymentForm({
               {isProcessing ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {t('Redirecting...')}
+                  {'Redirecting...'}
                 </>
               ) : (
                 <>
                   <ExternalLink className="mr-2 h-4 w-4" />
-                  {t('Pay {{amount}}', { amount: `${currency} ${planPrice}` })}
+                  {`Pay ${currency} ${planPrice}`}
                 </>
               )}
             </Button>

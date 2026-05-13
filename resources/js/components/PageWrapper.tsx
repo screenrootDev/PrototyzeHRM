@@ -4,7 +4,7 @@ import { PageTemplate, PageAction } from '@/components/page-template';
 import { usePage } from '@inertiajs/react';
 import { hasPermission } from '@/utils/authorization';
 import { BreadcrumbItem } from '@/types';
-import { useTranslation } from 'react-i18next';
+
 
 export interface PageButton {
   label: string;
@@ -30,13 +30,13 @@ export function PageWrapper({
   children,
   breadcrumbs
 }: PageWrapperProps) {
-  const { t } = useTranslation();
+  
   const { auth } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
   // Generate default breadcrumbs if not provided
   const defaultBreadcrumbs: BreadcrumbItem[] = [
-    { title: t('Dashboard'), href: route('dashboard') },
+    { title: 'Dashboard', href: route('dashboard') },
     { title }
   ];
 

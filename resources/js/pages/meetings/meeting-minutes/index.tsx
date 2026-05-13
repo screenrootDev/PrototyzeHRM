@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, MessageSquare, CheckSquare, StickyNote, Gavel } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function MeetingMinutes() {
-  const { t } = useTranslation();
+  
   const { auth, meetingMinutes, meetings, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -103,17 +103,15 @@ export default function MeetingMinutes() {
     delete formData.recorded_time;
 
     if (formMode === 'create') {
-      toast.loading(t('Creating meeting minute...'));
+      toast.loading('Creating meeting minute...');
 
       router.post(route('meetings.meeting-minutes.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -125,17 +123,15 @@ export default function MeetingMinutes() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating meeting minute...'));
+      toast.loading('Updating meeting minute...');
 
       router.put(route('meetings.meeting-minutes.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -150,17 +146,15 @@ export default function MeetingMinutes() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting meeting minute...'));
+    toast.loading('Deleting meeting minute...');
 
     router.delete(route('meetings.meeting-minutes.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -190,7 +184,7 @@ export default function MeetingMinutes() {
   
   if (hasPermission(permissions, 'create-meeting-minutes')) {
     pageActions.push({
-      label: t('Add Minute'),
+      label: 'Add Minute',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -198,9 +192,9 @@ export default function MeetingMinutes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.meeting-minutes.index') },
-    { title: t('Meeting Minutes') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.meeting-minutes.index') },
+    { title: 'Meeting Minutes' }
   ];
 
   const getTypeColor = (type: string) => {
@@ -226,7 +220,7 @@ export default function MeetingMinutes() {
   const columns = [
     { 
       key: 'meeting.title', 
-      label: t('Meeting'),
+      label: 'Meeting',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.meeting?.title}</div>
@@ -238,23 +232,23 @@ export default function MeetingMinutes() {
     },
     { 
       key: 'topic', 
-      label: t('Topic'), 
+      label: 'Topic', 
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'type', 
-      label: t('Type'),
+      label: 'Type',
       render: (value) => (
         <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getTypeColor(value)}`}>
           {getTypeIcon(value)}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'content', 
-      label: t('Content'),
+      label: 'Content',
       render: (value) => (
         <div className="max-w-xs">
           <div className="text-sm text-gray-600 truncate">
@@ -265,12 +259,12 @@ export default function MeetingMinutes() {
     },
     { 
       key: 'recorder.name', 
-      label: t('Recorded By'),
+      label: 'Recorded By',
       render: (_, row) => row.recorder?.name || '-'
     },
     { 
       key: 'recorded_at', 
-      label: t('Recorded At'),
+      label: 'Recorded At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -278,21 +272,21 @@ export default function MeetingMinutes() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-meeting-minutes'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-meeting-minutes'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -301,15 +295,15 @@ export default function MeetingMinutes() {
   ];
 
   const typeOptions = [
-    { value: '_empty_', label: t('All Types') , disabled: true},
-    { value: 'Discussion', label: t('Discussion') },
-    { value: 'Decision', label: t('Decision') },
-    { value: 'Action Item', label: t('Action Item') },
-    { value: 'Note', label: t('Note') }
+    { value: '_empty_', label: 'All Types' , disabled: true},
+    { value: 'Discussion', label: 'Discussion' },
+    { value: 'Decision', label: 'Decision' },
+    { value: 'Action Item', label: 'Action Item' },
+    { value: 'Note', label: 'Note' }
   ];
 
   const meetingOptions = [
-    { value: '_empty_', label: t('All Meetings') , disabled: true},
+    { value: '_empty_', label: 'All Meetings' , disabled: true},
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -317,7 +311,7 @@ export default function MeetingMinutes() {
   ];
 
   const recorderOptions = [
-    { value: '_empty_', label: t('All Recorders'), disabled: true },
+    { value: '_empty_', label: 'All Recorders', disabled: true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -325,7 +319,7 @@ export default function MeetingMinutes() {
   ];
 
   const meetingSelectOptions = [
-    { value: '_empty_', label: t('Select Meeting') },
+    { value: '_empty_', label: 'Select Meeting' },
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -333,7 +327,7 @@ export default function MeetingMinutes() {
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('Select Recorder') },
+    { value: '_empty_', label: 'Select Recorder' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -342,7 +336,7 @@ export default function MeetingMinutes() {
 
   return (
     <PageTemplate 
-      title={t("Meeting Minutes")} 
+      title={"Meeting Minutes"} 
       url="/meetings/meeting-minutes"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -356,7 +350,7 @@ export default function MeetingMinutes() {
           filters={[
             {
               name: 'type',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: typeFilter,
               onChange: setTypeFilter,
@@ -364,7 +358,7 @@ export default function MeetingMinutes() {
             },
             {
               name: 'meeting_id',
-              label: t('Meeting'),
+              label: 'Meeting',
               type: 'select',
               value: meetingFilter,
               onChange: setMeetingFilter,
@@ -373,7 +367,7 @@ export default function MeetingMinutes() {
             },
             {
               name: 'recorded_by',
-              label: t('Recorder'),
+              label: 'Recorder',
               type: 'select',
               value: recorderFilter,
               onChange: setRecorderFilter,
@@ -425,7 +419,7 @@ export default function MeetingMinutes() {
           to={meetingMinutes?.to || 0}
           total={meetingMinutes?.total || 0}
           links={meetingMinutes?.links}
-          entityName={t("meeting minutes")}
+          entityName={"meeting minutes"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -438,7 +432,7 @@ export default function MeetingMinutes() {
           fields: [
             { 
               name: 'meeting_id', 
-              label: t('Meeting'), 
+              label: 'Meeting', 
               type: 'select', 
               required: true,
               options: meetingSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -446,27 +440,27 @@ export default function MeetingMinutes() {
             },
             { 
               name: 'topic', 
-              label: t('Topic'), 
+              label: 'Topic', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'type', 
-              label: t('Type'), 
+              label: 'Type', 
               type: 'select', 
               required: true,
               options: typeOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'content', 
-              label: t('Content'), 
+              label: 'Content', 
               type: 'textarea', 
               required: true,
               rows: 6
             },
             { 
               name: 'recorded_by', 
-              label: t('Recorded By'), 
+              label: 'Recorded By', 
               type: 'select', 
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '_empty_'),
@@ -474,15 +468,15 @@ export default function MeetingMinutes() {
             },
             { 
               name: 'recorded_date', 
-              label: t('Recorded Date'), 
+              label: 'Recorded Date', 
               type: 'date',
-              helpText: t('Leave empty to use current date')
+              helpText: 'Leave empty to use current date'
             },
             { 
               name: 'recorded_time', 
-              label: t('Recorded Time'), 
+              label: 'Recorded Time', 
               type: 'time',
-              helpText: t('Leave empty to use current time')
+              helpText: 'Leave empty to use current time'
             }
           ],
           modalSize: 'xl'
@@ -494,10 +488,10 @@ export default function MeetingMinutes() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Meeting Minute')
+            ? 'Add Meeting Minute'
             : formMode === 'edit'
-              ? t('Edit Meeting Minute')
-              : t('View Meeting Minute')
+              ? 'Edit Meeting Minute'
+              : 'View Meeting Minute'
         }
         mode={formMode}
       />

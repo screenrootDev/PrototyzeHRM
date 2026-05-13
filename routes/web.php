@@ -1155,15 +1155,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         // ChatGPT routes
         Route::post('api/chatgpt/generate', [\App\Http\Controllers\ChatGptController::class, 'generate'])->name('chatgpt.generate');
 
-        // Language management
-        Route::get('manage-language/{lang?}', [LanguageController::class, 'managePage'])->middleware('permission:manage-language')->name('manage-language');
-        Route::get('language/load', [LanguageController::class, 'load'])->name('language.load');
-        Route::match(['POST', 'PATCH'], 'language/save', [LanguageController::class, 'save'])->middleware('permission:edit-language')->name('language.save');
-        Route::post('languages/change', [LanguageController::class, 'changeLanguage'])->name('languages.change');
-        Route::post('/languages/create', [LanguageController::class, 'createLanguage'])->name('languages.create');
-        Route::delete('/languages/{languageCode}', [LanguageController::class, 'deleteLanguage'])->name('languages.delete');
-        Route::patch('/languages/{languageCode}/toggle', [LanguageController::class, 'toggleLanguageStatus'])->name('languages.toggle');
-        Route::post('/languages/{locale}/update', [LanguageController::class, 'updateTranslations'])->name('languages.update');
+
 
         // Landing Page content management (Super Admin only)
         Route::middleware('App\Http\Middleware\SuperAdminMiddleware')->group(function () {

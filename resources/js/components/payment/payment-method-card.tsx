@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AlertCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 interface PaymentMethodCardProps {
   title: string;
@@ -23,7 +23,7 @@ export function PaymentMethodCard({
   helpUrl,
   helpText
 }: PaymentMethodCardProps) {
-  const { t } = useTranslation();
+  
 
   return (
     <div className="border rounded-lg">
@@ -47,7 +47,7 @@ export function PaymentMethodCard({
                   rel="noopener noreferrer"
                   className="underline"
                 >
-                  {t("Dashboard")}
+                  {"Dashboard"}
                 </a>
               </AlertDescription>
             </Alert>

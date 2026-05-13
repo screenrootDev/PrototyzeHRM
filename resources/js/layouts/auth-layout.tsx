@@ -1,8 +1,5 @@
-import { Head } from '@inertiajs/react';
-import { CreditCard, Users, Smartphone, QrCode } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LanguageSwitcher } from '@/components/language-switcher';
+import { CreditCard } from 'lucide-react';
 import { useBrand } from '@/contexts/BrandContext';
 import { useAppearance, THEME_COLORS } from '@/hooks/use-appearance';
 import { useFavicon } from '@/hooks/use-favicon';
@@ -48,7 +45,7 @@ export default function AuthLayout({
     statusType = 'success',
 }: AuthLayoutProps) {
     useFavicon();
-    const { t, i18n } = useTranslation();
+    
     const [mounted, setMounted] = useState(false);
     const { logoLight, logoDark, themeColor, customColor } = useBrand();
     const { appearance } = useAppearance();
@@ -65,12 +62,7 @@ export default function AuthLayout({
 
     useEffect(() => {
         setMounted(true);
-
-        // Set default language from global settings
-        if (userLanguage && i18n.language !== userLanguage) {
-            i18n.changeLanguage(userLanguage);
-        }
-    }, [userLanguage]);
+    }, []);
 
     // RTL Support for auth pages
     // useEffect(() => {
@@ -83,7 +75,7 @@ export default function AuthLayout({
     //         const getCookie = (name: string): string | null => {
     //             if (typeof document === 'undefined') return null;
     //             const value = `; ${document.cookie}`;
-    //             const parts = value.split(`; ${name}=`);
+    //             const parts = value.split(`; ${name}=`)
     //             if (parts.length === 2) {
     //                 const cookieValue = parts.pop()?.split(';').shift();
     //                 return cookieValue ? decodeURIComponent(cookieValue) : null;
@@ -126,7 +118,7 @@ export default function AuthLayout({
         const getCookie = (name: string): string | null => {
             if (typeof document === 'undefined') return null;
             const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
+            const parts = value.split(`; ${name}=`)
             if (parts.length === 2) {
                 const cookieValue = parts.pop()?.split(';').shift();
                 return cookieValue ? decodeURIComponent(cookieValue) : null;
@@ -196,7 +188,7 @@ export default function AuthLayout({
             
             {/* Language Switcher */}
             <div className="absolute top-6 right-6 z-10 md:block hidden">
-                <LanguageSwitcher />
+
             </div>
 
             <div className="flex items-center justify-center min-h-screen p-6">

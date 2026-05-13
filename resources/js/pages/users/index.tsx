@@ -19,10 +19,10 @@ import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 import { useInitials } from '@/hooks/use-initials';
-import { useTranslation } from 'react-i18next';
+
 
 export default function Users() {
-  const { t } = useTranslation();
+  
   const { auth, users, roles, planLimits, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const getInitials = useInitials();
@@ -158,46 +158,46 @@ export default function Users() {
     }
     
     if (formMode === 'create') {
-      toast.loading(t('Creating user...'));
+      toast.loading('Creating user...');
       
       router.post(route('users.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
+            toast.success(page.props.flash.success);
           } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
+            toast.error(page.props.flash.error);
           }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
+            toast.error(errors);
           } else {
-            toast.error(t('Failed to create user: {{errors}}', { errors: Object.values(errors).join(', ') }));
+            toast.error(`Failed to create user: ${Object.values(errors).join(', ')}`);
           }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating user...'));
+      toast.loading('Updating user...');
       
       router.put(route("users.update", currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
+            toast.success(page.props.flash.success);
           } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
+            toast.error(page.props.flash.error);
           }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
+            toast.error(errors);
           } else {
-            toast.error(t('Failed to update user: {{errors}}', { errors: Object.values(errors).join(', ') }));
+            toast.error(`Failed to update user: ${Object.values(errors).join(', ')}`);
           }
         }
       });
@@ -205,48 +205,48 @@ export default function Users() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting user...'));
+    toast.loading('Deleting user...');
     
     router.delete(route("users.destroy", currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
+          toast.success(page.props.flash.success);
         } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
+          toast.error(page.props.flash.error);
         }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
+          toast.error(errors);
         } else {
-          toast.error(t('Failed to delete user: {{errors}}', { errors: Object.values(errors).join(', ') }));
+          toast.error(`Failed to delete user: ${Object.values(errors).join(', ')}`);
         }
       }
     });
   };
   
   const handleResetPasswordConfirm = (data: { password: string, password_confirmation: string }) => {
-    toast.loading(t('Resetting password...'));
+    toast.loading('Resetting password...');
     
     router.put(route('users.reset-password', currentItem.id), data, {
       onSuccess: (page) => {
         setIsResetPasswordModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
+          toast.success(page.props.flash.success);
         } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
+          toast.error(page.props.flash.error);
         }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
+          toast.error(errors);
         } else {
-          toast.error(t('Failed to reset password: {{errors}}', { errors: Object.values(errors).join(', ') }));
+          toast.error(`Failed to reset password: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -254,23 +254,23 @@ export default function Users() {
   
   const handleToggleStatus = (user: any) => {
     const newStatus = user.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} user...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} user...`);
     
     router.put(route('users.toggle-status', user.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
+          toast.success(page.props.flash.success);
         } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
+          toast.error(page.props.flash.error);
         }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
+          toast.error(errors);
         } else {
-          toast.error(t('Failed to update user status: {{errors}}', { errors: Object.values(errors).join(', ') }));
+          toast.error(`Failed to update user status: ${Object.values(errors).join(', ')}`);
         }
       }
     });
@@ -294,25 +294,25 @@ export default function Users() {
   if (hasPermission(permissions, 'create-users')) {
     const canCreate = !planLimits || planLimits.can_create;
     pageActions.push({
-      label: planLimits && !canCreate ? t('User Limit Reached ({{current}}/{{max}})', { current: planLimits.current_users, max: planLimits.max_users }) : t('Add User'),
+      label: planLimits && !canCreate ? `User Limit Reached (${planLimits.current_users}/${planLimits.max_users})` : 'Add User',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: canCreate ? 'default' : 'outline',
-      onClick: canCreate ? () => handleAddNew() : () => toast.error(t('User limit exceeded. Your plan allows maximum {{max}} users. Please upgrade your plan.', { max: planLimits.max_users })),
+      onClick: canCreate ? () => handleAddNew() : () => toast.error(`User limit exceeded. Your plan allows maximum ${planLimits.max_users} users. Please upgrade your plan.`),
       disabled: !canCreate
     });
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Staff'), href: route('users.index') },
-    { title: t('Users') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Staff', href: route('users.index') },
+    { title: 'Users' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value: any, row: any) => {
         return (
@@ -330,7 +330,7 @@ export default function Users() {
     },
     { 
       key: 'roles', 
-      label: t('Roles'),
+      label: 'Roles',
       render: (value: any) => {
         if (!value || !value.length) return <span className="text-muted-foreground">No roles assigned</span>;
         
@@ -341,7 +341,7 @@ export default function Users() {
     },
     { 
       key: 'created_at', 
-      label: t('Joined'), 
+      label: 'Joined', 
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -350,35 +350,35 @@ export default function Users() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-users'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-users'
     },
     { 
-      label: t('Reset Password'), 
+      label: 'Reset Password', 
       icon: 'KeyRound', 
       action: 'reset-password', 
       className: 'text-blue-500',
       requiredPermission: 'reset-password-users'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'toggle-status-users'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -388,7 +388,7 @@ export default function Users() {
 
   return (
     <PageTemplate 
-      title={t("Users Management")} 
+      title={"Users Management"} 
       url="/users"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -403,12 +403,12 @@ export default function Users() {
           filters={[
             {
               name: 'role',
-              label: t('Role'),
+              label: 'Role',
               type: 'select',
               value: selectedRole,
               onChange: handleRoleFilter,
               options: [
-                { value: 'all', label: t('All Roles') },
+                { value: 'all', label: 'All Roles' },
                 ...(roles || []).map((role: any) => ({
                   value: role.id.toString(),
                   label: role.label || role.name
@@ -469,7 +469,7 @@ export default function Users() {
             to={users?.to || 0}
             total={users?.total || 0}
             links={users?.links}
-            entityName={t("users")}
+            entityName={"users"}
             onPageChange={(url) => router.get(url)}
           />
         </div>
@@ -494,7 +494,7 @@ export default function Users() {
                             user.status === 'active' ? 'bg-green-500' : 'bg-gray-400'
                           }`}></div>
                           <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            {user.status === 'active' ? t('Active') : t('Inactive')}
+                            {user.status === 'active' ? 'Active' : 'Inactive'}
                           </span>
                         </div>
                       </div>
@@ -515,13 +515,13 @@ export default function Users() {
                         {hasPermission(permissions, 'view-users') && (
                           <DropdownMenuItem onClick={() => handleAction('view', user)}>
                             <Eye className="h-4 w-4 mr-2" />
-                            <span>{t("View User")}</span>
+                            <span>{"View User"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'edit-users') && (
                           <DropdownMenuItem onClick={() => handleAction('reset-password', user)}>
                             <KeyRound className="h-4 w-4 mr-2" />
-                            <span>{t("Reset Password")}</span>
+                            <span>{"Reset Password"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'edit-users') && (
@@ -530,20 +530,20 @@ export default function Users() {
                               <Lock className="h-4 w-4 mr-2" /> : 
                               <Unlock className="h-4 w-4 mr-2" />
                             }
-                            <span>{user.status === 'active' ? t("Disable User") : t("Enable User")}</span>
+                            <span>{user.status === 'active' ? "Disable User" : "Enable User"}</span>
                           </DropdownMenuItem>
                         )}
                         <DropdownMenuSeparator />
                         {hasPermission(permissions, 'edit-users') && (
                           <DropdownMenuItem onClick={() => handleAction('edit', user)} className="text-amber-600">
                             <Edit className="h-4 w-4 mr-2" />
-                            <span>{t("Edit")}</span>
+                            <span>{"Edit"}</span>
                           </DropdownMenuItem>
                         )}
                         {hasPermission(permissions, 'delete-users') && (
                           <DropdownMenuItem onClick={() => handleAction('delete', user)} className="text-rose-600">
                             <Trash2 className="h-4 w-4 mr-2" />
-                            <span>{t("Delete")}</span>
+                            <span>{"Delete"}</span>
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>
@@ -560,14 +560,14 @@ export default function Users() {
                           </span>
                         ))
                       ) : (
-                        <span className="text-muted-foreground text-xs dark:text-gray-400">{t("No role")}</span>
+                        <span className="text-muted-foreground text-xs dark:text-gray-400">{"No role"}</span>
                       )}
                     </div>
                   </div>
                 
                   {/* Joined date */}
                   <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    {t("Joined:")} {window.appSettings?.formatDateTimeSimple(user.created_at, false) || new Date(user.created_at).toLocaleDateString()}
+                    {"Joined:"} {window.appSettings?.formatDateTimeSimple(user.created_at, false) || new Date(user.created_at).toLocaleDateString()}
                   </div>
                 
                   {/* Action buttons */}
@@ -580,7 +580,7 @@ export default function Users() {
                         className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Edit className="h-4 w-4 mr-2" />
-                        {t("Edit")}
+                        {"Edit"}
                       </Button>
                     )}
                     
@@ -592,7 +592,7 @@ export default function Users() {
                         className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Eye className="h-4 w-4 mr-2" />
-                        {t("View")}
+                        {"View"}
                       </Button>
                     )}
                     
@@ -604,7 +604,7 @@ export default function Users() {
                         className="flex-1 h-9 text-sm text-gray-700 border-gray-300 dark:border-gray-600 dark:text-gray-200"
                       >
                         <Trash2 className="h-4 w-4 mr-2" />
-                        {t("Delete")}
+                        {"Delete"}
                       </Button>
                     )}
                   </div>
@@ -620,7 +620,7 @@ export default function Users() {
               to={users?.to || 0}
               total={users?.total || 0}
               links={users?.links}
-              entityName={t("users")}
+              entityName={"users"}
               onPageChange={(url) => router.get(url)}
             />
           </div>
@@ -634,25 +634,25 @@ export default function Users() {
         onSubmit={handleFormSubmit}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Name'), type: 'text', required: true },
-            { name: 'email', label: t('Email'), type: 'email', required: true },
+            { name: 'name', label: 'Name', type: 'text', required: true },
+            { name: 'email', label: 'Email', type: 'email', required: true },
             { 
               name: 'password', 
-              label: t('Password'), 
+              label: 'Password', 
               type: 'password',
               required: true,
               conditional: (mode) => mode === 'create'
             },
             { 
               name: 'password_confirmation', 
-              label: t('Confirm Password'), 
+              label: 'Confirm Password', 
               type: 'password',
               required: true,
               conditional: (mode) => mode === 'create'
             },
             { 
               name: 'roles', 
-              label: t('Role'), 
+              label: 'Role', 
               type: 'select', 
               options: roles ? roles.map((role: any) => ({
                 value: role.id.toString(),
@@ -669,10 +669,10 @@ export default function Users() {
         } : null}
         title={
           formMode === 'create' 
-            ? t('Add New User') 
+            ? 'Add New User' 
             : formMode === 'edit' 
-              ? t('Edit User') 
-              : t('View User')
+              ? 'Edit User' 
+              : 'View User'
         }
         mode={formMode}
       />
@@ -693,8 +693,8 @@ export default function Users() {
         onSubmit={handleResetPasswordConfirm}
         formConfig={{
           fields: [
-            { name: 'password', label: t('New Password'), type: 'password', required: true },
-            { name: 'password_confirmation', label: t('Confirm Password'), type: 'password', required: true }
+            { name: 'password', label: 'New Password', type: 'password', required: true },
+            { name: 'password_confirmation', label: 'Confirm Password', type: 'password', required: true }
           ],
           modalSize: 'sm'
         }}

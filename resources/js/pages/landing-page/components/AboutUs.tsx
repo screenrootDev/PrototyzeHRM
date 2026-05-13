@@ -1,6 +1,6 @@
 import React from 'react';
 import { Target, Heart, Award, Lightbulb, Star, Shield, Users, Zap } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 interface AboutUsProps {
@@ -40,7 +40,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
 };
 
 export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' }: AboutUsProps) {
-  const { t } = useTranslation();
+  
   const { ref, isVisible } = useScrollAnimation();
 
   // Helper to get full URL for images
@@ -56,31 +56,31 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
   const defaultValues = [
     {
       icon: 'target',
-      title: t('Our Mission'),
-      description: t('To empower businesses with smart HR solutions that simplify employee management, payroll, attendance, and performance tracking.')
+      title: 'Our Mission',
+      description: 'To empower businesses with smart HR solutions that simplify employee management, payroll, attendance, and performance tracking.'
     },
     {
       icon: 'heart',
-      title: t('Our Values'),
-      description: t('We prioritize innovation, efficiency, and creating a workplace ecosystem that nurtures growth and collaboration.')
+      title: 'Our Values',
+      description: 'We prioritize innovation, efficiency, and creating a workplace ecosystem that nurtures growth and collaboration.'
     },
     {
       icon: 'award',
-      title: t('Our Commitment'),
-      description: t('Providing reliable, intuitive HR tools backed by exceptional support to help organizations optimize their workforce.')
+      title: 'Our Commitment',
+      description: 'Providing reliable, intuitive HR tools backed by exceptional support to help organizations optimize their workforce.'
     },
     {
       icon: 'lightbulb',
-      title: t('Our Vision'),
-      description: t('A future where HR management is fully automated, transparent, and enables organizations to focus on people, not paperwork.')
+      title: 'Our Vision',
+      description: 'A future where HR management is fully automated, transparent, and enables organizations to focus on people, not paperwork.'
     }
 
   ];
 
   const defaultStats = [
-    { value: t('3+ Years'), label: t('Experience'), color: 'blue' },
-    { value: '500+', label: t('Companies Served'), color: 'green' },
-    { value: '20K+', label: t('Employees Managed'), color: 'purple' },
+    { value: '3+ Years', label: 'Experience', color: 'blue' },
+    { value: '500+', label: 'Companies Served', color: 'green' },
+    { value: '20K+', label: 'Employees Managed', color: 'purple' },
 
   ];
 
@@ -97,10 +97,10 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData.title || t('About HRM SaaS')}
+            {sectionData.title || 'About HRM SaaS'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-            {sectionData.description || t('We are passionate about simplifying HR management for businesses of all sizes.')}
+            {sectionData.description || 'We are passionate about simplifying HR management for businesses of all sizes.'}
           </p>
         </div>
 
@@ -108,10 +108,10 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
           {/* Left Content */}
           <div>
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              {sectionData.story_title || t('We are passionate about simplifying HR management for businesses of all sizes.')}
+              {sectionData.story_title || 'We are passionate about simplifying HR management for businesses of all sizes.'}
             </h3>
             <div className="text-gray-600 mb-8 leading-relaxed" dangerouslySetInnerHTML={{
-              __html: (sectionData.story_content || t('Founded by HR and tech enthusiasts, HRMGo was created to replace cumbersome spreadsheets and manual processes with a modern, all-in-one HR platform.')).replace(/\n/g, '</p><p className="mb-6">')
+              __html: (sectionData.story_content || 'Founded by HR and tech enthusiasts, HRMGo was created to replace cumbersome spreadsheets and manual processes with a modern, all-in-one HR platform.').replace(/\n/g, '</p><p className="mb-6">')
             }} />
 
             {stats.length > 0 && (
@@ -136,10 +136,10 @@ export default function AboutUs({ settings, sectionData, brandColor = '#3b82f6' 
                   <span className="text-3xl">{sectionData.image_icon || '🚀'}</span>
                 </div>
                 <h4 className="text-xl font-semibold text-gray-900 mb-2">
-                  {sectionData.image_title || t('Innovation Driven')}
+                  {sectionData.image_title || 'Innovation Driven'}
                 </h4>
                 <p className="text-gray-600">
-                  {sectionData.image_subtitle || t('Building the future of networking')}
+                  {sectionData.image_subtitle || 'Building the future of networking'}
                 </p>
               </div>
             )}

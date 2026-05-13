@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
+
 import { toast } from '@/components/custom-toast';
 import { usePaymentProcessor } from '@/hooks/usePaymentProcessor';
 
@@ -24,7 +24,7 @@ export function PayPalPaymentForm({
   onSuccess, 
   onCancel 
 }: PayPalPaymentFormProps) {
-  const { t } = useTranslation();
+  
   const paypalRef = useRef<HTMLDivElement>(null);
   
   const { processPayment } = usePaymentProcessor({
@@ -55,21 +55,15 @@ export function PayPalPaymentForm({
           },
           onApprove: (data: any, actions: any) => {
             return actions.order.capture().then((details: any) => {
-              processPayment('paypal', {
-                planId,
-                billingCycle,
-                couponCode,
-                order_id: data.orderID,
-                payment_id: details.id,
-              });
+              processPayment('paypal');
             });
           },
           onError: (err: any) => {
             console.error('PayPal error:', err);
             if (err.message && err.message.includes('declined')) {
-              toast.error(t('Card was declined. Please try a different payment method.'));
+              toast.error('Card was declined. Please try a different payment method.');
             } else {
-              toast.error(t('Payment failed. Please try again.'));
+              toast.error('Payment failed. Please try again.');
             }
           },
           onCancel: () => {
@@ -89,7 +83,7 @@ export function PayPalPaymentForm({
   }, [paypalClientId, planId, billingCycle, couponCode, currency]);
 
   if (!paypalClientId) {
-    return <div className="p-4 text-center text-red-500">{t('PayPal not configured')}</div>;
+    return <div className="p-4 text-center text-red-500">{'PayPal not configured'}</div>;
   }
 
   return (

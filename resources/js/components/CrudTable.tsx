@@ -21,7 +21,7 @@ import * as LucidIcons from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
 import { TableColumn, TableAction } from '@/types/crud';
 import { Link } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
+
 
 interface CrudTableProps {
   columns: TableColumn[];
@@ -57,7 +57,7 @@ export function CrudTable({
   entityPermissions,
   showActions = true,
 }: CrudTableProps) {
-  const { t } = useTranslation();
+  
   const renderSortIcon = (column: TableColumn) => {
     if (!column.sortable) return null;
 
@@ -199,7 +199,7 @@ export function CrudTable({
 
       case 'image':
         if (!value) {
-          return <div className="text-center text-gray-400">{t("No image")}</div>;
+          return <div className="text-center text-gray-400">{"No image"}</div>;
         }
         return (
           <div className="flex justify-center">
@@ -271,8 +271,8 @@ export function CrudTable({
                 </div>
               </TableHead>
             ))}
-            {/* <TableHead className="w-24 py-2.5 font-semibold text-right">{t("Actions")}</TableHead> */}
-            {showActions && hasAnyActionPermission && <TableHead className="w-24 py-2.5 text-right font-semibold">{t('Actions')}</TableHead>}
+            {/* <TableHead className="w-24 py-2.5 font-semibold text-right">{"Actions"}</TableHead> */}
+            {showActions && hasAnyActionPermission && <TableHead className="w-24 py-2.5 text-right font-semibold">{'Actions'}</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -303,13 +303,13 @@ export function CrudTable({
                 colSpan={columns.length + 2} 
                 className="h-24 text-center text-muted-foreground dark:text-gray-400"
               >
-                {t("No results found.")}
+                {"No results found."}
               </TableCell> */}
               <TableCell
                 colSpan={columns.length + (showActions && hasAnyActionPermission ? 2 : 1)}
                 className="text-muted-foreground h-24 text-center dark:text-gray-400"
               >
-                {t('No results found.')}
+                {'No results found.'}
               </TableCell>
             </TableRow>
           )}

@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 
-import { useTranslation } from 'react-i18next';
+
 
 interface DomainConfigProps {
   data: {
@@ -26,7 +26,7 @@ interface DomainConfigProps {
 }
 
 export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange, onPrefixChange, businessId, canUseCustomDomain = true, canUseSubdomain = true }: DomainConfigProps) {
-  const { t } = useTranslation();
+  
   const [domainType, setDomainType] = React.useState(data.domain_type || 'slug');
   const [domainStatus, setDomainStatus] = React.useState({ available: true, checking: false });
   
@@ -105,12 +105,12 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
   return (
     <Card>
       <div className="p-3 border-b">
-        <h3 className="text-base font-medium"><span className="bg-gray-100 dark:bg-gray-700 text-xs rounded-full h-5 w-5 inline-flex items-center justify-center mr-1.5">2</span>{t("Domain & URL Settings")}</h3>
+        <h3 className="text-base font-medium"><span className="bg-gray-100 dark:bg-gray-700 text-xs rounded-full h-5 w-5 inline-flex items-center justify-center mr-1.5">2</span>{"Domain & URL Settings"}</h3>
       </div>
       <div className="p-3 space-y-3">
         {/* Domain Type Selection */}
         <div>
-          <Label className="text-sm mb-1 block">{t("URL Type")}</Label>
+          <Label className="text-sm mb-1 block">{"URL Type"}</Label>
           <div className="flex space-x-3">
             <div className="flex items-center">
               <input 
@@ -126,7 +126,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
                 className="h-3 w-3 text-blue-600"
               />
               <Label htmlFor="slug" className="text-sm cursor-pointer ml-1">
-                {t("Slug")}
+                {"Slug"}
               </Label>
             </div>
             
@@ -145,8 +145,8 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
                 className="h-3 w-3 text-blue-600 disabled:opacity-50"
               />
               <Label htmlFor="subdomain" className={`text-sm cursor-pointer ml-1 ${!canUseSubdomain ? 'opacity-50' : ''}`}>
-                {t("Subdomain")}
-                {!canUseSubdomain && <span className="text-xs text-amber-600 ml-1">({t('Plan upgrade required')})</span>}
+                {"Subdomain"}
+                {!canUseSubdomain && <span className="text-xs text-amber-600 ml-1">({'Plan upgrade required'})</span>}
               </Label>
             </div>
             
@@ -165,8 +165,8 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
                 className="h-3 w-3 text-blue-600 disabled:opacity-50"
               />
               <Label htmlFor="domain" className={`text-sm cursor-pointer ml-1 ${!canUseCustomDomain ? 'opacity-50' : ''}`}>
-                {t("Domain")}
-                {!canUseCustomDomain && <span className="text-xs text-amber-600 ml-1">({t('Plan upgrade required')})</span>}
+                {"Domain"}
+                {!canUseCustomDomain && <span className="text-xs text-amber-600 ml-1">({'Plan upgrade required'})</span>}
               </Label>
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
         <div className="space-y-3">
           {domainType === 'domain' && (
             <div>
-              <Label className="text-sm mb-1 block">{t("Custom Domain")}</Label>
+              <Label className="text-sm mb-1 block">{"Custom Domain"}</Label>
               <Input
                 value={data.custom_domain || ''}
                 onChange={(e) => {
@@ -189,13 +189,13 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
               {domainStatus && (
                 <div className="mt-1 flex items-center">
                   {domainStatus.checking && (
-                    <span className="text-xs text-gray-500">{t("Checking...")}</span>
+                    <span className="text-xs text-gray-500">{"Checking..."}</span>
                   )}
                   {!domainStatus.checking && !domainStatus.available && (
-                    <span className="text-xs text-red-500">{t("Not available")}</span>
+                    <span className="text-xs text-red-500">{"Not available"}</span>
                   )}
                   {!domainStatus.checking && domainStatus.available && data.custom_domain && (
-                    <span className="text-xs text-green-500">{t("Available")}</span>
+                    <span className="text-xs text-green-500">{"Available"}</span>
                   )}
                 </div>
               )}
@@ -204,7 +204,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
 
           {domainType === 'slug' && (
             <div>
-              <Label className="text-sm mb-1 block">{t("URL Prefix")}</Label>
+              <Label className="text-sm mb-1 block">{"URL Prefix"}</Label>
               <Input
                 value={data.url_prefix || ''}
                 onChange={(e) => {
@@ -219,7 +219,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
 
           {(domainType === 'slug' || domainType === 'subdomain') && (
             <div>
-              <Label className="text-sm mb-1 block">{t("Slug")}</Label>
+              <Label className="text-sm mb-1 block">{"Slug"}</Label>
               <Input
                 value={data.slug || ''}
                 onChange={(e) => onSlugChange ? onSlugChange(e.target.value) : onUpdate('slug', e.target.value)}
@@ -229,13 +229,13 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
               {slugStatus && (
                 <div className="mt-1 flex items-center">
                   {slugStatus.checking && (
-                    <span className="text-xs text-gray-500">{t("Checking...")}</span>
+                    <span className="text-xs text-gray-500">{"Checking..."}</span>
                   )}
                   {!slugStatus.checking && !slugStatus.available && (
-                    <span className="text-xs text-red-500">{t("Not available")}</span>
+                    <span className="text-xs text-red-500">{"Not available"}</span>
                   )}
                   {!slugStatus.checking && slugStatus.available && data.slug && (
-                    <span className="text-xs text-green-500">{t("Available")}</span>
+                    <span className="text-xs text-green-500">{"Available"}</span>
                   )}
                 </div>
               )}
@@ -246,7 +246,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
         {/* Password Protection */}
         <div className="border-t pt-3">
           <div className="flex items-center justify-between mb-2">
-            <Label className="text-sm">{t("Password Protection")}</Label>
+            <Label className="text-sm">{"Password Protection"}</Label>
             <Switch
               checked={data.password_enabled || false}
               onCheckedChange={(checked) => onUpdate('password_enabled', checked)}
@@ -256,12 +256,12 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
           
           {data.password_enabled && (
             <div>
-              <Label className="text-sm mb-1 block">{t("Password")}</Label>
+              <Label className="text-sm mb-1 block">{"Password"}</Label>
               <Input
                 type="password"
                 value={data.password || ''}
                 onChange={(e) => onUpdate('password', e.target.value)}
-                placeholder={t("Enter password")}
+                placeholder={"Enter password"}
                 className="h-9 text-sm"
                 minLength={4}
               />
@@ -272,7 +272,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
         {/* Preview URL */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <Label className="text-sm">{t("Public URL")}</Label>
+            <Label className="text-sm">{"Public URL"}</Label>
             <Button
               type="button"
               variant="outline"
@@ -282,7 +282,7 @@ export default function DomainConfig({ data, onUpdate, slugStatus, onSlugChange,
                 navigator.clipboard.writeText(getPreviewUrl());
               }}
             >
-              {t("Copy")}
+              {"Copy"}
             </Button>
           </div>
           <div className="bg-gray-50 dark:bg-gray-800 p-2 rounded border text-sm">

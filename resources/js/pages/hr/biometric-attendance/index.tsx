@@ -5,14 +5,14 @@ import { RefreshCw, Timer, CheckCircle, XCircle, Clock, Eye } from 'lucide-react
 import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function BiometricAttendance() {
-  const { t } = useTranslation();
+  
   const { auth, biometricData, filters: pageFilters = {}, configurationMissing } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -79,15 +79,14 @@ export default function BiometricAttendance() {
         });
         setShowDetailsModal(true);
       } else {
-        toast.error(t(result.message || 'Failed to fetch details'));
-      }
+        toast.error(result.message || 'Failed to fetch details');      }
     } catch (error) {
-      toast.error(t('Error fetching details'));
+      toast.error('Error fetching details');
     }
   };
 
   const handleSync = (row: any) => {
-    toast.loading(t('Syncing biometric data...'));
+    toast.loading('Syncing biometric data...');
 
     const syncData = {
       biometric_emp_id: row.employee_code,
@@ -101,10 +100,8 @@ export default function BiometricAttendance() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -130,21 +127,21 @@ export default function BiometricAttendance() {
   };
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Biometric Attendance') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Biometric Attendance' }
   ];
 
   // Define table actions
   const actions = [
     {
-      label: t('Details'),
+      label: 'Details',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-biometric-attendance'
     },
     {
-      label: t('Sync'),
+      label: 'Sync',
       icon: 'RefreshCw',
       action: 'sync',
       className: 'text-green-500',
@@ -157,7 +154,7 @@ export default function BiometricAttendance() {
   const columns = [
     {
       key: 'employee_code',
-      label: t('Employee Code'),
+      label: 'Employee Code',
       sortable: false,
       render: (value: string) => (
         <span className="font-mono text-sm font-medium">{value}</span>
@@ -165,7 +162,7 @@ export default function BiometricAttendance() {
     },
     {
       key: 'name',
-      label: t('Employee Name'),
+      label: 'Employee Name',
       sortable: false,
       render: (value: string) => (
         <span className="font-medium">{value}</span>
@@ -173,7 +170,7 @@ export default function BiometricAttendance() {
     },
     {
       key: 'date',
-      label: t('Date'),
+      label: 'Date',
       sortable: false,
       render: (value: string) => (
         <span className="text-sm">{window.appSettings.formatDateTimeSimple(value, false)}</span>
@@ -181,7 +178,7 @@ export default function BiometricAttendance() {
     },
     {
       key: 'clock_in',
-      label: t('Clock In'),
+      label: 'Clock In',
       sortable: false,
       render: (value: string) => (
         <span className="font-mono text-sm font-medium text-green-600">{value || '-'}</span>
@@ -189,7 +186,7 @@ export default function BiometricAttendance() {
     },
     {
       key: 'clock_out',
-      label: t('Clock Out'),
+      label: 'Clock Out',
       sortable: false,
       render: (value: string) => (
         <span className="font-mono text-sm font-medium text-red-600">{value || '-'}</span>
@@ -197,7 +194,7 @@ export default function BiometricAttendance() {
     },
     {
       key: 'total_entries',
-      label: t('Total Entries'),
+      label: 'Total Entries',
       sortable: false,
       render: (value: number) => (
         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -210,7 +207,7 @@ export default function BiometricAttendance() {
 
   return (
     <PageTemplate
-      title={t("Biometric Attendance")}
+      title={"Biometric Attendance"}
       url="/hr/biometric-attendance"
       breadcrumbs={breadcrumbs}
       noPadding
@@ -222,18 +219,18 @@ export default function BiometricAttendance() {
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             onSearch={handleSearch}
-            searchPlaceholder={t('Search by employee name or code...')}
+            searchPlaceholder={'Search by employee name or code...'}
             filters={[
               {
                 name: 'start_date',
-                label: t('Start Date'),
+                label: 'Start Date',
                 type: 'date',
                 value: startDate,
                 onChange: setStartDate
               },
               {
                 name: 'end_date',
-                label: t('End Date'),
+                label: 'End Date',
                 type: 'date',
                 value: endDate,
                 onChange: setEndDate
@@ -265,7 +262,7 @@ export default function BiometricAttendance() {
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
             <Timer className="h-4 w-4" />
-            <span>{t('Biometric attendance data from device')}</span>
+            <span>{'Biometric attendance data from device'}</span>
           </div>
         </div>
 
@@ -276,18 +273,18 @@ export default function BiometricAttendance() {
                 <Timer className="h-16 w-16 mx-auto text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-                {t('Configuration Required')}
+                {'Configuration Required'}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {t('Please configure ZKTeco API settings to fetch biometric attendance data.')}
+                {'Please configure ZKTeco API settings to fetch biometric attendance data.'}
               </p>
               <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400">
-                <p>{t('Required settings:')}</p>
+                <p>{'Required settings:'}</p>
                 <ul className="list-disc list-inside space-y-1">
-                  <li>{t('ZKTeco API URL')}</li>
-                  <li>{t('Username')}</li>
-                  <li>{t('Password')}</li>
-                  <li>{t('Auth Token')}</li>
+                  <li>{'ZKTeco API URL'}</li>
+                  <li>{'Username'}</li>
+                  <li>{'Password'}</li>
+                  <li>{'Auth Token'}</li>
                 </ul>
               </div>
             </div>
@@ -315,7 +312,7 @@ export default function BiometricAttendance() {
               to={biometricData?.to || 0}
               total={biometricData?.total || 0}
               links={biometricData?.links}
-              entityName={t("biometric records")}
+              entityName={"biometric records"}
               onPageChange={(url) => router.get(url)}
             />
           </>
@@ -327,7 +324,7 @@ export default function BiometricAttendance() {
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>
-              {t('Punch Details')} - {selectedEmployee?.name} ({selectedEmployee?.code})
+              {'Punch Details'} - {selectedEmployee?.name} ({selectedEmployee?.code})
               <br />
               <span className="text-sm font-normal text-gray-600">
                 {selectedEmployee?.date && window.appSettings.formatDateTimeSimple(selectedEmployee.date, false)}
@@ -338,10 +335,10 @@ export default function BiometricAttendance() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-2">{t('Time')}</th>
-                  <th className="text-left p-2">{t('Status')}</th>
-                  <th className="text-left p-2">{t('Verify Type')}</th>
-                  <th className="text-left p-2">{t('Terminal')}</th>
+                  <th className="text-left p-2">{'Time'}</th>
+                  <th className="text-left p-2">{'Status'}</th>
+                  <th className="text-left p-2">{'Verify Type'}</th>
+                  <th className="text-left p-2">{'Terminal'}</th>
                 </tr>
               </thead>
               <tbody>
@@ -357,7 +354,7 @@ export default function BiometricAttendance() {
             </table>
             {detailEntries.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                {t('No entries found')}
+                {'No entries found'}
               </div>
             )}
           </div>

@@ -9,12 +9,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function EmployeeSalaries() {
-  const { t } = useTranslation();
+  
   const { auth, employeeSalaries, employees, salaryComponents, filters: pageFilters = {}, flash } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -101,17 +101,15 @@ export default function EmployeeSalaries() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating employee salary...'));
+      toast.loading('Creating employee salary...');
 
       router.post(route('hr.employee-salaries.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -123,17 +121,15 @@ export default function EmployeeSalaries() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating employee salary...'));
+      toast.loading('Updating employee salary...');
 
       router.put(route('hr.employee-salaries.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -148,17 +144,15 @@ export default function EmployeeSalaries() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee salary...'));
+    toast.loading('Deleting employee salary...');
 
     router.delete(route('hr.employee-salaries.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -173,16 +167,14 @@ export default function EmployeeSalaries() {
 
   const handleToggleStatus = (salary: any) => {
     const newStatus = salary.is_active ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} employee salary...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} employee salary...`);
 
     router.put(route('hr.employee-salaries.toggle-status', salary.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -199,14 +191,13 @@ export default function EmployeeSalaries() {
     router.get(route('hr.employee-salaries.show-payroll', salary.id), {}, {
       onSuccess: (page) => {
         if (page.props.flash?.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
           toast.error(errors);
         } else {
-          toast.error(t('Failed to load payroll calculation'));
+          toast.error('Failed to load payroll calculation');
         }
       }
     });
@@ -230,7 +221,7 @@ export default function EmployeeSalaries() {
   // Need to Remove Add the "Add New Salary" button if user has permission
   // if (hasPermission(permissions, 'create-employee-salaries')) {
   //   pageActions.push({
-  //     label: t('Add Employee Salary'),
+  //     label: 'Add Employee Salary',
   //     icon: <Plus className="h-4 w-4 mr-2" />,
   //     variant: 'default',
   //     onClick: () => handleAddNew()
@@ -238,28 +229,28 @@ export default function EmployeeSalaries() {
   // }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Payroll Management'), href: route('hr.employee-salaries.index') },
-    { title: t('Employee Salaries') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Payroll Management', href: route('hr.employee-salaries.index') },
+    { title: 'Employee Salaries' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'basic_salary',
-      label: t('Basic Salary'),
+      label: 'Basic Salary',
       render: (value: number) => (
         <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value || 0)}</span>
       )
     },
     {
       key: 'components',
-      label: t('Components'),
+      label: 'Components',
       render: (value: any[], row: any) => {
         const componentNames = row.component_names || [];
 
@@ -293,19 +284,19 @@ export default function EmployeeSalaries() {
     },
     {
       key: 'is_active',
-      label: t('Status'),
+      label: 'Status',
       render: (value: boolean) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value
           ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
           : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
           }`}>
-          {value ? t('Active') : t('Inactive')}
+          {value ? 'Active' : 'Inactive'}
         </span>
       )
     },
     {
       key: 'created_at',
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -314,35 +305,35 @@ export default function EmployeeSalaries() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-employee-salaries'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-salaries'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-salaries'
     },
     {
-      label: t('Show Payroll'),
+      label: 'Show Payroll',
       icon: 'BarChart3',
       action: 'show-payroll',
       className: 'text-blue-500',
       requiredPermission: 'view-employee-salaries',
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -352,7 +343,7 @@ export default function EmployeeSalaries() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees'), disabled : true },
+    { value: 'all', label: 'All Employees', disabled : true },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -360,14 +351,14 @@ export default function EmployeeSalaries() {
   ];
 
   const isActiveOptions = [
-    { value: 'all', label: t('All Status') , disabled : true},
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: 'all', label: 'All Status' , disabled : true},
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   return (
     <PageTemplate
-      title={t("Employee Salaries")}
+      title={"Employee Salaries"}
       url="/hr/employee-salaries"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -382,7 +373,7 @@ export default function EmployeeSalaries() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -391,7 +382,7 @@ export default function EmployeeSalaries() {
             },
             {
               name: 'is_active',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedIsActive,
               onChange: setSelectedIsActive,
@@ -443,7 +434,7 @@ export default function EmployeeSalaries() {
           to={employeeSalaries?.to || 0}
           total={employeeSalaries?.total || 0}
           links={employeeSalaries?.links}
-          entityName={t("employee salaries")}
+          entityName={"employee salaries"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -457,7 +448,7 @@ export default function EmployeeSalaries() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               searchable : true,
@@ -467,20 +458,20 @@ export default function EmployeeSalaries() {
                 label: emp.name
               })) : []
             },
-            { name: 'basic_salary', label: t('Basic Salary'), type: 'number', min: 0, step: 0.01, readOnly: true },
+            { name: 'basic_salary', label: 'Basic Salary', type: 'number', min: 0, step: 0.01, readOnly: true },
             {
               name: 'components',
-              label: t('Salary Components'),
+              label: 'Salary Components',
               type: 'multi-select',
               searchable : true,
               options: salaryComponents ? salaryComponents.map((comp: any) => ({
                 value: comp.id.toString(),
                 label: `${comp.name} (${comp.type}) - ${comp.calculation_type === 'percentage' ? comp.percentage_of_basic + '%' : 'Rs.' + comp.default_amount}`
               })) : [],
-              placeholder: t('Select salary components')
+              placeholder: 'Select salary components'
             },
-            { name: 'is_active', label: t('Is Active'), type: 'checkbox', defaultValue: true },
-            { name: 'notes', label: t('Notes'), type: 'textarea', placeholder: t('Select components to be applied to this salary') }
+            { name: 'is_active', label: 'Is Active', type: 'checkbox', defaultValue: true },
+            { name: 'notes', label: 'Notes', type: 'textarea', placeholder: 'Select components to be applied to this salary' }
           ],
           modalSize: 'lg'
         }}
@@ -490,10 +481,10 @@ export default function EmployeeSalaries() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Setup Employee Salary')
+            ? 'Setup Employee Salary'
             : formMode === 'edit'
-              ? t('Edit Employee Salary')
-              : t('View Employee Salary')
+              ? 'Edit Employee Salary'
+              : 'View Employee Salary'
         }
         mode={formMode}
       />

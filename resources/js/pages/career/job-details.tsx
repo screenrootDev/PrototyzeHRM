@@ -6,12 +6,12 @@ import { MapPin, Clock, Building, DollarSign, Calendar, Users, Star } from 'luci
 import CareerHeader from '@/components/career/CareerHeader';
 import CareerFooter from '@/components/career/CareerFooter';
 import { getImagePath } from '@/utils/helpers';
-import { useTranslation } from 'react-i18next';
+
 import { useFavicon } from '@/hooks/use-favicon';
 import { useBrandTheme } from '@/hooks/use-brand-theme';
 
 export default function JobDetails() {
-  const { t } = useTranslation();
+  
   const { jobPosting, relatedJobs, companyId, companySettings, userSlug } = usePage().props as any;
 
   // Use favicon hook and brand theme like career index
@@ -20,7 +20,7 @@ export default function JobDetails() {
 
   return (
     <>
-      <Head title={`${jobPosting.title} - ${t("Career Opportunities")}`}>
+      <Head title={`${jobPosting.title} - ${"Career Opportunities"}`}>
         {companySettings?.favIcon && (
           <>
             <link rel="icon" href={getImagePath(companySettings.favIcon)} />
@@ -37,7 +37,7 @@ export default function JobDetails() {
           {/* Back Button */}
           <div className="mb-6">
             <Link href={userSlug ? route('career.index', userSlug) : '/career'} className="inline-flex items-center text-blue-600 hover:text-blue-800">
-              ← {t("Back to All Jobs")}
+              ← {"Back to All Jobs"}
             </Link>
           </div>
 
@@ -60,7 +60,7 @@ export default function JobDetails() {
                         {jobPosting.status}
                       </Badge>
                       {jobPosting.priority === 'High' && (
-                        <Badge variant="destructive">{t("High Priority")}</Badge>
+                        <Badge variant="destructive">{"High Priority"}</Badge>
                       )}
                     </div>
                   </div>
@@ -70,28 +70,28 @@ export default function JobDetails() {
                     <div className="flex items-center gap-2">
                       <MapPin className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Location")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Location"}</p>
                         <p className="text-sm text-gray-600">{jobPosting.location?.name || 'Remote'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Building className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Department")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Department"}</p>
                         <p className="text-sm text-gray-600">{jobPosting.department?.name || '-'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Type")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Type"}</p>
                         <p className="text-sm text-gray-600">{jobPosting.job_type?.name || 'Full-time'}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Positions")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Positions"}</p>
                         <p className="text-sm text-gray-600">{jobPosting.positions || 1}</p>
                       </div>
                     </div>
@@ -101,11 +101,11 @@ export default function JobDetails() {
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Salary Range")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Salary Range"}</p>
                         <p className="text-sm text-gray-600">
                           {jobPosting.min_salary && jobPosting.max_salary 
                             ? `$${jobPosting.min_salary} - $${jobPosting.max_salary}`
-                            : t('Competitive')
+                            : 'Competitive'
                           }
                         </p>
                       </div>
@@ -119,7 +119,7 @@ export default function JobDetails() {
                         className="px-8"
                         onClick={() => window.open(route('career.apply', [userSlug, jobPosting.code]), '_blank')}
                       >
-                        {t("Apply for this Position")}
+                        {"Apply for this Position"}
                       </Button>
                     ) : (
                       <Button 
@@ -127,7 +127,7 @@ export default function JobDetails() {
                         className="px-8"
                         onClick={() => window.open(jobPosting.application_url, '_blank')}
                       >
-                        {t("Apply for this Position")}
+                        {"Apply for this Position"}
                       </Button>
                     )}
                   </div>
@@ -137,7 +137,7 @@ export default function JobDetails() {
               {/* Job Description */}
               <Card>
                 <CardHeader>
-                  <CardTitle>{t("Job Description")}</CardTitle>
+                  <CardTitle>{"Job Description"}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div 
@@ -151,7 +151,7 @@ export default function JobDetails() {
               {jobPosting.requirements && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("Requirements")}</CardTitle>
+                    <CardTitle>{"Requirements"}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div 
@@ -166,7 +166,7 @@ export default function JobDetails() {
               {jobPosting.benefits && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("Benefits & Perks")}</CardTitle>
+                    <CardTitle>{"Benefits & Perks"}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div 
@@ -181,7 +181,7 @@ export default function JobDetails() {
               {jobPosting.skills && jobPosting.skills.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle>{t("Required Skills")}</CardTitle>
+                    <CardTitle>{"Required Skills"}</CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="flex flex-wrap gap-2">
@@ -201,7 +201,7 @@ export default function JobDetails() {
               {/* Quick Apply */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">{t("Quick Apply")}</CardTitle>
+                  <CardTitle className="text-lg">{"Quick Apply"}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {jobPosting.application_type === 'existing' ? (
@@ -210,7 +210,7 @@ export default function JobDetails() {
                       size="lg"
                       onClick={() => window.open(route('career.apply', [userSlug, jobPosting.code]), '_blank')}
                     >
-                      {t("Apply Now")}
+                      {"Apply Now"}
                     </Button>
                   ) : (
                     <Button 
@@ -218,11 +218,11 @@ export default function JobDetails() {
                       size="lg"
                       onClick={() => window.open(jobPosting.application_url, '_blank')}
                     >
-                      {t("Apply Now")}
+                      {"Apply Now"}
                     </Button>
                   )}
                   <p className="text-sm text-gray-600 text-center">
-                    {t("Application takes less than 5 minutes")}
+                    {"Application takes less than 5 minutes"}
                   </p>
                 </CardContent>
               </Card>
@@ -230,13 +230,13 @@ export default function JobDetails() {
               {/* Job Info */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">{t("Job Information")}</CardTitle>
+                  <CardTitle className="text-lg">{"Job Information"}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-gray-500" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{t("Posted Date")}</p>
+                      <p className="text-sm font-medium text-gray-900">{"Posted Date"}</p>
                       <p className="text-sm text-gray-600">
                         {new Date(jobPosting.created_at).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -249,7 +249,7 @@ export default function JobDetails() {
                   <div className="flex items-center gap-3">
                     <Calendar className="h-5 w-5 text-red-500" />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{t("Application Deadline")}</p>
+                      <p className="text-sm font-medium text-gray-900">{"Application Deadline"}</p>
                       <p className="text-sm text-red-600 font-medium">
                         {new Date(jobPosting.application_deadline).toLocaleDateString('en-US', {
                           year: 'numeric',
@@ -263,13 +263,13 @@ export default function JobDetails() {
                     <div className="flex items-center gap-3">
                       <Building className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Experience Required")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Experience Required"}</p>
                         <p className="text-sm text-gray-600">
                           {jobPosting.min_experience && jobPosting.max_experience 
-                            ? `${jobPosting.min_experience} - ${jobPosting.max_experience} ${t('years')}`
+                            ? `${jobPosting.min_experience} - ${jobPosting.max_experience} ${'years'}`
                             : jobPosting.min_experience 
-                              ? `${jobPosting.min_experience}+ ${t('years')}`
-                              : `${jobPosting.max_experience} ${t('years')}`
+                              ? `${jobPosting.min_experience}+ ${'years'}`
+                              : `${jobPosting.max_experience} ${'years'}`
                           }
                         </p>
                       </div>
@@ -279,7 +279,7 @@ export default function JobDetails() {
                     <div className="flex items-center gap-3">
                       <Building className="h-5 w-5 text-gray-500" />
                       <div>
-                        <p className="text-sm font-medium text-gray-900">{t("Experience Level")}</p>
+                        <p className="text-sm font-medium text-gray-900">{"Experience Level"}</p>
                         <p className="text-sm text-gray-600">{jobPosting.experience_level}</p>
                       </div>
                     </div>
@@ -291,7 +291,7 @@ export default function JobDetails() {
               {relatedJobs && relatedJobs.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">{t("Similar Jobs")}</CardTitle>
+                    <CardTitle className="text-lg">{"Similar Jobs"}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {relatedJobs.map((relatedJob, index) => (
@@ -305,7 +305,7 @@ export default function JobDetails() {
                               <span>{relatedJob.location?.name || 'Remote'}</span>
                             </div>
                             <Badge variant="outline" className="text-xs">
-                              {relatedJob.positions || 1} {t("Positions")}
+                              {relatedJob.positions || 1} {"Positions"}
                             </Badge>
                           </div>
                         </div>

@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, RefreshCw, User, Calendar, DollarSign, CheckCircle, XCircle, Clock, Play } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function ContractRenewals() {
-  const { t } = useTranslation();
+  
   const { auth, contractRenewals, contracts, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -89,25 +89,21 @@ export default function ContractRenewals() {
         setIsApprovalModalOpen(true);
         break;
       case 'process':
-        if (confirm(t('Are you sure you want to process this renewal? This will update the original contract.'))) {
-          toast.loading(t('Processing renewal...'));
+        if (confirm('Are you sure you want to process this renewal? This will update the original contract.')) {
+          toast.loading('Processing renewal...');
           
           router.put(route('hr.contracts.contract-renewals.process', item.id), {}, {
             onSuccess: (page) => {
               toast.dismiss();
               if (page.props.flash.success) {
-                toast.success(t(page.props.flash.success));
-              } else if (page.props.flash.error) {
-                toast.error(t(page.props.flash.error));
-              }
+                toast.success(page.props.flash.success);              } else if (page.props.flash.error) {
+                toast.error(page.props.flash.error);              }
             },
             onError: (errors) => {
               toast.dismiss();
               if (typeof errors === 'string') {
-                toast.error(t(errors));
-              } else {
-                toast.error(t('Failed to process renewal: {{errors}}', { errors: Object.values(errors).join(', ') }));
-              }
+                toast.error(errors);              } else {
+                toast.error(`Failed to process renewal: ${Object.values(errors).join(', ')}`);              }
             }
           });
         }
@@ -134,72 +130,60 @@ export default function ContractRenewals() {
     }
 
     if (formMode === 'create') {
-      toast.loading(t('Creating contract renewal...'));
+      toast.loading('Creating contract renewal...');
 
       router.post(route('hr.contracts.contract-renewals.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create contract renewal: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create contract renewal: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating contract renewal...'));
+      toast.loading('Updating contract renewal...');
 
       router.put(route('hr.contracts.contract-renewals.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update contract renewal: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update contract renewal: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting contract renewal...'));
+    toast.loading('Deleting contract renewal...');
 
     router.delete(route('hr.contracts.contract-renewals.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete contract renewal: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete contract renewal: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -209,8 +193,7 @@ export default function ContractRenewals() {
       ? 'hr.contracts.contract-renewals.approve' 
       : 'hr.contracts.contract-renewals.reject';
     
-    toast.loading(t(approvalAction === 'approve' ? 'Approving renewal...' : 'Rejecting renewal...'));
-    
+    toast.loading(approvalAction === 'approve' ? 'Approving renewal...' : 'Rejecting renewal...');    
     router.put(route(route_name, currentItem.id), { 
       approval_notes: formData.approval_notes || undefined 
     }, {
@@ -218,18 +201,14 @@ export default function ContractRenewals() {
         setIsApprovalModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to process approval: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to process approval: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -250,7 +229,7 @@ export default function ContractRenewals() {
   
   if (hasPermission(permissions, 'create-contract-renewals')) {
     pageActions.push({
-      label: t('Add Renewal'),
+      label: 'Add Renewal',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -258,9 +237,9 @@ export default function ContractRenewals() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Contract Management'), href: route('hr.contracts.contract-renewals.index') },
-    { title: t('Contract Renewals') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Contract Management', href: route('hr.contracts.contract-renewals.index') },
+    { title: 'Contract Renewals' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -296,7 +275,7 @@ export default function ContractRenewals() {
   const columns = [
     { 
       key: 'renewal_number', 
-      label: t('Renewal #'), 
+      label: 'Renewal #', 
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-2">
@@ -310,7 +289,7 @@ export default function ContractRenewals() {
     },
     { 
       key: 'contract.employee.name', 
-      label: t('Employee'),
+      label: 'Employee',
       render: (_, row) => (
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-gray-500" />
@@ -320,7 +299,7 @@ export default function ContractRenewals() {
     },
     { 
       key: 'current_end_date', 
-      label: t('Renewal Period'),
+      label: 'Renewal Period',
       sortable: true,
       render: (value, row) => (
         <div>
@@ -336,7 +315,7 @@ export default function ContractRenewals() {
     },
     { 
       key: 'new_basic_salary', 
-      label: t('New Compensation'),
+      label: 'New Compensation',
       render: (value, row) => {
         const total = getTotalCompensation(value, row.new_allowances);
         return (
@@ -357,22 +336,22 @@ export default function ContractRenewals() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
           {getStatusIcon(value)}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'requester.name', 
-      label: t('Requested By'),
+      label: 'Requested By',
       render: (_, row) => row.requester?.name || '-'
     },
     { 
       key: 'approved_at', 
-      label: t('Approved'),
+      label: 'Approved',
       render: (value, row) => {
         if (!value) return '-';
         return (
@@ -387,14 +366,14 @@ export default function ContractRenewals() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-contract-renewals'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
@@ -402,7 +381,7 @@ export default function ContractRenewals() {
       condition: (item: any) => item.status === 'Pending'
     },
     { 
-      label: t('Approve'), 
+      label: 'Approve', 
       icon: 'CheckCircle', 
       action: 'approve', 
       className: 'text-green-500',
@@ -410,7 +389,7 @@ export default function ContractRenewals() {
       condition: (item: any) => item.status === 'Pending'
     },
     { 
-      label: t('Reject'), 
+      label: 'Reject', 
       icon: 'XCircle', 
       action: 'reject', 
       className: 'text-red-500',
@@ -418,7 +397,7 @@ export default function ContractRenewals() {
       condition: (item: any) => item.status === 'Pending'
     },
     { 
-      label: t('Process'), 
+      label: 'Process', 
       icon: 'Play', 
       action: 'process', 
       className: 'text-purple-500',
@@ -426,7 +405,7 @@ export default function ContractRenewals() {
       condition: (item: any) => item.status === 'Approved'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -436,15 +415,15 @@ export default function ContractRenewals() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'Pending', label: t('Pending') },
-    { value: 'Approved', label: t('Approved') },
-    { value: 'Rejected', label: t('Rejected') },
-    { value: 'Processed', label: t('Processed') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'Pending', label: 'Pending' },
+    { value: 'Approved', label: 'Approved' },
+    { value: 'Rejected', label: 'Rejected' },
+    { value: 'Processed', label: 'Processed' }
   ];
 
   const contractOptions = [
-    { value: '_empty_', label: t('All Contracts'), disabled: true },
+    { value: '_empty_', label: 'All Contracts', disabled: true },
     ...(contracts || []).map((contract: any) => ({
       value: contract.id.toString(),
       label: `${contract.contract_number} - ${contract.employee?.name} (Expires: ${format(new Date(contract.end_date), 'MMM dd, yyyy')})`
@@ -452,7 +431,7 @@ export default function ContractRenewals() {
   ];
 
   const contractSelectOptions = [
-    { value: '_empty_', label: t('Select Contract') },
+    { value: '_empty_', label: 'Select Contract' },
     ...(contracts || []).map((contract: any) => ({
       value: contract.id.toString(),
       label: `${contract.contract_number} - ${contract.employee?.name}`
@@ -460,7 +439,7 @@ export default function ContractRenewals() {
   ];
 
   const employeeOptions = [
-    { value: '_empty_', label: t('Select Requester') },
+    { value: '_empty_', label: 'Select Requester' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -469,7 +448,7 @@ export default function ContractRenewals() {
 
   return (
     <PageTemplate 
-      title={t("Contract Renewals")} 
+      title={"Contract Renewals"} 
       url="/hr/contracts/contract-renewals"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -483,7 +462,7 @@ export default function ContractRenewals() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -491,7 +470,7 @@ export default function ContractRenewals() {
             },
             {
               name: 'contract_id',
-              label: t('Contract'),
+              label: 'Contract',
               type: 'select',
               value: contractFilter,
               onChange: setContractFilter,
@@ -542,7 +521,7 @@ export default function ContractRenewals() {
           to={contractRenewals?.to || 0}
           total={contractRenewals?.total || 0}
           links={contractRenewals?.links}
-          entityName={t("contract renewals")}
+          entityName={"contract renewals"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -555,7 +534,7 @@ export default function ContractRenewals() {
           fields: [
             { 
               name: 'contract_id', 
-              label: t('Contract'), 
+              label: 'Contract', 
               type: 'select', 
               required: true,
               options: contractSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -563,19 +542,19 @@ export default function ContractRenewals() {
             },
             { 
               name: 'new_start_date', 
-              label: t('New Start Date'), 
+              label: 'New Start Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'new_end_date', 
-              label: t('New End Date'), 
+              label: 'New End Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'new_basic_salary', 
-              label: t('New Basic Salary'), 
+              label: 'New Basic Salary', 
               type: 'number', 
               required: true,
               min: 0,
@@ -583,38 +562,38 @@ export default function ContractRenewals() {
             },
             { 
               name: 'new_allowances', 
-              label: t('New Allowances'), 
+              label: 'New Allowances', 
               type: 'text',
-              helpText: t('Format: Name:Amount, Name:Amount (e.g., Transport:500, Meal:300)')
+              helpText: 'Format: Name:Amount, Name:Amount (e.g., Transport:500, Meal:300)'
             },
             { 
               name: 'new_benefits', 
-              label: t('New Benefits'), 
+              label: 'New Benefits', 
               type: 'text',
-              helpText: t('Comma-separated list of benefits')
+              helpText: 'Comma-separated list of benefits'
             },
             { 
               name: 'new_terms_conditions', 
-              label: t('New Terms & Conditions'), 
+              label: 'New Terms & Conditions', 
               type: 'textarea',
               rows: 4
             },
             { 
               name: 'changes_summary', 
-              label: t('Changes Summary'), 
+              label: 'Changes Summary', 
               type: 'textarea',
               rows: 3,
-              helpText: t('Summary of changes from current contract')
+              helpText: 'Summary of changes from current contract'
             },
             { 
               name: 'reason', 
-              label: t('Reason for Renewal'), 
+              label: 'Reason for Renewal', 
               type: 'textarea',
               rows: 2
             },
             { 
               name: 'requested_by', 
-              label: t('Requested By'), 
+              label: 'Requested By', 
               type: 'select', 
               required: true,
               options: employeeOptions.filter(opt => opt.value !== '_empty_'),
@@ -630,10 +609,10 @@ export default function ContractRenewals() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Contract Renewal')
+            ? 'Add Contract Renewal'
             : formMode === 'edit'
-              ? t('Edit Contract Renewal')
-              : t('View Contract Renewal')
+              ? 'Edit Contract Renewal'
+              : 'View Contract Renewal'
         }
         mode={formMode}
       />
@@ -654,7 +633,7 @@ export default function ContractRenewals() {
           fields: [
             {
               name: 'approval_notes',
-              label: approvalAction === 'approve' ? t('Approval Notes (Optional)') : t('Rejection Reason'),
+              label: approvalAction === 'approve' ? 'Approval Notes (Optional)' : 'Rejection Reason',
               type: 'textarea',
               required: approvalAction === 'reject',
               rows: 4
@@ -662,9 +641,9 @@ export default function ContractRenewals() {
           ]
         }}
         initialData={{}}
-        title={approvalAction === 'approve' ? t('Approve Renewal') : t('Reject Renewal')}
+        title={approvalAction === 'approve' ? 'Approve Renewal' : 'Reject Renewal'}
         mode="edit"
-        submitLabel={approvalAction === 'approve' ? t('Approve') : t('Reject')}
+        submitLabel={approvalAction === 'approve' ? 'Approve' : 'Reject'}
       />
     </PageTemplate>
   );

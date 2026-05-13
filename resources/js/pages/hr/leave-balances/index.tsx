@@ -8,12 +8,12 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 
 export default function LeaveBalances() {
-  const { t } = useTranslation();
+  
   const { auth, leaveBalances, employees, leaveTypes, years, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -99,17 +99,15 @@ export default function LeaveBalances() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating leave balance...'));
+      toast.loading('Creating leave balance...');
 
       router.post(route('hr.leave-balances.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -121,17 +119,15 @@ export default function LeaveBalances() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating leave balance...'));
+      toast.loading('Updating leave balance...');
 
       router.put(route('hr.leave-balances.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -146,17 +142,15 @@ export default function LeaveBalances() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting leave balance...'));
+    toast.loading('Deleting leave balance...');
 
     router.delete(route('hr.leave-balances.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -170,17 +164,15 @@ export default function LeaveBalances() {
   };
 
   const handleAdjustSubmit = (formData: any) => {
-    toast.loading(t('Adjusting leave balance...'));
+    toast.loading('Adjusting leave balance...');
 
     router.put(route('hr.leave-balances.adjust', currentItem.id), formData, {
       onSuccess: (page) => {
         setIsAdjustModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -212,7 +204,7 @@ export default function LeaveBalances() {
   // Add the "Add New Leave Balance" button if user has permission
   if (hasPermission(permissions, 'create-leave-balances')) {
     pageActions.push({
-      label: t('Add Leave Balance'),
+      label: 'Add Leave Balance',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -220,21 +212,21 @@ export default function LeaveBalances() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Leave Management'), href: route('hr.leave-balances.index') },
-    { title: t('Leave Balances') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Leave Management', href: route('hr.leave-balances.index') },
+    { title: 'Leave Balances' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => row.employee?.name || '-'
     },
     {
       key: 'leave_type',
-      label: t('Leave Type'),
+      label: 'Leave Type',
       render: (value: any, row: any) => (
         <div className="flex items-center gap-2">
           <div 
@@ -247,7 +239,7 @@ export default function LeaveBalances() {
     },
     {
       key: 'year',
-      label: t('Year'),
+      label: 'Year',
       sortable: true,
       render: (value: number) => (
         <span className="font-mono">{value}</span>
@@ -255,21 +247,21 @@ export default function LeaveBalances() {
     },
     {
       key: 'allocated_days',
-      label: t('Allocated'),
+      label: 'Allocated',
       render: (value: number) => (
         <span className="font-mono text-blue-600">{value}</span>
       )
     },
     {
       key: 'used_days',
-      label: t('Used'),
+      label: 'Used',
       render: (value: number) => (
         <span className="font-mono text-red-600">{value}</span>
       )
     },
     {
       key: 'remaining_days',
-      label: t('Remaining'),
+      label: 'Remaining',
       render: (value: number) => (
         <span className={`font-mono ${value > 0 ? 'text-green-600' : 'text-gray-500'}`}>
           {value}
@@ -278,14 +270,14 @@ export default function LeaveBalances() {
     },
     {
       key: 'carried_forward',
-      label: t('Carried Forward'),
+      label: 'Carried Forward',
       render: (value: number) => (
         <span className="font-mono text-purple-600">{value}</span>
       )
     },
     {
       key: 'manual_adjustment',
-      label: t('Adjustment'),
+      label: 'Adjustment',
       render: (value: number) => (
         <span className={`font-mono ${value > 0 ? 'text-green-600' : value < 0 ? 'text-red-600' : 'text-gray-500'}`}>
           {value > 0 ? '+' : ''}{value}
@@ -297,28 +289,28 @@ export default function LeaveBalances() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-leave-balances'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-leave-balances'
     },
     {
-      label: t('Adjust'),
+      label: 'Adjust',
       icon: 'Settings',
       action: 'adjust',
       className: 'text-purple-500',
       requiredPermission: 'adjust-leave-balances'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -328,7 +320,7 @@ export default function LeaveBalances() {
 
   // Prepare options for filters and forms
   const employeeOptions = [
-    { value: 'all', label: t('All Employees') },
+    { value: 'all', label: 'All Employees' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -336,7 +328,7 @@ export default function LeaveBalances() {
   ];
 
   const leaveTypeOptions = [
-    { value: 'all', label: t('All Leave Types') },
+    { value: 'all', label: 'All Leave Types' },
     ...(leaveTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -344,7 +336,7 @@ export default function LeaveBalances() {
   ];
 
   const yearOptions = [
-    { value: 'all', label: t('All Years') },
+    { value: 'all', label: 'All Years' },
     ...(years || []).map((year: number) => ({
       value: year.toString(),
       label: year.toString()
@@ -353,7 +345,7 @@ export default function LeaveBalances() {
 
   return (
     <PageTemplate
-      title={t("Leave Balances")}
+      title={"Leave Balances"}
       url="/hr/leave-balances"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -368,7 +360,7 @@ export default function LeaveBalances() {
           filters={[
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -376,7 +368,7 @@ export default function LeaveBalances() {
             },
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               value: selectedLeaveType,
               onChange: setSelectedLeaveType,
@@ -384,7 +376,7 @@ export default function LeaveBalances() {
             },
             {
               name: 'year',
-              label: t('Year'),
+              label: 'Year',
               type: 'select',
               value: selectedYear,
               onChange: setSelectedYear,
@@ -437,7 +429,7 @@ export default function LeaveBalances() {
           to={leaveBalances?.to || 0}
           total={leaveBalances?.total || 0}
           links={leaveBalances?.links}
-          entityName={t("leave balances")}
+          entityName={"leave balances"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -451,7 +443,7 @@ export default function LeaveBalances() {
           fields: [
             {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               options: employees ? employees.map((emp: any) => ({
@@ -461,7 +453,7 @@ export default function LeaveBalances() {
             },
             {
               name: 'leave_type_id',
-              label: t('Leave Type'),
+              label: 'Leave Type',
               type: 'select',
               required: true,
               options: leaveTypes ? leaveTypes.map((type: any) => ({
@@ -469,21 +461,21 @@ export default function LeaveBalances() {
                 label: type.name
               })) : []
             },
-            { name: 'year', label: t('Year'), type: 'number', required: true, min: 2020, max: 2030, defaultValue: new Date().getFullYear() },
-            { name: 'allocated_days', label: t('Allocated Days'), type: 'number', required: true, min: 0, step: 0.5 },
-            { name: 'carried_forward', label: t('Carried Forward Days'), type: 'number', min: 0, step: 0.5, defaultValue: 0 },
-            { name: 'manual_adjustment', label: t('Manual Adjustment'), type: 'number', step: 0.5, defaultValue: 0 },
-            { name: 'adjustment_reason', label: t('Adjustment Reason'), type: 'textarea' }
+            { name: 'year', label: 'Year', type: 'number', required: true, min: 2020, max: 2030, defaultValue: new Date().getFullYear() },
+            { name: 'allocated_days', label: 'Allocated Days', type: 'number', required: true, min: 0, step: 0.5 },
+            { name: 'carried_forward', label: 'Carried Forward Days', type: 'number', min: 0, step: 0.5, defaultValue: 0 },
+            { name: 'manual_adjustment', label: 'Manual Adjustment', type: 'number', step: 0.5, defaultValue: 0 },
+            { name: 'adjustment_reason', label: 'Adjustment Reason', type: 'textarea' }
           ],
           modalSize: 'lg'
         }}
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Leave Balance')
+            ? 'Add New Leave Balance'
             : formMode === 'edit'
-              ? t('Edit Leave Balance')
-              : t('View Leave Balance')
+              ? 'Edit Leave Balance'
+              : 'View Leave Balance'
         }
         mode={formMode}
       />
@@ -495,13 +487,13 @@ export default function LeaveBalances() {
         onSubmit={handleAdjustSubmit}
         formConfig={{
           fields: [
-            { name: 'manual_adjustment', label: t('Adjustment Amount'), type: 'number', required: true, step: 0.5 },
-            { name: 'adjustment_reason', label: t('Reason for Adjustment'), type: 'textarea', required: true }
+            { name: 'manual_adjustment', label: 'Adjustment Amount', type: 'number', required: true, step: 0.5 },
+            { name: 'adjustment_reason', label: 'Reason for Adjustment', type: 'textarea', required: true }
           ],
           modalSize: 'md'
         }}
         initialData={currentItem}
-        title={t('Adjust Leave Balance')}
+        title={'Adjust Leave Balance'}
         mode="edit"
       />
 

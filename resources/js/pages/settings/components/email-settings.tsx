@@ -8,12 +8,12 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { useTranslation } from 'react-i18next';
+
 import { router, usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 
 export default function EmailSettings() {
-  const { t } = useTranslation();
+  const t = (s: string) => s;
   const { settings = {}, globalSettings } = usePage().props as any;
   
   
@@ -106,7 +106,7 @@ export default function EmailSettings() {
           toast.error(errorMessage);
           setTestResult({ success: false, message: errorMessage });
         } else {
-          const message = t('Test email sent successfully to {{email}}', { email: testEmail });
+          const message = `Test email sent successfully to ${testEmail}`;
           toast.success(message);
           setTestResult({ success: true, message });
         }

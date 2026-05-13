@@ -2,26 +2,26 @@
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { ArrowLeft, Download, Users, DollarSign, Calendar } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/components/custom-toast';
 import { CrudTable } from '@/components/CrudTable';
 
 export default function PayrollRunShow() {
-  const { t } = useTranslation();
+  
   const { payrollRun } = usePage().props as any;
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Payroll Management'), href: route('hr.payroll-runs.index') },
-    { title: t('Payroll Runs'), href: route('hr.payroll-runs.index') },
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Payroll Management', href: route('hr.payroll-runs.index') },
+    { title: 'Payroll Runs', href: route('hr.payroll-runs.index') },
     { title: payrollRun.title }
   ];
 
   const pageActions = [
     {
-      label: t('Back to List'),
+      label: 'Back to List',
       icon: <ArrowLeft className="h-4 w-4 mr-2" />,
       variant: 'outline',
       onClick: () => router.get(route('hr.payroll-runs.index'))
@@ -31,7 +31,7 @@ export default function PayrollRunShow() {
   // Add generate payslips button if payroll is completed
   if (payrollRun.status === 'completed') {
     pageActions.unshift({
-      label: t('Generate Payslips'),
+      label: 'Generate Payslips',
       icon: <Download className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleGeneratePayslips()
@@ -39,7 +39,7 @@ export default function PayrollRunShow() {
   }
 
   const handleGeneratePayslips = () => {
-    toast.loading(t('Generating payslips...'));
+    toast.loading('Generating payslips...');
 
     router.post(route('hr.payslips.bulk-generate'), {
       payroll_run_id: payrollRun.id
@@ -47,14 +47,12 @@ export default function PayrollRunShow() {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-          // Redirect to payslips page to see generated payslips
+          toast.success(page.props.flash.success);          // Redirect to payslips page to see generated payslips
           setTimeout(() => {
             router.get(route('hr.payslips.index'));
           }, 1000);
         } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -88,7 +86,7 @@ export default function PayrollRunShow() {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Total Employees')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{'Total Employees'}</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -98,7 +96,7 @@ export default function PayrollRunShow() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Gross Pay')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{'Gross Pay'}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -108,7 +106,7 @@ export default function PayrollRunShow() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Total Deductions')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{'Total Deductions'}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -118,7 +116,7 @@ export default function PayrollRunShow() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">{t('Net Pay')}</CardTitle>
+            <CardTitle className="text-sm font-medium">{'Net Pay'}</CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -130,44 +128,44 @@ export default function PayrollRunShow() {
       {/* Payroll Run Details */}
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle>{t('Payroll Run Details')}</CardTitle>
+          <CardTitle>{'Payroll Run Details'}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Pay Period')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Pay Period'}</label>
               <p className="text-sm">
                 {window.appSettings?.formatDateTimeSimple(payrollRun.pay_period_start, false) || new Date(payrollRun.pay_period_start).toLocaleDateString()} - {window.appSettings?.formatDateTimeSimple(payrollRun.pay_period_end, false) || new Date(payrollRun.pay_period_end).toLocaleDateString()}
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Pay Date')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Pay Date'}</label>
               <p className="text-sm">{ window.appSettings?.formatDateTimeSimple(payrollRun.pay_date, false) || new Date(payrollRun.pay_date).toLocaleDateString()}</p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Payroll Frequency')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Payroll Frequency'}</label>
               <p className="text-sm">
                 <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10">
-                  {payrollRun.payroll_frequency === 'weekly' ? t('Weekly') : payrollRun.payroll_frequency === 'biweekly' ? t('Bi-Weekly') : t('Monthly')}
+                  {payrollRun.payroll_frequency === 'weekly' ? 'Weekly' : payrollRun.payroll_frequency === 'biweekly' ? 'Bi-Weekly' : 'Monthly'}
                 </span>
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Status')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Status'}</label>
               <p>
                 <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(payrollRun.status)}`}>
-                  {t(payrollRun.status)}
+                  {payrollRun.status}
                 </span>
               </p>
             </div>
             <div>
-              <label className="text-sm font-medium text-gray-500">{t('Created At')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Created At'}</label>
               <p className="text-sm">{window.appSettings?.formatDateTimeSimple(payrollRun.created_at, false) || new Date(payrollRun.created_at).toLocaleDateString()}</p>
             </div>
           </div>
           {payrollRun.notes && (
             <div className="mt-4">
-              <label className="text-sm font-medium text-gray-500">{t('Notes')}</label>
+              <label className="text-sm font-medium text-gray-500">{'Notes'}</label>
               <p className="text-sm mt-1">{payrollRun.notes}</p>
             </div>
           )}
@@ -177,13 +175,13 @@ export default function PayrollRunShow() {
       {/* Employee Payroll Entries */}
       <Card>
         <CardHeader>
-          <CardTitle>{t('Employee Payroll Entries')}</CardTitle>
+          <CardTitle>{'Employee Payroll Entries'}</CardTitle>
           <div className="mt-2 p-3 bg-blue-50 rounded-md space-y-2">
             <p className="text-sm text-blue-800 font-medium">
-              {t('Gross Pay Formula')} : <span className="font-mono">Total Earnings (Basic Salary + Component Earning) - Unpaid Leave Deduction + Overtime Earnings</span>
+              {'Gross Pay Formula'} : <span className="font-mono">Total Earnings (Basic Salary + Component Earning) - Unpaid Leave Deduction + Overtime Earnings</span>
             </p>
             <p className="text-sm text-blue-800 font-medium">
-              {t('Net Salary Formula')} : <span className="font-mono">Gross Pay - Total Deductions</span>
+              {'Net Salary Formula'} : <span className="font-mono">Gross Pay - Total Deductions</span>
             </p>
           </div>
         </CardHeader>
@@ -192,83 +190,83 @@ export default function PayrollRunShow() {
             columns={[
               {
                 key: 'employee',
-                label: t('Employee'),
+                label: 'Employee',
                 render: (value: any, row: any) => row.employee?.name || '-',
               },
               {
                 key: 'basic_salary',
-                label: t('Basic Salary'),
+                label: 'Basic Salary',
                 render: (value: number) => (
                   <span className="font-mono text-gray-900">{window.appSettings?.formatCurrency(value)}</span>
                 )
               },
               {
                 key: 'per_day_salary',
-                label: t('Per Day Salary'),
+                label: 'Per Day Salary',
                 render: (value: number) => (
                   <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value || 0)}</span>
                 )
               },
               {
                 key: 'component_earnings',
-                label: t('Component Earnings'),
+                label: 'Component Earnings',
                 render: (value: number) => (
                   <span className="font-mono text-blue-600">{window.appSettings?.formatCurrency(value || 0)}</span>
                 )
               },
               {
                 key: 'total_earnings',
-                label: t('Total Earning'),
+                label: 'Total Earning',
                 render: (value: number) => (
                   <span className="font-mono text-blue-600">{window.appSettings?.formatCurrency(value || 0)}</span>
                 )
               },
               {
                 key: 'working_days',
-                label: t('Working Days'),
+                label: 'Working Days',
                 render: (value: number) => value || 0
               },
               {
                 key: 'present_days',
-                label: t('Present Days'),
+                label: 'Present Days',
                 render: (value: number) => value || 0
               },
               {
                 key: 'overtime_hours',
-                label: t('Overtime Hours'),
+                label: 'Overtime Hours',
                 render: (value: number) => `${value || 0}h`
               },
               {
                 key: 'overtime_amount',
-                label: t('Overtime Earnings'),
+                label: 'Overtime Earnings',
                 render: (value: number) => (
                   <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value || 0)}</span>
                 )
               },
               {
                 key: 'unpaid_leave_deduction',
-                label: t('Leave Deductions'),
+                label: 'Leave Deductions',
                 render: (value: number) => (
                   <span className="font-mono text-red-600">{window.appSettings?.formatCurrency(value || 0)}</span>
                 )
               },
               {
                 key: 'gross_pay',
-                label: t('Gross Pay'),
+                label: 'Gross Pay',
                 render: (value: number) => (
                   <span className="font-mono text-green-600">{window.appSettings?.formatCurrency(value)}</span>
                 )
               },
               {
                 key: 'total_deductions',
-                label: t('Component Deduction'),
+                label: 'Component Deduction',
                 render: (value: number) => (
                   <span className="font-mono text-red-600">{window.appSettings?.formatCurrency(value)}</span>
                 )
               },
               {
                 key: 'net_pay',
-                label: t('Net Pay'),
+                label: 'Net Pay',
                 render: (value: number) => (
                   <span className="font-mono text-blue-600 font-bold">{window.appSettings?.formatCurrency(value)}</span>
                 )

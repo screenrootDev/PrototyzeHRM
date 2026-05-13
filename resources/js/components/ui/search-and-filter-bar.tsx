@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { DatePicker } from '@/components/ui/date-picker';
 import { Filter, Search, List, LayoutGrid } from 'lucide-react';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+
 
 interface FilterOption {
   name: string;
@@ -56,7 +56,7 @@ export function SearchAndFilterBar({
   activeView = 'list',
   onViewChange,
 }: SearchAndFilterBarProps) {
-  const { t } = useTranslation();
+  
 
   return (
     <div className="w-full">
@@ -66,7 +66,7 @@ export function SearchAndFilterBar({
             <div className="relative w-64">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={t("Search...")}
+                placeholder={"Search..."}
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="w-full pl-9"
@@ -74,7 +74,7 @@ export function SearchAndFilterBar({
             </div>
             <Button type="submit" size="sm">
               <Search className="h-4 w-4 mr-1.5" />
-              {t("Search")}
+              {"Search"}
             </Button>
           </form>
           
@@ -87,7 +87,7 @@ export function SearchAndFilterBar({
                 onClick={() => setShowFilters(!showFilters)}
               >
                 <Filter className="h-3.5 w-3.5 mr-1.5" />
-                {showFilters ? t('Hide Filters') : t('Filters')}
+                {showFilters ? 'Hide Filters' : 'Filters'}
                 {hasActiveFilters() && (
                   <span className="ml-1 bg-primary-foreground text-primary rounded-full w-5 h-5 flex items-center justify-center text-xs">
                     {activeFilterCount()}
@@ -120,7 +120,7 @@ export function SearchAndFilterBar({
             </div>
           )}
           
-          <Label className="text-xs text-muted-foreground">{t("Per Page:")}</Label>
+          <Label className="text-xs text-muted-foreground">{"Per Page:"}</Label>
           <Select
             value={currentPerPage}
             onValueChange={onPerPageChange}
@@ -149,7 +149,7 @@ export function SearchAndFilterBar({
                     onValueChange={filter.onChange}
                   >
                     <SelectTrigger className="w-40">
-                      <SelectValue placeholder={t(`All ${filter.label}`)} />
+                      <SelectValue placeholder={`All ${filter.label}`} />
                     </SelectTrigger>
                     <SelectContent searchable={filter.searchable}>
                       {filter.options.map((option) => (
@@ -178,7 +178,7 @@ export function SearchAndFilterBar({
                   className="h-9"
                   onClick={onApplyFilters}
                 >
-                  {t("Apply Filters")}
+                  {"Apply Filters"}
                 </Button>
               )}
               
@@ -189,7 +189,7 @@ export function SearchAndFilterBar({
                 onClick={onResetFilters}
                 disabled={!hasActiveFilters()}
               >
-                {t("Reset Filters")}
+                {"Reset Filters"}
               </Button>
             </div>
           </div>

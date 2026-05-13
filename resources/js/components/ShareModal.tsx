@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Facebook, Twitter, Linkedin, Mail, Link } from 'lucide-react';
 
 interface ShareModalProps {
@@ -15,12 +15,12 @@ interface ShareModalProps {
 }
 
 export function ShareModal({ isOpen, onClose, url, title }: ShareModalProps) {
-  const { t } = useTranslation();
+  
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(url)
       .then(() => {
-        toast.success(t('Link copied to clipboard'));
+        toast.success('Link copied to clipboard');
       })
       .catch(() => {
         // Fallback for browsers that don't support clipboard API
@@ -30,7 +30,7 @@ export function ShareModal({ isOpen, onClose, url, title }: ShareModalProps) {
         tempInput.select();
         document.execCommand('copy');
         document.body.removeChild(tempInput);
-        toast.success(t('Link copied to clipboard'));
+        toast.success('Link copied to clipboard');
       });
   };
 
@@ -63,7 +63,7 @@ export function ShareModal({ isOpen, onClose, url, title }: ShareModalProps) {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t('Share')} {title}</DialogTitle>
+          <DialogTitle>{'Share'} {title}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-2">
           <div className="flex items-center space-x-2">
@@ -80,7 +80,7 @@ export function ShareModal({ isOpen, onClose, url, title }: ShareModalProps) {
             </div>
             <Button type="button" size="sm" onClick={handleCopyLink}>
               <Link className="h-4 w-4 mr-2" />
-              {t('Copy')}
+              {'Copy'}
             </Button>
           </div>
           <div className="flex justify-center space-x-4">
@@ -124,7 +124,7 @@ export function ShareModal({ isOpen, onClose, url, title }: ShareModalProps) {
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={onClose}>
-            {t('Close')}
+            {'Close'}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -11,13 +11,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import MediaPicker from '@/components/MediaPicker';
 import { getImagePath } from '@/utils/helpers';
 
 export default function EmployeeEdit() {
-  const { t } = useTranslation();
+  
   const { employee, branches, departments, designations, documentTypes, shifts, attendancePolicies } = usePage().props as any;
 
   // State
@@ -178,16 +178,14 @@ export default function EmployeeEdit() {
   };
 
   const removeExistingDocument = (documentId: number) => {
-    toast.loading(t('Deleting document...'));
+    toast.loading('Deleting document...');
 
     router.delete(route('hr.employees.documents.destroy', documentId), {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
 
         // Update the existing documents list
         setExistingDocuments(existingDocuments.filter(doc => doc.id !== documentId));
@@ -195,10 +193,8 @@ export default function EmployeeEdit() {
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete document: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete document: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -245,15 +241,14 @@ export default function EmployeeEdit() {
       onSuccess: (page) => {
         setIsSubmitting(false);
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        }
+          toast.success(page.props.flash.success);        }
         router.get(route('hr.employees.index'));
       },
       onError: (errors) => {
         setIsSubmitting(false);
         setErrors(errors);
 
-        toast.error(t('Please correct the errors in the form'));
+        toast.error('Please correct the errors in the form');
       }
     });
   };
@@ -261,20 +256,20 @@ export default function EmployeeEdit() {
 
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.employees.index') },
-    { title: t('Employees'), href: route('hr.employees.index') },
-    { title: t('Edit Employee') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.employees.index') },
+    { title: 'Employees', href: route('hr.employees.index') },
+    { title: 'Edit Employee' }
   ];
 
   return (
     <PageTemplate
-      title={t("Edit Employee")}
+      title={"Edit Employee"}
       url={`/hr/employees/${employee.id}/edit`}
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: t('Back to Employees'),
+          label: 'Back to Employees',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.employees.index'))
@@ -285,12 +280,12 @@ export default function EmployeeEdit() {
         {/* Basic Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Basic Information')}</CardTitle>
+            <CardTitle>{'Basic Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="name" required>{t('Full Name')}</Label>
+                <Label htmlFor="name" required>{'Full Name'}</Label>
                 <Input
                   id="name"
                   required
@@ -302,18 +297,18 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employee_id">{t('Employee ID')}</Label>
+                <Label htmlFor="employee_id">{'Employee ID'}</Label>
                 <Input
                   id="employee_id"
                   value={formData.employee_id}
                   readOnly
                   className="bg-muted"
                 />
-                <p className="text-sm text-muted-foreground">{t('Employee ID cannot be changed')}</p>
+                <p className="text-sm text-muted-foreground">{'Employee ID cannot be changed'}</p>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="biometric_emp_id" required>{t('Employee Code')}</Label>
+                <Label htmlFor="biometric_emp_id" required>{'Employee Code'}</Label>
                 <Input
                   id="biometric_emp_id"
                   required
@@ -322,12 +317,12 @@ export default function EmployeeEdit() {
                   placeholder=""
                   className={errors.biometric_emp_id ? 'border-red-500' : ''}
                 />
-                <p className="text-sm text-muted-foreground">{t('This ID will be used to map employee with biometric device.')}</p>
+                <p className="text-sm text-muted-foreground">{'This ID will be used to map employee with biometric device.'}</p>
                 {errors.biometric_emp_id && <p className="text-red-500 text-xs">{errors.biometric_emp_id}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" required>{t('Email')}</Label>
+                <Label htmlFor="email" required>{'Email'}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -340,7 +335,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="password">{t('Password')} <span className="text-sm text-muted-foreground">{t('(Leave blank to keep current)')}</span></Label>
+                <Label htmlFor="password">{'Password'} <span className="text-sm text-muted-foreground">{'(Leave blank to keep current)'}</span></Label>
                 <Input
                   id="password"
                   type="password"
@@ -352,7 +347,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone" required>{t('Phone Number')}</Label>
+                <Label htmlFor="phone" required>{'Phone Number'}</Label>
                 <Input
                   id="phone"
                   required
@@ -364,7 +359,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date_of_birth" required>{t('Date of Birth')}</Label>
+                <Label htmlFor="date_of_birth" required>{'Date of Birth'}</Label>
                 <Input
                   id="date_of_birth"
                   type="date"
@@ -377,7 +372,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label required>{t('Gender')}</Label>
+                <Label required>{'Gender'}</Label>
                 <RadioGroup
                   value={formData.gender}
                   onValueChange={(value) => handleChange('gender', value)}
@@ -385,22 +380,22 @@ export default function EmployeeEdit() {
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="male" id="gender-male" />
-                    <Label htmlFor="gender-male">{t('Male')}</Label>
+                    <Label htmlFor="gender-male">{'Male'}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="female" id="gender-female" />
-                    <Label htmlFor="gender-female">{t('Female')}</Label>
+                    <Label htmlFor="gender-female">{'Female'}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="other" id="gender-other" />
-                    <Label htmlFor="gender-other">{t('Other')}</Label>
+                    <Label htmlFor="gender-other">{'Other'}</Label>
                   </div>
                 </RadioGroup>
                 {errors.gender && <p className="text-red-500 text-xs">{errors.gender}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label required>{t('Profile Image')}</Label>
+                <Label required>{'Profile Image'}</Label>
                 <div className="flex flex-col gap-3">
                   <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 h-32">
                     {formData.profile_image || employee.avatar ? (
@@ -412,7 +407,7 @@ export default function EmployeeEdit() {
                     ) : (
                       <div className="text-muted-foreground flex flex-col items-center gap-2">
                         <div className="h-12 w-12 bg-muted flex items-center justify-center rounded-full border border-dashed">
-                          <span className="font-semibold text-xs text-muted-foreground">{t('Image')}</span>
+                          <span className="font-semibold text-xs text-muted-foreground">{'Image'}</span>
                         </div>
                         <span className="text-xs">No image selected</span>
                       </div>
@@ -435,19 +430,19 @@ export default function EmployeeEdit() {
         {/* Employment Details Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Employment Details')}</CardTitle>
+            <CardTitle>{'Employment Details'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="branch_id" required>{t('Branch')}</Label>
+                <Label htmlFor="branch_id" required>{'Branch'}</Label>
                 <Select
                   value={formData.branch_id}
                   required
                   onValueChange={(value) => handleChange('branch_id', value)}
                 >
                   <SelectTrigger className={errors.branch_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Branch')} />
+                    <SelectValue placeholder={'Select Branch'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {branches.map((branch: any) => (
@@ -461,7 +456,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="department_id" required>{t('Department')}</Label>
+                <Label htmlFor="department_id" required>{'Department'}</Label>
                 <Select
                   value={formData.department_id}
                   required
@@ -469,7 +464,7 @@ export default function EmployeeEdit() {
                   disabled={!formData.branch_id}
                 >
                   <SelectTrigger className={errors.department_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={formData.branch_id ? t('Select Department') : t('Select Branch First')} />
+                    <SelectValue placeholder={formData.branch_id ? 'Select Department' : 'Select Branch First'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {filteredDepartments.map((department: any) => (
@@ -483,7 +478,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="designation_id" required>{t('Designation')}</Label>
+                <Label htmlFor="designation_id" required>{'Designation'}</Label>
                 <Select
                   value={formData.designation_id}
                   required
@@ -491,7 +486,7 @@ export default function EmployeeEdit() {
                   disabled={!formData.department_id}
                 >
                   <SelectTrigger className={errors.designation_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={formData.department_id ? t('Select Designation') : t('Select Department First')} />
+                    <SelectValue placeholder={formData.department_id ? 'Select Designation' : 'Select Department First'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {filteredDesignations.map((designation: any) => (
@@ -505,7 +500,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="date_of_joining" required>{t('Date of Joining')}</Label>
+                <Label htmlFor="date_of_joining" required>{'Date of Joining'}</Label>
                 <Input
                   id="date_of_joining"
                   type="date"
@@ -518,54 +513,54 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employment_type" required>{t('Employment Type')}</Label>
+                <Label htmlFor="employment_type" required>{'Employment Type'}</Label>
                 <Select
                   value={formData.employment_type}
                   required
                   onValueChange={(value) => handleChange('employment_type', value)}
                 >
                   <SelectTrigger className={errors.employment_type ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Employment Type')} />
+                    <SelectValue placeholder={'Select Employment Type'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="Full-time">{t('Full-time')}</SelectItem>
-                    <SelectItem value="Part-time">{t('Part-time')}</SelectItem>
-                    <SelectItem value="Contract">{t('Contract')}</SelectItem>
-                    <SelectItem value="Internship">{t('Internship')}</SelectItem>
-                    <SelectItem value="Temporary">{t('Temporary')}</SelectItem>
+                    <SelectItem value="Full-time">{'Full-time'}</SelectItem>
+                    <SelectItem value="Part-time">{'Part-time'}</SelectItem>
+                    <SelectItem value="Contract">{'Contract'}</SelectItem>
+                    <SelectItem value="Internship">{'Internship'}</SelectItem>
+                    <SelectItem value="Temporary">{'Temporary'}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.employment_type && <p className="text-red-500 text-xs">{errors.employment_type}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="employee_status" required>{t('Employee Status')}</Label>
+                <Label htmlFor="employee_status" required>{'Employee Status'}</Label>
                 <Select
                   value={formData.employee_status}
                   required
                   onValueChange={(value) => handleChange('employee_status', value)}
                 >
                   <SelectTrigger className={errors.employee_status ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Employee Status')} />
+                    <SelectValue placeholder={'Select Employee Status'} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active">{t('Active')}</SelectItem>
-                    <SelectItem value="inactive">{t('Inactive')}</SelectItem>
-                    <SelectItem value="probation">{t('Probation')}</SelectItem>
-                    <SelectItem value="terminated">{t('Terminated')}</SelectItem>
+                    <SelectItem value="active">{'Active'}</SelectItem>
+                    <SelectItem value="inactive">{'Inactive'}</SelectItem>
+                    <SelectItem value="probation">{'Probation'}</SelectItem>
+                    <SelectItem value="terminated">{'Terminated'}</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.employee_status && <p className="text-red-500 text-xs">{errors.employee_status}</p>}
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="shift_id">{t('Shift')}</Label>
+                <Label htmlFor="shift_id">{'Shift'}</Label>
                 <Select
                   value={formData.shift_id}
                   onValueChange={(value) => handleChange('shift_id', value)}
                 >
                   <SelectTrigger className={errors.shift_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Shift (Optional)')} />
+                    <SelectValue placeholder={'Select Shift (Optional)'} />
                   </SelectTrigger>
                   <SelectContent searchable={true}>
                     {shifts?.map((shift: any) => (
@@ -579,13 +574,13 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="attendance_policy_id">{t('Attendance Policy')}</Label>
+                <Label htmlFor="attendance_policy_id">{'Attendance Policy'}</Label>
                 <Select
                   value={formData.attendance_policy_id}
                   onValueChange={(value) => handleChange('attendance_policy_id', value)}
                 >
                   <SelectTrigger className={errors.attendance_policy_id ? 'border-red-500' : ''}>
-                    <SelectValue placeholder={t('Select Attendance Policy (Optional)')} />
+                    <SelectValue placeholder={'Select Attendance Policy (Optional)'} />
                   </SelectTrigger>
                   <SelectContent>
                     {attendancePolicies?.map((policy: any) => (
@@ -604,12 +599,12 @@ export default function EmployeeEdit() {
         {/* Contact Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Contact Information')}</CardTitle>
+            <CardTitle>{'Contact Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="address_line_1" required>{t('Address Line 1')}</Label>
+                <Label htmlFor="address_line_1" required>{'Address Line 1'}</Label>
                 <Input
                   id="address_line_1"
                   required
@@ -621,7 +616,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="address_line_2" required>{t('Address Line 2')}</Label>
+                <Label htmlFor="address_line_2" required>{'Address Line 2'}</Label>
                 <Input
                   id="address_line_2"
                   required
@@ -633,7 +628,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="city" required>{t('City')}</Label>
+                <Label htmlFor="city" required>{'City'}</Label>
                 <Input
                   id="city"
                   value={formData.city}
@@ -645,7 +640,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="state" required >{t('State/Province')}</Label>
+                <Label htmlFor="state" required >{'State/Province'}</Label>
                 <Input
                   id="state"
                   required
@@ -657,7 +652,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="country" required>{t('Country')}</Label>
+                <Label htmlFor="country" required>{'Country'}</Label>
                 <Input
                   id="country"
                   required
@@ -669,7 +664,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="postal_code" required>{t('Postal/Zip Code')}</Label>
+                <Label htmlFor="postal_code" required>{'Postal/Zip Code'}</Label>
                 <Input
                   id="postal_code"
                   required
@@ -682,10 +677,10 @@ export default function EmployeeEdit() {
             </div>
 
             <div className="mt-6">
-              <h3 className="text-lg font-medium mb-4">{t('Emergency Contact')}</h3>
+              <h3 className="text-lg font-medium mb-4">{'Emergency Contact'}</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_name" required>{t('Name')}</Label>
+                  <Label htmlFor="emergency_contact_name" required>{'Name'}</Label>
                   <Input
                     id="emergency_contact_name"
                     value={formData.emergency_contact_name}
@@ -697,7 +692,7 @@ export default function EmployeeEdit() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_relationship" required>{t('Relationship')}</Label>
+                  <Label htmlFor="emergency_contact_relationship" required>{'Relationship'}</Label>
                   <Input
                     id="emergency_contact_relationship"
                     required
@@ -709,7 +704,7 @@ export default function EmployeeEdit() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="emergency_contact_number" required>{t('Phone Number')}</Label>
+                  <Label htmlFor="emergency_contact_number" required>{'Phone Number'}</Label>
                   <Input
                     id="emergency_contact_number"
                     required
@@ -727,12 +722,12 @@ export default function EmployeeEdit() {
         {/* Banking Information Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Banking Information')}</CardTitle>
+            <CardTitle>{'Banking Information'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="bank_name" required>{t('Bank Name')}</Label>
+                <Label htmlFor="bank_name" required>{'Bank Name'}</Label>
                 <Input
                   id="bank_name"
                   value={formData.bank_name}
@@ -744,7 +739,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account_holder_name" required>{t('Account Holder Name')}</Label>
+                <Label htmlFor="account_holder_name" required>{'Account Holder Name'}</Label>
                 <Input
                   id="account_holder_name"
                   required
@@ -756,7 +751,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="account_number" >{t('Account Number')}</Label>
+                <Label htmlFor="account_number" >{'Account Number'}</Label>
                 <Input
                   id="account_number"
                   value={formData.account_number}
@@ -768,7 +763,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bank_identifier_code" required>{t('Bank Identifier Code (BIC/SWIFT)')}</Label>
+                <Label htmlFor="bank_identifier_code" required>{'Bank Identifier Code (BIC/SWIFT)'}</Label>
                 <Input
                   id="bank_identifier_code"
                   value={formData.bank_identifier_code}
@@ -780,7 +775,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="bank_branch" required>{t('Bank Branch')}</Label>
+                <Label htmlFor="bank_branch" required>{'Bank Branch'}</Label>
                 <Input
                   id="bank_branch"
                   value={formData.bank_branch}
@@ -792,7 +787,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="tax_payer_id" >{t('Tax Payer ID')}</Label>
+                <Label htmlFor="tax_payer_id" >{'Tax Payer ID'}</Label>
                 <Input
                   id="tax_payer_id"
                   value={formData.tax_payer_id}
@@ -803,7 +798,7 @@ export default function EmployeeEdit() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="salary" required>{t('Base Salary')}</Label>
+                <Label htmlFor="salary" required>{'Base Salary'}</Label>
                 <Input
                   id="salary"
                   required
@@ -822,13 +817,13 @@ export default function EmployeeEdit() {
         {/* Documents Card */}
         <Card>
           <CardHeader>
-            <CardTitle>{t('Documents')}</CardTitle>
+            <CardTitle>{'Documents'}</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {/* Existing Documents */}
             {existingDocuments.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-lg font-medium mb-4">{t('Existing Documents')}</h3>
+                <h3 className="text-lg font-medium mb-4">{'Existing Documents'}</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {existingDocuments.map((document: any) => (
                     <Card key={document.id} className="border">
@@ -838,7 +833,7 @@ export default function EmployeeEdit() {
                             <div>
                               <h4 className="font-medium">{document.document_type?.name}</h4>
                               <p className="text-sm text-muted-foreground">
-                                {document.expiry_date ? `${t('Expires')}: ${new Date(document.expiry_date).toLocaleDateString()}` : t('No expiry date')}
+                                {document.expiry_date ? `${'Expires'}: ${new Date(document.expiry_date).toLocaleDateString()}` : 'No expiry date'}
                               </p>
                               <div className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium mt-2 ${document.verification_status === 'verified'
                                 ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20'
@@ -847,10 +842,10 @@ export default function EmployeeEdit() {
                                   : 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
                                 }`}>
                                 {document.verification_status === 'verified'
-                                  ? t('Verified')
+                                  ? 'Verified'
                                   : document.verification_status === 'rejected'
-                                    ? t('Rejected')
-                                    : t('Pending')}
+                                    ? 'Rejected'
+                                    : 'Pending'}
                               </div>
                             </div>
                           </div>
@@ -880,11 +875,11 @@ export default function EmployeeEdit() {
 
             {/* New Documents */}
             <div>
-              <h3 className="text-lg font-medium mb-4">{t('Add New Documents')}</h3>
+              <h3 className="text-lg font-medium mb-4">{'Add New Documents'}</h3>
               {newDocuments.map((document: any, index: number) => (
                 <div key={index} className="border rounded-md p-4 space-y-4 mb-4">
                   <div className="flex justify-between items-center">
-                    <h3 className="text-lg font-medium">{t('Document')} #{index + 1}</h3>
+                    <h3 className="text-lg font-medium">{'Document'} #{index + 1}</h3>
                     <Button
                       type="button"
                       variant="ghost"
@@ -897,13 +892,13 @@ export default function EmployeeEdit() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor={`document_type_${index}`}>{t('Document Type')} <span className="text-red-500">*</span></Label>
+                      <Label htmlFor={`document_type_${index}`}>{'Document Type'} <span className="text-red-500">*</span></Label>
                       <Select
                         value={document.document_type_id}
                         onValueChange={(value) => handleNewDocumentChange(index, 'document_type_id', value)}
                       >
                         <SelectTrigger className={errors[`new_documents.${index}.document_type_id`] ? 'border-red-500' : ''}>
-                          <SelectValue placeholder={t('Select Document Type')} />
+                          <SelectValue placeholder={'Select Document Type'} />
                         </SelectTrigger>
                         <SelectContent>
                           {documentTypes.map((type: any) => (
@@ -919,7 +914,7 @@ export default function EmployeeEdit() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label>{t('File')} <span className="text-red-500">*</span></Label>
+                      <Label>{'File'} <span className="text-red-500">*</span></Label>
                       <div className="flex flex-col gap-3">
                         <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 h-20">
                           {document.file_path ? (
@@ -931,7 +926,7 @@ export default function EmployeeEdit() {
                           ) : (
                             <div className="text-muted-foreground flex flex-col items-center gap-1">
                               <div className="h-8 w-8 bg-muted flex items-center justify-center rounded border border-dashed">
-                                <span className="font-semibold text-xs text-muted-foreground">{t('Doc')}</span>
+                                <span className="font-semibold text-xs text-muted-foreground">{'Doc'}</span>
                               </div>
                               <span className="text-xs">No file selected</span>
                             </div>
@@ -951,7 +946,7 @@ export default function EmployeeEdit() {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor={`document_expiry_${index}`}>{t('Expiry Date')}</Label>
+                      <Label htmlFor={`document_expiry_${index}`}>{'Expiry Date'}</Label>
                       <Input
                         id={`document_expiry_${index}`}
                         type="date"
@@ -974,7 +969,7 @@ export default function EmployeeEdit() {
                 className="mt-4"
               >
                 <Plus className="h-4 w-4 mr-2" />
-                {t('Add Document')}
+                {'Add Document'}
               </Button>
             </div>
           </CardContent>
@@ -987,13 +982,13 @@ export default function EmployeeEdit() {
             variant="outline"
             onClick={() => router.get(route('hr.employees.index'))}
           >
-            {t('Cancel')}
+            {'Cancel'}
           </Button>
           <Button
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? t('Saving...') : t('Update Employee')}
+            {isSubmitting ? 'Saving...' : 'Update Employee'}
           </Button>
         </div>
       </form>

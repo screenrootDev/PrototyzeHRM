@@ -6,13 +6,13 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 
 export default function ChecklistItems() {
-  const { t } = useTranslation();
+  
   const { auth, checklistItems, checklists, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -94,17 +94,15 @@ export default function ChecklistItems() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating checklist item...'));
+      toast.loading('Creating checklist item...');
 
       router.post(route('hr.recruitment.checklist-items.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -116,17 +114,15 @@ export default function ChecklistItems() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating checklist item...'));
+      toast.loading('Updating checklist item...');
 
       router.put(route('hr.recruitment.checklist-items.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -141,17 +137,15 @@ export default function ChecklistItems() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting checklist item...'));
+    toast.loading('Deleting checklist item...');
 
     router.delete(route('hr.recruitment.checklist-items.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -166,16 +160,14 @@ export default function ChecklistItems() {
 
   const handleToggleStatus = (item: any) => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} checklist item...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} checklist item...`);
 
     router.put(route('hr.recruitment.checklist-items.toggle-status', item.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -205,7 +197,7 @@ export default function ChecklistItems() {
 
   if (hasPermission(permissions, 'create-checklist-items')) {
     pageActions.push({
-      label: t('Add Item'),
+      label: 'Add Item',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -213,9 +205,9 @@ export default function ChecklistItems() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.checklist-items.index') },
-    { title: t('Checklist Items') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.checklist-items.index') },
+    { title: 'Checklist Items' }
   ];
 
   const getCategoryColor = (category: string) => {
@@ -233,19 +225,19 @@ export default function ChecklistItems() {
   const columns = [
     {
       key: 'checklist.name',
-      label: t('Checklist'),
+      label: 'Checklist',
       render: (_, row) => row.checklist?.name || '-'
     },
     {
       key: 'task_name',
-      label: t('Task'),
+      label: 'Task',
       sortable: true,
       render: (value, row) => (
         <div>
           <div className="font-medium">{value}</div>
           {row.is_required && (
             <span className="inline-flex items-center rounded-md bg-red-50 px-1.5 py-0.5 text-xs font-medium text-red-700 ring-1 ring-inset ring-red-600/10">
-              {t('Required')}
+              {'Required'}
             </span>
           )}
         </div>
@@ -253,37 +245,37 @@ export default function ChecklistItems() {
     },
     {
       key: 'category',
-      label: t('Category'),
+      label: 'Category',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getCategoryColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     // {
     //   key: 'assigned_to_role',
-    //   label: t('Assigned To'),
+    //   label: 'Assigned To',
     //   render: (value) => value || '-'
     // },
     // {
     //   key: 'due_day',
-    //   label: t('Due Day'),
+    //   label: 'Due Day',
     //   sortable: true,
     //   render: (value) => (
     //     <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-    //       {t('Day')} {value}
+    //       {'Day'} {value}
     //     </span>
     //   )
     // },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-red-600/20'
           }`}>
-          {t(value === 'active' ? 'Active' : 'Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     }
@@ -291,28 +283,28 @@ export default function ChecklistItems() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-checklist-items'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-checklist-items'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-checklist-items'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -321,17 +313,17 @@ export default function ChecklistItems() {
   ];
 
   const categoryOptions = [
-    { value: '_empty_', label: t('All Categories'), disabled: true },
-    { value: 'Documentation', label: t('Documentation') },
-    { value: 'IT Setup', label: t('IT Setup') },
-    { value: 'Training', label: t('Training') },
-    { value: 'HR', label: t('HR') },
-    { value: 'Facilities', label: t('Facilities') },
-    { value: 'Other', label: t('Other') }
+    { value: '_empty_', label: 'All Categories', disabled: true },
+    { value: 'Documentation', label: 'Documentation' },
+    { value: 'IT Setup', label: 'IT Setup' },
+    { value: 'Training', label: 'Training' },
+    { value: 'HR', label: 'HR' },
+    { value: 'Facilities', label: 'Facilities' },
+    { value: 'Other', label: 'Other' }
   ];
 
   const checklistOptions = [
-    { value: '_empty_', label: t('All Checklists'), disabled: true },
+    { value: '_empty_', label: 'All Checklists', disabled: true },
     ...(checklists || []).map((checklist: any) => ({
       value: checklist.id.toString(),
       label: checklist.name
@@ -339,13 +331,13 @@ export default function ChecklistItems() {
   ];
 
   const requiredOptions = [
-    { value: '_empty_', label: t('All'), disabled: true },
-    { value: 'true', label: t('Required') },
-    { value: 'false', label: t('Optional') }
+    { value: '_empty_', label: 'All', disabled: true },
+    { value: 'true', label: 'Required' },
+    { value: 'false', label: 'Optional' }
   ];
 
   const checklistSelectOptions = [
-    { value: '_empty_', label: t('Select Checklist') },
+    { value: '_empty_', label: 'Select Checklist' },
     ...(checklists || []).map((checklist: any) => ({
       value: checklist.id.toString(),
       label: checklist.name
@@ -354,7 +346,7 @@ export default function ChecklistItems() {
 
   return (
     <PageTemplate
-      title={t("Checklist Items")}
+      title={"Checklist Items"}
       url="/hr/recruitment/checklist-items"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -368,7 +360,7 @@ export default function ChecklistItems() {
           filters={[
             {
               name: 'category',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: categoryFilter,
               onChange: setCategoryFilter,
@@ -376,7 +368,7 @@ export default function ChecklistItems() {
             },
             {
               name: 'checklist_id',
-              label: t('Checklist'),
+              label: 'Checklist',
               type: 'select',
               value: checklistFilter,
               onChange: setChecklistFilter,
@@ -385,7 +377,7 @@ export default function ChecklistItems() {
             },
             {
               name: 'is_required',
-              label: t('Required'),
+              label: 'Required',
               type: 'select',
               value: requiredFilter,
               onChange: setRequiredFilter,
@@ -436,7 +428,7 @@ export default function ChecklistItems() {
           to={checklistItems?.to || 0}
           total={checklistItems?.total || 0}
           links={checklistItems?.links}
-          entityName={t("checklist items")}
+          entityName={"checklist items"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -449,7 +441,7 @@ export default function ChecklistItems() {
           fields: [
             {
               name: 'checklist_id',
-              label: t('Checklist'),
+              label: 'Checklist',
               type: 'select',
               required: true,
               options: checklistSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -457,18 +449,18 @@ export default function ChecklistItems() {
             },
             {
               name: 'task_name',
-              label: t('Task Name'),
+              label: 'Task Name',
               type: 'text',
               required: true
             },
             {
               name: 'description',
-              label: t('Description'),
+              label: 'Description',
               type: 'textarea'
             },
             {
               name: 'category',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               required: true,
               options: categoryOptions.filter(opt => opt.value !== '_empty_'),
@@ -476,30 +468,30 @@ export default function ChecklistItems() {
             },
             // {
             //   name: 'assigned_to_role',
-            //   label: t('Assigned To Role'),
+            //   label: 'Assigned To Role',
             //   type: 'text'
             // },
             // {
             //   name: 'due_day',
-            //   label: t('Due Day'),
+            //   label: 'Due Day',
             //   type: 'number',
             //   required: true,
             //   min: 1,
-            //   helpText: t('Number of days from start date')
+            //   helpText: 'Number of days from start date'
             // },
             {
               name: 'is_required',
-              label: t('Required Task'),
+              label: 'Required Task',
               type: 'checkbox'
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: [
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ]
             }
           ],
@@ -508,10 +500,10 @@ export default function ChecklistItems() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Checklist Item')
+            ? 'Add New Checklist Item'
             : formMode === 'edit'
-              ? t('Edit Checklist Item')
-              : t('View Checklist Item')
+              ? 'Edit Checklist Item'
+              : 'View Checklist Item'
         }
         mode={formMode}
       />

@@ -8,14 +8,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export default function EmployeeGoals() {
-  const { t } = useTranslation();
+  
   const { auth, goals, employees, goalTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -106,18 +106,16 @@ export default function EmployeeGoals() {
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating employee goal...'));
+      toast.loading('Creating employee goal...');
 
       router.post(route('hr.performance.employee-goals.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Employee goal created successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Employee goal created successfully');
           }
         },
         onError: (errors) => {
@@ -130,18 +128,16 @@ export default function EmployeeGoals() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating employee goal...'));
+      toast.loading('Updating employee goal...');
 
       router.put(route('hr.performance.employee-goals.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          } else {
-            toast.success(t('Employee goal updated successfully'));
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          } else {
+            toast.success('Employee goal updated successfully');
           }
         },
         onError: (errors) => {
@@ -157,18 +153,16 @@ export default function EmployeeGoals() {
   };
 
   const handleProgressSubmit = (formData: any) => {
-    toast.loading(t('Updating goal progress...'));
+    toast.loading('Updating goal progress...');
 
     router.put(route('hr.performance.employee-goals.update-progress', currentItem.id), { progress: formData.progress }, {
       onSuccess: (page) => {
         setIsProgressModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Goal progress updated successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Goal progress updated successfully');
         }
       },
       onError: (errors) => {
@@ -183,18 +177,16 @@ export default function EmployeeGoals() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting employee goal...'));
+    toast.loading('Deleting employee goal...');
 
     router.delete(route('hr.performance.employee-goals.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        } else {
-          toast.success(t('Employee goal deleted successfully'));
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        } else {
+          toast.success('Employee goal deleted successfully');
         }
       },
       onError: (errors) => {
@@ -227,7 +219,7 @@ export default function EmployeeGoals() {
   // Add the "Add New Goal" button if user has permission
   if (hasPermission(permissions, 'create-employee-goals')) {
     pageActions.push({
-      label: t('Add Goal'),
+      label: 'Add Goal',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -235,46 +227,46 @@ export default function EmployeeGoals() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Performance'), href: route('hr.performance.indicator-categories.index') },
-    { title: t('Employee Goals') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Performance', href: route('hr.performance.indicator-categories.index') },
+    { title: 'Employee Goals' }
   ];
 
   // Define table columns
   const columns = [
     {
       key: 'title',
-      label: t('Title'),
+      label: 'Title',
       sortable: true
     },
     {
       key: 'employee',
-      label: t('Employee'),
+      label: 'Employee',
       render: (value: any, row: any) => {
         return row.employee?.name || '-';
       }
     },
     {
       key: 'goal_type.name',
-      label: t('Goal Type'),
+      label: 'Goal Type',
       render: (value: string, row: any) => row.goal_type?.name || '-'
     },
     {
       key: 'start_date',
-      label: t('Start Date'),
+      label: 'Start Date',
       sortable: true,
       render: (value: string) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'end_date',
-      label: t('End Date'),
+      label: 'End Date',
       sortable: true,
       render: (value: string) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     },
     {
       key: 'progress',
-      label: t('Progress'),
+      label: 'Progress',
       render: (value: number) => (
         <div className="w-full">
           <Progress value={value} className="h-2" />
@@ -284,7 +276,7 @@ export default function EmployeeGoals() {
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value: string) => {
         let statusClass = '';
         let statusText = '';
@@ -292,15 +284,15 @@ export default function EmployeeGoals() {
         switch (value) {
           case 'not_started':
             statusClass = 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20';
-            statusText = t('Not Started');
+            statusText = 'Not Started';
             break;
           case 'in_progress':
             statusClass = 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20';
-            statusText = t('In Progress');
+            statusText = 'In Progress';
             break;
           case 'completed':
             statusClass = 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20';
-            statusText = t('Completed');
+            statusText = 'Completed';
             break;
           default:
             statusClass = 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20';
@@ -319,28 +311,28 @@ export default function EmployeeGoals() {
   // Define table actions
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-employee-goals'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-employee-goals'
     },
     {
-      label: t('Update Progress'),
+      label: 'Update Progress',
       icon: 'BarChart',
       action: 'update-progress',
       className: 'text-green-500',
       requiredPermission: 'edit-employee-goals'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -350,15 +342,15 @@ export default function EmployeeGoals() {
 
   // Prepare filter options
   const statusOptions = [
-    { value: 'all', label: t('All Statuses') },
-    { value: 'not_started', label: t('Not Started') },
-    { value: 'in_progress', label: t('In Progress') },
-    { value: 'completed', label: t('Completed') }
+    { value: 'all', label: 'All Statuses' },
+    { value: 'not_started', label: 'Not Started' },
+    { value: 'in_progress', label: 'In Progress' },
+    { value: 'completed', label: 'Completed' }
   ];
 
   // Prepare employee options
   const employeeOptions = [
-    { value: '', label: t('All Employees') },
+    { value: '', label: 'All Employees' },
     ...(employees || []).map((employee: any) => ({
       value: employee.id.toString(),
       label: `${employee.name} (${employee.employee_id})`
@@ -367,7 +359,7 @@ export default function EmployeeGoals() {
 
   // Prepare goal type options
   const goalTypeOptions = [
-    { value: '', label: t('All Goal Types') },
+    { value: '', label: 'All Goal Types' },
     ...(goalTypes || []).map((goalType: any) => ({
       value: goalType.id.toString(),
       label: goalType.name
@@ -376,7 +368,7 @@ export default function EmployeeGoals() {
 
   return (
     <PageTemplate
-      title={t("Employee Goals")}
+      title={"Employee Goals"}
       url="/hr/performance/employee-goals"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -391,7 +383,7 @@ export default function EmployeeGoals() {
           filters={[
             ...(hasPermission(permissions, 'manage-any-employee-goals') ? [{
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               value: selectedEmployee,
               onChange: setSelectedEmployee,
@@ -401,7 +393,7 @@ export default function EmployeeGoals() {
 
             {
               name: 'goal_type_id',
-              label: t('Goal Type'),
+              label: 'Goal Type',
               type: 'select',
               value: selectedGoalType,
               onChange: setSelectedGoalType,
@@ -410,7 +402,7 @@ export default function EmployeeGoals() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -463,7 +455,7 @@ export default function EmployeeGoals() {
           to={goals?.to || 0}
           total={goals?.total || 0}
           links={goals?.links}
-          entityName={t("employee goals")}
+          entityName={"employee goals"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -477,12 +469,12 @@ export default function EmployeeGoals() {
           fields: [
             formMode === 'view' ? {
               name: 'employee_name',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'text',
               readOnly: true
             } : {
               name: 'employee_id',
-              label: t('Employee'),
+              label: 'Employee',
               type: 'select',
               required: true,
               searchable: true,
@@ -493,7 +485,7 @@ export default function EmployeeGoals() {
             },
             {
               name: 'goal_type_id',
-              label: t('Goal Type'),
+              label: 'Goal Type',
               type: 'select',
               searchable: true,
               required: true,
@@ -502,14 +494,14 @@ export default function EmployeeGoals() {
                 label: goalType.name
               }))
             },
-            { name: 'title', label: t('Goal Title'), type: 'text', required: true },
-            { name: 'description', label: t('Description'), type: 'textarea' },
-            { name: 'start_date', label: t('Start Date'), type: 'date', required: true },
-            { name: 'end_date', label: t('End Date'), type: 'date', required: true },
-            { name: 'target', label: t('Target'), type: 'text', placeholder: 'e.g., Complete 5 projects, Achieve 95% accuracy, etc.' },
+            { name: 'title', label: 'Goal Title', type: 'text', required: true },
+            { name: 'description', label: 'Description', type: 'textarea' },
+            { name: 'start_date', label: 'Start Date', type: 'date', required: true },
+            { name: 'end_date', label: 'End Date', type: 'date', required: true },
+            { name: 'target', label: 'Target', type: 'text', placeholder: 'e.g., Complete 5 projects, Achieve 95% accuracy, etc.' },
             {
               name: 'progress',
-              label: t('Progress (%)'),
+              label: 'Progress (%)',
               type: 'number',
               min: 0,
               max: 100,
@@ -517,12 +509,12 @@ export default function EmployeeGoals() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               options: [
-                { value: 'not_started', label: t('Not Started') },
-                { value: 'in_progress', label: t('In Progress') },
-                { value: 'completed', label: t('Completed') }
+                { value: 'not_started', label: 'Not Started' },
+                { value: 'in_progress', label: 'In Progress' },
+                { value: 'completed', label: 'Completed' }
               ],
               defaultValue: 'not_started'
             }
@@ -537,10 +529,10 @@ export default function EmployeeGoals() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Employee Goal')
+            ? 'Add New Employee Goal'
             : formMode === 'edit'
-              ? t('Edit Employee Goal')
-              : t('View Employee Goal')
+              ? 'Edit Employee Goal'
+              : 'View Employee Goal'
         }
         mode={formMode}
       />
@@ -554,7 +546,7 @@ export default function EmployeeGoals() {
           fields: [
             {
               name: 'progress',
-              label: t('Progress (%)'),
+              label: 'Progress (%)',
               type: 'number',
               min: 0,
               max: 100,
@@ -565,7 +557,7 @@ export default function EmployeeGoals() {
           modalSize: 'sm'
         }}
         initialData={{ progress: progressValue }}
-        title={t('Update Goal Progress')}
+        title={'Update Goal Progress'}
         mode="edit"
         customContent={
           <div className="mb-4 text-center">

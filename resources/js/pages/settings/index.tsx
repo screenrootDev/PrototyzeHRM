@@ -26,12 +26,12 @@ import WorkingDaysSettings from './components/working-days-settings';
 import ZektoSettings from './components/zekto-settings';
 import IpRestrictionSettings from './components/ip-restriction-settings';
 import { Toaster } from '@/components/ui/toaster';
-import { useTranslation } from 'react-i18next';
+
 import { hasPermission } from '@/utils/permissions';
 import { useLayout } from '@/contexts/LayoutContext';
 
 export default function Settings() {
-  const { t } = useTranslation();
+  
   const { position } = useLayout();
 
   const { systemSettings = {}, cacheSize = '0.00', timezones = {}, dateFormats = {}, timeFormats = {}, paymentSettings = {}, webhooks = [], auth = {}, globalSettings = {}, zektoSettings = {} } = usePage().props as any;
@@ -41,91 +41,91 @@ export default function Settings() {
   // Define all possible sidebar navigation items
   const allSidebarNavItems: (NavItem & { permission?: string })[] = [
     {
-      title: t('System Settings'),
+      title: 'System Settings',
       href: '#system-settings',
       icon: <SettingsIcon className="h-4 w-4 mr-2" />,
       permission: 'manage-system-settings'
     },
     {
-      title: t('Brand Settings'),
+      title: 'Brand Settings',
       href: '#brand-settings',
       icon: <Palette className="h-4 w-4 mr-2" />,
       permission: 'manage-brand-settings'
     },
     {
-      title: t('Currency Settings'),
+      title: 'Currency Settings',
       href: '#currency-settings',
       icon: <DollarSign className="h-4 w-4 mr-2" />,
       permission: 'manage-currency-settings'
     },
     {
-      title: t('Email Settings'),
+      title: 'Email Settings',
       href: '#email-settings',
       icon: <Mail className="h-4 w-4 mr-2" />,
       permission: 'manage-email-settings'
     },
     {
-      title: t('Working Days Settings'),
+      title: 'Working Days Settings',
       href: '#working-days-settings',
       icon: <Clock className="h-4 w-4 mr-2" />,
       permission: 'manage-working-days-settings'
     },
     {
-      title: t('IP Restriction Settings'),
+      title: 'IP Restriction Settings',
       href: '#ip-restriction-settings',
       icon: <Network className="h-4 w-4 mr-2" />,
       permission: 'manage-ip-restriction-settings'
     },
     {
-      title: t('Zekto Settings'),
+      title: 'Zekto Settings',
       href: '#zekto-settings',
       icon: <Fingerprint className="h-4 w-4 mr-2" />,
       permission: 'manage-biomatric-attedance-settings'
     },
     {
-      title: t('Payment Settings'),
+      title: 'Payment Settings',
       href: '#payment-settings',
       icon: <CreditCard className="h-4 w-4 mr-2" />,
       permission: 'manage-payment-settings'
     },
     {
-      title: t('Storage Settings'),
+      title: 'Storage Settings',
       href: '#storage-settings',
       icon: <HardDrive className="h-4 w-4 mr-2" />,
       permission: 'manage-storage-settings'
     },
     {
-      title: t('ReCaptcha Settings'),
+      title: 'ReCaptcha Settings',
       href: '#recaptcha-settings',
       icon: <Shield className="h-4 w-4 mr-2" />,
       permission: 'manage-recaptcha-settings'
     },
     {
-      title: t('Chat GPT Settings'),
+      title: 'Chat GPT Settings',
       href: '#chatgpt-settings',
       icon: <Bot className="h-4 w-4 mr-2" />,
       permission: 'manage-chatgpt-settings'
     },
     {
-      title: t('Cookie Settings'),
+      title: 'Cookie Settings',
       href: '#cookie-settings',
       icon: <Cookie className="h-4 w-4 mr-2" />,
       permission: 'manage-cookie-settings'
     },
     {
-      title: t('SEO Settings'),
+      title: 'SEO Settings',
       href: '#seo-settings',
       icon: <Search className="h-4 w-4 mr-2" />,
       permission: 'manage-seo-settings'
     },
     {
-      title: t('Cache Settings'),
+      title: 'Cache Settings',
       href: '#cache-settings',
       icon: <HardDrive className="h-4 w-4 mr-2" />,
       permission: 'manage-cache-settings'
     },
     // {
-    //   title: t('Google Calendar Settings'),
+    //   title: 'Google Calendar Settings',
     //   href: '#google-calendar-settings',
     //   icon: <Calendar className="h-4 w-4 mr-2" />,
     //   permission: 'settings'
@@ -134,7 +134,7 @@ export default function Settings() {
 
   // if (auth.user?.type !== 'superadmin') {
   //   allSidebarNavItems.push({
-  //     title: t('Webhook Settings'),
+  //     title: 'Webhook Settings',
   //     href: '#webhook-settings',
   //     icon: <Webhook className="h-4 w-4 mr-2" />,
   //     permission: 'manage-webhook-settings'
@@ -250,11 +250,11 @@ export default function Settings() {
 
   return (
     <PageTemplate
-      title={t('Settings')}
+      title={'Settings'}
       url="/settings"
       breadcrumbs={[
-        { title: t('Dashboard'), href: route('dashboard') },
-        { title: t('Settings') }
+        { title: 'Dashboard', href: route('dashboard') },
+        { title: 'Settings' }
       ]}
     >
       <div className={`flex flex-col md:flex-row gap-8`} dir={position === 'right' ? 'rtl' : 'ltr'}>

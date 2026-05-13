@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, CheckSquare, User, Calendar, AlertTriangle, Clock } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function ActionItems() {
-  const { t } = useTranslation();
+  
   const { auth, actionItems, meetings, employees, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -99,17 +99,15 @@ export default function ActionItems() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating action item...'));
+      toast.loading('Creating action item...');
       
       router.post(route('meetings.action-items.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -121,17 +119,15 @@ export default function ActionItems() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating action item...'));
+      toast.loading('Updating action item...');
       
       router.put(route('meetings.action-items.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -146,17 +142,15 @@ export default function ActionItems() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting action item...'));
+    toast.loading('Deleting action item...');
     
     router.delete(route('meetings.action-items.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -170,7 +164,7 @@ export default function ActionItems() {
   };
   
   const handleProgressUpdate = (formData: any) => {
-    toast.loading(t('Updating progress...'));
+    toast.loading('Updating progress...');
     
     router.put(route('meetings.action-items.update-progress', currentItem.id), {
       progress_percentage: formData.progress_percentage,
@@ -180,10 +174,8 @@ export default function ActionItems() {
         setIsProgressModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -214,7 +206,7 @@ export default function ActionItems() {
   
   if (hasPermission(permissions, 'create-action-items')) {
     pageActions.push({
-      label: t('Add Action Item'),
+      label: 'Add Action Item',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -222,9 +214,9 @@ export default function ActionItems() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Meetings'), href: route('meetings.action-items.index') },
-    { title: t('Action Items') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Meetings', href: route('meetings.action-items.index') },
+    { title: 'Action Items' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -259,7 +251,7 @@ export default function ActionItems() {
   const columns = [
     { 
       key: 'title', 
-      label: t('Action Item'), 
+      label: 'Action Item', 
       sortable: true,
       render: (value, row) => (
         <div>
@@ -270,7 +262,7 @@ export default function ActionItems() {
     },
     { 
       key: 'assignee.name', 
-      label: t('Assigned To'),
+      label: 'Assigned To',
       render: (_, row) => (
         <div className="flex items-center gap-1">
           <User className="h-4 w-4 text-gray-500" />
@@ -280,7 +272,7 @@ export default function ActionItems() {
     },
     { 
       key: 'due_date', 
-      label: t('Due Date'),
+      label: 'Due Date',
       sortable: true,
       render: (value, row) => {
         const daysRemaining = getDaysRemaining(value, row.status);
@@ -303,17 +295,17 @@ export default function ActionItems() {
     },
     { 
       key: 'priority', 
-      label: t('Priority'),
+      label: 'Priority',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getPriorityColor(value)}`}>
           {value === 'Critical' && <AlertTriangle className="h-3 w-3 mr-1" />}
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'progress_percentage', 
-      label: t('Progress'),
+      label: 'Progress',
       render: (value, row) => (
         <div className="w-full">
           <div className="flex items-center justify-between mb-1">
@@ -321,7 +313,7 @@ export default function ActionItems() {
             <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(row.status)}`}>
               {row.status === 'Completed' && <CheckSquare className="h-3 w-3 mr-1" />}
               {row.status === 'Overdue' && <Clock className="h-3 w-3 mr-1" />}
-              {t(row.status)}
+              {row.status}
             </span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
@@ -341,28 +333,28 @@ export default function ActionItems() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-action-items'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-action-items'
     },
     { 
-      label: t('Update Progress'), 
+      label: 'Update Progress', 
       icon: 'TrendingUp', 
       action: 'update-progress', 
       className: 'text-green-500',
       requiredPermission: 'edit-action-items'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -371,23 +363,23 @@ export default function ActionItems() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true},
-    { value: 'Not Started', label: t('Not Started') },
-    { value: 'In Progress', label: t('In Progress') },
-    { value: 'Completed', label: t('Completed') },
-    { value: 'Overdue', label: t('Overdue') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true},
+    { value: 'Not Started', label: 'Not Started' },
+    { value: 'In Progress', label: 'In Progress' },
+    { value: 'Completed', label: 'Completed' },
+    { value: 'Overdue', label: 'Overdue' }
   ];
 
   const priorityOptions = [
-    { value: '_empty_', label: t('All Priorities') , disabled: true },
-    { value: 'Low', label: t('Low') },
-    { value: 'Medium', label: t('Medium') },
-    { value: 'High', label: t('High') },
-    { value: 'Critical', label: t('Critical') }
+    { value: '_empty_', label: 'All Priorities' , disabled: true },
+    { value: 'Low', label: 'Low' },
+    { value: 'Medium', label: 'Medium' },
+    { value: 'High', label: 'High' },
+    { value: 'Critical', label: 'Critical' }
   ];
 
   const assigneeOptions = [
-    { value: '_empty_', label: t('All Assignees')  , disabled: true},
+    { value: '_empty_', label: 'All Assignees'  , disabled: true},
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -395,7 +387,7 @@ export default function ActionItems() {
   ];
 
   const meetingOptions = [
-    { value: '_empty_', label: t('All Meetings') , disabled: true},
+    { value: '_empty_', label: 'All Meetings' , disabled: true},
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -403,7 +395,7 @@ export default function ActionItems() {
   ];
 
   const meetingSelectOptions = [
-    { value: '_empty_', label: t('Select Meeting') },
+    { value: '_empty_', label: 'Select Meeting' },
     ...(meetings || []).map((meeting: any) => ({
       value: meeting.id.toString(),
       label: `${meeting.title} - ${format(new Date(meeting.meeting_date), 'MMM dd, yyyy')}`
@@ -411,7 +403,7 @@ export default function ActionItems() {
   ];
 
   const employeeSelectOptions = [
-    { value: '_empty_', label: t('Select Assignee') },
+    { value: '_empty_', label: 'Select Assignee' },
     ...(employees || []).map((emp: any) => ({
       value: emp.id.toString(),
       label: emp.name
@@ -420,7 +412,7 @@ export default function ActionItems() {
 
   return (
     <PageTemplate 
-      title={t("Action Items")} 
+      title={"Action Items"} 
       url="/meetings/action-items"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -434,7 +426,7 @@ export default function ActionItems() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -442,7 +434,7 @@ export default function ActionItems() {
             },
             {
               name: 'priority',
-              label: t('Priority'),
+              label: 'Priority',
               type: 'select',
               value: priorityFilter,
               onChange: setPriorityFilter,
@@ -450,7 +442,7 @@ export default function ActionItems() {
             },
             {
               name: 'assigned_to',
-              label: t('Assignee'),
+              label: 'Assignee',
               type: 'select',
               value: assigneeFilter,
               onChange: setAssigneeFilter,
@@ -459,7 +451,7 @@ export default function ActionItems() {
             },
             {
               name: 'meeting_id',
-              label: t('Meeting'),
+              label: 'Meeting',
               type: 'select',
               value: meetingFilter,
               onChange: setMeetingFilter,
@@ -512,7 +504,7 @@ export default function ActionItems() {
           to={actionItems?.to || 0}
           total={actionItems?.total || 0}
           links={actionItems?.links}
-          entityName={t("action items")}
+          entityName={"action items"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -525,7 +517,7 @@ export default function ActionItems() {
           fields: [
             { 
               name: 'meeting_id', 
-              label: t('Meeting'), 
+              label: 'Meeting', 
               type: 'select', 
               required: true,
               options: meetingSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -533,19 +525,19 @@ export default function ActionItems() {
             },
             { 
               name: 'title', 
-              label: t('Action Item Title'), 
+              label: 'Action Item Title', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea',
               rows: 3
             },
             { 
               name: 'assigned_to', 
-              label: t('Assign To'), 
+              label: 'Assign To', 
               type: 'select', 
               required: true,
               options: employeeSelectOptions.filter(opt => opt.value !== '_empty_'),
@@ -553,28 +545,28 @@ export default function ActionItems() {
             },
             { 
               name: 'due_date', 
-              label: t('Due Date'), 
+              label: 'Due Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'priority', 
-              label: t('Priority'), 
+              label: 'Priority', 
               type: 'select', 
               required: true,
               options: priorityOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'progress_percentage', 
-              label: t('Progress (%)'), 
+              label: 'Progress (%)', 
               type: 'number',
               min: 0,
               max: 100,
-              helpText: t('Current completion percentage')
+              helpText: 'Current completion percentage'
             },
             { 
               name: 'notes', 
-              label: t('Notes'), 
+              label: 'Notes', 
               type: 'textarea',
               rows: 2
             }
@@ -587,10 +579,10 @@ export default function ActionItems() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Action Item')
+            ? 'Add Action Item'
             : formMode === 'edit'
-              ? t('Edit Action Item')
-              : t('View Action Item')
+              ? 'Edit Action Item'
+              : 'View Action Item'
         }
         mode={formMode}
       />
@@ -611,19 +603,19 @@ export default function ActionItems() {
           fields: [
             {
               name: 'progress_percentage',
-              label: t('Progress Percentage'),
+              label: 'Progress Percentage',
               type: 'number',
               required: true,
               min: 0,
               max: 100,
-              helpText: t('Enter completion percentage (0-100)')
+              helpText: 'Enter completion percentage (0-100)'
             },
             {
               name: 'notes',
-              label: t('Progress Notes'),
+              label: 'Progress Notes',
               type: 'textarea',
               rows: 3,
-              helpText: t('Optional notes about the progress')
+              helpText: 'Optional notes about the progress'
             }
           ],
           modalSize: 'md'
@@ -632,9 +624,9 @@ export default function ActionItems() {
           progress_percentage: currentItem?.progress_percentage || 0,
           notes: currentItem?.notes || ''
         }}
-        title={t('Update Progress')}
+        title={'Update Progress'}
         mode="edit"
-        submitButtonText={t('Update Progress')}
+        submitButtonText={'Update Progress'}
       />
     </PageTemplate>
   );

@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function JobRequisitions() {
-  const { t } = useTranslation();
+  
   const { auth, jobRequisitions, jobCategories, departments, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -82,17 +82,13 @@ export default function JobRequisitions() {
         router.put(route('hr.recruitment.job-requisitions.update-status', item.id), { status: 'Approved' }, {
           onSuccess: (page) => {
             if (page.props.flash.success) {
-              toast.success(t(page.props.flash.success));
-            } else if (page.props.flash.error) {
-              toast.error(t(page.props.flash.error));
-            }
+              toast.success(page.props.flash.success);            } else if (page.props.flash.error) {
+              toast.error(page.props.flash.error);            }
           },
           onError: (errors) => {
             if (typeof errors === 'string') {
-              toast.error(t(errors));
-            } else {
-              toast.error(t('Failed to approve job requisition: {{errors}}', { errors: Object.values(errors).join(', ') }));
-            }
+              toast.error(errors);            } else {
+              toast.error(`Failed to approve job requisition: ${Object.values(errors).join(', ')}`);            }
           }
         });
         break;
@@ -111,17 +107,13 @@ export default function JobRequisitions() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create job requisition: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create job requisition: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
@@ -129,17 +121,13 @@ export default function JobRequisitions() {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update job requisition: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update job requisition: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -150,17 +138,13 @@ export default function JobRequisitions() {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete job requisition: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete job requisition: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -181,7 +165,7 @@ export default function JobRequisitions() {
   
   if (hasPermission(permissions, 'create-job-requisitions')) {
     pageActions.push({
-      label: t('Add Job Requisition'),
+      label: 'Add Job Requisition',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -189,9 +173,9 @@ export default function JobRequisitions() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.job-requisitions.index') },
-    { title: t('Job Requisitions') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.job-requisitions.index') },
+    { title: 'Job Requisitions' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -217,52 +201,52 @@ export default function JobRequisitions() {
   const columns = [
     { 
       key: 'requisition_code', 
-      label: t('Code'), 
+      label: 'Code', 
       sortable: true,
       render: (value) => <div className="font-mono text-sm">{value}</div>
     },
     { 
       key: 'title', 
-      label: t('Title'), 
+      label: 'Title', 
       sortable: true,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'job_category.name', 
-      label: t('Category'),
+      label: 'Category',
       render: (_, row) => row.job_category?.name || '-'
     },
     { 
       key: 'department.name', 
-      label: t('Department'),
+      label: 'Department',
       render: (_, row) => row.department ? `${row.department.name} (${row.department.branch?.name || 'No Branch'})` : '-'
     },
     { 
       key: 'positions_count', 
-      label: t('Positions'),
+      label: 'Positions',
       render: (value) => value || 1
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getStatusColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'priority', 
-      label: t('Priority'),
+      label: 'Priority',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${getPriorityColor(value)}`}>
-          {t(value)}
+          {value}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) =>window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -270,21 +254,21 @@ export default function JobRequisitions() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-job-requisitions'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-job-requisitions'
     },
     { 
-      label: t('Approve'), 
+      label: 'Approve', 
       icon: 'CheckCircle', 
       action: 'approve', 
       className: 'text-green-500',
@@ -292,7 +276,7 @@ export default function JobRequisitions() {
       condition: (item) => item.status !== 'Approved'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -301,23 +285,23 @@ export default function JobRequisitions() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') },
-    { value: 'Draft', label: t('Draft') },
-    { value: 'Pending Approval', label: t('Pending Approval') },
-    { value: 'Approved', label: t('Approved') },
-    { value: 'On Hold', label: t('On Hold') },
-    { value: 'Closed', label: t('Closed') }
+    { value: '_empty_', label: 'All Statuses' },
+    { value: 'Draft', label: 'Draft' },
+    { value: 'Pending Approval', label: 'Pending Approval' },
+    { value: 'Approved', label: 'Approved' },
+    { value: 'On Hold', label: 'On Hold' },
+    { value: 'Closed', label: 'Closed' }
   ];
 
   const priorityOptions = [
-    { value: '_empty_', label: t('All Priorities') },
-    { value: 'Low', label: t('Low') },
-    { value: 'Medium', label: t('Medium') },
-    { value: 'High', label: t('High') }
+    { value: '_empty_', label: 'All Priorities' },
+    { value: 'Low', label: 'Low' },
+    { value: 'Medium', label: 'Medium' },
+    { value: 'High', label: 'High' }
   ];
 
   const jobCategoryOptions = [
-    { value: '_empty_', label: t('Select Category') },
+    { value: '_empty_', label: 'Select Category' },
     ...(jobCategories || []).map((cat: any) => ({
       value: cat.id.toString(),
       label: cat.name
@@ -325,7 +309,7 @@ export default function JobRequisitions() {
   ];
 
   const departmentOptions = [
-    { value: '_empty_', label: t('Select Department') },
+    { value: '_empty_', label: 'Select Department' },
     ...(departments || []).map((dept: any) => ({
       value: dept.id.toString(),
       label: `${dept.name} (${dept.branch?.name || 'No Branch'})`
@@ -334,7 +318,7 @@ export default function JobRequisitions() {
 
   return (
     <PageTemplate 
-      title={t("Job Requisitions")} 
+      title={"Job Requisitions"} 
       url="/hr/recruitment/job-requisitions"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -348,7 +332,7 @@ export default function JobRequisitions() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -356,7 +340,7 @@ export default function JobRequisitions() {
             },
             {
               name: 'priority',
-              label: t('Priority'),
+              label: 'Priority',
               type: 'select',
               value: priorityFilter,
               onChange: setPriorityFilter,
@@ -406,7 +390,7 @@ export default function JobRequisitions() {
           to={jobRequisitions?.to || 0}
           total={jobRequisitions?.total || 0}
           links={jobRequisitions?.links}
-          entityName={t("job requisitions")}
+          entityName={"job requisitions"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -419,13 +403,13 @@ export default function JobRequisitions() {
           fields: [
             { 
               name: 'title', 
-              label: t('Title'), 
+              label: 'Title', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'job_category_id', 
-              label: t('Job Category'), 
+              label: 'Job Category', 
               type: 'select', 
               required: true,
               options: jobCategoryOptions.filter(opt => opt.value !== '_empty_'),
@@ -433,62 +417,62 @@ export default function JobRequisitions() {
             },
             { 
               name: 'department_id', 
-              label: t('Department'), 
+              label: 'Department', 
               type: 'select',
               options: departmentOptions.filter(opt => opt.value !== '_empty_'),
               searchable : true,
             },
             { 
               name: 'positions_count', 
-              label: t('Positions'), 
+              label: 'Positions', 
               type: 'number', 
               required: true,
               min: 1
             },
             { 
               name: 'budget_min', 
-              label: t('Min Budget'), 
+              label: 'Min Budget', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'budget_max', 
-              label: t('Max Budget'), 
+              label: 'Max Budget', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'priority', 
-              label: t('Priority'), 
+              label: 'Priority', 
               type: 'select', 
               required: true,
               options: priorityOptions.filter(opt => opt.value !== '_empty_')
             },
             { 
               name: 'skills_required', 
-              label: t('Skills Required'), 
+              label: 'Skills Required', 
               type: 'textarea' 
             },
             { 
               name: 'education_required', 
-              label: t('Education Required'), 
+              label: 'Education Required', 
               type: 'textarea' 
             },
             { 
               name: 'experience_required', 
-              label: t('Experience Required'), 
+              label: 'Experience Required', 
               type: 'textarea' 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'responsibilities', 
-              label: t('Responsibilities'), 
+              label: 'Responsibilities', 
               type: 'textarea' 
             }
           ],
@@ -497,10 +481,10 @@ export default function JobRequisitions() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Job Requisition')
+            ? 'Add New Job Requisition'
             : formMode === 'edit'
-              ? t('Edit Job Requisition')
-              : t('View Job Requisition')
+              ? 'Edit Job Requisition'
+              : 'View Job Requisition'
         }
         mode={formMode}
       />

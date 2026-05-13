@@ -1,7 +1,7 @@
 // components/CrudDeleteModal.tsx
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { useTranslation } from 'react-i18next';
+
 
 interface CrudDeleteModalProps {
   isOpen: boolean;
@@ -18,22 +18,22 @@ export function CrudDeleteModal({
   itemName,
   entityName
 }: CrudDeleteModalProps) {
-  const { t } = useTranslation();
+  
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{t("Delete")} {entityName}</DialogTitle>
+          <DialogTitle>{"Delete"} {entityName}</DialogTitle>
           <DialogDescription>
-            {t("Are you sure you want to delete")} {itemName || `this ${entityName}`}? {t("This action cannot be undone.")}
+            {"Are you sure you want to delete"} {itemName || `this ${entityName}`}? {"This action cannot be undone."}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="sm:justify-end">
           <Button type="button" variant="outline" onClick={onClose}>
-            {t("Cancel")}
+            {"Cancel"}
           </Button>
           <Button type="button" variant="destructive" onClick={onConfirm}>
-            {t("Delete")}
+            {"Delete"}
           </Button>
         </DialogFooter>
       </DialogContent>

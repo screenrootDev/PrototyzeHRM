@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, BarChart, Layout } from 'lucide-react';
@@ -18,7 +18,7 @@ import { RichTextEditor } from '@/components/ui/rich-text-editor';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function Announcements() {
-  const { t } = useTranslation();
+  
   const { auth, announcements, departments, branches, categories, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -142,72 +142,60 @@ export default function Announcements() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Creating announcement...'));
+      toast.loading('Creating announcement...');
 
       router.post(route('hr.announcements.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create announcement: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create announcement: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating announcement...'));
+      toast.loading('Updating announcement...');
       
       router.put(route('hr.announcements.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update announcement: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update announcement: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting announcement...'));
+    toast.loading('Deleting announcement...');
     
     router.delete(route('hr.announcements.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete announcement: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete announcement: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -235,7 +223,7 @@ export default function Announcements() {
   
   // Add the "Dashboard" button
   pageActions.push({
-    label: t('Dashboard View'),
+    label: 'Dashboard View',
     icon: <Layout className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleViewDashboard
@@ -244,7 +232,7 @@ export default function Announcements() {
   // Add the "Add New Announcement" button if user has permission
   if (hasPermission(permissions, 'create-announcements')) {
     pageActions.push({
-      label: t('Add Announcement'),
+      label: 'Add Announcement',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -252,16 +240,16 @@ export default function Announcements() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.announcements.index') },
-    { title: t('Announcements') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.announcements.index') },
+    { title: 'Announcements' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'title', 
-      label: t('Title'),
+      label: 'Title',
       sortable: true,
       render: (value, row) => {
         const badges = [];
@@ -269,7 +257,7 @@ export default function Announcements() {
         if (row.is_featured) {
           badges.push(
             <Badge key="featured" variant="secondary" className="bg-purple-50 text-purple-700 hover:bg-purple-50 ml-2">
-              {t('Featured')}
+              {'Featured'}
             </Badge>
           );
         }
@@ -277,7 +265,7 @@ export default function Announcements() {
         if (row.is_high_priority) {
           badges.push(
             <Badge key="priority" variant="secondary" className="bg-red-50 text-red-700 hover:bg-red-50 ml-2">
-              {t('High Priority')}
+              {'High Priority'}
             </Badge>
           );
         }
@@ -292,7 +280,7 @@ export default function Announcements() {
     },
     { 
       key: 'category', 
-      label: t('Category'),
+      label: 'Category',
       render: (value) => {
         const categoryClasses = {
           'company news': 'bg-blue-50 text-blue-700 ring-blue-600/20',
@@ -313,7 +301,7 @@ export default function Announcements() {
     },
     { 
       key: 'date_range', 
-      label: t('Date Range'),
+      label: 'Date Range',
       sortable: false,
       render: (_, row) => {
         
@@ -329,13 +317,13 @@ export default function Announcements() {
         let statusClass;
         
         if (start > today) {
-          status = t('Upcoming');
+          status = 'Upcoming';
           statusClass = 'bg-blue-50 text-blue-700 ring-blue-600/20';
         } else if (end && end < today) {
-          status = t('Expired');
+          status = 'Expired';
           statusClass = 'bg-gray-50 text-gray-700 ring-gray-600/20';
         } else {
-          status = t('Active');
+          status = 'Active';
           statusClass = 'bg-green-50 text-green-700 ring-green-600/20';
         }
         
@@ -351,12 +339,12 @@ export default function Announcements() {
     },
     { 
       key: 'audience', 
-      label: t('Audience'),
+      label: 'Audience',
       render: (_, row) => {
         if (row.is_company_wide) {
           return (
             <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-              {t('Company-wide')}
+              {'Company-wide'}
             </Badge>
           );
         }
@@ -368,12 +356,12 @@ export default function Announcements() {
           <div className="space-y-1">
             {departmentCount > 0 && (
               <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">
-                {t('{{count}} Departments', { count: departmentCount })}
+                {`${departmentCount} Departments`}
               </Badge>
             )}
             {branchCount > 0 && (
               <Badge variant="outline" className="bg-amber-50 text-amber-700 hover:bg-amber-50">
-                {t('{{count}} Branches', { count: branchCount })}
+                {`${branchCount} Branches`}
               </Badge>
             )}
           </div>
@@ -382,7 +370,7 @@ export default function Announcements() {
     },
     { 
       key: 'attachments', 
-      label: t('Attachments'),
+      label: 'Attachments',
       render: (value, row) => value && value.trim() !== '' ? (
         <Button
           variant="outline"
@@ -393,7 +381,7 @@ export default function Announcements() {
             handleAction('download-attachment', row);
           }}
         >
-          {t('Download')}
+          {'Download'}
         </Button>
       ) : '-'
     }
@@ -402,28 +390,28 @@ export default function Announcements() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-announcements'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-announcements'
     },
     { 
-      label: t('Statistics'), 
+      label: 'Statistics', 
       icon: 'BarChart', 
       action: 'statistics', 
       className: 'text-indigo-500',
       requiredPermission: 'view-announcements'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -433,7 +421,7 @@ export default function Announcements() {
 
   // Prepare category options for filter
   const categoryOptions = [
-    { value: '', label: t('All Categories') },
+    { value: '', label: 'All Categories' },
     ...(categories || []).map((category: string) => ({
       value: category,
       label: category.charAt(0).toUpperCase() + category.slice(1)
@@ -442,7 +430,7 @@ export default function Announcements() {
 
   // Prepare department options for filter
   const departmentOptions = [
-    { value: '', label: t('All Departments') },
+    { value: '', label: 'All Departments' },
     ...(departments || []).map((dept: any) => ({
       value: dept.id.toString(),
       label: dept.name
@@ -451,7 +439,7 @@ export default function Announcements() {
 
   // Prepare branch options for filter
   const branchOptions = [
-    { value: '', label: t('All Branches') },
+    { value: '', label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -460,31 +448,31 @@ export default function Announcements() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: '', label: t('All Statuses') },
-    { value: 'active', label: t('Active') },
-    { value: 'upcoming', label: t('Upcoming') },
-    { value: 'expired', label: t('Expired') }
+    { value: '', label: 'All Statuses' },
+    { value: 'active', label: 'Active' },
+    { value: 'upcoming', label: 'Upcoming' },
+    { value: 'expired', label: 'Expired' }
   ];
 
   // Prepare priority options for filter
   const priorityOptions = [
-    { value: '', label: t('All Priorities') },
-    { value: 'high', label: t('High Priority') },
-    { value: 'normal', label: t('Normal Priority') }
+    { value: '', label: 'All Priorities' },
+    { value: 'high', label: 'High Priority' },
+    { value: 'normal', label: 'Normal Priority' }
   ];
 
   // Prepare category options for form
   const categoryFormOptions = [
-    { value: 'company news', label: t('Company News') },
-    { value: 'policy updates', label: t('Policy Updates') },
-    { value: 'events', label: t('Events') },
-    { value: 'HR', label: t('HR') },
-    { value: 'IT updates', label: t('IT Updates') }
+    { value: 'company news', label: 'Company News' },
+    { value: 'policy updates', label: 'Policy Updates' },
+    { value: 'events', label: 'Events' },
+    { value: 'HR', label: 'HR' },
+    { value: 'IT updates', label: 'IT Updates' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Announcements")} 
+      title={"Announcements"} 
       url="/hr/announcements"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -499,7 +487,7 @@ export default function Announcements() {
           filters={[
             {
               name: 'category',
-              label: t('Category'),
+              label: 'Category',
               type: 'select',
               value: selectedCategory,
               onChange: setSelectedCategory,
@@ -507,7 +495,7 @@ export default function Announcements() {
             },
             {
               name: 'department_id',
-              label: t('Department'),
+              label: 'Department',
               type: 'select',
               value: selectedDepartment,
               onChange: setSelectedDepartment,
@@ -515,7 +503,7 @@ export default function Announcements() {
             },
             {
               name: 'branch_id',
-              label: t('Branch'),
+              label: 'Branch',
               type: 'select',
               value: selectedBranch,
               onChange: setSelectedBranch,
@@ -523,7 +511,7 @@ export default function Announcements() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -531,7 +519,7 @@ export default function Announcements() {
             },
             {
               name: 'priority',
-              label: t('Priority'),
+              label: 'Priority',
               type: 'select',
               value: selectedPriority,
               onChange: setSelectedPriority,
@@ -539,21 +527,21 @@ export default function Announcements() {
             },
             {
               name: 'featured',
-              label: t('Featured Only'),
+              label: 'Featured Only',
               type: 'checkbox',
               value: isFeatured,
               onChange: setIsFeatured
             },
             {
               name: 'date_from',
-              label: t('Date From'),
+              label: 'Date From',
               type: 'date',
               value: dateFrom,
               onChange: setDateFrom
             },
             {
               name: 'date_to',
-              label: t('Date To'),
+              label: 'Date To',
               type: 'date',
               value: dateTo,
               onChange: setDateTo
@@ -610,7 +598,7 @@ export default function Announcements() {
           to={announcements?.to || 0}
           total={announcements?.total || 0}
           links={announcements?.links}
-          entityName={t("announcements")}
+          entityName={"announcements"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -624,79 +612,79 @@ export default function Announcements() {
           fields: [
             { 
               name: 'title', 
-              label: t('Title'), 
+              label: 'Title', 
               type: 'text',
               required: true
             },
             { 
               name: 'category', 
-              label: t('Category'), 
+              label: 'Category', 
               type: 'select',
               required: true,
               options: categoryFormOptions
             },
             { 
               name: 'description', 
-              label: t('Short Description'), 
+              label: 'Short Description', 
               type: 'textarea',
-              helpText: t('Brief summary of the announcement')
+              helpText: 'Brief summary of the announcement'
             },
             { 
               name: 'content', 
-              label: t('Content'), 
+              label: 'Content', 
               type: 'custom',
               required: true,
               render: (field, formData, handleChange) => (
                 <RichTextEditor
                   value={formData[field.name] || ''}
                   onChange={(value) => handleChange(field.name, value)}
-                  placeholder={t('Enter announcement content...')}
+                  placeholder={'Enter announcement content...'}
                 />
               )
             },
             { 
               name: 'start_date', 
-              label: t('Start Date'), 
+              label: 'Start Date', 
               type: 'date', 
               required: true 
             },
             { 
               name: 'end_date', 
-              label: t('End Date'), 
+              label: 'End Date', 
               type: 'date',
-              helpText: t('Leave empty for indefinite announcements')
+              helpText: 'Leave empty for indefinite announcements'
             },
             { 
               name: 'attachments', 
-              label: t('Attachments'), 
+              label: 'Attachments', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select attachment file...')}
+                  placeholder={'Select attachment file...'}
                 />
               ),
-              helpText: t('Upload PDF, Word or image file (max 5MB)')
+              helpText: 'Upload PDF, Word or image file (max 5MB)'
             },
             { 
               name: 'is_featured', 
-              label: t('Featured Announcement'), 
+              label: 'Featured Announcement', 
               type: 'checkbox',
-              helpText: t('Featured announcements are highlighted on the dashboard')
+              helpText: 'Featured announcements are highlighted on the dashboard'
             },
             { 
               name: 'is_high_priority', 
-              label: t('High Priority'), 
+              label: 'High Priority', 
               type: 'checkbox',
-              helpText: t('High priority announcements are shown at the top of the list')
+              helpText: 'High priority announcements are shown at the top of the list'
             },
             { 
               name: 'is_company_wide', 
-              label: t('Company-wide Announcement'), 
+              label: 'Company-wide Announcement', 
               type: 'checkbox',
               defaultValue: true,
-              helpText: t('If unchecked, you must select specific departments or branches')
+              helpText: 'If unchecked, you must select specific departments or branches'
             },
             {
               name: 'branch_department_selection',
@@ -705,17 +693,17 @@ export default function Announcements() {
               dependentConfig: [
                 {
                   name: 'branch_ids',
-                  label: t('Target Branches'),
+                  label: 'Target Branches',
                   multiple: true,
                   options: branchOptions.filter(opt => opt.value !== ''),
-                  helpText: t('Select branches that should receive this announcement')
+                  helpText: 'Select branches that should receive this announcement'
                 },
                 {
                   name: 'department_ids',
-                  label: t('Target Departments'),
+                  label: 'Target Departments',
                   multiple: true,
                   apiEndpoint: '/hr/announcements/get-departments/{branch_ids}',
-                  helpText: t('Select departments that should receive this announcement')
+                  helpText: 'Select departments that should receive this announcement'
                 }
               ]
             }
@@ -730,10 +718,10 @@ export default function Announcements() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add New Announcement')
+            ? 'Add New Announcement'
             : formMode === 'edit'
-              ? t('Edit Announcement')
-              : t('View Announcement')
+              ? 'Edit Announcement'
+              : 'View Announcement'
         }
         mode={formMode}
       />

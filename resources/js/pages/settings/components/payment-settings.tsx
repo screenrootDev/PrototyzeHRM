@@ -10,7 +10,7 @@ import { Save, CreditCard, AlertCircle, Banknote, IndianRupee, Wallet, Coins, Se
 import { PAYMENT_METHODS, PAYMENT_METHOD_LABELS, PAYMENT_METHOD_HELP_URLS } from '@/utils/payment';
 import { SettingsSection } from '@/components/settings-section';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { useTranslation } from 'react-i18next';
+
 import { useForm } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
 import { useState, useMemo } from 'react';
@@ -142,7 +142,7 @@ interface PaymentSettingsProps {
 }
 
 export default function PaymentSettings({ settings = {} }: PaymentSettingsProps) {
-  const { t } = useTranslation();
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'enabled' | 'disabled'>('all');
   
@@ -270,40 +270,40 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
 
   // Payment methods data for search
   const paymentMethods = useMemo(() => [
-    { key: 'bank', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.BANK]) },
-    { key: 'stripe', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.STRIPE]) },
-    { key: 'paypal', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYPAL]) },
-    { key: 'razorpay', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.RAZORPAY]) },
-    { key: 'mercadopago', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MERCADOPAGO]) },
-    { key: 'paystack', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYSTACK]) },
-    { key: 'flutterwave', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.FLUTTERWAVE]) },
-    { key: 'paytabs', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTABS]) },
-    { key: 'skrill', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.SKRILL]) },
-    { key: 'coingate', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.COINGATE]) },
-    { key: 'payfast', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYFAST]) },
-    { key: 'tap', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TAP]) },
-    { key: 'xendit', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.XENDIT]) },
-    { key: 'paytr', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTR]) },
-    { key: 'mollie', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MOLLIE]) },
-    { key: 'toyyibpay', name: t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TOYYIBPAY]) },
-    { key: 'paymentwall', name: t('PaymentWall') },
-    { key: 'sspay', name: t('SSPay') },
-    { key: 'benefit', name: t('Benefit') },
-    { key: 'iyzipay', name: t('Iyzipay') },
-    { key: 'aamarpay', name: t('Aamarpay') },
-    { key: 'midtrans', name: t('Midtrans') },
-    { key: 'yookassa', name: t('YooKassa') },
-    { key: 'nepalste', name: t('Nepalste') },
-    { key: 'paiement', name: t('Paiement Pro') },
-    { key: 'cinetpay', name: t('CinetPay') },
-    { key: 'payhere', name: t('PayHere') },
-    { key: 'fedapay', name: t('FedaPay') },
-    { key: 'authorizenet', name: t('AuthorizeNet') },
-    { key: 'khalti', name: t('Khalti') },
-    { key: 'easebuzz', name: t('Easebuzz') },
-    { key: 'ozow', name: t('Ozow') },
-    { key: 'cashfree', name: t('Cashfree') },
-  ], [t]);
+    { key: 'bank', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.BANK] },
+    { key: 'stripe', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.STRIPE] },
+    { key: 'paypal', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYPAL] },
+    { key: 'razorpay', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.RAZORPAY] },
+    { key: 'mercadopago', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MERCADOPAGO] },
+    { key: 'paystack', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYSTACK] },
+    { key: 'flutterwave', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.FLUTTERWAVE] },
+    { key: 'paytabs', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTABS] },
+    { key: 'skrill', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.SKRILL] },
+    { key: 'coingate', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.COINGATE] },
+    { key: 'payfast', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYFAST] },
+    { key: 'tap', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TAP] },
+    { key: 'xendit', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.XENDIT] },
+    { key: 'paytr', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTR] },
+    { key: 'mollie', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MOLLIE] },
+    { key: 'toyyibpay', name: PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TOYYIBPAY] },
+    { key: 'paymentwall', name: 'PaymentWall' },
+    { key: 'sspay', name: 'SSPay' },
+    { key: 'benefit', name: 'Benefit' },
+    { key: 'iyzipay', name: 'Iyzipay' },
+    { key: 'aamarpay', name: 'Aamarpay' },
+    { key: 'midtrans', name: 'Midtrans' },
+    { key: 'yookassa', name: 'YooKassa' },
+    { key: 'nepalste', name: 'Nepalste' },
+    { key: 'paiement', name: 'Paiement Pro' },
+    { key: 'cinetpay', name: 'CinetPay' },
+    { key: 'payhere', name: 'PayHere' },
+    { key: 'fedapay', name: 'FedaPay' },
+    { key: 'authorizenet', name: 'AuthorizeNet' },
+    { key: 'khalti', name: 'Khalti' },
+    { key: 'easebuzz', name: 'Easebuzz' },
+    { key: 'ozow', name: 'Ozow' },
+    { key: 'cashfree', name: 'Cashfree' },
+  ], []);
 
   // Filter payment methods based on search and status
   const filteredMethods = useMemo(() => {
@@ -346,19 +346,19 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
         }
       },
       onError: (errors) => {
-        toast.error(t('Failed to update payment settings'));
+        toast.error('Failed to update payment settings');
       }
     });
   };
 
   return (
     <SettingsSection
-      title={t("Payment Settings")}
-      description={t("Configure payment gateway for subscription plans")}
+      title={"Payment Settings"}
+      description={"Configure payment gateway for subscription plans"}
       action={
         <Button type="submit" form="payment-settings-form" size="sm" disabled={processing}>
           <Save className="h-4 w-4 mr-2" />
-          {processing ? t("Saving...") : t("Save Changes")}
+          {processing ? "Saving..." : "Save Changes"}
         </Button>
       }
     >
@@ -367,9 +367,9 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
           {/* Payment Methods */}
           <Card>
             <CardHeader>
-              <CardTitle>{t("Payment Methods")}</CardTitle>
+              <CardTitle>{"Payment Methods"}</CardTitle>
               <CardDescription>
-                {t("Configure available payment methods for subscription plans")}
+                {"Configure available payment methods for subscription plans"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -378,7 +378,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
-                    placeholder={t("Search payment methods...")}
+                    placeholder={"Search payment methods..."}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 pr-10"
@@ -400,9 +400,9 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">{t("All Methods")}</SelectItem>
-                    <SelectItem value="enabled">{t("Enabled Only")}</SelectItem>
-                    <SelectItem value="disabled">{t("Disabled Only")}</SelectItem>
+                    <SelectItem value="all">{"All Methods"}</SelectItem>
+                    <SelectItem value="enabled">{"Enabled Only"}</SelectItem>
+                    <SelectItem value="disabled">{"Disabled Only"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -410,10 +410,10 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Active Filters */}
               {(searchTerm || statusFilter !== 'all') && (
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-sm text-muted-foreground">{t("Active filters:")} </span>
+                  <span className="text-sm text-muted-foreground">{"Active filters:"} </span>
                   {searchTerm && (
                     <Badge variant="secondary" className="text-xs">
-                      {t("Search:")} "{searchTerm}"
+                      {"Search:"} "{searchTerm}"
                       <Button
                         type="button"
                         variant="ghost"
@@ -427,7 +427,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   )}
                   {statusFilter !== 'all' && (
                     <Badge variant="secondary" className="text-xs">
-                      {t("Status:")} {statusFilter === 'enabled' ? t("Enabled") : t("Disabled")}
+                      {"Status:"} {statusFilter === 'enabled' ? "Enabled" : "Disabled"}
                       <Button
                         type="button"
                         variant="ghost"
@@ -447,8 +447,8 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="flex items-center justify-between text-sm text-muted-foreground">
                   <span>
                     {filteredMethods.length > 0 
-                      ? t("Showing {{count}} of {{total}} payment methods", { count: filteredMethods.length, total: paymentMethods.length })
-                      : t("No payment methods found matching your criteria")
+                      ? `Showing ${filteredMethods.length} of ${paymentMethods.length} payment methods`
+                      : "No payment methods found matching your criteria"
                     }
                   </span>
                 </div>
@@ -459,9 +459,9 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   <div className="mx-auto w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
                     <Search className="h-5 w-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium mb-2">{t("No results found")}</h3>
+                  <h3 className="text-lg font-medium mb-2">{"No results found"}</h3>
                   <p className="text-muted-foreground mb-4">
-                    {t("Try adjusting your search or filter criteria")}
+                    {"Try adjusting your search or filter criteria"}
                   </p>
                   <Button
                     type="button"
@@ -472,7 +472,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                       setStatusFilter('all');
                     }}
                   >
-                    {t("Clear filters")}
+                    {"Clear filters"}
                   </Button>
                 </div>
               )}
@@ -480,22 +480,22 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Bank Transfer */}
               {shouldShowMethod('bank') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.BANK])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.BANK]}
                 icon={<Banknote className="h-5 w-5" />}
                 enabled={data.is_bank_enabled}
                 onToggle={(checked) => setData('is_bank_enabled', checked)}
               >
                 <div className="space-y-2">
-                  <Label htmlFor="bank_detail">{t("Bank Details")}</Label>
+                  <Label htmlFor="bank_detail">{"Bank Details"}</Label>
                   <Textarea
                     id="bank_detail"
                     value={data.bank_detail}
                     onChange={(e) => setData('bank_detail', e.target.value)}
-                    placeholder={t("Bank: Your Bank Name\nAccount Number: 0000 0000\nRouting Number: 000000000")}
+                    placeholder={"Bank: Your Bank Name\nAccount Number: 0000 0000\nRouting Number: 000000000"}
                     rows={6}
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t("Enter your bank details that customers will use for manual transfers")}
+                    {"Enter your bank details that customers will use for manual transfers"}
                   </p>
                   {errors.bank_detail && (
                     <p className="text-sm text-destructive">{errors.bank_detail}</p>
@@ -507,17 +507,17 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Stripe */}
               {shouldShowMethod('stripe') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.STRIPE])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.STRIPE]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_stripe_enabled}
                 onToggle={(checked) => setData('is_stripe_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.STRIPE]}
-                helpText={t("Get your Stripe API keys from your")}
+                helpText={"Get your Stripe API keys from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="stripe_key"
-                    label={t("Publishable Key")}
+                    label={"Publishable Key"}
                     value={data.stripe_key}
                     onChange={(value) => setData('stripe_key', value)}
                     placeholder="pk_test_..."
@@ -525,7 +525,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="stripe_secret"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.stripe_secret}
                     onChange={(value) => setData('stripe_secret', value)}
                     placeholder="sk_test_..."
@@ -539,12 +539,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* PayPal */}
               {shouldShowMethod('paypal') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYPAL])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYPAL]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paypal_enabled}
                 onToggle={(checked) => setData('is_paypal_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYPAL]}
-                helpText={t("Get your PayPal API credentials from your")}
+                helpText={"Get your PayPal API credentials from your"}
               >
                 <div className="space-y-4">
                   <PaymentModeSelector
@@ -555,18 +555,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <PaymentInputField
                       id="paypal_client_id"
-                      label={t("Client ID")}
+                      label={"Client ID"}
                       value={data.paypal_client_id}
                       onChange={(value) => setData('paypal_client_id', value)}
-                      placeholder={t("Client ID")}
+                      placeholder={"Client ID"}
                       error={errors.paypal_client_id}
                     />
                     <PaymentInputField
                       id="paypal_secret_key"
-                      label={t("Secret Key")}
+                      label={"Secret Key"}
                       value={data.paypal_secret_key}
                       onChange={(value) => setData('paypal_secret_key', value)}
-                      placeholder={t("Secret Key")}
+                      placeholder={"Secret Key"}
                       isSecret
                       error={errors.paypal_secret_key}
                     />
@@ -578,17 +578,17 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Razorpay */}
               {shouldShowMethod('razorpay') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.RAZORPAY])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.RAZORPAY]}
                 icon={<IndianRupee className="h-5 w-5" />}
                 enabled={data.is_razorpay_enabled}
                 onToggle={(checked) => setData('is_razorpay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.RAZORPAY]}
-                helpText={t("Get your Razorpay API credentials from your")}
+                helpText={"Get your Razorpay API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="razorpay_key"
-                    label={t("Key ID")}
+                    label={"Key ID"}
                     value={data.razorpay_key}
                     onChange={(value) => setData('razorpay_key', value)}
                     placeholder="rzp_test_..."
@@ -596,7 +596,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="razorpay_secret"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.razorpay_secret}
                     onChange={(value) => setData('razorpay_secret', value)}
                     placeholder="..."
@@ -610,12 +610,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Mercado Pago */}
               {shouldShowMethod('mercadopago') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MERCADOPAGO])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MERCADOPAGO]}
                 icon={<Wallet className="h-5 w-5" />}
                 enabled={data.is_mercadopago_enabled}
                 onToggle={(checked) => setData('is_mercadopago_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.MERCADOPAGO]}
-                helpText={t("Get your Mercado Pago API credentials from your")}
+                helpText={"Get your Mercado Pago API credentials from your"}
               >
                 <div className="space-y-4">
                   <PaymentModeSelector
@@ -625,7 +625,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="mercadopago_access_token"
-                    label={t("Access Token")}
+                    label={"Access Token"}
                     value={data.mercadopago_access_token}
                     onChange={(value) => setData('mercadopago_access_token', value)}
                     placeholder={data.mercadopago_mode === 'sandbox' ? 'TEST-' : 'APP_USR-'}
@@ -633,12 +633,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                     error={errors.mercadopago_access_token}
                   />
                   <p className="text-xs text-muted-foreground">
-                    {t("For server-side API integration, use your Private Access Token (NOT your public key). You can find this in your MercadoPago Developer Dashboard under Credentials > Production/Test Credentials > Access token.")}
+                    {"For server-side API integration, use your Private Access Token (NOT your public key). You can find this in your MercadoPago Developer Dashboard under Credentials > Production/Test Credentials > Access token."}
                   </p>
                   <Alert>
                     <AlertCircle className="h-4 w-4" />
                     <AlertDescription>
-                      {t("Important: Do not use your Public Key here. The Access Token is different and is required for server-side operations.")}
+                      {"Important: Do not use your Public Key here. The Access Token is different and is required for server-side operations."}
                     </AlertDescription>
                   </Alert>
                 </div>
@@ -648,17 +648,17 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Paystack */}
               {shouldShowMethod('paystack') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYSTACK])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYSTACK]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paystack_enabled}
                 onToggle={(checked) => setData('is_paystack_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYSTACK]}
-                helpText={t("Get your Paystack API credentials from your")}
+                helpText={"Get your Paystack API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="paystack_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.paystack_public_key}
                     onChange={(value) => setData('paystack_public_key', value)}
                     placeholder="pk_test_..."
@@ -666,7 +666,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="paystack_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.paystack_secret_key}
                     onChange={(value) => setData('paystack_secret_key', value)}
                     placeholder="sk_test_..."
@@ -680,17 +680,17 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Flutterwave */}
               {shouldShowMethod('flutterwave') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.FLUTTERWAVE])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.FLUTTERWAVE]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_flutterwave_enabled}
                 onToggle={(checked) => setData('is_flutterwave_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.FLUTTERWAVE]}
-                helpText={t("Get your Flutterwave API credentials from your")}
+                helpText={"Get your Flutterwave API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="flutterwave_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.flutterwave_public_key}
                     onChange={(value) => setData('flutterwave_public_key', value)}
                     placeholder="FLWPUBK_TEST-..."
@@ -698,7 +698,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="flutterwave_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.flutterwave_secret_key}
                     onChange={(value) => setData('flutterwave_secret_key', value)}
                     placeholder="FLWSECK_TEST-..."
@@ -712,12 +712,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* PayTabs */}
               {shouldShowMethod('paytabs') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTABS])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTABS]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paytabs_enabled}
                 onToggle={(checked) => setData('is_paytabs_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYTABS]}
-                helpText={t("Get your PayTabs API credentials from your")}
+                helpText={"Get your PayTabs API credentials from your"}
               >
                 <div className="space-y-4">
                   <PaymentModeSelector
@@ -728,36 +728,36 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <PaymentInputField
                       id="paytabs_profile_id"
-                      label={t("Profile ID")}
+                      label={"Profile ID"}
                       value={data.paytabs_profile_id}
                       onChange={(value) => setData('paytabs_profile_id', value)}
-                      placeholder={t("Profile ID")}
+                      placeholder={"Profile ID"}
                       error={errors.paytabs_profile_id}
                     />
                     <PaymentInputField
                       id="paytabs_server_key"
-                      label={t("Server Key")}
+                      label={"Server Key"}
                       value={data.paytabs_server_key}
                       onChange={(value) => setData('paytabs_server_key', value)}
-                      placeholder={t("Server Key")}
+                      placeholder={"Server Key"}
                       isSecret
                       error={errors.paytabs_server_key}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="paytabs_region">{t("Region")}</Label>
+                    <Label htmlFor="paytabs_region">{"Region"}</Label>
                     <Select value={data.paytabs_region} onValueChange={(value) => setData('paytabs_region', value)}>
                       <SelectTrigger>
-                        <SelectValue placeholder={t("Select Region")} />
+                        <SelectValue placeholder={"Select Region"} />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ARE">{t("UAE")}</SelectItem>
-                        <SelectItem value="SAU">{t("Saudi Arabia")}</SelectItem>
-                        <SelectItem value="OMN">{t("Oman")}</SelectItem>
-                        <SelectItem value="JOR">{t("Jordan")}</SelectItem>
-                        <SelectItem value="EGY">{t("Egypt")}</SelectItem>
-                        <SelectItem value="IRQ">{t("Iraq")}</SelectItem>
-                        <SelectItem value="GLOBAL">{t("Global")}</SelectItem>
+                        <SelectItem value="ARE">{"UAE"}</SelectItem>
+                        <SelectItem value="SAU">{"Saudi Arabia"}</SelectItem>
+                        <SelectItem value="OMN">{"Oman"}</SelectItem>
+                        <SelectItem value="JOR">{"Jordan"}</SelectItem>
+                        <SelectItem value="EGY">{"Egypt"}</SelectItem>
+                        <SelectItem value="IRQ">{"Iraq"}</SelectItem>
+                        <SelectItem value="GLOBAL">{"Global"}</SelectItem>
                       </SelectContent>
                     </Select>
                     {errors.paytabs_region && (
@@ -771,28 +771,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Skrill */}
               {shouldShowMethod('skrill') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.SKRILL])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.SKRILL]}
                 icon={<Wallet className="h-5 w-5" />}
                 enabled={data.is_skrill_enabled}
                 onToggle={(checked) => setData('is_skrill_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.SKRILL]}
-                helpText={t("Get your Skrill merchant credentials from your")}
+                helpText={"Get your Skrill merchant credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="skrill_merchant_id"
-                    label={t("Merchant ID")}
+                    label={"Merchant ID"}
                     value={data.skrill_merchant_id}
                     onChange={(value) => setData('skrill_merchant_id', value)}
-                    placeholder={t("Merchant ID")}
+                    placeholder={"Merchant ID"}
                     error={errors.skrill_merchant_id}
                   />
                   <PaymentInputField
                     id="skrill_secret_word"
-                    label={t("Secret Word")}
+                    label={"Secret Word"}
                     value={data.skrill_secret_word}
                     onChange={(value) => setData('skrill_secret_word', value)}
-                    placeholder={t("Secret Word")}
+                    placeholder={"Secret Word"}
                     isSecret
                     error={errors.skrill_secret_word}
                   />
@@ -803,12 +803,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* CoinGate */}
               {shouldShowMethod('coingate') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.COINGATE])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.COINGATE]}
                 icon={<Coins className="h-5 w-5" />}
                 enabled={data.is_coingate_enabled}
                 onToggle={(checked) => setData('is_coingate_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.COINGATE]}
-                helpText={t("Get your CoinGate API credentials from your")}
+                helpText={"Get your CoinGate API credentials from your"}
               >
                 <div className="space-y-4">
                   <PaymentModeSelector
@@ -818,10 +818,10 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   />
                   <PaymentInputField
                     id="coingate_api_token"
-                    label={t("API Token")}
+                    label={"API Token"}
                     value={data.coingate_api_token}
                     onChange={(value) => setData('coingate_api_token', value)}
-                    placeholder={t("API Token")}
+                    placeholder={"API Token"}
                     isSecret
                     error={errors.coingate_api_token}
                   />
@@ -832,12 +832,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Payfast */}
               {shouldShowMethod('payfast') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYFAST])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYFAST]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_payfast_enabled}
                 onToggle={(checked) => setData('is_payfast_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYFAST]}
-                helpText={t("Get your Payfast merchant credentials from your")}
+                helpText={"Get your Payfast merchant credentials from your"}
               >
                 <div className="space-y-4">
                   <PaymentModeSelector
@@ -848,28 +848,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <PaymentInputField
                       id="payfast_merchant_id"
-                      label={t("Merchant ID")}
+                      label={"Merchant ID"}
                       value={data.payfast_merchant_id}
                       onChange={(value) => setData('payfast_merchant_id', value)}
-                      placeholder={t("Merchant ID")}
+                      placeholder={"Merchant ID"}
                       error={errors.payfast_merchant_id}
                     />
                     <PaymentInputField
                       id="payfast_merchant_key"
-                      label={t("Merchant Key")}
+                      label={"Merchant Key"}
                       value={data.payfast_merchant_key}
                       onChange={(value) => setData('payfast_merchant_key', value)}
-                      placeholder={t("Merchant Key")}
+                      placeholder={"Merchant Key"}
                       isSecret
                       error={errors.payfast_merchant_key}
                     />
                   </div>
                   <PaymentInputField
                     id="payfast_passphrase"
-                    label={t("Passphrase")}
+                    label={"Passphrase"}
                     value={data.payfast_passphrase}
                     onChange={(value) => setData('payfast_passphrase', value)}
-                    placeholder={t("Passphrase (optional)")}
+                    placeholder={"Passphrase (optional)"}
                     error={errors.payfast_passphrase}
                   />
                 </div>
@@ -879,19 +879,19 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Tap */}
               {shouldShowMethod('tap') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TAP])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TAP]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_tap_enabled}
                 onToggle={(checked) => setData('is_tap_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.TAP]}
-                helpText={t("Get your Tap API credentials from your")}
+                helpText={"Get your Tap API credentials from your"}
               >
                 <PaymentInputField
                   id="tap_secret_key"
-                  label={t("Secret Key")}
+                  label={"Secret Key"}
                   value={data.tap_secret_key}
                   onChange={(value) => setData('tap_secret_key', value)}
-                  placeholder={t("Secret Key")}
+                  placeholder={"Secret Key"}
                   isSecret
                   error={errors.tap_secret_key}
                 />
@@ -901,19 +901,19 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Xendit */}
               {shouldShowMethod('xendit') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.XENDIT])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.XENDIT]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_xendit_enabled}
                 onToggle={(checked) => setData('is_xendit_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.XENDIT]}
-                helpText={t("Get your Xendit API credentials from your")}
+                helpText={"Get your Xendit API credentials from your"}
               >
                 <PaymentInputField
                   id="xendit_api_key"
-                  label={t("API Key")}
+                  label={"API Key"}
                   value={data.xendit_api_key}
                   onChange={(value) => setData('xendit_api_key', value)}
-                  placeholder={t("API Key")}
+                  placeholder={"API Key"}
                   isSecret
                   error={errors.xendit_api_key}
                 />
@@ -923,38 +923,38 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* PayTR */}
               {shouldShowMethod('paytr') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTR])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.PAYTR]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paytr_enabled}
                 onToggle={(checked) => setData('is_paytr_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYTR]}
-                helpText={t("Get your PayTR merchant credentials from your")}
+                helpText={"Get your PayTR merchant credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="paytr_merchant_id"
-                    label={t("Merchant ID")}
+                    label={"Merchant ID"}
                     value={data.paytr_merchant_id}
                     onChange={(value) => setData('paytr_merchant_id', value)}
-                    placeholder={t("Merchant ID")}
+                    placeholder={"Merchant ID"}
                     error={errors.paytr_merchant_id}
                   />
                   <PaymentInputField
                     id="paytr_merchant_key"
-                    label={t("Merchant Key")}
+                    label={"Merchant Key"}
                     value={data.paytr_merchant_key}
                     onChange={(value) => setData('paytr_merchant_key', value)}
-                    placeholder={t("Merchant Key")}
+                    placeholder={"Merchant Key"}
                     isSecret
                     error={errors.paytr_merchant_key}
                   />
                 </div>
                 <PaymentInputField
                   id="paytr_merchant_salt"
-                  label={t("Merchant Salt")}
+                  label={"Merchant Salt"}
                   value={data.paytr_merchant_salt}
                   onChange={(value) => setData('paytr_merchant_salt', value)}
-                  placeholder={t("Merchant Salt")}
+                  placeholder={"Merchant Salt"}
                   isSecret
                   error={errors.paytr_merchant_salt}
                 />
@@ -964,19 +964,19 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Mollie */}
               {shouldShowMethod('mollie') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MOLLIE])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.MOLLIE]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_mollie_enabled}
                 onToggle={(checked) => setData('is_mollie_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.MOLLIE]}
-                helpText={t("Get your Mollie API credentials from your")}
+                helpText={"Get your Mollie API credentials from your"}
               >
                 <PaymentInputField
                   id="mollie_api_key"
-                  label={t("API Key")}
+                  label={"API Key"}
                   value={data.mollie_api_key}
                   onChange={(value) => setData('mollie_api_key', value)}
-                  placeholder={t("API Key")}
+                  placeholder={"API Key"}
                   isSecret
                   error={errors.mollie_api_key}
                 />
@@ -986,28 +986,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* toyyibPay */}
               {shouldShowMethod('toyyibpay') && (
               <PaymentMethodCard
-                title={t(PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TOYYIBPAY])}
+                title={PAYMENT_METHOD_LABELS[PAYMENT_METHODS.TOYYIBPAY]}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_toyyibpay_enabled}
                 onToggle={(checked) => setData('is_toyyibpay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.TOYYIBPAY]}
-                helpText={t("Get your toyyibPay credentials from your")}
+                helpText={"Get your toyyibPay credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="toyyibpay_category_code"
-                    label={t("Category Code")}
+                    label={"Category Code"}
                     value={data.toyyibpay_category_code}
                     onChange={(value) => setData('toyyibpay_category_code', value)}
-                    placeholder={t("Category Code")}
+                    placeholder={"Category Code"}
                     error={errors.toyyibpay_category_code}
                   />
                   <PaymentInputField
                     id="toyyibpay_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.toyyibpay_secret_key}
                     onChange={(value) => setData('toyyibpay_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.toyyibpay_secret_key}
                   />
@@ -1018,28 +1018,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* PaymentWall */}
               {shouldShowMethod('paymentwall') && (
               <PaymentMethodCard
-                title={t('PaymentWall')}
+                title={'PaymentWall'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paymentwall_enabled}
                 onToggle={(checked) => setData('is_paymentwall_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYMENTWALL]}
-                helpText={t("Get your PaymentWall API credentials from your")}
+                helpText={"Get your PaymentWall API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="paymentwall_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.paymentwall_public_key}
                     onChange={(value) => setData('paymentwall_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.paymentwall_public_key}
                   />
                   <PaymentInputField
                     id="paymentwall_private_key"
-                    label={t("Private Key")}
+                    label={"Private Key"}
                     value={data.paymentwall_private_key}
                     onChange={(value) => setData('paymentwall_private_key', value)}
-                    placeholder={t("Private Key")}
+                    placeholder={"Private Key"}
                     isSecret
                     error={errors.paymentwall_private_key}
                   />
@@ -1050,28 +1050,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* SSPay */}
               {shouldShowMethod('sspay') && (
               <PaymentMethodCard
-                title={t('SSPay')}
+                title={'SSPay'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_sspay_enabled}
                 onToggle={(checked) => setData('is_sspay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.SSPAY]}
-                helpText={t("Get your SSPay API credentials from your")}
+                helpText={"Get your SSPay API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="sspay_category_code"
-                    label={t("Category Code")}
+                    label={"Category Code"}
                     value={data.sspay_category_code}
                     onChange={(value) => setData('sspay_category_code', value)}
-                    placeholder={t("Category Code")}
+                    placeholder={"Category Code"}
                     error={errors.sspay_category_code}
                   />
                   <PaymentInputField
                     id="sspay_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.sspay_secret_key}
                     onChange={(value) => setData('sspay_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.sspay_secret_key}
                   />
@@ -1082,12 +1082,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Benefit */}
               {shouldShowMethod('benefit') && (
               <PaymentMethodCard
-                title={t('Benefit')}
+                title={'Benefit'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_benefit_enabled}
                 onToggle={(checked) => setData('is_benefit_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.BENEFIT]}
-                helpText={t("Get your Benefit API credentials from your")}
+                helpText={"Get your Benefit API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.benefit_mode as 'sandbox' | 'live'}
@@ -1097,18 +1097,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="benefit_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.benefit_public_key}
                     onChange={(value) => setData('benefit_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.benefit_public_key}
                   />
                   <PaymentInputField
                     id="benefit_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.benefit_secret_key}
                     onChange={(value) => setData('benefit_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.benefit_secret_key}
                   />
@@ -1119,12 +1119,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Iyzipay */}
               {shouldShowMethod('iyzipay') && (
               <PaymentMethodCard
-                title={t('Iyzipay')}
+                title={'Iyzipay'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_iyzipay_enabled}
                 onToggle={(checked) => setData('is_iyzipay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.IYZIPAY]}
-                helpText={t("Get your Iyzipay API credentials from your")}
+                helpText={"Get your Iyzipay API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.iyzipay_mode as 'sandbox' | 'live'}
@@ -1134,18 +1134,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="iyzipay_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.iyzipay_public_key}
                     onChange={(value) => setData('iyzipay_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.iyzipay_public_key}
                   />
                   <PaymentInputField
                     id="iyzipay_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.iyzipay_secret_key}
                     onChange={(value) => setData('iyzipay_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.iyzipay_secret_key}
                   />
@@ -1156,28 +1156,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Aamarpay */}
               {shouldShowMethod('aamarpay') && (
               <PaymentMethodCard
-                title={t('Aamarpay')}
+                title={'Aamarpay'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_aamarpay_enabled}
                 onToggle={(checked) => setData('is_aamarpay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.AAMARPAY]}
-                helpText={t("Get your Aamarpay API credentials from your")}
+                helpText={"Get your Aamarpay API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="aamarpay_store_id"
-                    label={t("Store ID")}
+                    label={"Store ID"}
                     value={data.aamarpay_store_id}
                     onChange={(value) => setData('aamarpay_store_id', value)}
-                    placeholder={t("Store ID")}
+                    placeholder={"Store ID"}
                     error={errors.aamarpay_store_id}
                   />
                   <PaymentInputField
                     id="aamarpay_signature"
-                    label={t("Signature")}
+                    label={"Signature"}
                     value={data.aamarpay_signature}
                     onChange={(value) => setData('aamarpay_signature', value)}
-                    placeholder={t("Signature")}
+                    placeholder={"Signature"}
                     isSecret
                     error={errors.aamarpay_signature}
                   />
@@ -1188,12 +1188,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Midtrans */}
               {shouldShowMethod('midtrans') && (
               <PaymentMethodCard
-                title={t('Midtrans')}
+                title={'Midtrans'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_midtrans_enabled}
                 onToggle={(checked) => setData('is_midtrans_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.MIDTRANS]}
-                helpText={t("Get your Midtrans API credentials from your")}
+                helpText={"Get your Midtrans API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.midtrans_mode as 'sandbox' | 'live'}
@@ -1202,10 +1202,10 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 />
                 <PaymentInputField
                   id="midtrans_secret_key"
-                  label={t("Secret Key")}
+                  label={"Secret Key"}
                   value={data.midtrans_secret_key}
                   onChange={(value) => setData('midtrans_secret_key', value)}
-                  placeholder={t("Secret Key")}
+                  placeholder={"Secret Key"}
                   isSecret
                   error={errors.midtrans_secret_key}
                 />
@@ -1215,28 +1215,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* YooKassa */}
               {shouldShowMethod('yookassa') && (
               <PaymentMethodCard
-                title={t('YooKassa')}
+                title={'YooKassa'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_yookassa_enabled}
                 onToggle={(checked) => setData('is_yookassa_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.YOOKASSA]}
-                helpText={t("Get your YooKassa API credentials from your")}
+                helpText={"Get your YooKassa API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="yookassa_shop_id"
-                    label={t("Shop ID")}
+                    label={"Shop ID"}
                     value={data.yookassa_shop_id}
                     onChange={(value) => setData('yookassa_shop_id', value)}
-                    placeholder={t("Shop ID")}
+                    placeholder={"Shop ID"}
                     error={errors.yookassa_shop_id}
                   />
                   <PaymentInputField
                     id="yookassa_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.yookassa_secret_key}
                     onChange={(value) => setData('yookassa_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.yookassa_secret_key}
                   />
@@ -1247,12 +1247,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Nepalste */}
               {/* {shouldShowMethod('nepalste') && (
               <PaymentMethodCard
-                title={t('Nepalste')}
+                title={'Nepalste'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_nepalste_enabled}
                 onToggle={(checked) => setData('is_nepalste_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.NEPALSTE]}
-                helpText={t("Get your Nepalste API credentials from your")}
+                helpText={"Get your Nepalste API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.nepalste_mode as 'sandbox' | 'live'}
@@ -1262,18 +1262,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="nepalste_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.nepalste_public_key}
                     onChange={(value) => setData('nepalste_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.nepalste_public_key}
                   />
                   <PaymentInputField
                     id="nepalste_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.nepalste_secret_key}
                     onChange={(value) => setData('nepalste_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.nepalste_secret_key}
                   />
@@ -1284,19 +1284,19 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Paiement Pro */}
               {shouldShowMethod('paiement') && (
               <PaymentMethodCard
-                title={t('Paiement Pro')}
+                title={'Paiement Pro'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_paiement_enabled}
                 onToggle={(checked) => setData('is_paiement_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAIEMENT]}
-                helpText={t("Get your Paiement Pro API credentials from your")}
+                helpText={"Get your Paiement Pro API credentials from your"}
               >
                 <PaymentInputField
                   id="paiement_merchant_id"
-                  label={t("Merchant ID")}
+                  label={"Merchant ID"}
                   value={data.paiement_merchant_id}
                   onChange={(value) => setData('paiement_merchant_id', value)}
-                  placeholder={t("Merchant ID")}
+                  placeholder={"Merchant ID"}
                   error={errors.paiement_merchant_id}
                 />
               </PaymentMethodCard>
@@ -1305,36 +1305,36 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* CinetPay */}
               {shouldShowMethod('cinetpay') && (
               <PaymentMethodCard
-                title={t('CinetPay')}
+                title={'CinetPay'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_cinetpay_enabled}
                 onToggle={(checked) => setData('is_cinetpay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.CINETPAY]}
-                helpText={t("Get your CinetPay API credentials from your")}
+                helpText={"Get your CinetPay API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <PaymentInputField
                     id="cinetpay_site_id"
-                    label={t("Site ID")}
+                    label={"Site ID"}
                     value={data.cinetpay_site_id}
                     onChange={(value) => setData('cinetpay_site_id', value)}
-                    placeholder={t("Site ID")}
+                    placeholder={"Site ID"}
                     error={errors.cinetpay_site_id}
                   />
                   <PaymentInputField
                     id="cinetpay_api_key"
-                    label={t("API Key")}
+                    label={"API Key"}
                     value={data.cinetpay_api_key}
                     onChange={(value) => setData('cinetpay_api_key', value)}
-                    placeholder={t("API Key")}
+                    placeholder={"API Key"}
                     error={errors.cinetpay_api_key}
                   />
                   <PaymentInputField
                     id="cinetpay_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.cinetpay_secret_key}
                     onChange={(value) => setData('cinetpay_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.cinetpay_secret_key}
                   />
@@ -1345,12 +1345,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* PayHere */}
               {shouldShowMethod('payhere') && (
               <PaymentMethodCard
-                title={t('PayHere')}
+                title={'PayHere'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_payhere_enabled}
                 onToggle={(checked) => setData('is_payhere_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.PAYHERE]}
-                helpText={t("Get your PayHere API credentials from your")}
+                helpText={"Get your PayHere API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.payhere_mode as 'sandbox' | 'live'}
@@ -1360,35 +1360,35 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="payhere_merchant_id"
-                    label={t("Merchant ID")}
+                    label={"Merchant ID"}
                     value={data.payhere_merchant_id}
                     onChange={(value) => setData('payhere_merchant_id', value)}
-                    placeholder={t("Merchant ID")}
+                    placeholder={"Merchant ID"}
                     error={errors.payhere_merchant_id}
                   />
                   <PaymentInputField
                     id="payhere_merchant_secret"
-                    label={t("Merchant Secret")}
+                    label={"Merchant Secret"}
                     value={data.payhere_merchant_secret}
                     onChange={(value) => setData('payhere_merchant_secret', value)}
-                    placeholder={t("Merchant Secret")}
+                    placeholder={"Merchant Secret"}
                     isSecret
                     error={errors.payhere_merchant_secret}
                   />
                   <PaymentInputField
                     id="payhere_app_id"
-                    label={t("App ID")}
+                    label={"App ID"}
                     value={data.payhere_app_id}
                     onChange={(value) => setData('payhere_app_id', value)}
-                    placeholder={t("App ID")}
+                    placeholder={"App ID"}
                     error={errors.payhere_app_id}
                   />
                   <PaymentInputField
                     id="payhere_app_secret"
-                    label={t("App Secret")}
+                    label={"App Secret"}
                     value={data.payhere_app_secret}
                     onChange={(value) => setData('payhere_app_secret', value)}
-                    placeholder={t("App Secret")}
+                    placeholder={"App Secret"}
                     isSecret
                     error={errors.payhere_app_secret}
                   />
@@ -1399,12 +1399,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* FedaPay */}
               {shouldShowMethod('fedapay') && (
               <PaymentMethodCard
-                title={t('FedaPay')}
+                title={'FedaPay'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_fedapay_enabled}
                 onToggle={(checked) => setData('is_fedapay_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.FEDAPAY]}
-                helpText={t("Get your FedaPay API credentials from your")}
+                helpText={"Get your FedaPay API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.fedapay_mode as 'sandbox' | 'live'}
@@ -1414,18 +1414,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="fedapay_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.fedapay_public_key}
                     onChange={(value) => setData('fedapay_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.fedapay_public_key}
                   />
                   <PaymentInputField
                     id="fedapay_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.fedapay_secret_key}
                     onChange={(value) => setData('fedapay_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.fedapay_secret_key}
                   />
@@ -1436,12 +1436,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* AuthorizeNet */}
               {shouldShowMethod('authorizenet') && (
               <PaymentMethodCard
-                title={t('AuthorizeNet')}
+                title={'AuthorizeNet'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_authorizenet_enabled}
                 onToggle={(checked) => setData('is_authorizenet_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.AUTHORIZENET]}
-                helpText={t("Get your AuthorizeNet API credentials from your")}
+                helpText={"Get your AuthorizeNet API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.authorizenet_mode as 'sandbox' | 'live'}
@@ -1451,18 +1451,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="authorizenet_merchant_id"
-                    label={t("Merchant ID")}
+                    label={"Merchant ID"}
                     value={data.authorizenet_merchant_id}
                     onChange={(value) => setData('authorizenet_merchant_id', value)}
-                    placeholder={t("Merchant ID")}
+                    placeholder={"Merchant ID"}
                     error={errors.authorizenet_merchant_id}
                   />
                   <PaymentInputField
                     id="authorizenet_transaction_key"
-                    label={t("Transaction Key")}
+                    label={"Transaction Key"}
                     value={data.authorizenet_transaction_key}
                     onChange={(value) => setData('authorizenet_transaction_key', value)}
-                    placeholder={t("Transaction Key")}
+                    placeholder={"Transaction Key"}
                     isSecret
                     error={errors.authorizenet_transaction_key}
                   />
@@ -1473,28 +1473,28 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Khalti */}
               {shouldShowMethod('khalti') && (
               <PaymentMethodCard
-                title={t('Khalti')}
+                title={'Khalti'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_khalti_enabled}
                 onToggle={(checked) => setData('is_khalti_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.KHALTI]}
-                helpText={t("Get your Khalti API credentials from your")}
+                helpText={"Get your Khalti API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="khalti_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.khalti_public_key}
                     onChange={(value) => setData('khalti_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.khalti_public_key}
                   />
                   <PaymentInputField
                     id="khalti_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.khalti_secret_key}
                     onChange={(value) => setData('khalti_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.khalti_secret_key}
                   />
@@ -1505,37 +1505,37 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Easebuzz */}
               {shouldShowMethod('easebuzz') && (
               <PaymentMethodCard
-                title={t('Easebuzz')}
+                title={'Easebuzz'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_easebuzz_enabled}
                 onToggle={(checked) => setData('is_easebuzz_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.EASEBUZZ]}
-                helpText={t("Get your Easebuzz API credentials from your")}
+                helpText={"Get your Easebuzz API credentials from your"}
               >
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <PaymentInputField
                     id="easebuzz_merchant_key"
-                    label={t("Merchant Key")}
+                    label={"Merchant Key"}
                     value={data.easebuzz_merchant_key}
                     onChange={(value) => setData('easebuzz_merchant_key', value)}
-                    placeholder={t("Merchant Key")}
+                    placeholder={"Merchant Key"}
                     error={errors.easebuzz_merchant_key}
                   />
                   <PaymentInputField
                     id="easebuzz_salt_key"
-                    label={t("Salt Key")}
+                    label={"Salt Key"}
                     value={data.easebuzz_salt_key}
                     onChange={(value) => setData('easebuzz_salt_key', value)}
-                    placeholder={t("Salt Key")}
+                    placeholder={"Salt Key"}
                     isSecret
                     error={errors.easebuzz_salt_key}
                   />
                   <PaymentInputField
                     id="easebuzz_environment"
-                    label={t("Environment")}
+                    label={"Environment"}
                     value={data.easebuzz_environment}
                     onChange={(value) => setData('easebuzz_environment', value)}
-                    placeholder={t("prod/test")}
+                    placeholder={"prod/test"}
                     error={errors.easebuzz_environment}
                   />
                 </div>
@@ -1545,12 +1545,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Ozow */}
               {shouldShowMethod('ozow') && (
               <PaymentMethodCard
-                title={t('Ozow')}
+                title={'Ozow'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_ozow_enabled}
                 onToggle={(checked) => setData('is_ozow_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.OZOW]}
-                helpText={t("Get your Ozow API credentials from your")}
+                helpText={"Get your Ozow API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.ozow_mode as 'sandbox' | 'live'}
@@ -1560,27 +1560,27 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <PaymentInputField
                     id="ozow_site_key"
-                    label={t("Site Key")}
+                    label={"Site Key"}
                     value={data.ozow_site_key}
                     onChange={(value) => setData('ozow_site_key', value)}
-                    placeholder={t("Site Key")}
+                    placeholder={"Site Key"}
                     error={errors.ozow_site_key}
                   />
                   <PaymentInputField
                     id="ozow_private_key"
-                    label={t("Private Key")}
+                    label={"Private Key"}
                     value={data.ozow_private_key}
                     onChange={(value) => setData('ozow_private_key', value)}
-                    placeholder={t("Private Key")}
+                    placeholder={"Private Key"}
                     isSecret
                     error={errors.ozow_private_key}
                   />
                   <PaymentInputField
                     id="ozow_api_key"
-                    label={t("API Key")}
+                    label={"API Key"}
                     value={data.ozow_api_key}
                     onChange={(value) => setData('ozow_api_key', value)}
-                    placeholder={t("API Key")}
+                    placeholder={"API Key"}
                     error={errors.ozow_api_key}
                   />
                 </div>
@@ -1590,12 +1590,12 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
               {/* Cashfree */}
               {shouldShowMethod('cashfree') && (
               <PaymentMethodCard
-                title={t('Cashfree')}
+                title={'Cashfree'}
                 icon={<CreditCard className="h-5 w-5" />}
                 enabled={data.is_cashfree_enabled}
                 onToggle={(checked) => setData('is_cashfree_enabled', checked)}
                 helpUrl={PAYMENT_METHOD_HELP_URLS[PAYMENT_METHODS.CASHFREE]}
-                helpText={t("Get your Cashfree API credentials from your")}
+                helpText={"Get your Cashfree API credentials from your"}
               >
                 <PaymentModeSelector
                   value={data.cashfree_mode as 'sandbox' | 'live'}
@@ -1605,18 +1605,18 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <PaymentInputField
                     id="cashfree_public_key"
-                    label={t("Public Key")}
+                    label={"Public Key"}
                     value={data.cashfree_public_key}
                     onChange={(value) => setData('cashfree_public_key', value)}
-                    placeholder={t("Public Key")}
+                    placeholder={"Public Key"}
                     error={errors.cashfree_public_key}
                   />
                   <PaymentInputField
                     id="cashfree_secret_key"
-                    label={t("Secret Key")}
+                    label={"Secret Key"}
                     value={data.cashfree_secret_key}
                     onChange={(value) => setData('cashfree_secret_key', value)}
-                    placeholder={t("Secret Key")}
+                    placeholder={"Secret Key"}
                     isSecret
                     error={errors.cashfree_secret_key}
                   />
@@ -1630,7 +1630,7 @@ export default function PaymentSettings({ settings = {} }: PaymentSettingsProps)
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              <strong>{t("Important:")}</strong> {t("These payment settings will be used for all subscription plan payments. Make sure to test your configuration before going live.")}
+              <strong>{"Important:"}</strong> {"These payment settings will be used for all subscription plan payments. Make sure to test your configuration before going live."}
             </AlertDescription>
           </Alert>
         </div>

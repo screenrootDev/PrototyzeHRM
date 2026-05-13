@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useForm } from '@inertiajs/react';
 import { Mail, CheckCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 
 interface NewsletterSectionProps {
   brandColor?: string;
@@ -23,7 +23,7 @@ interface NewsletterSectionProps {
 }
 
 export default function NewsletterSection({ flash, settings, sectionData, brandColor = '#3b82f6' }: NewsletterSectionProps) {
-  const { t } = useTranslation();
+  
   const [isSubmitted, setIsSubmitted] = useState(false);
   
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -50,10 +50,10 @@ export default function NewsletterSection({ flash, settings, sectionData, brandC
           </div>
           
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData?.title || t('Stay Updated with HRM')}
+            {sectionData?.title || 'Stay Updated with HRM'}
           </h2>
           <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto leading-relaxed font-medium" id="newsletter-description">
-            {sectionData?.subtitle || t('Get the latest updates, HR tips, and feature announcements.')}
+            {sectionData?.subtitle || 'Get the latest updates, HR tips, and feature announcements.'}
           </p>
 
           {flash?.success && (
@@ -69,7 +69,7 @@ export default function NewsletterSection({ flash, settings, sectionData, brandC
             <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-lg mb-6 max-w-md mx-auto">
               <div className="flex items-center gap-2">
                 <CheckCircle className="w-5 h-5" />
-                <span>{t('Thank you for subscribing!')}</span>
+                <span>{'Thank you for subscribing!'}</span>
               </div>
             </div>
           )}
@@ -81,7 +81,7 @@ export default function NewsletterSection({ flash, settings, sectionData, brandC
                   type="email"
                   value={data.email}
                   onChange={(e) => setData('email', e.target.value)}
-                  placeholder={t('Enter your email address')}
+                  placeholder={'Enter your email address'}
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:border-gray-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   style={{ '--tw-ring-color': brandColor } as React.CSSProperties}
                   required
@@ -103,13 +103,13 @@ export default function NewsletterSection({ flash, settings, sectionData, brandC
                 {processing && (
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 )}
-                {processing ? t('Subscribing...') : t('Subscribe')}
+                {processing ? 'Subscribing...' : 'Subscribe'}
               </button>
             </div>
           </form>
 
           <p className="text-gray-500 text-sm mt-4">
-            {sectionData?.privacy_text || t('No spam, unsubscribe at any time. We respect your privacy.')}
+            {sectionData?.privacy_text || 'No spam, unsubscribe at any time. We respect your privacy.'}
           </p>
 
           {/* Benefits */}

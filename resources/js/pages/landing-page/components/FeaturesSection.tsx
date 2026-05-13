@@ -1,6 +1,6 @@
 import React from 'react';
 import { QrCode, Smartphone, Share2, BarChart3, Globe, Shield, Star, Zap, Users, Lock, Wifi, Heart , DollarSign , Clock , UserPlus, Award, BarChart2} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { useScrollAnimation } from '../../../hooks/useScrollAnimation';
 
 interface Feature {
@@ -41,7 +41,7 @@ const iconMap: Record<string, React.ComponentType<any>> = {
 };
 
 export default function FeaturesSection({ settings, sectionData, brandColor = '#3b82f6' }: FeaturesSectionProps) {
-  const { t } = useTranslation();
+  
   const { ref, isVisible } = useScrollAnimation();
 
   // Helper to get full URL for images
@@ -58,40 +58,40 @@ export default function FeaturesSection({ settings, sectionData, brandColor = '#
   const defaultFeatures = [
     {
       icon: 'users',
-      title: t('Employee Management'),
-      description: t('Centralized profiles with personal, job, and document details. Perfect for business cards, flyers, and networking events.')
+      title: 'Employee Management',
+      description: 'Centralized profiles with personal, job, and document details. Perfect for business cards, flyers, and networking events.'
     },
     {
       icon: 'dollar-sign',
-      title: t('Payroll Automation'),
-      description: t('Generate accurate payslips with tax, allowances, and deductions. Modern networking made simple and professional.')
+      title: 'Payroll Automation',
+      description: 'Generate accurate payslips with tax, allowances, and deductions. Modern networking made simple and professional.'
     },
     {
       icon: 'share',
-      title: t('Easy Sharing'),
-      description: t('Share your digital card via email, SMS, social media, or direct links. Multiple sharing options available.')
+      title: 'Easy Sharing',
+      description: 'Share your digital card via email, SMS, social media, or direct links. Multiple sharing options available.'
     },
     {
       icon: 'clock',
-      title: t('Leave & Attendance'),
-      description: t('Smart tracking of leaves, shifts, and attendance logs. Understand how your network interacts with your card.')
+      title: 'Leave & Attendance',
+      description: 'Smart tracking of leaves, shifts, and attendance logs. Understand how your network interacts with your card.'
     },
     {
       icon: 'user-plus',
-      title: t('Recruitment & Onboarding'),
-      description: t('Streamline hiring with applicant tracking and digital onboarding.')
+      title: 'Recruitment & Onboarding',
+      description: 'Streamline hiring with applicant tracking and digital onboarding.'
     },
 
     {
       icon: 'award',
-      title: t('Performance Management'),
-      description: t('Set goals, run evaluations, and track employee growth.')
+      title: 'Performance Management',
+      description: 'Set goals, run evaluations, and track employee growth.'
     },
 
     {
       icon: 'bar-chart-2',
-      title: t('Reports & Analytics'),
-      description: t('Get actionable insights on workforce productivity and HR metrics.')
+      title: 'Reports & Analytics',
+      description: 'Get actionable insights on workforce productivity and HR metrics.'
     },
   ];
 
@@ -104,10 +104,10 @@ export default function FeaturesSection({ settings, sectionData, brandColor = '#
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className={`text-center mb-8 sm:mb-12 lg:mb-16 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {sectionData.title || t('Empowering Businesses with Smart HR Solutions')}
+            {sectionData.title || 'Empowering Businesses with Smart HR Solutions'}
           </h2>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed font-medium">
-            {sectionData.description || t('All-in-one platform to manage employees, payroll, attendance, and performance with ease. Built for professionals who value efficiency and innovation.')}
+            {sectionData.description || 'All-in-one platform to manage employees, payroll, attendance, and performance with ease. Built for professionals who value efficiency and innovation.'}
           </p>
         </div>
 

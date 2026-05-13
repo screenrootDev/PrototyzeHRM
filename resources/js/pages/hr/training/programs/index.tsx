@@ -8,7 +8,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Download } from 'lucide-react';
@@ -16,7 +16,7 @@ import { Badge } from '@/components/ui/badge';
 import MediaPicker from '@/components/MediaPicker';
 
 export default function TrainingPrograms() {
-  const { t } = useTranslation();
+  
   const { auth, trainingPrograms, trainingTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -113,72 +113,60 @@ export default function TrainingPrograms() {
     const data = formData;
     
     if (formMode === 'create') {
-      toast.loading(t('Creating training program...'));
+      toast.loading('Creating training program...');
 
       router.post(route('hr.training-programs.store'), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create training program: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create training program: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating training program...'));
+      toast.loading('Updating training program...');
       
       router.put(route('hr.training-programs.update', currentItem.id), data, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update training program: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update training program: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting training program...'));
+    toast.loading('Deleting training program...');
     
     router.delete(route('hr.training-programs.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete training program: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete training program: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -203,7 +191,7 @@ export default function TrainingPrograms() {
   // Add the "Add New Training Program" button if user has permission
   if (hasPermission(permissions, 'create-training-programs')) {
     pageActions.push({
-      label: t('Add Training Program'),
+      label: 'Add Training Program',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -211,17 +199,17 @@ export default function TrainingPrograms() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.training-programs.index') },
-    { title: t('Training Management'), href: route('hr.training-programs.index') },
-    { title: t('Training Programs') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.training-programs.index') },
+    { title: 'Training Management', href: route('hr.training-programs.index') },
+    { title: 'Training Programs' }
   ];
 
   // Define table columns
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'),
+      label: 'Name',
       sortable: true,
       render: (value, row) => (
         <div>
@@ -232,7 +220,7 @@ export default function TrainingPrograms() {
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       sortable: true,
       render: (value) => {
         const statusClasses = {
@@ -251,35 +239,35 @@ export default function TrainingPrograms() {
     },
     { 
       key: 'duration', 
-      label: t('Duration'),
+      label: 'Duration',
       sortable: true,
-      render: (value) => value ? `${value} ${t('hours')}` : '-'
+      render: (value) => value ? `${value} ${'hours'}` : '-'
     },
     { 
       key: 'cost', 
-      label: t('Cost'),
+      label: 'Cost',
       sortable: true,
       render: (value) => value ? window.appSettings?.formatCurrency(parseFloat(value)) : '-'
     },
     { 
       key: 'capacity', 
-      label: t('Capacity'),
+      label: 'Capacity',
       sortable: true,
       render: (value) => value || '-'
     },
     { 
       key: 'flags', 
-      label: t('Flags'),
+      label: 'Flags',
       render: (_, row) => (
         <div className="flex flex-wrap gap-1">
           {row.is_mandatory && (
             <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50">
-              {t('Mandatory')}
+              {'Mandatory'}
             </Badge>
           )}
           {row.is_self_enrollment && (
             <Badge variant="outline" className="bg-blue-50 text-blue-700 hover:bg-blue-50">
-              {t('Self-Enrollment')}
+              {'Self-Enrollment'}
             </Badge>
           )}
         </div>
@@ -287,12 +275,12 @@ export default function TrainingPrograms() {
     },
     { 
       key: 'sessions_count', 
-      label: t('Sessions'),
+      label: 'Sessions',
       render: (value) => value || '0'
     },
     { 
       key: 'employee_trainings_count', 
-      label: t('Employees'),
+      label: 'Employees',
       render: (value) => value || '0'
     }
   ];
@@ -300,21 +288,21 @@ export default function TrainingPrograms() {
   // Define table actions
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-training-programs'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-training-programs'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -324,7 +312,7 @@ export default function TrainingPrograms() {
 
   // Prepare training type options for filter
   const trainingTypeOptions = [
-    { value: '', label: t('All Types') },
+    { value: '', label: 'All Types' },
     ...(trainingTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: `${type.name} (${type.branch?.name || 'No Branch'} - ${type.departments?.map((d: any) => d.name).join(', ') || 'No Departments'})`
@@ -333,16 +321,16 @@ export default function TrainingPrograms() {
 
   // Prepare status options for filter
   const statusOptions = [
-    { value: '', label: t('All Statuses') },
-    { value: 'draft', label: t('Draft') },
-    { value: 'active', label: t('Active') },
-    { value: 'completed', label: t('Completed') },
-    { value: 'cancelled', label: t('Cancelled') }
+    { value: '', label: 'All Statuses' },
+    { value: 'draft', label: 'Draft' },
+    { value: 'active', label: 'Active' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'cancelled', label: 'Cancelled' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Training Programs")} 
+      title={"Training Programs"} 
       url="/hr/training/programs"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -357,7 +345,7 @@ export default function TrainingPrograms() {
           filters={[
             {
               name: 'training_type_id',
-              label: t('Training Type'),
+              label: 'Training Type',
               type: 'select',
               value: selectedType,
               onChange: setSelectedType,
@@ -366,7 +354,7 @@ export default function TrainingPrograms() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: setSelectedStatus,
@@ -421,7 +409,7 @@ export default function TrainingPrograms() {
           to={trainingPrograms?.to || 0}
           total={trainingPrograms?.total || 0}
           links={trainingPrograms?.links}
-          entityName={t("training programs")}
+          entityName={"training programs"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -435,13 +423,13 @@ export default function TrainingPrograms() {
           fields: [
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text',
               required: true
             },
             { 
               name: 'training_type_id', 
-              label: t('Training Type'), 
+              label: 'Training Type', 
               type: 'select',
               required: true,
               searchable: true,
@@ -452,69 +440,69 @@ export default function TrainingPrograms() {
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea'
             },
             { 
               name: 'duration', 
-              label: t('Duration (hours)'), 
+              label: 'Duration (hours)', 
               type: 'number',
               min: 1
             },
             { 
               name: 'cost', 
-              label: t('Cost'), 
+              label: 'Cost', 
               type: 'number',
               min: 0,
               step: 0.01
             },
             { 
               name: 'capacity', 
-              label: t('Capacity'), 
+              label: 'Capacity', 
               type: 'number',
               min: 1
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select',
               required: true,
               options: [
-                { value: 'draft', label: t('Draft') },
-                { value: 'active', label: t('Active') },
-                { value: 'completed', label: t('Completed') },
-                { value: 'cancelled', label: t('Cancelled') }
+                { value: 'draft', label: 'Draft' },
+                { value: 'active', label: 'Active' },
+                { value: 'completed', label: 'Completed' },
+                { value: 'cancelled', label: 'Cancelled' }
               ]
             },
             { 
               name: 'materials', 
-              label: t('Materials'), 
+              label: 'Materials', 
               type: 'custom',
               render: (field, formData, handleChange) => (
                 <MediaPicker
                   value={String(formData[field.name] || '')}
                   onChange={(url) => handleChange(field.name, url)}
-                  placeholder={t('Select materials file...')}
+                  placeholder={'Select materials file...'}
                 />
               ),
-              helpText: t('Upload PDF, Word or ZIP file (max 10MB)')
+              helpText: 'Upload PDF, Word or ZIP file (max 10MB)'
             },
             { 
               name: 'prerequisites', 
-              label: t('Prerequisites'), 
+              label: 'Prerequisites', 
               type: 'textarea'
             },
             { 
               name: 'is_mandatory', 
-              label: t('Mandatory Training'), 
+              label: 'Mandatory Training', 
               type: 'checkbox',
-              helpText: t('Mark this training as mandatory for employees')
+              helpText: 'Mark this training as mandatory for employees'
             },
             { 
               name: 'is_self_enrollment', 
-              label: t('Allow Self-Enrollment'), 
+              label: 'Allow Self-Enrollment', 
               type: 'checkbox',
-              helpText: t('Allow employees to enroll themselves in this training')
+              helpText: 'Allow employees to enroll themselves in this training'
             }
           ],
           modalSize: 'lg'
@@ -522,10 +510,10 @@ export default function TrainingPrograms() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Training Program')
+            ? 'Add New Training Program'
             : formMode === 'edit'
-              ? t('Edit Training Program')
-              : t('View Training Program')
+              ? 'Edit Training Program'
+              : 'View Training Program'
         }
         mode={formMode}
       />

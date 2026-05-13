@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { useTranslation } from 'react-i18next';
+
 import { usePage } from '@inertiajs/react';
 import { Upload, Search, X, Plus, Info, Copy, Download, MoreHorizontal, Image as ImageIcon, Calendar, HardDrive, BarChart3 } from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
@@ -24,7 +24,7 @@ interface MediaItem {
 }
 
 export default function MediaLibraryDemo() {
-  const { t } = useTranslation();
+  
   const { csrf_token, auth } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const [media, setMedia] = useState<MediaItem[]>([]);
@@ -60,7 +60,7 @@ export default function MediaLibraryDemo() {
       const result = await response.json();
 
       if (response.ok) {
-        toast.success(result.message || t('Directory created successfully'));
+        toast.success(result.message || 'Directory created successfully');
         setNewDirectoryName('');
         setShowCreateDirectory(false);
         fetchMedia();
@@ -68,11 +68,11 @@ export default function MediaLibraryDemo() {
         if (result.errors && Array.isArray(result.errors)) {
           result.errors.forEach((error: string) => toast.error(error));
         } else {
-          toast.error(result.error || result.message || t('Failed to create directory'));
+          toast.error(result.error || result.message || 'Failed to create directory');
         }
       }
     } catch (error) {
-      toast.error(t('Network error: Failed to create directory'));
+      toast.error('Network error: Failed to create directory');
     }
   };
 
@@ -177,15 +177,15 @@ export default function MediaLibraryDemo() {
         } else if (result.message) {
           toast.error(result.message);
         } else {
-          toast.error(t('Failed to upload files'));
+          toast.error('Failed to upload files');
         }
         
         // Show additional info if available
         if (result.allowed_types) {
-          toast.error(t('Allowed types: {{types}}', { types: result.allowed_types }));
+          toast.error(`Allowed types: ${result.allowed_types}`);
         }
         if (result.max_size_mb) {
-          toast.error(t('Max file size: {{size}} MB', { size: result.max_size_mb }));
+          toast.error(`Max file size: ${result.max_size_mb} MB`);
         }
       }
     } catch (error) {
@@ -231,16 +231,16 @@ export default function MediaLibraryDemo() {
 
       if (response.ok) {
         setMedia(prev => prev.filter(item => item.id !== id));
-        toast.success(result.message || t('Media deleted successfully'));
+        toast.success(result.message || 'Media deleted successfully');
       } else {
         if (result.errors && Array.isArray(result.errors)) {
           result.errors.forEach((error: string) => toast.error(error));
         } else {
-          toast.error(result.error || result.message || t('Failed to delete media'));
+          toast.error(result.error || result.message || 'Failed to delete media');
         }
       }
     } catch (error) {
-      toast.error(t('Error deleting media'));
+      toast.error('Error deleting media');
     }
   };
 
@@ -264,7 +264,7 @@ export default function MediaLibraryDemo() {
         if (errorData.errors && Array.isArray(errorData.errors)) {
           errorData.errors.forEach((error: string) => toast.error(error));
         } else {
-          toast.error(errorData.error || errorData.message || t('Download failed'));
+          toast.error(errorData.error || errorData.message || 'Download failed');
         }
         return;
       }
@@ -278,9 +278,9 @@ export default function MediaLibraryDemo() {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      toast.success(t('Download started'));
+      toast.success('Download started');
     } catch (error) {
-      toast.error(t('Download failed: Network error'));
+      toast.error('Download failed: Network error');
     }
   };
 
@@ -316,13 +316,13 @@ export default function MediaLibraryDemo() {
   const currentMedia = filteredMedia.slice(startIndex, startIndex + itemsPerPage);
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Media Library') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Media Library' }
   ];
 
   const pageActions = [
     {
-      label: t('Upload Media'),
+      label: 'Upload Media',
       icon: <Plus className="h-4 w-4" />,
       variant: 'default' as const,
       onClick: () => setIsUploadModalOpen(true)
@@ -331,7 +331,7 @@ export default function MediaLibraryDemo() {
 
   return (
     <PageTemplate
-      title={t('Media Library')}
+      title={'Media Library'}
       url="/examples/media-library-demo"
       breadcrumbs={breadcrumbs}
       actions={pageActions}
@@ -410,7 +410,7 @@ export default function MediaLibraryDemo() {
                 <div className="relative max-w-sm">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
-                    placeholder={t('Search media files...')}
+                    placeholder={'Search media files...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10"
@@ -418,7 +418,7 @@ export default function MediaLibraryDemo() {
                 </div>
                 {searchTerm && (
                   <p className="text-xs text-muted-foreground mt-1">
-                    {t('Showing results for "{{term}}"', { term: searchTerm })}
+                    Showing results for "{searchTerm}"
                   </p>
                 )}
               </div>
@@ -429,7 +429,7 @@ export default function MediaLibraryDemo() {
                   <div className="p-1.5 bg-primary/10 rounded-md">
                     <ImageIcon className="h-4 w-4 text-primary" />
                   </div>
-                  <span className="text-sm font-semibold">{filteredMedia.length} {t('Files')}</span>
+                  <span className="text-sm font-semibold">{filteredMedia.length} {'Files'}</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -446,7 +446,7 @@ export default function MediaLibraryDemo() {
                     <ImageIcon className="h-4 w-4 text-blue-600" />
                   </div>
                   <span className="text-sm font-semibold">
-                    {filteredMedia.filter(item => item.mime_type.startsWith('image/')).length} {t('Images')}
+                    {filteredMedia.filter(item => item.mime_type.startsWith('image/')).length} {'Images'}
                   </span>
                 </div>
               </div>
@@ -460,16 +460,16 @@ export default function MediaLibraryDemo() {
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-                <p className="text-muted-foreground">{t('Loading media...')}</p>
+                <p className="text-muted-foreground">{'Loading media...'}</p>
               </div>
             ) : currentMedia.length === 0 ? (
               <div className="text-center py-16">
                 <div className="mx-auto w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-4">
                   <ImageIcon className="h-10 w-10 text-muted-foreground" />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">{t('No media files found')}</h3>
+                <h3 className="text-lg font-semibold mb-2">{'No media files found'}</h3>
                 <p className="text-muted-foreground mb-6">
-                  {searchTerm ? t('No results found for "{{term}}"', { term: searchTerm }) : t('Get started by uploading your first media file')}
+                  {searchTerm ? `No results found for "${searchTerm}"` : 'Get started by uploading your first media file'}
                 </p>
                 {!searchTerm && (
                   <Button
@@ -477,7 +477,7 @@ export default function MediaLibraryDemo() {
                     size="lg"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    {t('Upload Media')}
+                    {'Upload Media'}
                   </Button>
                 )}
               </div>
@@ -535,19 +535,19 @@ export default function MediaLibraryDemo() {
                                   {hasPermission(permissions, 'view-media') && (
                                     <DropdownMenuItem onClick={() => handleShowInfo(item)}>
                                       <Info className="h-4 w-4 mr-2" />
-                                      {t('View Info')}
+                                      {'View Info'}
                                     </DropdownMenuItem>
                                   )}
                                   {hasPermission(permissions, 'view-media') && (
                                     <DropdownMenuItem onClick={() => handleCopyLink(item.url)}>
                                       <Copy className="h-4 w-4 mr-2" />
-                                      {t('Copy Link')}
+                                      {'Copy Link'}
                                     </DropdownMenuItem>
                                   )}
                                   {hasPermission(permissions, 'download-media') && (
                                     <DropdownMenuItem onClick={() => handleDownload(item.id, item.file_name)}>
                                       <Download className="h-4 w-4 mr-2" />
-                                      {t('Download')}
+                                      {'Download'}
                                     </DropdownMenuItem>
                                   )}
                                   <DropdownMenuSeparator />
@@ -557,7 +557,7 @@ export default function MediaLibraryDemo() {
                                       className="text-destructive focus:text-destructive"
                                     >
                                       <X className="h-4 w-4 mr-2" />
-                                      {t('Delete')}
+                                      {'Delete'}
                                     </DropdownMenuItem>
                                   )}
                                 </DropdownMenuContent>
@@ -601,7 +601,7 @@ export default function MediaLibraryDemo() {
                 {totalPages > 1 && (
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t">
                     <div className="text-sm text-muted-foreground">
-                      {t('Showing')} <span className="font-semibold">{startIndex + 1}</span> {t('to')} <span className="font-semibold">{Math.min(startIndex + itemsPerPage, filteredMedia.length)}</span> {t('of')} <span className="font-semibold">{filteredMedia.length}</span> {t('files')}
+                      {'Showing'} <span className="font-semibold">{startIndex + 1}</span> {'to'} <span className="font-semibold">{Math.min(startIndex + itemsPerPage, filteredMedia.length)}</span> {'of'} <span className="font-semibold">{filteredMedia.length}</span> {'files'}
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -611,7 +611,7 @@ export default function MediaLibraryDemo() {
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       >
-                        {t('Previous')}
+                        {'Previous'}
                       </Button>
 
                       <div className="flex gap-1">
@@ -647,7 +647,7 @@ export default function MediaLibraryDemo() {
                         disabled={currentPage === totalPages}
                         onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       >
-                        {t('Next')}
+                        {'Next'}
                       </Button>
                     </div>
                   </div>
@@ -663,7 +663,7 @@ export default function MediaLibraryDemo() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Upload className="h-5 w-5" />
-                {t('Upload Media Files')}
+                {'Upload Media Files'}
               </DialogTitle>
             </DialogHeader>
 
@@ -685,10 +685,10 @@ export default function MediaLibraryDemo() {
                       }`} />
                   </div>
                   <h3 className="text-lg font-medium mb-2">
-                    {dragActive ? t('Drop files here') : t('Upload your images')}
+                    {dragActive ? 'Drop files here' : 'Upload your images'}
                   </h3>
                   <p className="text-sm text-muted-foreground mb-6">
-                    {t('Drag and drop your images here, or click to browse')}
+                    {'Drag and drop your images here, or click to browse'}
                   </p>
 
                   <Input
@@ -708,12 +708,12 @@ export default function MediaLibraryDemo() {
                     {uploading ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        {t('Uploading...')}
+                        {'Uploading...'}
                       </>
                     ) : (
                       <>
                         <Plus className="h-4 w-4 mr-2" />
-                        {t('Choose Files')}
+                        {'Choose Files'}
                       </>
                     )}
                   </Button>
@@ -733,7 +733,7 @@ export default function MediaLibraryDemo() {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Info className="h-5 w-5" />
-                {t('Media Information')}
+                {'Media Information'}
               </DialogTitle>
             </DialogHeader>
 
@@ -766,30 +766,30 @@ export default function MediaLibraryDemo() {
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-3">
                     <div className="flex justify-between items-start">
-                      <span className="text-sm font-medium text-muted-foreground">{t('File Name')}</span>
+                      <span className="text-sm font-medium text-muted-foreground">{'File Name'}</span>
                       <span className="text-sm text-right max-w-xs truncate" title={selectedMediaInfo.file_name}>
                         {selectedMediaInfo.file_name}
                       </span>
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-muted-foreground">{t('File Type')}</span>
+                      <span className="text-sm font-medium text-muted-foreground">{'File Type'}</span>
                       <Badge variant="secondary">{selectedMediaInfo.mime_type}</Badge>
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-muted-foreground">{t('File Size')}</span>
+                      <span className="text-sm font-medium text-muted-foreground">{'File Size'}</span>
                       <span className="text-sm">{formatFileSize(selectedMediaInfo.size)}</span>
                     </div>
 
                     <div className="flex justify-between items-center">
-                      <span className="text-sm font-medium text-muted-foreground">{t('Uploaded')}</span>
+                      <span className="text-sm font-medium text-muted-foreground">{'Uploaded'}</span>
                       <span className="text-sm">{formatDate(selectedMediaInfo.created_at)}</span>
                     </div>
                   </div>
 
                   <div className="pt-2 border-t">
-                    <span className="text-sm font-medium text-muted-foreground block mb-2">{t('URL')}</span>
+                    <span className="text-sm font-medium text-muted-foreground block mb-2">{'URL'}</span>
                     <div className="flex items-center gap-2 p-2 bg-muted rounded-md">
                       <code className="text-xs text-muted-foreground flex-1 truncate">
                         {selectedMediaInfo.url}
@@ -814,7 +814,7 @@ export default function MediaLibraryDemo() {
                     className="flex-1"
                   >
                     <Copy className="h-4 w-4 mr-2" />
-                    {t('Copy Link')}
+                    {'Copy Link'}
                   </Button>
                   {hasPermission(permissions, 'download-media') && (
                     <Button
@@ -823,7 +823,7 @@ export default function MediaLibraryDemo() {
                       className="flex-1"
                     >
                       <Download className="h-4 w-4 mr-2" />
-                      {t('Download')}
+                      {'Download'}
                     </Button>
                   )}
                 </div>

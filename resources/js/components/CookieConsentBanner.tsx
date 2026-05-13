@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { X } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
 import { usePage } from '@inertiajs/react';
 import { useBrand } from '@/contexts/BrandContext';
 import { THEME_COLORS } from '@/hooks/use-appearance';
@@ -10,7 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { toast } from '@/components/custom-toast';
 
 export default function CookieConsentBanner() {
-  const { t } = useTranslation();
+  
   const { props } = usePage();
   const [isVisible, setIsVisible] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -153,7 +153,7 @@ export default function CookieConsentBanner() {
       await saveCookieConsent('accept_all', preferences);
       setIsVisible(false);
     } catch (error) {
-      toast.error(t('Failed to save cookie preferences'));
+      toast.error('Failed to save cookie preferences');
     } finally {
       setIsLoading(false);
     }
@@ -173,7 +173,7 @@ export default function CookieConsentBanner() {
       await saveCookieConsent('necessary_only', preferences);
       setIsVisible(false);
     } catch (error) {
-      toast.error(t('Failed to save cookie preferences'));
+      toast.error('Failed to save cookie preferences');
     } finally {
       setIsLoading(false);
     }
@@ -188,7 +188,7 @@ export default function CookieConsentBanner() {
         <Card className="p-4 shadow-lg border">
           <div className="flex justify-between items-start mb-3">
             <h3 className="font-semibold text-sm">
-              {settings.cookieTitle || t('Cookie Consent')}
+              {settings.cookieTitle || 'Cookie Consent'}
             </h3>
             <Button
               variant="ghost"
@@ -201,7 +201,7 @@ export default function CookieConsentBanner() {
           </div>
 
           <p className="text-sm text-muted-foreground mb-4">
-            {settings.cookieDescription || t('We use cookies to enhance your browsing experience and provide personalized content.')}
+            {settings.cookieDescription || 'We use cookies to enhance your browsing experience and provide personalized content.'}
           </p>
 
           <div className="flex flex-col gap-2">
@@ -213,7 +213,7 @@ export default function CookieConsentBanner() {
                 style={{ backgroundColor: primaryColor }}
                 disabled={isLoading}
               >
-                {isLoading ? t('Saving...') : t('Accept All')}
+                {isLoading ? 'Saving...' : 'Accept All'}
               </Button>
               <Button
                 onClick={acceptNecessary}
@@ -223,7 +223,7 @@ export default function CookieConsentBanner() {
                 style={{ borderColor: primaryColor, color: primaryColor }}
                 disabled={isLoading}
               >
-                {isLoading ? t('Saving...') : t('Necessary Only')}
+                {isLoading ? 'Saving...' : 'Necessary Only'}
               </Button>
             </div>
             <Button
@@ -232,15 +232,15 @@ export default function CookieConsentBanner() {
               size="sm"
               className="text-sm underline"
             >
-              {t('Let me choose')}
+              {'Let me choose'}
             </Button>
           </div>
 
           {settings.contactUsUrl && (
             <p className="text-xs text-muted-foreground mt-2">
-              {settings.contactUsDescription || t('Questions about our cookie policy?')}{' '}
+              {settings.contactUsDescription || 'Questions about our cookie policy?'}{' '}
               <a href={settings.contactUsUrl} className="underline">
-                {t('Contact us')}
+                {'Contact us'}
               </a>
             </p>
           )}
@@ -253,7 +253,7 @@ export default function CookieConsentBanner() {
           <Card className="w-full max-w-md max-h-[80vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold">{settings.cookieTitle || t('Cookie Preferences')}</h3>
+                <h3 className="text-lg font-semibold">{settings.cookieTitle || 'Cookie Preferences'}</h3>
                 <Button
                   variant="ghost"
                   size="sm"
@@ -268,9 +268,9 @@ export default function CookieConsentBanner() {
                 {/* Strictly Necessary Cookies */}
                 <div className="flex items-center justify-between">
                   <div className="flex-1">
-                    <h4 className="font-medium text-sm">{settings.strictlyCookieTitle || t('Strictly Necessary Cookies')}</h4>
+                    <h4 className="font-medium text-sm">{settings.strictlyCookieTitle || 'Strictly Necessary Cookies'}</h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      {settings.strictlyCookieDescription || t('These cookies are essential for the website to function properly.')}
+                      {settings.strictlyCookieDescription || 'These cookies are essential for the website to function properly.'}
                     </p>
                   </div>
                   <Switch checked={true} disabled={true} />
@@ -291,7 +291,7 @@ export default function CookieConsentBanner() {
                   style={{ borderColor: primaryColor, color: primaryColor }}
                   disabled={isLoading}
                 >
-                  {isLoading ? t('Saving...') : t('Save Preferences')}
+                  {isLoading ? 'Saving...' : 'Save Preferences'}
                 </Button>
                 <Button
                   onClick={async () => {
@@ -303,7 +303,7 @@ export default function CookieConsentBanner() {
                   style={{ backgroundColor: primaryColor }}
                   disabled={isLoading}
                 >
-                  {isLoading ? t('Saving...') : t('Accept All')}
+                  {isLoading ? 'Saving...' : 'Accept All'}
                 </Button>
               </div>
             </div>

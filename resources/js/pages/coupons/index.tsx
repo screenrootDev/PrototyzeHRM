@@ -3,10 +3,10 @@ import { couponsConfig } from '@/config/crud/coupons';
 import { useEffect, useState } from 'react';
 import { usePage } from '@inertiajs/react';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 
 export default function CouponsPage() {
-  const { t } = useTranslation();
+  
   const { flash } = usePage().props as any;
   const [config, setConfig] = useState(couponsConfig);
 
@@ -18,27 +18,27 @@ export default function CouponsPage() {
         ...couponsConfig.table,
         columns: couponsConfig.table.columns.map(col => ({
           ...col,
-          label: t(col.label)
+          label: col.label
         }))
       },
       form: {
         ...couponsConfig.form,
         fields: couponsConfig.form.fields.map(field => ({
           ...field,
-          label: t(field.label),
-          placeholder: field.placeholder ? t(field.placeholder) : undefined,
+          label: field.label,
+          placeholder: field.placeholder ? field.placeholder : undefined,
           options: field.options ? field.options.map(opt => ({
             ...opt,
-            label: t(opt.label)
+            label: opt.label
           })) : undefined
         }))
       },
       filters: couponsConfig.filters?.map(filter => ({
         ...filter,
-        label: t(filter.label),
+        label: filter.label,
         options: filter.options ? filter.options.map(opt => ({
           ...opt,
-          label: t(opt.label)
+          label: opt.label
         })) : undefined
       })),
       hooks: {
@@ -67,11 +67,11 @@ export default function CouponsPage() {
         }
       }
     });
-  }, [t]);
+  }, []);
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Coupons') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Coupons' }
   ];
 
   return (

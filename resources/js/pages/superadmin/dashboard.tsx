@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { RefreshCw, BarChart3, Nfc, Building2, CreditCard, Ticket, DollarSign, TrendingUp, Activity, UserPlus, AlertCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useTranslation } from 'react-i18next';
+
 import { Badge } from '@/components/ui/badge';
 import { DashboardOverview } from '@/components/dashboard/dashboard-overview';
 import { router } from '@inertiajs/react';
@@ -39,7 +39,7 @@ interface PageAction {
 }
 
 export default function SuperAdminDashboard({ dashboardData }: { dashboardData: SuperAdminDashboardData }) {
-  const { t } = useTranslation();
+  
   const [isRefreshing, setIsRefreshing] = useState(false);
 
 
@@ -55,7 +55,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
 
   const pageActions: PageAction[] = [
     {
-      label: t('Refresh'),
+      label: 'Refresh',
       icon: <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />,
       variant: 'outline',
       onClick: handleRefresh
@@ -81,7 +81,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
 
   return (
     <PageTemplate 
-      title={t('Dashboard')}
+      title={'Dashboard'}
       url="/dashboard"
       actions={pageActions}
     >
@@ -92,7 +92,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Active Plans')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Active Plans'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{stats.activePlans.toLocaleString()}</h3>
                 </div>
                 <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
@@ -106,7 +106,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Pending Requests')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Pending Requests'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{stats.pendingRequests.toLocaleString()}</h3>
                 </div>
                 <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
@@ -120,7 +120,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Monthly Growth')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Monthly Growth'}</p>
                   <h3 className="mt-2 text-2xl font-bold">+{stats.monthlyGrowth}%</h3>
                 </div>
                 <div className="rounded-full bg-emerald-100 p-3 dark:bg-emerald-900">
@@ -134,7 +134,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Companies')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Companies'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{stats.totalCompanies.toLocaleString()}</h3>
                 </div>
                 <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -148,7 +148,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Revenue')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Revenue'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{window.appSettings.formatCurrency(stats.totalRevenue.toLocaleString())}</h3>
                 </div>
                 <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
@@ -162,7 +162,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Users')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Users'}</p>
                   <h3 className="mt-2 text-2xl font-bold">{stats.totalUsers?.toLocaleString() || 0}</h3>
                 </div>
                 <div className="rounded-full bg-indigo-100 p-3 dark:bg-indigo-900">
@@ -181,7 +181,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                {t('Recently Registered Companies')}
+                {'Recently Registered Companies'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -200,7 +200,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">{t('No companies registered yet')}</p>
+                  <p className="text-sm text-muted-foreground text-center py-4">{'No companies registered yet'}</p>
                 )}
               </div>
             </CardContent>
@@ -211,7 +211,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Ticket className="h-5 w-5" />
-                {t('Top Performing Plans')}
+                {'Top Performing Plans'}
               </CardTitle>
             </CardHeader>
             <CardContent>

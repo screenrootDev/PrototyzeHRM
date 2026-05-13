@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function InterviewRounds() {
-  const { t } = useTranslation();
+  
   const { auth, interviewRounds, jobPostings, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -92,17 +92,15 @@ export default function InterviewRounds() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating interview round...'));
+      toast.loading('Creating interview round...');
 
       router.post(route('hr.recruitment.interview-rounds.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -114,17 +112,15 @@ export default function InterviewRounds() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating interview round...'));
+      toast.loading('Updating interview round...');
 
       router.put(route('hr.recruitment.interview-rounds.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -139,17 +135,15 @@ export default function InterviewRounds() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting interview round...'));
+    toast.loading('Deleting interview round...');
 
     router.delete(route('hr.recruitment.interview-rounds.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -164,16 +158,14 @@ export default function InterviewRounds() {
 
   const handleToggleStatus = (interviewRound: any) => {
     const newStatus = interviewRound.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} interview round...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} interview round...`);
 
     router.put(route('hr.recruitment.interview-rounds.toggle-status', interviewRound.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -202,7 +194,7 @@ export default function InterviewRounds() {
   
   if (hasPermission(permissions, 'create-interview-rounds')) {
     pageActions.push({
-      label: t('Add Interview Round'),
+      label: 'Add Interview Round',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -210,15 +202,15 @@ export default function InterviewRounds() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Recruitment'), href: route('hr.recruitment.interview-rounds.index') },
-    { title: t('Interview Rounds') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Recruitment', href: route('hr.recruitment.interview-rounds.index') },
+    { title: 'Interview Rounds' }
   ];
 
   const columns = [
     { 
       key: 'job.title', 
-      label: t('Job'),
+      label: 'Job',
       render: (_, row) => (
         <div>
           <div className="font-medium">{row.job?.title || '-'}</div>
@@ -228,7 +220,7 @@ export default function InterviewRounds() {
     },
     { 
       key: 'sequence_number', 
-      label: t('Sequence'), 
+      label: 'Sequence', 
       sortable: false,
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
@@ -238,31 +230,31 @@ export default function InterviewRounds() {
     },
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: false,
       render: (value) => <div className="font-medium">{value}</div>
     },
     { 
       key: 'description', 
-      label: t('Description'),
+      label: 'Description',
       render: (value) => value || '-'
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
           value === 'active' 
             ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
             : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
         }`}>
-          {value === 'active' ? t('Active') : t('Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -270,28 +262,28 @@ export default function InterviewRounds() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-interview-rounds'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-interview-rounds'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-interview-rounds'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -300,13 +292,13 @@ export default function InterviewRounds() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled: true},
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' , disabled: true},
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const jobOptions = [
-    { value: '_empty_', label: t('All Jobs') , disabled: true},
+    { value: '_empty_', label: 'All Jobs' , disabled: true},
     ...(jobPostings || []).map((job: any) => ({
       value: job.id.toString(),
       label: `${job.job_code} - ${job.title}`
@@ -314,7 +306,7 @@ export default function InterviewRounds() {
   ];
 
   const jobPostingOptions = [
-    { value: '_empty_', label: t('Select Job') },
+    { value: '_empty_', label: 'Select Job' },
     ...(jobPostings || []).map((job: any) => ({
       value: job.id.toString(),
       label: `${job.job_code} - ${job.title}`
@@ -323,7 +315,7 @@ export default function InterviewRounds() {
 
   return (
     <PageTemplate 
-      title={t("Interview Rounds")} 
+      title={"Interview Rounds"} 
       url="/hr/recruitment/interview-rounds"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -337,7 +329,7 @@ export default function InterviewRounds() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -345,7 +337,7 @@ export default function InterviewRounds() {
             },
             {
               name: 'job_id',
-              label: t('Job'),
+              label: 'Job',
               type: 'select',
               value: jobFilter,
               onChange: setJobFilter,
@@ -396,7 +388,7 @@ export default function InterviewRounds() {
           to={interviewRounds?.to || 0}
           total={interviewRounds?.total || 0}
           links={interviewRounds?.links}
-          entityName={t("interview rounds")}
+          entityName={"interview rounds"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -409,7 +401,7 @@ export default function InterviewRounds() {
           fields: [
             { 
               name: 'job_id', 
-              label: t('Job'), 
+              label: 'Job', 
               type: 'select', 
               required: true,
               options: jobPostingOptions.filter(opt => opt.value !== '_empty_'),
@@ -417,25 +409,25 @@ export default function InterviewRounds() {
             },
             { 
               name: 'name', 
-              label: t('Name'), 
+              label: 'Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'sequence_number', 
-              label: t('Sequence Number'), 
+              label: 'Sequence Number', 
               type: 'number', 
               required: true,
               min: 1
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea' 
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -445,10 +437,10 @@ export default function InterviewRounds() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Interview Round')
+            ? 'Add New Interview Round'
             : formMode === 'edit'
-              ? t('Edit Interview Round')
-              : t('View Interview Round')
+              ? 'Edit Interview Round'
+              : 'View Interview Round'
         }
         mode={formMode}
       />

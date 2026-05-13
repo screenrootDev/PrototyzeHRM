@@ -56,15 +56,6 @@
             return "<?php echo e(asset('storage')); ?>/" + path;
         };
 
-        // Set initial locale for i18next
-        fetch('<?php echo e(route('initial-locale')); ?>')
-            .then(response => response.text())
-            .then(locale => {
-                window.initialLocale = locale;
-            })
-            .catch(() => {
-                window.initialLocale = 'en';
-            });
     </script>
     <?php if (!isset($__inertiaSsrDispatched)) { $__inertiaSsrDispatched = true; $__inertiaSsrResponse = app(\Inertia\Ssr\Gateway::class)->dispatch($page); }  if ($__inertiaSsrResponse) { echo $__inertiaSsrResponse->head; } ?>
 </head>

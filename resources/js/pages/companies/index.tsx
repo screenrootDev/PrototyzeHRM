@@ -15,14 +15,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Filter, Search, Plus, Eye, Edit, Trash2, KeyRound, Lock, Unlock, LayoutGrid, List, Info, ArrowUpRight, CreditCard } from 'lucide-react';
 import { toast } from '@/components/custom-toast';
 import { useInitials } from '@/hooks/use-initials';
-import { useTranslation } from 'react-i18next';
+
 import { DatePicker } from '@/components/ui/date-picker';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { UpgradePlanModal } from '@/components/UpgradePlanModal';
 
 export default function Companies() {
-  const { t } = useTranslation();
+  
   const { auth, companies, plans, filters: pageFilters = {}, globalSettings } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const getInitials = useInitials();
@@ -197,7 +197,7 @@ export default function Companies() {
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Creating company...'));
+        toast.loading('Creating company...');
       }
       
       router.post(route('companies.store'), formData, {
@@ -207,25 +207,21 @@ export default function Companies() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to create company: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to create company: ${Object.values(errors).join(', ')}`);          }
         }
       });
     } else if (formMode === 'edit') {
       if (!globalSettings?.is_demo) {
-        toast.loading(t('Updating company...'));
+        toast.loading('Updating company...');
       }
       
       router.put(route('companies.update', currentCompany.id), formData, {
@@ -235,20 +231,16 @@ export default function Companies() {
             toast.dismiss();
           }
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           if (!globalSettings?.is_demo) {
             toast.dismiss();
           }
           if (typeof errors === 'string') {
-            toast.error(t(errors));
-          } else {
-            toast.error(t('Failed to update company: {{errors}}', { errors: Object.values(errors).join(', ') }));
-          }
+            toast.error(errors);          } else {
+            toast.error(`Failed to update company: ${Object.values(errors).join(', ')}`);          }
         }
       });
     }
@@ -256,7 +248,7 @@ export default function Companies() {
   
   const handleDeleteConfirm = () => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Deleting company...'));
+      toast.loading('Deleting company...');
     }
     
     router.delete(route("companies.destroy", currentCompany.id), {
@@ -266,27 +258,23 @@ export default function Companies() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to delete company: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to delete company: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
   
   const handleResetPasswordConfirm = (data: { password: string }) => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Resetting password...'));
+      toast.loading('Resetting password...');
     }
     
     router.put(route('companies.reset-password', currentCompany.id), data, {
@@ -296,20 +284,16 @@ export default function Companies() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to reset password: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to reset password: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -317,7 +301,7 @@ export default function Companies() {
   const handleToggleStatus = (company: any) => {
     const newStatus = company.status === 'active' ? 'inactive' : 'active';
     if (!globalSettings?.is_demo) {
-      toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} company...`);
+      toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} company...`);
     }
     
     router.put(route('companies.toggle-status', company.id), {}, {
@@ -326,20 +310,16 @@ export default function Companies() {
           toast.dismiss();
         }
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
         if (typeof errors === 'string') {
-          toast.error(t(errors));
-        } else {
-          toast.error(t('Failed to update company status: {{errors}}', { errors: Object.values(errors).join(', ') }));
-        }
+          toast.error(errors);        } else {
+          toast.error(`Failed to update company status: ${Object.values(errors).join(', ')}`);        }
       }
     });
   };
@@ -362,7 +342,7 @@ export default function Companies() {
     
     // Fetch available plans
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Loading plans...'));
+      toast.loading('Loading plans...');
     }
     fetch(route('companies.plans', company.id))
     .then(res => res.json())
@@ -377,13 +357,13 @@ export default function Companies() {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        toast.error(t('Failed to load plans'));
+        toast.error('Failed to load plans');
       });
   };
   
   const handleUpgradePlanConfirm = (planId: number,duration: string) => {
     if (!globalSettings?.is_demo) {
-      toast.loading(t('Upgrading plan...'));
+      toast.loading('Upgrading plan...');
     }
     
     // Use Inertia router to handle the request
@@ -397,14 +377,14 @@ export default function Companies() {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        toast.success(t('Plan upgraded successfully'));
+        toast.success('Plan upgraded successfully');
         router.reload();
       },
       onError: () => {
         if (!globalSettings?.is_demo) {
           toast.dismiss();
         }
-        toast.error(t('Failed to upgrade plan'));
+        toast.error('Failed to upgrade plan');
       }
     });
   };
@@ -416,7 +396,7 @@ export default function Companies() {
   // Define page actions
   const pageActions = [
     {
-      label: t('Add Company'),
+      label: 'Add Company',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -424,15 +404,15 @@ export default function Companies() {
   ];
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Companies') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Companies' }
   ];
 
   // Define table columns for list view
   const columns = [
     { 
       key: 'name', 
-      label: t('Name'), 
+      label: 'Name', 
       sortable: true,
       render: (value: any, row: any) => {
         return (
@@ -450,12 +430,12 @@ export default function Companies() {
     },
     { 
       key: 'plan_name', 
-      label: t('Plan'),
+      label: 'Plan',
       render: (value: string) => <span className="capitalize">{value}</span>
     },
     { 
       key: 'created_at', 
-      label: t('Created At'), 
+      label: 'Created At', 
       sortable: true,
       render: (value: string) => window.appSettings?.formatDateTime(value, false) || new Date(value).toLocaleDateString()
     }
@@ -463,7 +443,7 @@ export default function Companies() {
 
   return (
     <PageTemplate 
-      title={t("Companies")} 
+      title={"Companies"} 
       url="/companies"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -478,26 +458,26 @@ export default function Companies() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: selectedStatus,
               onChange: handleStatusFilter,
               options: [
-                { value: 'all', label: t('All Status') },
-                { value: 'active', label: t('Active') },
-                { value: 'inactive', label: t('Inactive') }
+                { value: 'all', label: 'All Status' },
+                { value: 'active', label: 'Active' },
+                { value: 'inactive', label: 'Inactive' }
               ]
             },
             {
               name: 'start_date',
-              label: t('Start Date'),
+              label: 'Start Date',
               type: 'date',
               value: startDate,
               onChange: (date) => setStartDate(date)
             },
             {
               name: 'end_date',
-              label: t('End Date'),
+              label: 'End Date',
               type: 'date',
               value: endDate,
               onChange: (date) => setEndDate(date)
@@ -563,7 +543,7 @@ export default function Companies() {
                     </th>
                   ))}
                   <th className="px-4 py-3 text-right font-medium text-gray-500">
-                    {t("Actions")}
+                    {"Actions"}
                   </th>
                 </tr>
               </thead>
@@ -588,7 +568,7 @@ export default function Companies() {
                               <ArrowUpRight className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Login as Company")}</TooltipContent>
+                          <TooltipContent>{"Login as Company"}</TooltipContent>
                         </Tooltip>
                         
                         <Tooltip>
@@ -602,7 +582,7 @@ export default function Companies() {
                               <Info className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Company Info")}</TooltipContent>
+                          <TooltipContent>{"Company Info"}</TooltipContent>
                         </Tooltip>
                         
                         <Tooltip>
@@ -616,7 +596,7 @@ export default function Companies() {
                               <CreditCard className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Upgrade Plan")}</TooltipContent>
+                          <TooltipContent>{"Upgrade Plan"}</TooltipContent>
                         </Tooltip>
                         
 
@@ -632,7 +612,7 @@ export default function Companies() {
                               <KeyRound className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Reset Password")}</TooltipContent>
+                          <TooltipContent>{"Reset Password"}</TooltipContent>
                         </Tooltip>
                         
                         <Tooltip>
@@ -646,7 +626,7 @@ export default function Companies() {
                               {company.status === 'active' ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{company.status === 'active' ? t("Disable Login") : t("Enable Login")}</TooltipContent>
+                          <TooltipContent>{company.status === 'active' ? "Disable Login" : "Enable Login"}</TooltipContent>
                         </Tooltip>
                         
                         <Tooltip>
@@ -660,7 +640,7 @@ export default function Companies() {
                               <Edit className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Edit")}</TooltipContent>
+                          <TooltipContent>{"Edit"}</TooltipContent>
                         </Tooltip>
                         
                         <Tooltip>
@@ -674,7 +654,7 @@ export default function Companies() {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{t("Delete")}</TooltipContent>
+                          <TooltipContent>{"Delete"}</TooltipContent>
                         </Tooltip>
                       </div>
                     </td>
@@ -684,7 +664,7 @@ export default function Companies() {
                 {(!companies?.data || companies.data.length === 0) && (
                   <tr>
                     <td colSpan={columns.length + 1} className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                      {t("No companies found")}
+                      {"No companies found"}
                     </td>
                   </tr>
                 )}
@@ -698,7 +678,7 @@ export default function Companies() {
             to={companies?.to || 0}
             total={companies?.total || 0}
             links={companies?.links}
-            entityName={t("companies")}
+            entityName={"companies"}
             onPageChange={(url) => router.get(url)}
           />
         </div>
@@ -723,7 +703,7 @@ export default function Companies() {
                             company.status === 'active' ? 'bg-gray-800' : 'bg-gray-400'
                           }`}></div>
                           <span className="text-sm font-medium text-gray-700">
-                            {company.status === 'active' ? t('Active') : t('Inactive')}
+                            {company.status === 'active' ? 'Active' : 'Inactive'}
                           </span>
                         </div>
                       </div>
@@ -743,36 +723,36 @@ export default function Companies() {
                       <DropdownMenuContent align="end" className="w-48 z-50" sideOffset={5}>
                         <DropdownMenuItem onClick={() => handleAction('login-as', company)}>
                           <ArrowUpRight className="h-4 w-4 mr-2" />
-                          <span>{t("Login as Company")}</span>
+                          <span>{"Login as Company"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleAction('company-info', company)}>
                           <Info className="h-4 w-4 mr-2" />
-                          <span>{t("Company Info")}</span>
+                          <span>{"Company Info"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleAction('upgrade-plan', company)}>
                           <CreditCard className="h-4 w-4 mr-2" />
-                          <span>{t("Upgrade Plan")}</span>
+                          <span>{"Upgrade Plan"}</span>
                         </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => handleAction('reset-password', company)}>
                           <KeyRound className="h-4 w-4 mr-2" />
-                          <span>{t("Reset Password")}</span>
+                          <span>{"Reset Password"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleAction('toggle-status', company)}>
                           {company.status === 'active' ? 
                             <Lock className="h-4 w-4 mr-2" /> : 
                             <Unlock className="h-4 w-4 mr-2" />
                           }
-                          <span>{company.status === 'active' ? t("Disable Login") : t("Enable Login")}</span>
+                          <span>{company.status === 'active' ? "Disable Login" : "Enable Login"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleAction('edit', company)} className="text-amber-600">
                           <Edit className="h-4 w-4 mr-2" />
-                          <span>{t("Edit")}</span>
+                          <span>{"Edit"}</span>
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => handleAction('delete', company)} className="text-rose-600">
                           <Trash2 className="h-4 w-4 mr-2" />
-                          <span>{t("Delete")}</span>
+                          <span>{"Delete"}</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -786,7 +766,7 @@ export default function Companies() {
                     </div>
                     {company.plan_expiry_date && (
                       <div className="text-xs text-gray-500 text-center mt-1">
-                        {t("Expires")}: {window.appSettings?.formatDateTime(company.plan_expiry_date, false) || new Date(company.plan_expiry_date).toLocaleDateString()}
+                        {"Expires"}: {window.appSettings?.formatDateTime(company.plan_expiry_date, false) || new Date(company.plan_expiry_date).toLocaleDateString()}
                       </div>
                     )}
                   </div>
@@ -800,7 +780,7 @@ export default function Companies() {
                       className="flex-1 h-9 text-sm border-gray-300"
                     >
                       <Edit className="h-4 w-4 mr-2" />
-                      {t("Edit")}
+                      {"Edit"}
                     </Button>
                     
                     <Button 
@@ -810,7 +790,7 @@ export default function Companies() {
                       className="flex-1 h-9 text-sm border-gray-300"
                     >
                       <Eye className="h-4 w-4 mr-2" />
-                      {t("View")}
+                      {"View"}
                     </Button>
                     
                     <Button 
@@ -820,7 +800,7 @@ export default function Companies() {
                       className="flex-1 h-9 text-sm text-gray-700 border-gray-300"
                     >
                       <Trash2 className="h-4 w-4 mr-2" />
-                      {t("Delete")}
+                      {"Delete"}
                     </Button>
                   </div>
                 </div>
@@ -829,7 +809,7 @@ export default function Companies() {
             
             {(!companies?.data || companies.data.length === 0) && (
               <div className="col-span-full p-8 text-center text-gray-500 dark:text-gray-400">
-                {t("No companies found")}
+                {"No companies found"}
               </div>
             )}
           </div>
@@ -841,7 +821,7 @@ export default function Companies() {
               to={companies?.to || 0}
               total={companies?.total || 0}
               links={companies?.links}
-              entityName={t("companies")}
+              entityName={"companies"}
               onPageChange={(url) => router.get(url)}
             />
           </div>
@@ -866,11 +846,11 @@ export default function Companies() {
         }}
         formConfig={{
           fields: [
-            { name: 'name', label: t('Company Name'), type: 'text', required: true },
-            { name: 'email', label: t('Email'), type: 'email', required: true },
+            { name: 'name', label: 'Company Name', type: 'text', required: true },
+            { name: 'email', label: 'Email', type: 'email', required: true },
             { 
               name: 'login_enabled', 
-              label: t('Enable Login'),
+              label: 'Enable Login',
               placeholder: '', // Empty placeholder to prevent duplicate label
               type: 'switch',
               defaultValue: true,
@@ -878,7 +858,7 @@ export default function Companies() {
             },
             { 
               name: 'password', 
-              label: t('Password'), 
+              label: 'Password', 
               type: 'password',
               required: (mode) => mode === 'create',
               conditional: (mode, data) => {
@@ -894,10 +874,10 @@ export default function Companies() {
         }}
         title={
           formMode === 'create' 
-            ? t('Add New Company') 
+            ? 'Add New Company' 
             : formMode === 'edit' 
-              ? t('Edit Company') 
-              : t('View Company')
+              ? 'Edit Company' 
+              : 'View Company'
         }
         mode={formMode}
       />
@@ -918,7 +898,7 @@ export default function Companies() {
         onSubmit={handleResetPasswordConfirm}
         formConfig={{
           fields: [
-            { name: 'password', label: t('New Password'), type: 'password', required: true }
+            { name: 'password', label: 'New Password', type: 'password', required: true }
           ],
           modalSize: 'sm'
         }}

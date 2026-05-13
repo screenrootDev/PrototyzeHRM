@@ -1,6 +1,5 @@
 import { CrudConfig } from '@/types/crud';
 import { columnRenderers } from '@/utils/columnRenderers';
-import { t } from '@/utils/i18n';
 
 export const planRequestsConfig: CrudConfig = {
   entity: {
@@ -14,20 +13,20 @@ export const planRequestsConfig: CrudConfig = {
     }
   },
   modalSize: '4xl',
-  description: t('Manage plan upgrade requests from users'),
+  description: 'Manage plan upgrade requests from users',
   table: {
     columns: [
-      { key: 'user.name', label: t('Name'), sortable: true },
-      { key: 'user.email', label: t('Email'), sortable: true },
-      { key: 'plan.name', label: t('Plan Name'), sortable: true },
+      { key: 'user.name', label: 'Name', sortable: true },
+      { key: 'user.email', label: 'Email', sortable: true },
+      { key: 'plan.name', label: 'Plan Name', sortable: true },
       { 
         key: 'plan.duration', 
-        label: t('Plan Duration'), 
-        render: (value) => value === 'monthly' ? t('Monthly') : t('Yearly')
+        label: 'Plan Duration', 
+        render: (value) => value === 'monthly' ? 'Monthly' : 'Yearly'
       },
       { 
         key: 'status', 
-        label: t('Status'), 
+        label: 'Status', 
         render: columnRenderers.status({
           'pending': 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20',
           'approved': 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20',
@@ -36,14 +35,14 @@ export const planRequestsConfig: CrudConfig = {
       },
       { 
         key: 'created_at', 
-        label: t('Requested At'), 
+        label: 'Requested At', 
         sortable: true, 
         render: (value) => `${window.appSettings.formatDateTime(value, false)}`
       }
     ],
     actions: [
       { 
-        label: t('Approve'), 
+        label: 'Approve', 
         icon: 'Check', 
         action: 'approve', 
         className: 'text-green-600',
@@ -51,7 +50,7 @@ export const planRequestsConfig: CrudConfig = {
         requiredPermission: 'approve-plan-requests'
       },
       { 
-        label: t('Reject'), 
+        label: 'Reject', 
         icon: 'X', 
         action: 'reject', 
         className: 'text-red-600',
@@ -62,19 +61,19 @@ export const planRequestsConfig: CrudConfig = {
   },
   search: {
     enabled: true,
-    placeholder: t('Search plan requests...'),
+    placeholder: 'Search plan requests...',
     fields: ['user.name', 'user.email', 'plan.name']
   },
   filters: [
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       type: 'select',
       options: [
-        { value: 'all', label: t('All Status') },
-        { value: 'pending', label: t('Pending') },
-        { value: 'approved', label: t('Approved') },
-        { value: 'rejected', label: t('Rejected') }
+        { value: 'all', label: 'All Status' },
+        { value: 'pending', label: 'Pending' },
+        { value: 'approved', label: 'Approved' },
+        { value: 'rejected', label: 'Rejected' }
       ]
     }
   ],

@@ -3,7 +3,7 @@
  */
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useTranslation } from 'react-i18next';
+
 
 interface PaginationProps {
   from?: number;
@@ -28,7 +28,7 @@ export function Pagination({
   onPageChange,
   className = '',
 }: PaginationProps) {
-  const { t } = useTranslation();
+  
 
   const handlePageChange = (url: string) => {
     if (onPageChange) {
@@ -44,8 +44,8 @@ export function Pagination({
       className
     )}>
       <div className="text-sm text-muted-foreground dark:text-gray-300">
-        {t("Showing")} <span className="font-medium dark:text-white">{from}</span> {t("to")}{" "}
-        <span className="font-medium dark:text-white">{to}</span> {t("of")}{" "}
+        {"Showing"} <span className="font-medium dark:text-white">{from}</span> {"to"}{" "}
+        <span className="font-medium dark:text-white">{to}</span> {"of"}{" "}
         <span className="font-medium dark:text-white">{total}</span> {entityName}
       </div>
 
@@ -79,7 +79,7 @@ export function Pagination({
                 disabled={currentPage <= 1}
                 onClick={() => handlePageChange(`?page=${currentPage - 1}`)}
               >
-                {t("Previous")}
+                {"Previous"}
               </Button>
               <span className="px-3 py-1 dark:text-white">
                 {currentPage} of {lastPage}
@@ -90,7 +90,7 @@ export function Pagination({
                 disabled={currentPage >= lastPage}
                 onClick={() => handlePageChange(`?page=${currentPage + 1}`)}
               >
-                {t("Next")}
+                {"Next"}
               </Button>
             </>
           )

@@ -106,77 +106,48 @@ export function initializeGlobalSettings(settings: Record<string, any>) {
             if (!date) return null;
 
             try {
-                // Database stores time in whatever timezone was active, display in current timezone
-                const dbDate = typeof date === 'string' ? new Date(date) : date;
+                const rawDate = typeof date === 'string' ? new Date(date) : date;
+                if (isNaN(rawDate.getTime())) return date.toString();
+
                 const currentTimezone = settings.defaultTimezone || 'UTC';
-
-                // Convert database time to current timezone
-                const utcDate = new Date(dbDate.toLocaleString('en-US', { timeZone: currentTimezone }));
-                const companyTimezone = currentTimezone;
-
-                // Convert UTC to company timezone using Intl.DateTimeFormat
-                const formatter = new Intl.DateTimeFormat('en-CA', {
-                    timeZone: companyTimezone,
+                
+                // Use Intl.DateTimeFormat to get the parts for the configured timezone
+                const options: Intl.DateTimeFormatOptions = {
                     year: 'numeric',
-                    month: '2-digit',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                    hour12: false
-                });
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    second: 'numeric',
+                    hour12: false,
+                    timeZone: currentTimezone
+                };
 
-                const parts = formatter.formatToParts(utcDate);
+                const formatter = new Intl.DateTimeFormat('en-US', options);
+                const parts = formatter.formatToParts(rawDate);
+                
+                const getPart = (type: string) => parts.find(p => p.type === type)?.value || '0';
 
-
-                const dateObj = new Date(
-                    `${parts.find(p => p.type === 'year')?.value}-${parts.find(p => p.type === 'month')?.value}-${parts.find(p => p.type === 'day')?.value}T${parts.find(p => p.type === 'hour')?.value}:${parts.find(p => p.type === 'minute')?.value}:${parts.find(p => p.type === 'second')?.value}`
+                // Create a local date object that "looks like" the date in that timezone
+                // This allows us to use standard Date methods in convertPhpFormat
+                const tzDate = new Date(
+                    parseInt(getPart('year')),
+                    parseInt(getPart('month')) - 1,
+                    parseInt(getPart('day')),
+                    parseInt(getPart('hour')),
+                    parseInt(getPart('minute')),
+                    parseInt(getPart('second'))
                 );
 
                 let phpFormat = settings.dateFormat ?? 'D, M j, Y';
-
-                // Add time format if includeTime is true
                 if (includeTime) {
                     const timeFormat = settings.timeFormat ?? 'H:i';
                     phpFormat = `${phpFormat} ${timeFormat}`;
                 }
 
-                // Dynamic PHP to JS format conversion
-                function convertPhpFormat(phpFormat: string, dateObj: Date): string {
-                    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-                    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                    const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-                    return phpFormat.replace(/[a-zA-Z]/g, (match) => {
-                        switch (match) {
-                            case 'D': return daysShort[dateObj.getDay()];
-                            case 'l': return days[dateObj.getDay()];
-                            case 'M': return monthsShort[dateObj.getMonth()];
-                            case 'F': return months[dateObj.getMonth()];
-                            case 'j': return dateObj.getDate().toString();
-                            case 'd': return String(dateObj.getDate()).padStart(2, '0');
-                            case 'Y': return dateObj.getFullYear().toString();
-                            case 'y': return dateObj.getFullYear().toString().slice(-2);
-                            case 'm': return String(dateObj.getMonth() + 1).padStart(2, '0');
-                            case 'n': return (dateObj.getMonth() + 1).toString();
-                            case 'G': return String(dateObj.getHours());
-                            case 'H': return String(dateObj.getHours()).padStart(2, '0');
-                            case 'g': return String(dateObj.getHours() % 12 || 12);
-                            case 'h': return String(dateObj.getHours() % 12 || 12).padStart(2, '0');
-                            case 'i': return String(dateObj.getMinutes()).padStart(2, '0');
-                            case 's': return String(dateObj.getSeconds()).padStart(2, '0');
-                            case 'a': return dateObj.getHours() >= 12 ? 'pm' : 'am';
-                            case 'A': return dateObj.getHours() >= 12 ? 'PM' : 'AM';
-                            default: return match;
-                        }
-                    });
-                }
-
-                return convertPhpFormat(phpFormat, dateObj);
+                return convertPhpFormat(phpFormat, tzDate);
             } catch (error) {
+                console.warn('Date formatting error:', error);
                 return date.toString();
             }
         },
@@ -185,29 +156,12 @@ export function initializeGlobalSettings(settings: Record<string, any>) {
 
             try {
                 const [hours, minutes] = time.split(':');
-                if (!hours || !minutes || isNaN(Number(hours)) || isNaN(Number(minutes))) return time;
+                if (hours === undefined || minutes === undefined || isNaN(Number(hours)) || isNaN(Number(minutes))) return time;
 
                 const dateObj = new Date();
                 dateObj.setHours(Number(hours), Number(minutes), 0, 0);
 
                 const timeFormat = settings.timeFormat ?? 'H:i';
-
-                function convertPhpTimeFormat(phpFormat: string, dateObj: Date): string {
-                    return phpFormat.replace(/[a-zA-Z]/g, (match) => {
-                        switch (match) {
-                            case 'G': return String(dateObj.getHours());
-                            case 'H': return String(dateObj.getHours()).padStart(2, '0');
-                            case 'g': return String(dateObj.getHours() % 12 || 12);
-                            case 'h': return String(dateObj.getHours() % 12 || 12).padStart(2, '0');
-                            case 'i': return String(dateObj.getMinutes()).padStart(2, '0');
-                            case 's': return String(dateObj.getSeconds()).padStart(2, '0');
-                            case 'a': return dateObj.getHours() >= 12 ? 'pm' : 'am';
-                            case 'A': return dateObj.getHours() >= 12 ? 'PM' : 'AM';
-                            default: return match;
-                        }
-                    });
-                }
-
                 return convertPhpTimeFormat(timeFormat, dateObj);
             } catch (error) {
                 return time;
@@ -218,6 +172,7 @@ export function initializeGlobalSettings(settings: Record<string, any>) {
 
             try {
                 const dateObj = typeof date === 'string' ? new Date(date) : date;
+                if (isNaN(dateObj.getTime())) return date.toString();
                 
                 let phpFormat = settings.dateFormat ?? 'D, M j, Y';
 
@@ -226,45 +181,63 @@ export function initializeGlobalSettings(settings: Record<string, any>) {
                     phpFormat = `${phpFormat} ${timeFormat}`;
                 }
 
-                function convertPhpFormat(phpFormat: string, dateObj: Date): string {
-                    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                        'July', 'August', 'September', 'October', 'November', 'December'];
-                    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-                    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-                    const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
-                    return phpFormat.replace(/[a-zA-Z]/g, (match) => {
-                        switch (match) {
-                            case 'D': return daysShort[dateObj.getDay()];
-                            case 'l': return days[dateObj.getDay()];
-                            case 'M': return monthsShort[dateObj.getMonth()];
-                            case 'F': return months[dateObj.getMonth()];
-                            case 'j': return dateObj.getDate().toString();
-                            case 'd': return String(dateObj.getDate()).padStart(2, '0');
-                            case 'Y': return dateObj.getFullYear().toString();
-                            case 'y': return dateObj.getFullYear().toString().slice(-2);
-                            case 'm': return String(dateObj.getMonth() + 1).padStart(2, '0');
-                            case 'n': return (dateObj.getMonth() + 1).toString();
-                            case 'G': return String(dateObj.getHours());
-                            case 'H': return String(dateObj.getHours()).padStart(2, '0');
-                            case 'g': return String(dateObj.getHours() % 12 || 12);
-                            case 'h': return String(dateObj.getHours() % 12 || 12).padStart(2, '0');
-                            case 'i': return String(dateObj.getMinutes()).padStart(2, '0');
-                            case 's': return String(dateObj.getSeconds()).padStart(2, '0');
-                            case 'a': return dateObj.getHours() >= 12 ? 'pm' : 'am';
-                            case 'A': return dateObj.getHours() >= 12 ? 'PM' : 'AM';
-                            default: return match;
-                        }
-                    });
-                }
-
                 return convertPhpFormat(phpFormat, dateObj);
             } catch (error) {
                 return date.toString();
             }
         }
     };
+}
+
+// Helper function for PHP to JS date format conversion
+function convertPhpFormat(phpFormat: string, dateObj: Date): string {
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const daysShort = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+    return phpFormat.replace(/[a-zA-Z]/g, (match) => {
+        switch (match) {
+            case 'D': return daysShort[dateObj.getDay()];
+            case 'l': return days[dateObj.getDay()];
+            case 'M': return monthsShort[dateObj.getMonth()];
+            case 'F': return months[dateObj.getMonth()];
+            case 'j': return dateObj.getDate().toString();
+            case 'd': return String(dateObj.getDate()).padStart(2, '0');
+            case 'Y': return dateObj.getFullYear().toString();
+            case 'y': return dateObj.getFullYear().toString().slice(-2);
+            case 'm': return String(dateObj.getMonth() + 1).padStart(2, '0');
+            case 'n': return (dateObj.getMonth() + 1).toString();
+            case 'G': return String(dateObj.getHours());
+            case 'H': return String(dateObj.getHours()).padStart(2, '0');
+            case 'g': return String(dateObj.getHours() % 12 || 12);
+            case 'h': return String(dateObj.getHours() % 12 || 12).padStart(2, '0');
+            case 'i': return String(dateObj.getMinutes()).padStart(2, '0');
+            case 's': return String(dateObj.getSeconds()).padStart(2, '0');
+            case 'a': return dateObj.getHours() >= 12 ? 'pm' : 'am';
+            case 'A': return dateObj.getHours() >= 12 ? 'PM' : 'AM';
+            default: return match;
+        }
+    });
+}
+
+// Helper function for PHP to JS time format conversion
+function convertPhpTimeFormat(phpFormat: string, dateObj: Date): string {
+    return phpFormat.replace(/[a-zA-Z]/g, (match) => {
+        switch (match) {
+            case 'G': return String(dateObj.getHours());
+            case 'H': return String(dateObj.getHours()).padStart(2, '0');
+            case 'g': return String(dateObj.getHours() % 12 || 12);
+            case 'h': return String(dateObj.getHours() % 12 || 12).padStart(2, '0');
+            case 'i': return String(dateObj.getMinutes()).padStart(2, '0');
+            case 's': return String(dateObj.getSeconds()).padStart(2, '0');
+            case 'a': return dateObj.getHours() >= 12 ? 'pm' : 'am';
+            case 'A': return dateObj.getHours() >= 12 ? 'PM' : 'AM';
+            default: return match;
+        }
+    });
 }
 
 export { };

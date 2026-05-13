@@ -6,7 +6,7 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, Code, Eye, Star, Download } from 'lucide-react';
@@ -17,7 +17,7 @@ import { Label } from '@/components/ui/label';
 import { format } from 'date-fns';
 
 export default function ContractTemplates() {
-  const { t } = useTranslation();
+  
   const { auth, contractTemplates, contractTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
@@ -155,17 +155,15 @@ export default function ContractTemplates() {
     }
 
     if (formMode === 'create') {
-      toast.loading(t('Creating contract template...'));
+      toast.loading('Creating contract template...');
 
       router.post(route('hr.contracts.contract-templates.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -177,17 +175,15 @@ export default function ContractTemplates() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating contract template...'));
+      toast.loading('Updating contract template...');
 
       router.put(route('hr.contracts.contract-templates.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -202,17 +198,15 @@ export default function ContractTemplates() {
   };
 
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting contract template...'));
+    toast.loading('Deleting contract template...');
 
     router.delete(route('hr.contracts.contract-templates.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -227,16 +221,14 @@ export default function ContractTemplates() {
 
   const handleToggleStatus = (item: any) => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} contract template...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} contract template...`);
 
     router.put(route('hr.contracts.contract-templates.toggle-status', item.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -266,7 +258,7 @@ export default function ContractTemplates() {
 
   if (hasPermission(permissions, 'create-contract-templates')) {
     pageActions.push({
-      label: t('Add Template'),
+      label: 'Add Template',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -274,15 +266,15 @@ export default function ContractTemplates() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Contract Management'), href: route('hr.contracts.contract-templates.index') },
-    { title: t('Contract Templates') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Contract Management', href: route('hr.contracts.contract-templates.index') },
+    { title: 'Contract Templates' }
   ];
 
   const columns = [
     {
       key: 'name',
-      label: t('Template Name'),
+      label: 'Template Name',
       sortable: true,
       render: (value, row) => (
         <div className="flex items-center gap-2">
@@ -301,56 +293,56 @@ export default function ContractTemplates() {
     },
     {
       key: 'contract_type.name',
-      label: t('Contract Type'),
+      label: 'Contract Type',
       render: (_, row) => row.contract_type?.name || '-'
     },
     {
       key: 'variables',
-      label: t('Variables'),
+      label: 'Variables',
       render: (value) => {
         if (!value || !Array.isArray(value) || value.length === 0) return '-';
         return (
           <div className="flex items-center gap-1">
             <Code className="h-4 w-4 text-gray-500" />
-            <span>{value.length} {t('variables')}</span>
+            <span>{value.length} {'variables'}</span>
           </div>
         );
       }
     },
     {
       key: 'clauses',
-      label: t('Clauses'),
+      label: 'Clauses',
       render: (value) => {
         if (!value || !Array.isArray(value) || value.length === 0) return '-';
         return (
-          <span>{value.length} {t('clauses')}</span>
+          <span>{value.length} {'clauses'}</span>
         );
       }
     },
     {
       key: 'template_content',
-      label: t('Content Length'),
+      label: 'Content Length',
       render: (value) => (
         <span className="text-sm text-gray-600">
-          {value ? `${value.length} ${t('characters')}` : '-'}
+          {value ? `${value.length} ${'characters'}` : '-'}
         </span>
       )
     },
     {
       key: 'status',
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${value === 'active'
             ? 'bg-green-50 text-green-700 ring-green-600/20'
             : 'bg-red-50 text-red-700 ring-red-600/20'
           }`}>
-          {t(value === 'active' ? 'Active' : 'Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     {
       key: 'created_at',
-      label: t('Created'),
+      label: 'Created',
       sortable: true,
       render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleString()) : '-'
     }
@@ -358,42 +350,42 @@ export default function ContractTemplates() {
 
   const actions = [
     {
-      label: t('View'),
+      label: 'View',
       icon: 'Eye',
       action: 'view',
       className: 'text-blue-500',
       requiredPermission: 'view-contract-templates'
     },
     {
-      label: t('Preview'),
+      label: 'Preview',
       icon: 'FileText',
       action: 'preview',
       className: 'text-purple-500',
       requiredPermission: 'view-contract-templates'
     },
     {
-      label: t('Generate Contract'),
+      label: 'Generate Contract',
       icon: 'Download',
       action: 'generate',
       className: 'text-green-500',
       requiredPermission: 'view-contract-templates'
     },
     {
-      label: t('Edit'),
+      label: 'Edit',
       icon: 'Edit',
       action: 'edit',
       className: 'text-amber-500',
       requiredPermission: 'edit-contract-templates'
     },
     {
-      label: t('Toggle Status'),
+      label: 'Toggle Status',
       icon: 'Lock',
       action: 'toggle-status',
       className: 'text-amber-500',
       requiredPermission: 'edit-contract-templates'
     },
     {
-      label: t('Delete'),
+      label: 'Delete',
       icon: 'Trash2',
       action: 'delete',
       className: 'text-red-500',
@@ -402,7 +394,7 @@ export default function ContractTemplates() {
   ];
 
   const typeOptions = [
-    { value: '_empty_', label: t('All Types'), disabled: true },
+    { value: '_empty_', label: 'All Types', disabled: true },
     ...(contractTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -410,19 +402,19 @@ export default function ContractTemplates() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses'), disabled: true },
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses', disabled: true },
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const defaultOptions = [
-    { value: '_empty_', label: t('All'), disabled: true },
-    { value: 'true', label: t('Default') },
-    { value: 'false', label: t('Custom') }
+    { value: '_empty_', label: 'All', disabled: true },
+    { value: 'true', label: 'Default' },
+    { value: 'false', label: 'Custom' }
   ];
 
   const typeSelectOptions = [
-    { value: '_empty_', label: t('Select Contract Type') },
+    { value: '_empty_', label: 'Select Contract Type' },
     ...(contractTypes || []).map((type: any) => ({
       value: type.id.toString(),
       label: type.name
@@ -431,7 +423,7 @@ export default function ContractTemplates() {
 
   return (
     <PageTemplate
-      title={t("Contract Templates")}
+      title={"Contract Templates"}
       url="/hr/contracts/contract-templates"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -445,7 +437,7 @@ export default function ContractTemplates() {
           filters={[
             {
               name: 'contract_type_id',
-              label: t('Contract Type'),
+              label: 'Contract Type',
               type: 'select',
               value: typeFilter,
               onChange: setTypeFilter,
@@ -454,7 +446,7 @@ export default function ContractTemplates() {
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -462,7 +454,7 @@ export default function ContractTemplates() {
             },
             {
               name: 'is_default',
-              label: t('Type'),
+              label: 'Type',
               type: 'select',
               value: defaultFilter,
               onChange: setDefaultFilter,
@@ -513,7 +505,7 @@ export default function ContractTemplates() {
           to={contractTemplates?.to || 0}
           total={contractTemplates?.total || 0}
           links={contractTemplates?.links}
-          entityName={t("contract templates")}
+          entityName={"contract templates"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -526,52 +518,52 @@ export default function ContractTemplates() {
           fields: [
             {
               name: 'name',
-              label: t('Template Name'),
+              label: 'Template Name',
               type: 'text',
               required: true
             },
             {
               name: 'description',
-              label: t('Description'),
+              label: 'Description',
               type: 'textarea',
               rows: 2
             },
             {
               name: 'contract_type_id',
-              label: t('Contract Type'),
+              label: 'Contract Type',
               type: 'select',
               required: true,
               options: typeSelectOptions.filter(opt => opt.value !== '_empty_')
             },
             {
               name: 'template_content',
-              label: t('Template Content'),
+              label: 'Template Content',
               type: 'textarea',
               required: true,
               rows: 12,
-              helpText: t('Use {{variable_name}} for dynamic content')
+              helpText: 'Use {{variable_name}} for dynamic content'
             },
             {
               name: 'variables',
-              label: t('Variables'),
+              label: 'Variables',
               type: 'text',
-              helpText: t('Comma-separated list of variable names (without {{}})')
+              helpText: 'Comma-separated list of variable names (without {{}})'
             },
             {
               name: 'clauses',
-              label: t('Clauses'),
+              label: 'Clauses',
               type: 'text',
-              helpText: t('Comma-separated list of contract clauses')
+              helpText: 'Comma-separated list of contract clauses'
             },
             {
               name: 'is_default',
-              label: t('Set as Default for Type'),
+              label: 'Set as Default for Type',
               type: 'checkbox',
-              helpText: t('Only one template can be default per contract type')
+              helpText: 'Only one template can be default per contract type'
             },
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -586,10 +578,10 @@ export default function ContractTemplates() {
         } : null}
         title={
           formMode === 'create'
-            ? t('Add Contract Template')
+            ? 'Add Contract Template'
             : formMode === 'edit'
-              ? t('Edit Contract Template')
-              : t('View Contract Template')
+              ? 'Edit Contract Template'
+              : 'View Contract Template'
         }
         mode={formMode}
       />
@@ -606,18 +598,18 @@ export default function ContractTemplates() {
         <DialogContent className="max-w-4xl max-h-[80vh]">
           <DialogHeader>
             <DialogTitle>
-              {t('Template Preview')}: {currentItem?.name}
+              {'Template Preview'}: {currentItem?.name}
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4 overflow-y-auto max-h-[60vh] pr-1">
             <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border">
               <pre className="whitespace-pre-wrap text-sm font-mono">
-                {currentItem?.template_content || t('No content available')}
+                {currentItem?.template_content || 'No content available'}
               </pre>
             </div>
             {currentItem?.variables && currentItem.variables.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">{t('Available Variables')}:</h4>
+                <h4 className="text-sm font-medium mb-2">{'Available Variables'}:</h4>
                 <div className="flex flex-wrap gap-2">
                   {currentItem.variables.map((variable: string, index: number) => (
                     <span key={index} className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
@@ -636,7 +628,7 @@ export default function ContractTemplates() {
         <DialogContent className="max-w-lg max-h-[80vh]">
           <DialogHeader>
             <DialogTitle className="text-lg font-semibold">
-              {t('Generate Contract')}
+              {'Generate Contract'}
             </DialogTitle>
             <p className="text-sm text-gray-600">{currentItem?.name}</p>
           </DialogHeader>
@@ -657,10 +649,10 @@ export default function ContractTemplates() {
           </div>
           <div className="flex justify-end space-x-2 pt-2 border-t">
             <Button variant="outline" onClick={() => setIsGenerateModalOpen(false)}>
-              {t('Cancel')}
+              {'Cancel'}
             </Button>
             <Button onClick={handleGenerateSubmit} className="bg-red-500 hover:bg-red-600">
-              {t('Generate PDF')}
+              {'Generate PDF'}
             </Button>
           </div>
         </DialogContent>

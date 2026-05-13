@@ -5,7 +5,7 @@ import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useTranslation } from 'react-i18next';
+
 import { List, Bell, AlertTriangle, Star, Calendar } from 'lucide-react';
 import { format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
@@ -15,7 +15,7 @@ import { Separator } from '@/components/ui/separator';
 import { hasPermission } from '@/utils/authorization';
 
 export default function AnnouncementDashboard() {
-  const { t } = useTranslation();
+  
   const { 
     auth, 
     allAnnouncements, 
@@ -84,7 +84,7 @@ export default function AnnouncementDashboard() {
         // In a real implementation, you might want to use a more elegant approach
         setTimeout(() => {
           document.querySelector('[data-action="create-announcement"]')?.dispatchEvent(
-            new MouseEvent('click', { bubbles: true })
+            new MouseEvent('click')
           );
         }, 500);
       }
@@ -96,7 +96,7 @@ export default function AnnouncementDashboard() {
   
   // Add the "List View" button
   pageActions.push({
-    label: t('List View'),
+    label: 'List View',
     icon: <List className="h-4 w-4 mr-2" />,
     variant: 'outline',
     onClick: handleBackToList
@@ -105,7 +105,7 @@ export default function AnnouncementDashboard() {
   // Add the "Create Announcement" button if user has permission
   if (hasPermission(permissions, 'create-announcements')) {
     pageActions.push({
-      label: t('Create Announcement'),
+      label: 'Create Announcement',
       icon: <Bell className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: handleCreateAnnouncement
@@ -113,10 +113,10 @@ export default function AnnouncementDashboard() {
   }
   
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('HR Management'), href: route('hr.announcements.index') },
-    { title: t('Announcements'), href: route('hr.announcements.index') },
-    { title: t('Dashboard') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'HR Management', href: route('hr.announcements.index') },
+    { title: 'Announcements', href: route('hr.announcements.index') },
+    { title: 'Dashboard' }
   ];
   
 
@@ -154,12 +154,12 @@ export default function AnnouncementDashboard() {
               </span>
               {announcement.is_featured && (
                 <Badge variant="secondary" className="bg-purple-50 text-purple-700 hover:bg-purple-50">
-                  <Star className="h-3 w-3 mr-1" /> {t('Featured')}
+                  <Star className="h-3 w-3 mr-1" /> {'Featured'}
                 </Badge>
               )}
               {announcement.is_high_priority && (
                 <Badge variant="secondary" className="bg-red-50 text-red-700 hover:bg-red-50">
-                  <AlertTriangle className="h-3 w-3 mr-1" /> {t('High Priority')}
+                  <AlertTriangle className="h-3 w-3 mr-1" /> {'High Priority'}
                 </Badge>
               )}
             </div>
@@ -185,7 +185,7 @@ export default function AnnouncementDashboard() {
             size="sm" 
             onClick={() => handleViewAnnouncement(announcement)}
           >
-            {t('Read More')}
+            {'Read More'}
           </Button>
         </CardFooter>
       </Card>
@@ -194,7 +194,7 @@ export default function AnnouncementDashboard() {
   
   return (
     <PageTemplate 
-      title={t("Announcement Dashboard")} 
+      title={"Announcement Dashboard"} 
       url="/hr/announcements/dashboard"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -204,10 +204,10 @@ export default function AnnouncementDashboard() {
       {/* Tabs */}
       <Tabs defaultValue="all" className="w-full">
         <TabsList className="mb-4">
-          <TabsTrigger value="all">{t('All Announcements')}</TabsTrigger>
-          <TabsTrigger value="high-priority">{t('High Priority')}</TabsTrigger>
-          <TabsTrigger value="featured">{t('Featured')}</TabsTrigger>
-          <TabsTrigger value="upcoming">{t('Upcoming')}</TabsTrigger>
+          <TabsTrigger value="all">{'All Announcements'}</TabsTrigger>
+          <TabsTrigger value="high-priority">{'High Priority'}</TabsTrigger>
+          <TabsTrigger value="featured">{'Featured'}</TabsTrigger>
+          <TabsTrigger value="upcoming">{'Upcoming'}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="all" className="mt-0">
@@ -220,7 +220,7 @@ export default function AnnouncementDashboard() {
           ) : (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p>{t('No announcements found.')}</p>
+                <p>{'No announcements found.'}</p>
               </CardContent>
             </Card>
           )}
@@ -236,7 +236,7 @@ export default function AnnouncementDashboard() {
           ) : (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p>{t('No high priority announcements found.')}</p>
+                <p>{'No high priority announcements found.'}</p>
               </CardContent>
             </Card>
           )}
@@ -252,7 +252,7 @@ export default function AnnouncementDashboard() {
           ) : (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p>{t('No featured announcements found.')}</p>
+                <p>{'No featured announcements found.'}</p>
               </CardContent>
             </Card>
           )}
@@ -268,7 +268,7 @@ export default function AnnouncementDashboard() {
           ) : (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p>{t('No upcoming announcements found.')}</p>
+                <p>{'No upcoming announcements found.'}</p>
               </CardContent>
             </Card>
           )}

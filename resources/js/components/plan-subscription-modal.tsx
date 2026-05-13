@@ -1,5 +1,5 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useTranslation } from 'react-i18next';
+
 import { PaymentProcessor } from '@/components/payment/payment-processor';
 
 interface PaymentMethod {
@@ -34,7 +34,7 @@ export function PlanSubscriptionModal({
   paymentMethods,
   currencySymbol 
 }: PlanSubscriptionModalProps) {
-  const { t } = useTranslation();
+  
 
   const handlePaymentSuccess = () => {
     onClose();
@@ -48,7 +48,7 @@ export function PlanSubscriptionModal({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
-          <DialogTitle>{t('Subscribe to {{planName}}', { planName: plan.name })}</DialogTitle>
+          <DialogTitle>{`Subscribe to ${plan.name}`}</DialogTitle>
         </DialogHeader>
         
         <div className="overflow-y-auto flex-1 pr-2">

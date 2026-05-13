@@ -6,14 +6,14 @@ import { CrudTable } from '@/components/CrudTable';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-import { useTranslation } from 'react-i18next';
+
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, FileText, Calendar, Clock, RefreshCw } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function ContractTypes() {
-  const { t } = useTranslation();
+  
   const { auth, contractTypes, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   
@@ -92,17 +92,15 @@ export default function ContractTypes() {
   
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
-      toast.loading(t('Creating contract type...'));
+      toast.loading('Creating contract type...');
 
       router.post(route('hr.contracts.contract-types.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -114,17 +112,15 @@ export default function ContractTypes() {
         }
       });
     } else if (formMode === 'edit') {
-      toast.loading(t('Updating contract type...'));
+      toast.loading('Updating contract type...');
 
       router.put(route('hr.contracts.contract-types.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
           if (page.props.flash.success) {
-            toast.success(t(page.props.flash.success));
-          } else if (page.props.flash.error) {
-            toast.error(t(page.props.flash.error));
-          }
+            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
+            toast.error(page.props.flash.error);          }
         },
         onError: (errors) => {
           toast.dismiss();
@@ -139,17 +135,15 @@ export default function ContractTypes() {
   };
   
   const handleDeleteConfirm = () => {
-    toast.loading(t('Deleting contract type...'));
+    toast.loading('Deleting contract type...');
 
     router.delete(route('hr.contracts.contract-types.destroy', currentItem.id), {
       onSuccess: (page) => {
         setIsDeleteModalOpen(false);
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -164,16 +158,14 @@ export default function ContractTypes() {
   
   const handleToggleStatus = (item: any) => {
     const newStatus = item.status === 'active' ? 'inactive' : 'active';
-    toast.loading(`${newStatus === 'active' ? t('Activating') : t('Deactivating')} contract type...`);
+    toast.loading(`${newStatus === 'active' ? 'Activating' : 'Deactivating'} contract type...`);
 
     router.put(route('hr.contracts.contract-types.toggle-status', item.id), {}, {
       onSuccess: (page) => {
         toast.dismiss();
         if (page.props.flash.success) {
-          toast.success(t(page.props.flash.success));
-        } else if (page.props.flash.error) {
-          toast.error(t(page.props.flash.error));
-        }
+          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
+          toast.error(page.props.flash.error);        }
       },
       onError: (errors) => {
         toast.dismiss();
@@ -202,7 +194,7 @@ export default function ContractTypes() {
   
   if (hasPermission(permissions, 'create-contract-types')) {
     pageActions.push({
-      label: t('Add Contract Type'),
+      label: 'Add Contract Type',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
       onClick: () => handleAddNew()
@@ -210,15 +202,15 @@ export default function ContractTypes() {
   }
 
   const breadcrumbs = [
-    { title: t('Dashboard'), href: route('dashboard') },
-    { title: t('Contract Management'), href: route('hr.contracts.contract-types.index') },
-    { title: t('Contract Types') }
+    { title: 'Dashboard', href: route('dashboard') },
+    { title: 'Contract Management', href: route('hr.contracts.contract-types.index') },
+    { title: 'Contract Types' }
   ];
 
   const columns = [
     { 
       key: 'name', 
-      label: t('Contract Type'), 
+      label: 'Contract Type', 
       sortable: false,
       render: (value, row) => (
         <div className="flex items-center gap-2">
@@ -239,81 +231,81 @@ export default function ContractTypes() {
     },
     { 
       key: 'default_duration_months', 
-      label: t('Duration'),
+      label: 'Duration',
       render: (value) => {
         if (!value) {
           return (
             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 ring-1 ring-inset ring-blue-600/20">
-              {t('Permanent')}
+              {'Permanent'}
             </span>
           );
         }
         return (
           <div className="flex items-center gap-1">
             <Calendar className="h-4 w-4 text-gray-500" />
-            <span>{value} {t('months')}</span>
+            <span>{value} {'months'}</span>
           </div>
         );
       }
     },
     { 
       key: 'probation_period_months', 
-      label: t('Probation'),
+      label: 'Probation',
       render: (value) => (
         <div className="flex items-center gap-1">
           <Clock className="h-4 w-4 text-gray-500" />
-          <span>{value} {t('months')}</span>
+          <span>{value} {'months'}</span>
         </div>
       )
     },
     { 
       key: 'notice_period_days', 
-      label: t('Notice Period'),
+      label: 'Notice Period',
       render: (value) => (
-        <span>{value} {t('days')}</span>
+        <span>{value} {'days'}</span>
       )
     },
     { 
       key: 'is_renewable', 
-      label: t('Renewable'),
+      label: 'Renewable',
       render: (value) => (
         <div className="flex items-center gap-1">
           {value ? (
             <>
               <RefreshCw className="h-4 w-4 text-green-500" />
-              <span className="text-green-700">{t('Yes')}</span>
+              <span className="text-green-700">{'Yes'}</span>
             </>
           ) : (
-            <span className="text-gray-500">{t('No')}</span>
+            <span className="text-gray-500">{'No'}</span>
           )}
         </div>
       )
     },
     { 
       key: 'contracts_count', 
-      label: t('Contracts'),
+      label: 'Contracts',
       render: (value) => (
         <span className="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">
-          {value || 0} {t('contracts')}
+          {value || 0} {'contracts'}
         </span>
       )
     },
     { 
       key: 'status', 
-      label: t('Status'),
+      label: 'Status',
       render: (value) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
           value === 'active' 
             ? 'bg-green-50 text-green-700 ring-green-600/20' 
             : 'bg-red-50 text-red-700 ring-red-600/20'
         }`}>
-          {t(value === 'active' ? 'Active' : 'Inactive')}
+          {value === 'active' ? 'Active' : 'Inactive'}
         </span>
       )
     },
     { 
       key: 'created_at', 
-      label: t('Created At'),
+      label: 'Created At',
       sortable: true,
       render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
@@ -321,28 +313,28 @@ export default function ContractTypes() {
 
   const actions = [
     { 
-      label: t('View'), 
+      label: 'View', 
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
       requiredPermission: 'view-contract-types'
     },
     { 
-      label: t('Edit'), 
+      label: 'Edit', 
       icon: 'Edit', 
       action: 'edit', 
       className: 'text-amber-500',
       requiredPermission: 'edit-contract-types'
     },
     { 
-      label: t('Toggle Status'), 
+      label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
       requiredPermission: 'edit-contract-types'
     },
     { 
-      label: t('Delete'), 
+      label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
@@ -351,20 +343,20 @@ export default function ContractTypes() {
   ];
 
   const statusOptions = [
-    { value: '_empty_', label: t('All Statuses') , disabled : true},
-    { value: 'active', label: t('Active') },
-    { value: 'inactive', label: t('Inactive') }
+    { value: '_empty_', label: 'All Statuses' , disabled : true},
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' }
   ];
 
   const renewableOptions = [
-    { value: '_empty_', label: t('All'), disabled : true },
-    { value: 'true', label: t('Renewable') },
-    { value: 'false', label: t('Non-renewable') }
+    { value: '_empty_', label: 'All', disabled : true },
+    { value: 'true', label: 'Renewable' },
+    { value: 'false', label: 'Non-renewable' }
   ];
 
   return (
     <PageTemplate 
-      title={t("Contract Types")} 
+      title={"Contract Types"} 
       url="/hr/contracts/contract-types"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
@@ -378,7 +370,7 @@ export default function ContractTypes() {
           filters={[
             {
               name: 'status',
-              label: t('Status'),
+              label: 'Status',
               type: 'select',
               value: statusFilter,
               onChange: setStatusFilter,
@@ -386,7 +378,7 @@ export default function ContractTypes() {
             },
             {
               name: 'is_renewable',
-              label: t('Renewable'),
+              label: 'Renewable',
               type: 'select',
               value: renewableFilter,
               onChange: setRenewableFilter,
@@ -436,7 +428,7 @@ export default function ContractTypes() {
           to={contractTypes?.to || 0}
           total={contractTypes?.total || 0}
           links={contractTypes?.links}
-          entityName={t("contract types")}
+          entityName={"contract types"}
           onPageChange={(url) => router.get(url)}
         />
       </div>
@@ -449,27 +441,27 @@ export default function ContractTypes() {
           fields: [
             { 
               name: 'name', 
-              label: t('Contract Type Name'), 
+              label: 'Contract Type Name', 
               type: 'text', 
               required: true 
             },
             { 
               name: 'description', 
-              label: t('Description'), 
+              label: 'Description', 
               type: 'textarea',
               rows: 3
             },
             { 
               name: 'default_duration_months', 
-              label: t('Default Duration (months)'), 
+              label: 'Default Duration (months)', 
               type: 'number',
               min: 1,
               max: 120,
-              helpText: t('Leave empty for permanent contracts')
+              helpText: 'Leave empty for permanent contracts'
             },
             { 
               name: 'probation_period_months', 
-              label: t('Probation Period (months)'), 
+              label: 'Probation Period (months)', 
               type: 'number', 
               required: true,
               min: 0,
@@ -477,7 +469,7 @@ export default function ContractTypes() {
             },
             { 
               name: 'notice_period_days', 
-              label: t('Notice Period (days)'), 
+              label: 'Notice Period (days)', 
               type: 'number', 
               required: true,
               min: 0,
@@ -485,13 +477,13 @@ export default function ContractTypes() {
             },
             { 
               name: 'is_renewable', 
-              label: t('Is Renewable'), 
+              label: 'Is Renewable', 
               type: 'checkbox',
-              helpText: t('Can this contract type be renewed?')
+              helpText: 'Can this contract type be renewed?'
             },
             { 
               name: 'status', 
-              label: t('Status'), 
+              label: 'Status', 
               type: 'select', 
               required: true,
               options: statusOptions.filter(opt => opt.value !== '_empty_')
@@ -502,10 +494,10 @@ export default function ContractTypes() {
         initialData={currentItem}
         title={
           formMode === 'create'
-            ? t('Add New Contract Type')
+            ? 'Add New Contract Type'
             : formMode === 'edit'
-              ? t('Edit Contract Type')
-              : t('View Contract Type')
+              ? 'Edit Contract Type'
+              : 'View Contract Type'
         }
         mode={formMode}
       />

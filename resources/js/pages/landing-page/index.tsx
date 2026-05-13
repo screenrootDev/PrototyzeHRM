@@ -1,6 +1,5 @@
 import React from "react";
 import { usePage, Head } from "@inertiajs/react";
-import { useTranslation } from "react-i18next";
 import Header from "./components/Header";
 import HeroSection from "./components/HeroSection";
 import FeaturesSection from "./components/FeaturesSection";
@@ -100,7 +99,6 @@ interface PageProps {
 }
 
 export default function LandingPage() {
-  const { i18n } = useTranslation();
   const pageProps = usePage<PageProps>();
   const {
     plans,
@@ -124,12 +122,7 @@ export default function LandingPage() {
   const userLanguage = (usePage().props as any).userLanguage;
   useFavicon();
 
-  // Initialize i18n with default language
-  React.useEffect(() => {
-    if (userLanguage && i18n.language !== userLanguage) {
-      i18n.changeLanguage(userLanguage);
-    }
-  }, [userLanguage, i18n]);
+
 
   // RTL Support for landing page - Apply immediately and persist
   const applyRTLDirection = React.useCallback(() => {
@@ -141,9 +134,9 @@ export default function LandingPage() {
     const getCookie = (name: string): string | null => {
       if (typeof document === "undefined") return null;
       const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
+      const parts = value.split(`; ${name}=`)
       if (parts.length === 2) {
-        const cookieValue = parts.pop()?.split(";").shift();
+        const cookieValue = parts.pop()?.split(';').shift();
         return cookieValue ? decodeURIComponent(cookieValue) : null;
       }
       return null;
@@ -283,7 +276,7 @@ export default function LandingPage() {
   //     const getCookie = (name: string): string | null => {
   //       if (typeof document === 'undefined') return null;
   //       const value = `; ${document.cookie}`;
-  //       const parts = value.split(`; ${name}=`);
+  //       const parts = value.split(`; ${name}=`)
   //       if (parts.length === 2) {
   //         const cookieValue = parts.pop()?.split(';').shift();
   //         return cookieValue ? decodeURIComponent(cookieValue) : null;

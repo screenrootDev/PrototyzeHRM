@@ -6,10 +6,6 @@ import { Switch } from '@/components/ui/switch';
 import { useState, useEffect } from 'react';
 import { Save } from 'lucide-react';
 import { SettingsSection } from '@/components/settings-section';
-import { useTranslation } from 'react-i18next';
-import { router, usePage } from '@inertiajs/react';
-import { toast } from '@/components/custom-toast';
-import languageData from '@/../../resources/lang/language.json';
 import ReactCountryFlag from 'react-country-flag';
 interface SystemSettingsProps {
   settings?: Record<string, string>;
@@ -26,12 +22,10 @@ export default function SystemSettings({
   timeFormats = {},
   isCompanyUser = false
 }: SystemSettingsProps) {
-  const { t } = useTranslation();
   const pageProps = usePage().props as any;
 
   // Default settings
   const defaultSettings = {
-    defaultLanguage: 'en',
     dateFormat: 'MM/DD/YYYY',
     timeFormat: '12h',
     calendarStartDay: 'sunday',
@@ -50,7 +44,6 @@ export default function SystemSettings({
   // Initialize state with merged settings
   const [timezoneSearch, setTimezoneSearch] = useState('');
   const [systemSettings, setSystemSettings] = useState(() => ({
-    defaultLanguage: settingsData.defaultLanguage || defaultSettings.defaultLanguage,
     dateFormat: settingsData.dateFormat || defaultSettings.dateFormat,
     timeFormat: settingsData.timeFormat || defaultSettings.timeFormat,
     calendarStartDay: settingsData.calendarStartDay || defaultSettings.calendarStartDay,
@@ -96,7 +89,6 @@ export default function SystemSettings({
 
     // Create clean settings object
     const cleanSettings = {
-      defaultLanguage: systemSettings.defaultLanguage,
       dateFormat: systemSettings.dateFormat,
       timeFormat: systemSettings.timeFormat,
       calendarStartDay: systemSettings.calendarStartDay,
@@ -132,7 +124,7 @@ export default function SystemSettings({
         }
       },
       onError: (errors) => {
-        const errorMessage = errors.error || Object.values(errors).join(', ') || t('Failed to update system settings');
+        const errorMessage = errors.error || Object.values(errors).join(', ') || 'Failed to update system settings';
         toast.error(errorMessage);
       }
     });
@@ -146,70 +138,27 @@ export default function SystemSettings({
 
   return (
     <SettingsSection
-      title={t("System Settings")}
-      description={t("Configure system-wide settings for your application")}
+      title={"System Settings"}
+      description={"Configure system-wide settings for your application"}
       action={
         <Button type="submit" form="system-settings-form" size="sm">
           <Save className="h-4 w-4 mr-2" />
-          {t("Save Changes")}
+          {"Save Changes"}
         </Button>
       }
     >
       <form id="system-settings-form" onSubmit={submitSystemSettings} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="defaultLanguage">{t("Default Language")}</Label>
-            <Select
-              value={systemSettings.defaultLanguage}
-              onValueChange={(value) => handleSystemSettingsChange('defaultLanguage', value)}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={t("Select language")}>
-                  {systemSettings.defaultLanguage && (() => {
-                    const selectedLang = languageData.find(lang => lang.code === systemSettings.defaultLanguage);
-                    return selectedLang ? <div className="flex items-center space-x-2">
-                      <ReactCountryFlag
-                        countryCode={selectedLang.countryCode}
-                        svg
-                        style={{
-                          width: '1.2em',
-                          height: '1.2em',
-                        }}
-                      /> <span>
-                        {selectedLang.name}
-                      </span> </div> : t("Select language");
-                  })()}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {languageData.map((language) => (
-                  <SelectItem key={language.code} value={language.code}>
-                    <div className="flex items-center space-x-2">
-                      <ReactCountryFlag
-                        countryCode={language.countryCode}
-                        svg
-                        style={{
-                          width: '1.2em',
-                          height: '1.2em',
-                        }}
-                      /> <span>
-                        {language.name}
-                      </span>
-                    </div>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+
 
           <div className="grid gap-2">
-            <Label htmlFor="dateFormat">{t("Date Format")}</Label>
+            <Label htmlFor="dateFormat">{"Date Format"}</Label>
             <Select
               value={systemSettings.dateFormat}
               onValueChange={(value) => handleSystemSettingsChange('dateFormat', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("Select date format")} />
+                <SelectValue placeholder={"Select date format"} />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(dateFormats).length > 0 ?
@@ -234,13 +183,13 @@ export default function SystemSettings({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="timeFormat">{t("Time Format")}</Label>
+            <Label htmlFor="timeFormat">{"Time Format"}</Label>
             <Select
               value={systemSettings.timeFormat}
               onValueChange={(value) => handleSystemSettingsChange('timeFormat', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("Select time format")} />
+                <SelectValue placeholder={"Select time format"} />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(timeFormats).length > 0 ?
@@ -267,35 +216,35 @@ export default function SystemSettings({
           {!isCompanyUser && (
             <>
               <div className="grid gap-2">
-                <Label htmlFor="calendarStartDay">{t("Calendar Start Day")}</Label>
+                <Label htmlFor="calendarStartDay">{"Calendar Start Day"}</Label>
                 <Select
                   value={systemSettings.calendarStartDay}
                   onValueChange={(value) => handleSystemSettingsChange('calendarStartDay', value)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={t("Select start day")} />
+                    <SelectValue placeholder={"Select start day"} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="sunday">{t("Sunday")}</SelectItem>
-                    <SelectItem value="monday">{t("Monday")}</SelectItem>
+                    <SelectItem value="sunday">{"Sunday"}</SelectItem>
+                    <SelectItem value="monday">{"Monday"}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </>)}
 
           <div className="grid gap-2 md:col-span-2">
-            <Label htmlFor="defaultTimezone">{t("Default Timezone")}</Label>
+            <Label htmlFor="defaultTimezone">{"Default Timezone"}</Label>
             <Select
               value={systemSettings.defaultTimezone}
               onValueChange={(value) => handleSystemSettingsChange('defaultTimezone', value)}
             >
               <SelectTrigger>
-                <SelectValue placeholder={t("Select timezone")} />
+                <SelectValue placeholder={"Select timezone"} />
               </SelectTrigger>
               <SelectContent>
                 <div className="p-2">
                   <Input
-                    placeholder={t("Search timezones...")}
+                    placeholder={"Search timezones..."}
                     value={timezoneSearch}
                     onChange={(e) => setTimezoneSearch(e.target.value)}
                     className="mb-2"
@@ -327,9 +276,9 @@ export default function SystemSettings({
               <div className="grid gap-2 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="emailVerification">{t("Email Verification")}</Label>
+                    <Label htmlFor="emailVerification">{"Email Verification"}</Label>
                     <p className="text-sm text-muted-foreground">
-                      {t("Require users to verify their email addresses")}
+                      {"Require users to verify their email addresses"}
                     </p>
                   </div>
                   <Switch
@@ -343,9 +292,9 @@ export default function SystemSettings({
               <div className="grid gap-2 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="landingPageEnabled">{t("Landing Page")}</Label>
+                    <Label htmlFor="landingPageEnabled">{"Landing Page"}</Label>
                     <p className="text-sm text-muted-foreground">
-                      {t("Enable or disable the public landing page")}
+                      {"Enable or disable the public landing page"}
                     </p>
                   </div>
                   <Switch
@@ -357,7 +306,7 @@ export default function SystemSettings({
               </div>
 
               <div className="grid gap-2 md:col-span-2">
-                <Label htmlFor="termsConditionsUrl">{t("Terms and Conditions URL")}</Label>
+                <Label htmlFor="termsConditionsUrl">{"Terms and Conditions URL"}</Label>
                 <Input
                   id="termsConditionsUrl"
                   type="url"
@@ -366,7 +315,7 @@ export default function SystemSettings({
                   onChange={(e) => handleSystemSettingsChange('termsConditionsUrl', e.target.value)}
                 />
                 <p className="text-sm text-muted-foreground">
-                  {t("Enter the URL for your Terms and Conditions page that will be linked in the registration form")}
+                  {"Enter the URL for your Terms and Conditions page that will be linked in the registration form"}
                 </p>
               </div>
             </>
@@ -378,9 +327,9 @@ export default function SystemSettings({
               <div className="grid gap-2 md:col-span-2">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label htmlFor="ipRestrictionEnabled">{t("IP Restriction")}</Label>
+                    <Label htmlFor="ipRestrictionEnabled">{"IP Restriction"}</Label>
                     <p className="text-sm text-muted-foreground">
-                      {t("Enable IP address restrictions for enhanced security")}
+                      {"Enable IP address restrictions for enhanced security"}
                     </p>
                   </div>
                   <Switch

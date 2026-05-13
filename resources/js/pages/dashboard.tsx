@@ -4,7 +4,7 @@ import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, Tren
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useTranslation } from 'react-i18next';
+
 import { usePage } from '@inertiajs/react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, LineChart, Line, AreaChart, Area } from 'recharts';
 import { hasPermission } from '@/utils/authorization';
@@ -48,7 +48,7 @@ interface PageAction {
 }
 
 export default function Dashboard({ dashboardData }: { dashboardData: CompanyDashboardData }) {
-  const { t } = useTranslation();
+  
   const { auth, companySlug } = usePage().props as any;
   const [copied, setCopied] = useState(false);
 
@@ -71,7 +71,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
 
   const pageActions: PageAction[] = [
     {
-      label: t('Refresh'),
+      label: 'Refresh',
       icon: <RefreshCw className="h-4 w-4" />,
       variant: 'outline',
       onClick: () => window.location.reload()
@@ -134,7 +134,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
 
   return (
     <PageTemplate 
-      title={t('Dashboard')}
+      title={'Dashboard'}
       url="/dashboard"
       actions={pageActions}
     >
@@ -145,10 +145,10 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Employees')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Employees'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalEmployees}</p>
                   {isCompanyUser && (
-                    <p className="text-xs text-green-600 mt-1">+{stats.newEmployeesThisMonth} {t('this month')}</p>
+                    <p className="text-xs text-green-600 mt-1">+{stats.newEmployeesThisMonth} {'this month'}</p>
                   )}
                 </div>
                 <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
@@ -162,9 +162,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Branches')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Branches'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalBranches}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.totalDepartments} {t('departments')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{stats.totalDepartments} {'departments'}</p>
                 </div>
                 <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
                   <Building2 className="h-5 w-5 text-green-600 dark:text-green-400" />
@@ -177,9 +177,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Attendance Rate')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Attendance Rate'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.attendanceRate}%</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.presentToday} {t('present today')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{stats.presentToday} {'present today'}</p>
                 </div>
                 <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
                   <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -192,9 +192,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Pending Leaves')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Pending Leaves'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.pendingLeaves}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.onLeaveToday} {t('on leave today')}</p>
+                  <p className="text-xs text-muted-foreground mt-1">{stats.onLeaveToday} {'on leave today'}</p>
                 </div>
                 <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
                   <Calendar className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
@@ -207,9 +207,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Active Jobs')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Active Jobs'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.activeJobPostings}</p>
-                  <p className="text-xs text-green-600 mt-1">+{stats.jobPostsThisMonth} {t('this month')}</p>
+                  <p className="text-xs text-green-600 mt-1">+{stats.jobPostsThisMonth} {'this month'}</p>
                 </div>
                 <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
                   <Briefcase className="h-5 w-5 text-orange-600 dark:text-orange-400" />
@@ -222,9 +222,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{t('Total Candidates')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{'Total Candidates'}</p>
                   <p className="mt-2 text-2xl font-bold">{stats.totalCandidates}</p>
-                  <p className="text-xs text-green-600 mt-1">+{stats.candidatesThisMonth} {t('this month')}</p>
+                  <p className="text-xs text-green-600 mt-1">+{stats.candidatesThisMonth} {'this month'}</p>
                 </div>
                 <div className="rounded-full bg-indigo-100 p-3 dark:bg-indigo-900">
                   <UserPlus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
@@ -263,8 +263,8 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                   <div className="absolute -bottom-2 -right-2 w-1.5 h-1.5 bg-primary/40 rounded-full animate-spin" style={{animationDuration: '6s', animationDirection: 'reverse'}}></div>
                 </div>
                 <div className="group-hover:translate-x-2 transition-transform duration-300">
-                  <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-primary transition-colors duration-300">{t('Join Our Team')}</h3>
-                  <p className="text-gray-600 mb-3 group-hover:text-gray-700 transition-colors duration-300">{t('Discover amazing career opportunities')}</p>
+                  <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-primary transition-colors duration-300">{'Join Our Team'}</h3>
+                  <p className="text-gray-600 mb-3 group-hover:text-gray-700 transition-colors duration-300">{'Discover amazing career opportunities'}</p>
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                       <div className="flex items-center space-x-1">
@@ -272,7 +272,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                         <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
                         <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
                       </div>
-                      <span className="text-primary font-semibold text-sm group-hover:scale-105 transition-transform duration-200">{stats.activeJobPostings} {t('open positions')}</span>
+                      <span className="text-primary font-semibold text-sm group-hover:scale-105 transition-transform duration-200">{stats.activeJobPostings} {'open positions'}</span>
                     </div>
                   </div>
                 </div>
@@ -286,12 +286,12 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                   {copied ? (
                     <>
                       <CheckCircle className="h-4 w-4 mr-2 text-primary animate-pulse" />
-                      {t('Copied!')}
+                      {'Copied!'}
                     </>
                   ) : (
                     <>
                       <Copy className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
-                      {t('Copy Link')}
+                      {'Copy Link'}
                     </>
                   )}
                 </Button>
@@ -302,7 +302,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                   {/* Button shine effect */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
                   <ExternalLink className="h-4 w-4 mr-2 group-hover:translate-x-1 transition-transform duration-200 relative z-10" />
-                  <span className="relative z-10">{t('View Careers')}</span>
+                  <span className="relative z-10">{'View Careers'}</span>
                 </Button>
               </div>
             </div>
@@ -317,7 +317,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                 <BarChart3 className="h-5 w-5" />
-                {t('Department Distribution')}
+                {'Department Distribution'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -341,7 +341,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No department data available')}
+                  {'No department data available'}
                 </div>
               )}
             </CardContent>
@@ -352,7 +352,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                 <TrendingUp className="h-5 w-5" />
-                {t('Hiring Trend (6 Months)')}
+                {'Hiring Trend (6 Months)'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -368,7 +368,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No hiring data available')}
+                  {'No hiring data available'}
                 </div>
               )}
             </CardContent>
@@ -379,7 +379,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                 <UserPlus className="h-5 w-5" />
-                {t('Candidate Status')}
+                {'Candidate Status'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -403,7 +403,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No candidate data available')}
+                  {'No candidate data available'}
                 </div>
               )}
             </CardContent>
@@ -414,7 +414,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg font-semibold">
                 <Calendar className="h-5 w-5" />
-                {t('Leave Types')}
+                {'Leave Types'}
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -439,7 +439,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </ResponsiveContainer>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No leave types available')}
+                  {'No leave types available'}
                 </div>
               )}
             </CardContent>
@@ -454,7 +454,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-5 w-5" />
-                  {t('Recent Leave Applications')}
+                  {'Recent Leave Applications'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.leaves.length}</Badge>
@@ -462,7 +462,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                     onClick={() => window.location.href = route('hr.leave-applications.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -476,7 +476,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                         <div className="flex items-center gap-2 mb-1">
                           <p className="font-medium">{leave.employee?.name || 'Employee'}</p>
                           <Badge variant="outline" className={`text-xs ring-1 ring-inset ${getStatusColor(leave.status)}`}>
-                            {t(leave.status.charAt(0).toUpperCase() + leave.status.slice(1))}
+                            {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -500,7 +500,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent leave applications')}
+                  {'No recent leave applications'}
                 </div>
               )}
             </CardContent>
@@ -512,7 +512,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <UserPlus className="h-5 w-5" />
-                  {t('Recent Candidates')}
+                  {'Recent Candidates'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.candidates.length}</Badge>
@@ -520,7 +520,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                     onClick={() => window.location.href = route('hr.recruitment.candidates.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -552,7 +552,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent candidates')}
+                  {'No recent candidates'}
                 </div>
               )}
             </CardContent>
@@ -564,7 +564,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Bell className="h-5 w-5" />
-                  {t('Recent Announcements')}
+                  {'Recent Announcements'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.announcements.length}</Badge>
@@ -572,7 +572,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                     onClick={() => window.location.href = route('hr.announcements.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -606,7 +606,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent announcements')}
+                  {'No recent announcements'}
                 </div>
               )}
             </CardContent>
@@ -618,7 +618,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardTitle className="flex items-center justify-between text-lg font-semibold">
                 <div className="flex items-center gap-2">
                   <Users className="h-5 w-5" />
-                  {t('Recent Meetings')}
+                  {'Recent Meetings'}
                 </div>
                 <div className="flex items-center gap-2">
                   <Badge variant="secondary">{recentActivities.meetings.length}</Badge>
@@ -626,7 +626,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                     onClick={() => window.location.href = route('meetings.meetings.index')}
                     className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
                   >
-                    {t('View All')}
+                    {'View All'}
                   </button>
                 </div>
               </CardTitle>
@@ -640,7 +640,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                         <div className="flex items-center gap-2 mb-1">
                           <p className="font-medium">{meeting.title}</p>
                           <Badge variant="outline" className={`text-xs ring-1 ring-inset ${getStatusColor(meeting.status)}`}>
-                            {t(meeting.status)}
+                            {meeting.status}
                           </Badge>
                         </div>
                         <p className="text-sm text-muted-foreground">
@@ -663,7 +663,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </div>
               ) : (
                 <div className="text-center py-8 text-muted-foreground">
-                  {t('No recent meetings')}
+                  {'No recent meetings'}
                 </div>
               )}
             </CardContent>
@@ -675,7 +675,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
           <CardHeader>
             <CardTitle className="flex items-center gap-2 text-lg font-semibold">
               <TrendingUp className="h-5 w-5" />
-              {t('Employee Growth')} ({new Date().getFullYear()})
+              {'Employee Growth'} ({new Date().getFullYear()})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -706,7 +706,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               </ResponsiveContainer>
             ) : (
               <div className="text-center py-8 text-muted-foreground">
-                {t('No employee growth data available')}
+                {'No employee growth data available'}
               </div>
             )}
           </CardContent>
