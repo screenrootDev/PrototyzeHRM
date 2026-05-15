@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Plan;
 
 use App\Services\UserService;
 use Illuminate\Auth\Events\Registered;
@@ -23,22 +22,7 @@ class RegisteredUserController extends Controller
      */
     public function create(Request $request): Response
     {
-        $encryptedPlanId = $request->get('plan');
-        $planId = null;
-        $referrer = null;
-
-        // Decrypt and validate plan ID
-        if ($encryptedPlanId) {
-            $planId = $this->decryptPlanId($encryptedPlanId);
-            if ($planId && !Plan::find($planId)) {
-                $planId = null; // Invalid plan ID
-            }
-        }
-
-
-
         return Inertia::render('auth/register', [
-            'planId' => $planId,
             'settings' => settings(),
         ]);
     }
@@ -57,9 +41,6 @@ class RegisteredUserController extends Controller
             'terms' => 'required|accepted'
         ]);
 
-        $superAdminSettings = settings();
-        $userLang = isset($superAdminSettings['defaultLanguage']) ? $superAdminSettings['defaultLanguage'] : 'en';
-
         $userData = [
             'name' => $request->name,
             'email' => $request->email,
@@ -69,7 +50,6 @@ class RegisteredUserController extends Controller
             'is_enable_login' => 1,
             'created_by' => 1,
             'plan_is_active' => 0,
-            'lang' => $userLang,
         ];
 
 
@@ -91,33 +71,7 @@ class RegisteredUserController extends Controller
             return redirect()->route('verification.notice');
         }
 
-        // Redirect to plans page with selected plan
-        $planId = $request->plan_id;
-        if ($planId) {
-            return redirect()->route('plans.index', ['selected' => $planId]);
-        }
         return to_route('dashboard');
     }
-
-    /**
-     * Decrypt plan ID from encrypted string
-     */
-    private function decryptPlanId($encryptedPlanId)
-    {
-        try {
-            $key = 'vCardGo2024';
-            $encrypted = base64_decode($encryptedPlanId);
-            $decrypted = '';
-
-            for ($i = 0; $i < strlen($encrypted); $i++) {
-                $decrypted .= chr(ord($encrypted[$i]) ^ ord($key[$i % strlen($key)]));
-            }
-
-            return is_numeric($decrypted) ? (int) $decrypted : null;
-        } catch (\Exception $e) {
-            return null;
-        }
-    }
-
 
 }

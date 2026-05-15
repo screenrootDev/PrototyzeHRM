@@ -344,15 +344,12 @@ class MediaController extends Controller
 
     private function getUserStorageLimit($user)
     {
-        if ($user->type === 'company' && $user->plan) {
-            return $user->plan->storage_limit * 1024 * 1024;
-        }
+        $company = ($user->type === 'company') ? $user : User::find($user->created_by);
 
-        if ($user->created_by) {
-            $company = User::find($user->created_by);
-            if ($company && $company->plan) {
-                return $company->plan->storage_limit * 1024 * 1024;
-            }
+        if ($company) {
+            // Priority: total_storage_limit column on user, fallback to plan limit
+            $limit = $company->total_storage_limit ?? ($company->plan ? $company->plan->storage_limit : 0);
+            return $limit * 1024 * 1024;
         }
 
         return null;

@@ -55,31 +55,15 @@ class DefaultCompanyUserSeeder extends Seeder
     private function createUsers($company, $faker)
     {
         $isDemo = config('app.is_demo');
-        $isSaas = isSaas();
-
-        if ($isSaas && $isDemo) {
-            // SaaS + Demo: 2 managers, 2 HR, 10 employees
-            $roles = [
-                ['role' => 'manager', 'count' => 2],
-                ['role' => 'hr', 'count' => 2],
-                ['role' => 'employee', 'count' => 10],
-            ];
-        } elseif ($isSaas && ! $isDemo) {
-            // SaaS + Non-Demo: 1 manager, 1 HR, 0 employees
-            $roles = [
-                ['role' => 'manager', 'count' => 1],
-                ['role' => 'hr', 'count' => 1],
-                ['role' => 'employee', 'count' => 0],
-            ];
-        } elseif (! $isSaas && $isDemo) {
-            // Non-SaaS + Demo: 2 managers, 2 HR, 10 employees
+        if ($isDemo) {
+            // Demo mode: 2 managers, 2 HR, 10 employees
             $roles = [
                 ['role' => 'manager', 'count' => 2],
                 ['role' => 'hr', 'count' => 2],
                 ['role' => 'employee', 'count' => 10],
             ];
         } else {
-            // Non-SaaS + Non-Demo: 1 manager, 1 HR, 0 employees
+            // Production mode: 1 manager, 1 HR, 0 employees
             $roles = [
                 ['role' => 'manager', 'count' => 1],
                 ['role' => 'hr', 'count' => 1],

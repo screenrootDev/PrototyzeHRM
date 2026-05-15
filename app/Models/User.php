@@ -39,20 +39,10 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
     {
         $fillable = parent::getFillable();
 
-        if (isSaas()) {
-            $fillable = array_merge($fillable, [
-                'plan_id',
-                'plan_expire_date',
-                'requested_plan',
-                'plan_is_active',
-                'storage_limit',
-
-                'is_trial',
-                'trial_day',
-                'trial_expire_date',
-
-            ]);
-        }
+        $fillable = array_merge($fillable, [
+            'storage_limit',
+            'total_storage_limit',
+        ]);
 
         return $fillable;
     }
@@ -68,13 +58,11 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'plan_expire_date' => 'date',
-            'trial_expire_date' => 'date',
-            'plan_is_active' => 'integer',
             'is_active' => 'integer',
             'is_enable_login' => 'integer',
             'google2fa_enable' => 'integer',
             'storage_limit' => 'float',
+            'total_storage_limit' => 'float',
         ];
     }
 
@@ -95,31 +83,15 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
      */
     public function creatorId()
     {
-        if (isSaas()) {
-            if ($this->type == 'superadmin' || $this->type == 'super admin' || $this->type == 'admin') {
-                return $this->id;
-            } else {
-                return $this->created_by;
-            }
+        if ($this->type == 'superadmin' || $this->type == 'super admin' || $this->type == 'admin' || $this->type == 'company') {
+            return $this->id;
         } else {
-            // Non-SaaS: Company is the top level
-            if ($this->type == 'company') {
-                return $this->id;
-            } else {
-                return $this->created_by;
-            }
+            return $this->created_by;
         }
     }
 
-    /**
-     * Check if user is super admin
-     */
     public function isSuperAdmin()
     {
-        if (! isSaas()) {
-            return false; // No super admin in non-SaaS
-        }
-
         return $this->type === 'superadmin' || $this->type === 'super admin';
     }
 
@@ -133,118 +105,6 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
 
     // Businesses relationship removed
 
-    /**
-     * Get the plan associated with the user.
-     */
-    public function plan()
-    {
-        if (! isSaas()) {
-            return null; // No plans in non-SaaS
-        }
-
-        return $this->belongsTo(Plan::class);
-    }
-
-    /**
-     * Check if user is on free plan
-     */
-    public function isOnFreePlan()
-    {
-        if (! isSaas()) {
-            return false; // No plans in non-SaaS
-        }
-
-        return $this->plan && $this->plan->is_default;
-    }
-
-    /**
-     * Get current plan or default plan
-     */
-    public function getCurrentPlan()
-    {
-        if (! isSaas()) {
-            return null; // No plans in non-SaaS
-        }
-
-        if ($this->plan) {
-            return $this->plan;
-        }
-
-        return Plan::getDefaultPlan();
-    }
-
-    /**
-     * Check if user has an active plan subscription
-     */
-    public function hasActivePlan()
-    {
-        if (! isSaas()) {
-            return true; // Always active in non-SaaS
-        }
-
-        return $this->plan_id &&
-            $this->plan_is_active &&
-            ($this->plan_expire_date === null || $this->plan_expire_date > now());
-    }
-
-    /**
-     * Check if user's plan has expired
-     */
-    public function isPlanExpired()
-    {
-        if (! isSaas()) {
-            return false; // No expiration in non-SaaS
-        }
-
-        return $this->plan_expire_date && $this->plan_expire_date < now();
-    }
-
-    /**
-     * Check if user's trial has expired
-     */
-    public function isTrialExpired()
-    {
-        if (! isSaas()) {
-            return false; // No trials in non-SaaS
-        }
-
-        return $this->is_trial && $this->trial_expire_date && $this->trial_expire_date < now();
-    }
-
-    /**
-     * Check if user needs to subscribe to a plan
-     */
-    public function needsPlanSubscription()
-    {
-        if (! isSaas()) {
-            return false; // No subscriptions in non-SaaS
-        }
-
-        if ($this->isSuperAdmin()) {
-            return false;
-        }
-
-        if ($this->type !== 'company') {
-            return false;
-        }
-
-        // Check if user has no plan and no default plan exists
-        if (! $this->plan_id) {
-            return ! Plan::getDefaultPlan();
-        }
-
-        // Check if trial is expired
-        if ($this->isTrialExpired()) {
-            return true;
-        }
-
-        // Check if plan is expired (but not on trial)
-        if (! $this->is_trial && $this->isPlanExpired()) {
-            return true;
-        }
-
-        return false;
-    }
 
     /**
      * Check if user can be impersonated
@@ -254,15 +114,13 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         return $this->type === 'company';
     }
 
+
+
     /**
      * Check if user can impersonate others
      */
     public function canImpersonate()
     {
-        if (! isSaas()) {
-            return false; // No impersonation in non-SaaS
-        }
-
         return $this->isSuperAdmin();
     }
 
@@ -320,15 +178,7 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
 
 
         static::created(function ($user) {
-            // Assign default plan to company users only in SaaS mode
-            if (isSaas() && $user->type === 'company' && ! $user->plan_id) {
-                $defaultPlan = Plan::getDefaultPlan();
-                if ($defaultPlan) {
-                    $user->plan_id = $defaultPlan->id;
-                    $user->plan_is_active = 1;
-                    $user->save();
-                }
-            }
+            // Plan logic removed
         });
 
         // Generate Slug When New user Creating
@@ -360,14 +210,7 @@ class User extends BaseAuthenticatable implements MustVerifyEmail
         return $slug;
     }
 
-    public function planOrders()
-    {
-        if (! isSaas()) {
-            return $this->hasMany(PlanOrder::class)->whereRaw('1 = 0'); // Empty relation in non-SaaS
-        }
 
-        return $this->hasMany(PlanOrder::class);
-    }
 
     public function companyDefaultData($company)
     {

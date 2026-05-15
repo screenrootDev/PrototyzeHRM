@@ -66,11 +66,12 @@ class HandleInertiaRequests extends Middleware
         $availableLanguages = [];
 
         // Merge currency settings with other settings
-        $globalSettings = array_merge($settings, $currencySettings);
+        $settingsArray = is_array($settings) ? $settings : (is_object($settings) && method_exists($settings, 'toArray') ? $settings->toArray() : (array) $settings);
+        $globalSettings = array_merge($settingsArray, $currencySettings);
         $globalSettings['base_url'] = config('app.url');
         $globalSettings['image_url'] = config('app.url');
         $globalSettings['is_demo'] = config('app.is_demo');
-        $globalSettings['is_saas'] = isSaas();
+        $globalSettings['is_saas'] = false;
         $globalSettings['availableLanguages'] = $availableLanguages;
 
         $companySlug = '';

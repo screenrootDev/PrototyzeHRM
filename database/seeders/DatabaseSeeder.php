@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
                 // Core system seeders
                 PermissionSeeder::class,
                 RoleSeeder::class,
-                PlanSeeder::class,
                 DefaultSuperAdminSeeder::class,
                 DefaultCompanySeeder::class,
                 DefaultCompanyUserSeeder::class,
@@ -29,9 +28,6 @@ class DatabaseSeeder extends Seeder
                 LandingPageCustomPageSeeder::class,
 
 
-                CouponSeeder::class,
-                PlanOrderSeeder::class,
-                PlanRequestSeeder::class,
                 WebhookSeeder::class,
                 MediaItemSeeder::class,
 
@@ -155,7 +151,6 @@ class DatabaseSeeder extends Seeder
             $this->call([
                 PermissionSeeder::class,
                 RoleSeeder::class,
-                PlanSeeder::class,
                 DefaultSuperAdminSeeder::class,
                 DefaultCompanySeeder::class,
                 DefaultCompanyUserSeeder::class,

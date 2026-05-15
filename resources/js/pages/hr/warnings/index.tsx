@@ -314,7 +314,7 @@ export default function Warnings() {
       key: 'warning_date', 
       label: 'Date',
       sortable: true,
-      render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value,false) || new Date(value).toLocaleString()) : '-'
+      render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()) : '-'
     },
     { 
       key: 'status', 

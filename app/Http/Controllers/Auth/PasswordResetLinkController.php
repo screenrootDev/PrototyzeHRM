@@ -47,15 +47,8 @@ class PasswordResetLinkController extends Controller
             if (! $user) {
                 return;
             }
-            if (isSaas()) {
-                if ($user->type == 'company') {
-                    $user = User::where('id', $user->created_by)->first();
-                } else {
-                    $user = User::where('id', $user->created_by)->first();
-                }
-            } else {
-                $user = User::where('id', $user->created_by)->first();
-            }
+            
+            $user = User::where('id', $user->created_by)->first();
 
             $getSettings = settings($user->id);
 

@@ -14,20 +14,10 @@ class MailConfigService
         if (!$user) {
             return;
         }
-        if (isSaas()) {
-            if ($user->type == 'superadmin') {
-                $user = User::where('type', 'superadmin')->first();
-            } else if ($user->type == 'company') {
-                $user = User::where('id', $user->created_by)->first();
-            } else {
-                $user = User::where('id', $user->created_by)->first();
-            }
+        if ($user->type == 'company' || $user->type == 'superadmin' || $user->type == 'super admin') {
+            $user = Auth::user();
         } else {
-            if ($user->type == 'company') {
-                $user = Auth::user();
-            } else {
-                $user = User::where('id', $user->created_by)->first();
-            }
+            $user = User::where('id', $user->created_by)->first();
         }
 
         $getSettings = settings($user->id);

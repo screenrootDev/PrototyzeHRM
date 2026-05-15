@@ -305,7 +305,7 @@ export default function Candidates() {
       key: 'application_date',
       label: 'Applied',
       sortable: false,
-      render: (value) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
+      render: (value) => value ? (window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()) : '-'
     }
   ];
 

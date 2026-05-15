@@ -188,11 +188,11 @@ export default function AnnouncementShow() {
           </div>
           <div className="flex flex-wrap gap-4 mt-4 text-sm text-gray-500">
             <div>
-              <span className="font-medium">{'Start Date'}:</span> {announcement.start_date ? (window.appSettings?.formatDateTimeSimple(announcement.start_date, false) || new Date(announcement.start_date).toLocaleString()) : '-'}
+              <span className="font-medium">{'Start Date'}:</span> {announcement.start_date ? (window.appSettings?.formatDateTimeSimple(announcement.start_date, false) || new Date(announcement.start_date).toLocaleDateString()) : '-'}
             </div>
             {announcement.end_date && (
               <div>
-                <span className="font-medium">{'End Date'}:</span> {announcement.end_date ? (window.appSettings?.formatDateTimeSimple(announcement.end_date,false) || new Date(announcement.end_date).toLocaleString()) : '-'}
+                <span className="font-medium">{'End Date'}:</span> {announcement.end_date ? (window.appSettings?.formatDateTimeSimple(announcement.end_date, false) || new Date(announcement.end_date).toLocaleDateString()) : '-'}
               </div>
             )}
             <div>

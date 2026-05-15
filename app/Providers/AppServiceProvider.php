@@ -3,9 +3,9 @@
 namespace App\Providers;
 
 use App\Models\User;
-use App\Models\Plan;
+
 use App\Observers\UserObserver;
-use App\Observers\PlanObserver;
+
 use App\Providers\AssetServiceProvider;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,8 +30,7 @@ class AppServiceProvider extends ServiceProvider
         // Register the UserObserver
         User::observe(UserObserver::class);
         
-        // Register the PlanObserver
-        Plan::observe(PlanObserver::class);
+
 
         // Configure dynamic storage disks
         try {

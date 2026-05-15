@@ -23,7 +23,7 @@ class EmailTemplateService
             // Get user's language or default to 'en'
             $language = 'en'; // default
             if ($business && $business->user) {
-                $language = $business->user->lang ?? 'en';
+                $language = getSetting('defaultLanguage', 'en', $business->user->id);
             }
             
             // Get template content for the language

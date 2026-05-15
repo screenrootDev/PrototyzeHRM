@@ -21,7 +21,7 @@ class SuperAdminMiddleware
         }
         
         // Allow Company users only in non-SaaS mode
-        if ($user->type === 'company' && !isSaas()) {
+        if ($user->type === 'company') {
             return $next($request);
         }
 

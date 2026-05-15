@@ -75,7 +75,7 @@ export default function CandidateShow() {
                   {candidate.status}
                 </Badge>
                 <p className="text-sm text-gray-500 mt-2">
-                  {'Applied on'} {new Date(candidate.application_date).toLocaleDateString()}
+                  {'Applied on'} {candidate.application_date ? (window.appSettings?.formatDateTimeSimple(candidate.application_date, false) || new Date(candidate.application_date).toLocaleDateString()) : '-'}
                 </p>
                 {candidate.is_archive && (
                   <Badge variant="secondary" className="mt-2">{'Archived'}</Badge>
@@ -260,19 +260,19 @@ export default function CandidateShow() {
               {candidate.current_salary && (
                 <div>
                   <p className="text-sm font-medium text-gray-900">{'Current Salary'}</p>
-                  <p className="text-sm text-gray-600">${candidate.current_salary.toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">${candidate.current_salary ? candidate.current_salary.toLocaleString() : '0'}</p>
                 </div>
               )}
               {candidate.expected_salary && (
                 <div>
                   <p className="text-sm font-medium text-gray-900">{'Expected Salary'}</p>
-                  <p className="text-sm text-gray-600">${candidate.expected_salary.toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">${candidate.expected_salary ? candidate.expected_salary.toLocaleString() : '0'}</p>
                 </div>
               )}
               {candidate.final_salary && (
                 <div>
                   <p className="text-sm font-medium text-gray-900">{'Final Salary'}</p>
-                  <p className="text-sm text-gray-600">${candidate.final_salary.toLocaleString()}</p>
+                  <p className="text-sm text-gray-600">${candidate.final_salary ? candidate.final_salary.toLocaleString() : '0'}</p>
                 </div>
               )}
               {candidate.notice_period && (
@@ -290,7 +290,7 @@ export default function CandidateShow() {
               {candidate.date_of_birth && (
                 <div>
                   <p className="text-sm font-medium text-gray-900">{'Date of Birth'}</p>
-                  <p className="text-sm text-gray-600">{new Date(candidate.date_of_birth).toLocaleDateString()}</p>
+                  <p className="text-sm text-gray-600">{candidate.date_of_birth ? (window.appSettings?.formatDateTimeSimple(candidate.date_of_birth, false) || new Date(candidate.date_of_birth).toLocaleDateString()) : '-'}</p>
                 </div>
               )}
             </CardContent>
@@ -406,7 +406,7 @@ export default function CandidateShow() {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">{'Applied Date'}</p>
-                <p className="text-sm text-gray-600">{new Date(candidate.application_date).toLocaleDateString()}</p>
+                <p className="text-sm text-gray-600">{candidate.application_date ? (window.appSettings?.formatDateTimeSimple(candidate.application_date, false) || new Date(candidate.application_date).toLocaleDateString()) : '-'}</p>
               </div>
             </div>
           </CardContent>

@@ -305,8 +305,8 @@ export default function Announcements() {
       sortable: false,
       render: (_, row) => {
         
-        const startDate = row.start_date ? (window.appSettings?.formatDateTimeSimple(row.start_date,false) || new Date(row.start_date).toLocaleString()) : '-'
-        const endDate = row.end_date ? (window.appSettings?.formatDateTimeSimple(row.end_date,false) || new Date(row.end_date).toLocaleString()) : '-'
+        const startDate = row.start_date ? (window.appSettings?.formatDateTimeSimple(row.start_date, false) || new Date(row.start_date).toLocaleDateString()) : '-';
+        const endDate = row.end_date ? (window.appSettings?.formatDateTimeSimple(row.end_date, false) || new Date(row.end_date).toLocaleDateString()) : '-';
         
         // Determine status based on dates
         const today = new Date();

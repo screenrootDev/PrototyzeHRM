@@ -369,17 +369,12 @@ class CandidateController extends Controller
                 'email' => $request->email,
                 'password' => \Illuminate\Support\Facades\Hash::make($request->password),
                 'type' => 'employee',
-                'lang' => 'en',
                 'avatar' => $request->profile_image,
                 'created_by' => creatorId(),
             ]);
 
             // Assign Employee role
-            if (isSaas()) {
-                $employeeRole = \Spatie\Permission\Models\Role::where('created_by', createdBy())->where('name', 'employee')->first();
-            } else {
-                $employeeRole = \Spatie\Permission\Models\Role::where('name', 'employee')->first();
-            }
+            $employeeRole = \Spatie\Permission\Models\Role::where('name', 'employee')->first();
             if ($employeeRole) {
                 $user->assignRole($employeeRole);
             }

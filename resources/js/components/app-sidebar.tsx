@@ -50,24 +50,7 @@ export function AppSidebar() {
         },
 
 
-        {
-            title: 'Plans',
-            icon: CreditCard,
-            children: [
-                {
-                    title: 'Plan',
-                    href: route('plans.index')
-                },
-                {
-                    title: 'Plan Request',
-                    href: route('plan-requests.index')
-                },
-                {
-                    title: 'Plan Orders',
-                    href: route('plan-orders.index')
-                }
-            ]
-        },
+
 
 
         {
@@ -850,36 +833,7 @@ export function AppSidebar() {
             });
         }
 
-        // Plans section
-        const planChildren = [];
-        if (hasPermission(permissions, 'manage-plans')) {
-            planChildren.push({
-                title: 'Plans',
-                href: route('plans.index')
-            });
-        }
 
-        if (hasPermission(permissions, 'view-plan-requests')) {
-            planChildren.push({
-                title: 'Plan Requests',
-                href: route('plan-requests.index')
-            });
-        }
-
-        if (hasPermission(permissions, 'view-plan-orders')) {
-            planChildren.push({
-                title: 'Plan Orders',
-                href: route('plan-orders.index')
-            });
-        }
-
-        if (planChildren.length > 0) {
-            items.push({
-                title: 'Plans',
-                icon: CreditCard,
-                children: planChildren
-            });
-        }
 
 
 

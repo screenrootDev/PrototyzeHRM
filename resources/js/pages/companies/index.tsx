@@ -19,7 +19,6 @@ import { useInitials } from '@/hooks/use-initials';
 import { DatePicker } from '@/components/ui/date-picker';
 import { CrudFormModal } from '@/components/CrudFormModal';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
-import { UpgradePlanModal } from '@/components/UpgradePlanModal';
 
 export default function Companies() {
   
@@ -39,10 +38,8 @@ export default function Companies() {
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isResetPasswordModalOpen, setIsResetPasswordModalOpen] = useState(false);
-  const [isUpgradePlanModalOpen, setIsUpgradePlanModalOpen] = useState(false);
 
   const [currentCompany, setCurrentCompany] = useState<any>(null);
-  const [availablePlans, setAvailablePlans] = useState<any[]>([]);
 
 
   const [formMode, setFormMode] = useState<'create' | 'edit' | 'view'>('create');
@@ -166,10 +163,6 @@ export default function Companies() {
         setFormMode('view');
         setIsFormModalOpen(true);
         break;
-      case 'upgrade-plan':
-        handleUpgradePlan(company);
-        break;
-
       case 'reset-password':
         setIsResetPasswordModalOpen(true);
         break;
@@ -337,57 +330,7 @@ export default function Companies() {
     }, { preserveState: true, preserveScroll: true });
   };
   
-  const handleUpgradePlan = (company: any) => {
-    setCurrentCompany(company);
-    
-    // Fetch available plans
-    if (!globalSettings?.is_demo) {
-      toast.loading('Loading plans...');
-    }
-    fetch(route('companies.plans', company.id))
-    .then(res => res.json())
-    .then(data => {
-        setAvailablePlans(data.plans);
-        setIsUpgradePlanModalOpen(true);
-        if (!globalSettings?.is_demo) {
-          toast.dismiss();
-        }
-      })
-      .catch(err => {
-        if (!globalSettings?.is_demo) {
-          toast.dismiss();
-        }
-        toast.error('Failed to load plans');
-      });
-  };
-  
-  const handleUpgradePlanConfirm = (planId: number,duration: string) => {
-    if (!globalSettings?.is_demo) {
-      toast.loading('Upgrading plan...');
-    }
-    
-    // Use Inertia router to handle the request
-    router.put(route('companies.upgrade-plan', currentCompany.id), { 
-      plan_id: planId ,
-      duration: duration
 
-    }, {
-      onSuccess: () => {
-        setIsUpgradePlanModalOpen(false);
-        if (!globalSettings?.is_demo) {
-          toast.dismiss();
-        }
-        toast.success('Plan upgraded successfully');
-        router.reload();
-      },
-      onError: () => {
-        if (!globalSettings?.is_demo) {
-          toast.dismiss();
-        }
-        toast.error('Failed to upgrade plan');
-      }
-    });
-  };
 
 
 
@@ -429,9 +372,9 @@ export default function Companies() {
       }
     },
     { 
-      key: 'plan_name', 
-      label: 'Plan',
-      render: (value: string) => <span className="capitalize">{value}</span>
+      key: 'total_storage_limit', 
+      label: 'Storage Limit',
+      render: (value: number) => <span className="font-medium text-blue-600 dark:text-blue-400">{value ? `${value} GB` : '5 GB'}</span>
     },
     { 
       key: 'created_at', 
@@ -584,21 +527,6 @@ export default function Companies() {
                           </TooltipTrigger>
                           <TooltipContent>{"Company Info"}</TooltipContent>
                         </Tooltip>
-                        
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <Button 
-                              variant="ghost" 
-                              size="icon" 
-                              onClick={() => handleAction('upgrade-plan', company)}
-                              className="text-amber-500 hover:text-amber-700"
-                            >
-                              <CreditCard className="h-4 w-4" />
-                            </Button>
-                          </TooltipTrigger>
-                          <TooltipContent>{"Upgrade Plan"}</TooltipContent>
-                        </Tooltip>
-                        
 
                         
                         <Tooltip>
@@ -729,10 +657,6 @@ export default function Companies() {
                           <Info className="h-4 w-4 mr-2" />
                           <span>{"Company Info"}</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleAction('upgrade-plan', company)}>
-                          <CreditCard className="h-4 w-4 mr-2" />
-                          <span>{"Upgrade Plan"}</span>
-                        </DropdownMenuItem>
 
                         <DropdownMenuItem onClick={() => handleAction('reset-password', company)}>
                           <KeyRound className="h-4 w-4 mr-2" />
@@ -758,17 +682,17 @@ export default function Companies() {
                     </DropdownMenu>
                   </div>
                   
-                  {/* Plan info */}
-                  <div className="border border-gray-200 rounded-md p-3 mb-4">
+                  {/* Storage info */}
+                  <div className="border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-4">
                     <div className="flex items-center justify-center">
                       <CreditCard className="h-4 w-4 text-gray-500 mr-2" />
-                      <span className="text-sm font-semibold text-gray-800">{company.plan_name}</span>
+                      <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                        {company.total_storage_limit ? `${company.total_storage_limit} GB` : "5 GB"}
+                      </span>
                     </div>
-                    {company.plan_expiry_date && (
-                      <div className="text-xs text-gray-500 text-center mt-1">
-                        {"Expires"}: {window.appSettings?.formatDateTime(company.plan_expiry_date, false) || new Date(company.plan_expiry_date).toLocaleDateString()}
-                      </div>
-                    )}
+                    <div className="text-xs text-gray-500 text-center mt-1">
+                      {"Storage Limit"}
+                    </div>
                   </div>
                 
                   {/* Action buttons */}
@@ -864,6 +788,13 @@ export default function Companies() {
               conditional: (mode, data) => {
                 return mode === 'create' && data?.login_enabled === true;
               }
+            },
+            { 
+              name: 'total_storage_limit', 
+              label: 'Storage Limit (GB)', 
+              type: 'number',
+              required: true,
+              defaultValue: 5.00
             }
           ],
           modalSize: 'lg'
@@ -907,17 +838,6 @@ export default function Companies() {
         mode="edit"
       />
       
-      {/* Upgrade Plan Modal */}
-      <UpgradePlanModal
-        isOpen={isUpgradePlanModalOpen}
-        onClose={() => setIsUpgradePlanModalOpen(false)}
-        onConfirm={handleUpgradePlanConfirm}
-        plans={availablePlans}
-        currentPlanId={currentCompany?.plan_id}
-        companyName={currentCompany?.name || ''}
-      />
-
-
     </PageTemplate>
   );
 }

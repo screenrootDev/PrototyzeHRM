@@ -34,9 +34,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'landing.enabled' => \App\Http\Middleware\CheckLandingPageEnabled::class,
             'verified' => App\Http\Middleware\EnsureEmailIsVerified::class,
-            'plan.access' => \App\Http\Middleware\CheckPlanAccess::class,
             'setting' => \App\Http\Middleware\SettingMiddleware::class,
-            'checksaas' => \App\Http\Middleware\CheckSaas::class,
             'career.shared' => \App\Http\Middleware\CareerSharedDataMiddleware::class,
         ]);
 
@@ -44,17 +42,6 @@ return Application::configure(basePath: dirname(__DIR__))
             except: [
                 'install/*',
                 'update/*',
-                'cashfree/create-session',
-                'cashfree/webhook',
-                'ozow/create-payment',
-                'payments/easebuzz/success',
-                'payments/aamarpay/success',
-                'payments/aamarpay/callback',
-                'payments/tap/success',
-                'payments/tap/callback',
-                'payments/benefit/success',
-                'payments/benefit/callback',
-                'payments/paytabs/callback',
                 'api/media/batch',
             ],
         );

@@ -13,7 +13,6 @@ import { usePage } from '@inertiajs/react';
 
 import BrandSettings from './components/brand-settings';
 import EmailSettings from './components/email-settings';
-import PaymentSettings from './components/payment-settings';
 import StorageSettings from './components/storage-settings';
 import RecaptchaSettings from './components/recaptcha-settings';
 import ChatGptSettings from './components/chatgpt-settings';
@@ -76,12 +75,6 @@ export default function Settings() {
       href: '#zekto-settings',
       icon: <Fingerprint className="h-4 w-4 mr-2" />,
       permission: 'manage-biomatric-attedance-settings'
-    },
-    {
-      title: 'Payment Settings',
-      href: '#payment-settings',
-      icon: <CreditCard className="h-4 w-4 mr-2" />,
-      permission: 'manage-payment-settings'
     },
     {
       title: 'Storage Settings',
@@ -170,7 +163,6 @@ export default function Settings() {
 
   const workingDaysSettingsRef = useRef<HTMLDivElement>(null);
   const emailSettingsRef = useRef<HTMLDivElement>(null);
-  const paymentSettingsRef = useRef<HTMLDivElement>(null);
   const storageSettingsRef = useRef<HTMLDivElement>(null);
   const recaptchaSettingsRef = useRef<HTMLDivElement>(null);
   const chatgptSettingsRef = useRef<HTMLDivElement>(null);
@@ -346,12 +338,6 @@ export default function Settings() {
             </section>
           )}
 
-          {/* Payment Settings Section */}
-          {(auth.permissions?.includes('manage-payment-settings') || auth.user?.type === 'superadmin') && (
-            <section id="payment-settings" ref={paymentSettingsRef} className="mb-8">
-              <PaymentSettings settings={paymentSettings} />
-            </section>
-          )}
 
           {/* Storage Settings Section */}
           {(auth.permissions?.includes('manage-settings') && (auth.user?.type === 'superadmin' || (auth.user?.type === 'company' && !isSaas))) && (

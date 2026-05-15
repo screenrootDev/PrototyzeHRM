@@ -86,53 +86,30 @@ Route::get('/', [LandingPageController::class, 'show'])->name('home');
 // Public form submission routes
 
 // Cashfree webhook (public route)
-Route::post('cashfree/webhook', [CashfreeController::class, 'webhook'])->name('cashfree.webhook');
 
 // Benefit webhook (public route)
-Route::post('benefit/webhook', [BenefitPaymentController::class, 'webhook'])->name('benefit.webhook');
-Route::get('payments/benefit/success', [BenefitPaymentController::class, 'success'])->name('benefit.success');
-Route::post('payments/benefit/callback', [BenefitPaymentController::class, 'callback'])->name('benefit.callback');
 
 // FedaPay callback (public route)
-Route::match(['GET', 'POST'], 'payments/fedapay/callback', [FedaPayPaymentController::class, 'callback'])->name('fedapay.callback');
 
 // YooKassa success/callback (public routes)
-Route::get('payments/yookassa/success', [YooKassaPaymentController::class, 'success'])->name('yookassa.success');
-Route::post('payments/yookassa/callback', [YooKassaPaymentController::class, 'callback'])->name('yookassa.callback');
 
 // Nepalste success/callback (public routes)
-Route::get('payments/nepalste/success', [NepalstePaymentController::class, 'success'])->name('nepalste.success');
-Route::post('payments/nepalste/callback', [NepalstePaymentController::class, 'callback'])->name('nepalste.callback');
 
 // PayTR callback (public route)
-Route::post('payments/paytr/callback', [PayTRPaymentController::class, 'callback'])->name('paytr.callback');
 
 // PayTabs callback (public route)
-Route::match(['GET', 'POST'], 'payments/paytabs/callback', [PayTabsPaymentController::class, 'callback'])->name('paytabs.callback');
-Route::get('payments/paytabs/success', [PayTabsPaymentController::class, 'success'])->name('paytabs.success');
 
 // Tap payment routes (public routes)
-Route::get('payments/tap/success', [TapPaymentController::class, 'success'])->name('tap.success');
-Route::post('payments/tap/callback', [TapPaymentController::class, 'callback'])->name('tap.callback');
 
 // Aamarpay payment routes (public routes)
-Route::match(['GET', 'POST'], 'payments/aamarpay/success', [AamarpayPaymentController::class, 'success'])->name('aamarpay.success');
-Route::post('payments/aamarpay/callback', [AamarpayPaymentController::class, 'callback'])->name('aamarpay.callback');
 
 // PaymentWall callback (public route)
-Route::match(['GET', 'POST'], 'payments/paymentwall/callback', [PaymentWallPaymentController::class, 'callback'])->name('paymentwall.callback');
-Route::get('payments/paymentwall/success', [PaymentWallPaymentController::class, 'success'])->name('paymentwall.success');
 
 // PayFast payment routes (public routes)
-Route::get('payments/payfast/success', [PayfastPaymentController::class, 'success'])->name('payfast.success');
-Route::post('payments/payfast/callback', [PayfastPaymentController::class, 'callback'])->name('payfast.callback');
 
 // CoinGate callback (public route)
-Route::match(['GET', 'POST'], 'payments/coingate/callback', [CoinGatePaymentController::class, 'callback'])->name('coingate.callback');
 
 // Xendit payment routes (public routes)
-Route::get('payments/xendit/success', [XenditPaymentController::class, 'success'])->name('xendit.success');
-Route::post('payments/xendit/callback', [XenditPaymentController::class, 'callback'])->name('xendit.callback');
 
 // PWA Manifest routes removed
 
@@ -163,101 +140,20 @@ Route::put('email-templates/{emailTemplate}/content', [\App\Http\Controllers\Ema
 
 Route::middleware(['auth', 'verified', 'setting'])->group(function () {
 
-    Route::middleware('checksaas')->group(function () {
+    Route::group([], function () { // Removed checksaas
         // Plans routes - accessible without plan check
-        Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
-        Route::post('plans/request', [PlanController::class, 'requestPlan'])->name('plans.request');
-        Route::post('plans/trial', [PlanController::class, 'startTrial'])->name('plans.trial');
-        Route::post('plans/subscribe', [PlanController::class, 'subscribe'])->name('plans.subscribe');
 
         // Payment routes - accessible without plan check
-        Route::post('payments/stripe', [StripePaymentController::class, 'processPayment'])->name('stripe.payment');
-        Route::post('payments/paypal', [PayPalPaymentController::class, 'processPayment'])->name('paypal.payment');
-        Route::post('payments/bank', [BankPaymentController::class, 'processPayment'])->name('bank.payment');
-        Route::post('payments/paystack', [PaystackPaymentController::class, 'processPayment'])->name('paystack.payment');
-        Route::post('payments/flutterwave', [FlutterwavePaymentController::class, 'processPayment'])->name('flutterwave.payment');
-        Route::post('payments/paytabs', [PayTabsPaymentController::class, 'processPayment'])->name('paytabs.payment');
-        Route::post('payments/skrill', [SkrillPaymentController::class, 'processPayment'])->name('skrill.payment');
-        Route::post('payments/coingate', [CoinGatePaymentController::class, 'processPayment'])->name('coingate.payment');
-        Route::post('payments/payfast', [PayfastPaymentController::class, 'processPayment'])->name('payfast.payment');
-        Route::post('payments/mollie', [MolliePaymentController::class, 'processPayment'])->name('mollie.payment');
-        Route::post('payments/toyyibpay', [ToyyibPayPaymentController::class, 'processPayment'])->name('toyyibpay.payment');
-        Route::post('payments/iyzipay', [IyzipayPaymentController::class, 'processPayment'])->name('iyzipay.payment');
-        Route::post('payments/benefit', [BenefitPaymentController::class, 'processPayment'])->name('benefit.payment');
-        Route::post('payments/ozow', [OzowPaymentController::class, 'processPayment'])->name('ozow.payment');
-        Route::post('payments/easebuzz', [EasebuzzPaymentController::class, 'processPayment'])->name('easebuzz.payment');
-        Route::post('payments/khalti', [KhaltiPaymentController::class, 'processPayment'])->name('khalti.payment');
-        Route::post('payments/authorizenet', [AuthorizeNetPaymentController::class, 'processPayment'])->name('authorizenet.payment');
-        Route::post('payments/fedapay', [FedaPayPaymentController::class, 'processPayment'])->name('fedapay.payment');
-        Route::post('payments/payhere', [PayHerePaymentController::class, 'processPayment'])->name('payhere.payment');
-        Route::post('payments/cinetpay', [CinetPayPaymentController::class, 'processPayment'])->name('cinetpay.payment');
-        Route::post('payments/paiement', [PaiementPaymentController::class, 'processPayment'])->name('paiement.payment');
-        Route::post('payments/nepalste', [NepalstePaymentController::class, 'processPayment'])->name('nepalste.payment');
-        Route::post('payments/yookassa', [YooKassaPaymentController::class, 'processPayment'])->name('yookassa.payment');
-        Route::post('payments/aamarpay', [AamarpayPaymentController::class, 'processPayment'])->name('aamarpay.payment');
-        Route::post('payments/midtrans', [MidtransPaymentController::class, 'processPayment'])->name('midtrans.payment');
-        Route::post('payments/paymentwall', [PaymentWallPaymentController::class, 'processPayment'])->name('paymentwall.payment');
-        Route::post('payments/sspay', [SSPayPaymentController::class, 'processPayment'])->name('sspay.payment');
 
         // Payment gateway specific routes
-        Route::post('razorpay/create-order', [RazorpayController::class, 'createOrder'])->name('razorpay.create-order');
-        Route::post('razorpay/verify-payment', [RazorpayController::class, 'verifyPayment'])->name('razorpay.verify-payment');
-        Route::post('cashfree/create-session', [CashfreeController::class, 'createPaymentSession'])->name('cashfree.create-session');
-        Route::post('cashfree/verify-payment', [CashfreeController::class, 'verifyPayment'])->name('cashfree.verify-payment');
-        Route::post('mercadopago/create-preference', [MercadoPagoController::class, 'createPreference'])->name('mercadopago.create-preference');
-        Route::post('mercadopago/process-payment', [MercadoPagoController::class, 'processPayment'])->name('mercadopago.process-payment');
 
         // Other payment creation routes
-        Route::post('tap/create-payment', [TapPaymentController::class, 'createPayment'])->name('tap.create-payment');
-        Route::post('xendit/create-payment', [XenditPaymentController::class, 'createPayment'])->name('xendit.create-payment');
-        Route::post('payments/paytr/create-token', [PayTRPaymentController::class, 'createPaymentToken'])->name('paytr.create-token');
-        Route::post('iyzipay/create-form', [IyzipayPaymentController::class, 'createPaymentForm'])->name('iyzipay.create-form');
-        Route::post('benefit/create-session', [BenefitPaymentController::class, 'createPaymentSession'])->name('benefit.create-session');
-        Route::post('ozow/create-payment', [OzowPaymentController::class, 'createPayment'])->name('ozow.create-payment');
-        Route::post('easebuzz/create-payment', [EasebuzzPaymentController::class, 'createPayment'])->name('easebuzz.create-payment');
-        Route::post('khalti/create-payment', [KhaltiPaymentController::class, 'createPayment'])->name('khalti.create-payment');
-        Route::post('authorizenet/create-form', [AuthorizeNetPaymentController::class, 'createPaymentForm'])->name('authorizenet.create-form');
-        Route::post('fedapay/create-payment', [FedaPayPaymentController::class, 'createPayment'])->name('fedapay.create-payment');
-        Route::post('payhere/create-payment', [PayHerePaymentController::class, 'createPayment'])->name('payhere.create-payment');
-        Route::post('cinetpay/create-payment', [CinetPayPaymentController::class, 'createPayment'])->name('cinetpay.create-payment');
-        Route::post('paiement/create-payment', [PaiementPaymentController::class, 'createPayment'])->name('paiement.create-payment');
-        Route::post('nepalste/create-payment', [NepalstePaymentController::class, 'createPayment'])->name('nepalste.create-payment');
-        Route::post('yookassa/create-payment', [YooKassaPaymentController::class, 'createPayment'])->name('yookassa.create-payment');
-        Route::post('aamarpay/create-payment', [AamarpayPaymentController::class, 'createPayment'])->name('aamarpay.create-payment');
-        Route::post('midtrans/create-payment', [MidtransPaymentController::class, 'createPayment'])->name('midtrans.create-payment');
-        Route::post('paymentwall/create-payment', [PaymentWallPaymentController::class, 'createPayment'])->name('paymentwall.create-payment');
-        Route::post('sspay/create-payment', [SSPayPaymentController::class, 'createPayment'])->name('sspay.create-payment');
 
         // Payment success/callback routes
-        Route::post('payments/skrill/callback', [SkrillPaymentController::class, 'callback'])->name('skrill.callback');
-        Route::get('payments/paytr/success', [PayTRPaymentController::class, 'success'])->name('paytr.success');
-        Route::get('payments/paytr/failure', [PayTRPaymentController::class, 'failure'])->name('paytr.failure');
-        Route::get('payments/mollie/success', [MolliePaymentController::class, 'success'])->name('mollie.success');
-        Route::post('payments/mollie/callback', [MolliePaymentController::class, 'callback'])->name('mollie.callback');
-        Route::match(['GET', 'POST'], 'payments/toyyibpay/success', [ToyyibPayPaymentController::class, 'success'])->name('toyyibpay.success');
-        Route::post('payments/toyyibpay/callback', [ToyyibPayPaymentController::class, 'callback'])->name('toyyibpay.callback');
-        Route::post('payments/iyzipay/callback', [IyzipayPaymentController::class, 'callback'])->name('iyzipay.callback');
-        Route::get('payments/ozow/success', [OzowPaymentController::class, 'success'])->name('ozow.success');
-        Route::post('payments/ozow/callback', [OzowPaymentController::class, 'callback'])->name('ozow.callback');
-        Route::get('payments/payhere/success', [PayHerePaymentController::class, 'success'])->name('payhere.success');
-        Route::post('payments/payhere/callback', [PayHerePaymentController::class, 'callback'])->name('payhere.callback');
-        Route::get('payments/cinetpay/success', [CinetPayPaymentController::class, 'success'])->name('cinetpay.success');
-        Route::post('payments/cinetpay/callback', [CinetPayPaymentController::class, 'callback'])->name('cinetpay.callback');
-        Route::get('payments/paiement/success', [PaiementPaymentController::class, 'success'])->name('paiement.success');
-        Route::post('payments/paiement/callback', [PaiementPaymentController::class, 'callback'])->name('paiement.callback');
-        Route::post('payments/midtrans/callback', [MidtransPaymentController::class, 'callback'])->name('midtrans.callback');
-        Route::post('paymentwall/process', [PaymentWallPaymentController::class, 'processPayment'])->name('paymentwall.process');
-        Route::get('payments/sspay/success', [SSPayPaymentController::class, 'success'])->name('sspay.success');
-        Route::post('payments/sspay/callback', [SSPayPaymentController::class, 'callback'])->name('sspay.callback');
-        Route::get('mercadopago/success', [MercadoPagoController::class, 'success'])->name('mercadopago.success');
-        Route::get('mercadopago/failure', [MercadoPagoController::class, 'failure'])->name('mercadopago.failure');
-        Route::get('mercadopago/pending', [MercadoPagoController::class, 'pending'])->name('mercadopago.pending');
-        Route::post('mercadopago/webhook', [MercadoPagoController::class, 'webhook'])->name('mercadopago.webhook');
-        Route::post('authorizenet/test-connection', [AuthorizeNetPaymentController::class, 'testConnection'])->name('authorizenet.test-connection');
     });
 
     // All other routes require plan access check
-    Route::middleware('plan.access')->group(function () {
+    Route::group([], function () { // Removed plan.access middleware
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('dashboard/redirect', [DashboardController::class, 'redirectToFirstAvailablePage'])->name('dashboard.redirect');
 
@@ -1082,19 +978,10 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
 
         // Plans management routes (admin only)
         Route::middleware('permission:manage-plans')->group(function () {
-            Route::get('plans/create', [PlanController::class, 'create'])->middleware('permission:create-plans')->name('plans.create');
-            Route::post('plans', [PlanController::class, 'store'])->middleware('permission:create-plans')->name('plans.store');
-            Route::get('plans/{plan}/edit', [PlanController::class, 'edit'])->middleware('permission:edit-plans')->name('plans.edit');
-            Route::put('plans/{plan}', [PlanController::class, 'update'])->middleware('permission:edit-plans')->name('plans.update');
-            Route::delete('plans/{plan}', [PlanController::class, 'destroy'])->middleware('permission:delete-plans')->name('plans.destroy');
-            Route::post('plans/{plan}/toggle-status', [PlanController::class, 'toggleStatus'])->name('plans.toggle-status');
         });
 
         // Plan Orders routes
         Route::middleware('permission:manage-plan-orders')->group(function () {
-            Route::get('plan-orders', [PlanOrderController::class, 'index'])->middleware('permission:manage-plan-orders')->name('plan-orders.index');
-            Route::post('plan-orders/{planOrder}/approve', [PlanOrderController::class, 'approve'])->middleware('permission:approve-plan-orders')->name('plan-orders.approve');
-            Route::post('plan-orders/{planOrder}/reject', [PlanOrderController::class, 'reject'])->middleware('permission:reject-plan-orders')->name('plan-orders.reject');
         });
 
         // Plan Requests routes (placeholder)
@@ -1103,7 +990,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         })->name('plan-requests.index');
 
         // Companies routes
-        Route::middleware(['checksaas', 'permission:manage-companies'])->group(function () {
+        Route::middleware(['permission:manage-companies'])->group(function () {
             Route::get('companies', [CompanyController::class, 'index'])->middleware('permission:manage-companies')->name('companies.index');
             Route::post('companies', [CompanyController::class, 'store'])->middleware('permission:create-companies')->name('companies.store');
             Route::put('companies/{company}', [CompanyController::class, 'update'])->middleware('permission:edit-companies')->name('companies.update');
@@ -1116,10 +1003,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
 
 
         // Plan Requests routes
-        Route::middleware(['checksaas', 'permission:manage-plan-requests'])->group(function () {
-            Route::get('plan-requests', [PlanRequestController::class, 'index'])->middleware('permission:manage-plan-requests')->name('plan-requests.index');
-            Route::post('plan-requests/{planRequest}/approve', [PlanRequestController::class, 'approve'])->middleware('permission:approve-plan-requests')->name('plan-requests.approve');
-            Route::post('plan-requests/{planRequest}/reject', [PlanRequestController::class, 'reject'])->middleware('permission:reject-plan-requests')->name('plan-requests.reject');
+        Route::middleware(['permission:manage-plan-requests'])->group(function () {
         });
 
 
@@ -1160,8 +1044,6 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
-Route::match(['GET', 'POST'], 'payments/easebuzz/success', [EasebuzzPaymentController::class, 'success'])->name('easebuzz.success');
-Route::post('payments/easebuzz/callback', [EasebuzzPaymentController::class, 'callback'])->name('easebuzz.callback');
 
 // Cookie consent routes
 Route::post('/cookie-consent/store', [CookieConsentController::class, 'store'])->name('cookie.consent.store');

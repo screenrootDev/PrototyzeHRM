@@ -7,12 +7,7 @@ use App\Http\Controllers\Settings\EmailSettingController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\SystemSettingsController;
 
-use App\Http\Controllers\PlanOrderController;
-use App\Http\Controllers\Settings\PaymentSettingController;
-use App\Http\Controllers\Settings\WebhookController;
-use App\Http\Controllers\StripePaymentController;
-use App\Http\Controllers\PayPalPaymentController;
-use App\Http\Controllers\BankPaymentController;
+
 use App\Http\Controllers\Settings\WorkingDaysSettingController;
 use Inertia\Inertia;
 
@@ -25,17 +20,12 @@ use Inertia\Inertia;
 |
 */
 
-// Payment routes accessible without plan check
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/payment-methods', [PaymentSettingController::class, 'getPaymentMethods'])->name('payment.methods');
-    Route::get('/enabled-payment-methods', [PaymentSettingController::class, 'getEnabledMethods'])->name('payment.enabled-methods');
-    Route::post('/plan-orders', [PlanOrderController::class, 'create'])->name('plan-orders.create');
-    Route::post('/stripe-payment', [StripePaymentController::class, 'processPayment'])->name('settings.stripe.payment');
-});
 
-Route::middleware(['auth', 'verified', 'plan.access'])->group(function () {
-    // Payment Settings (admin only)
-    Route::post('/payment-settings', [PaymentSettingController::class, 'store'])->name('payment.settings');
+
+use App\Http\Controllers\Settings\WebhookController;
+
+Route::middleware(['auth', 'verified'])->group(function () {
+
 
     // Profile settings page with profile and password sections
     Route::get('profile', function () {

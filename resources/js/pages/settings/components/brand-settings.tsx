@@ -99,17 +99,14 @@ export const getBrandSettings = (
 
       return {
         logoDark:
-          parsedBrand.logoDark ||
-          userSettings?.logoDark ||
-          DEFAULT_BRAND_SETTINGS.logoDark,
+          parsedBrand.logoDark !== undefined ? parsedBrand.logoDark :
+          (userSettings?.logoDark !== undefined ? userSettings.logoDark : DEFAULT_BRAND_SETTINGS.logoDark),
         logoLight:
-          parsedBrand.logoLight ||
-          userSettings?.logoLight ||
-          DEFAULT_BRAND_SETTINGS.logoLight,
+          parsedBrand.logoLight !== undefined ? parsedBrand.logoLight :
+          (userSettings?.logoLight !== undefined ? userSettings.logoLight : DEFAULT_BRAND_SETTINGS.logoLight),
         favicon:
-          parsedBrand.favicon ||
-          userSettings?.favicon ||
-          DEFAULT_BRAND_SETTINGS.favicon,
+          parsedBrand.favicon !== undefined ? parsedBrand.favicon :
+          (userSettings?.favicon !== undefined ? userSettings.favicon : DEFAULT_BRAND_SETTINGS.favicon),
         titleText:
           parsedBrand.titleText ||
           userSettings?.titleText ||
@@ -139,9 +136,9 @@ export const getBrandSettings = (
   // If we have settings from the backend, use those (non-demo mode)
   if (userSettings) {
     return {
-      logoDark: userSettings.logoDark || DEFAULT_BRAND_SETTINGS.logoDark,
-      logoLight: userSettings.logoLight || DEFAULT_BRAND_SETTINGS.logoLight,
-      favicon: userSettings.favicon || DEFAULT_BRAND_SETTINGS.favicon,
+      logoDark: userSettings.logoDark !== undefined ? userSettings.logoDark : DEFAULT_BRAND_SETTINGS.logoDark,
+      logoLight: userSettings.logoLight !== undefined ? userSettings.logoLight : DEFAULT_BRAND_SETTINGS.logoLight,
+      favicon: userSettings.favicon !== undefined ? userSettings.favicon : DEFAULT_BRAND_SETTINGS.favicon,
       titleText: userSettings.titleText || DEFAULT_BRAND_SETTINGS.titleText,
       footerText: userSettings.footerText || DEFAULT_BRAND_SETTINGS.footerText,
       companyMobile:

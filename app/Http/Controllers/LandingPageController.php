@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Plan;
 use App\Models\LandingPageSetting;
 use App\Models\LandingPageCustomPage;
 use App\Models\Business;
@@ -14,12 +13,6 @@ class LandingPageController extends Controller
 {
     public function show(Request $request)
     {
-        $host = $request->getHost();
-        $hostParts = explode('.', $host);
-        
-        // Track general landing page visit
-        // \Shetabit\Visitor\Facade\Visitor::visit();
-        
         // Check if landing page is enabled in settings
         if (!isLandingPageEnabled()) {
             return redirect()->route('login');
@@ -27,52 +20,8 @@ class LandingPageController extends Controller
         
         $landingSettings = LandingPageSetting::getSettings();
         
-        $plans = collect();
-        
-        if (isSaas()) {
-            $plans = Plan::where('is_plan_enable', 'on')->get()->map(function ($plan) {
-                $features = [];
-                if ($plan->enable_custdomain === 'on') $features[] = 'Custom Domain';
-                if ($plan->enable_custsubdomain === 'on') $features[] = 'Subdomain';
-                if ($plan->pwa_business === 'on') $features[] = 'PWA';
-                if ($plan->enable_chatgpt === 'on') $features[] = 'AI Integration';
-                
-                return [
-                    'id' => $plan->id,
-                    'name' => $plan->name,
-                    'price' => $plan->price,
-                    'yearly_price' => $plan->yearly_price,
-                    'duration' => $plan->duration,
-                    'description' => $plan->description,
-                    'features' => $features,
-                    'stats' => [
-                        'employees' => $plan->max_employees,
-                        'users' => $plan->max_users,
-                        'storage' => $plan->storage_limit . ' GB',
-                    ],
-                    'is_plan_enable' => $plan->is_plan_enable,
-                    'is_popular' => false // Will be set based on subscriber count
-                ];
-            });
-            
-            // Mark most subscribed plan as popular
-            $planSubscriberCounts = Plan::withCount('users')->get()->pluck('users_count', 'id');
-            if ($planSubscriberCounts->isNotEmpty()) {
-                $mostSubscribedPlanId = $planSubscriberCounts->keys()->sortByDesc(function($planId) use ($planSubscriberCounts) {
-                    return $planSubscriberCounts[$planId];
-                })->first();
-                
-                $plans = $plans->map(function($plan) use ($mostSubscribedPlanId) {
-                    if ($plan['id'] == $mostSubscribedPlanId && $plan['price'] != '0') {
-                        $plan['is_popular'] = true;
-                    }
-                    return $plan;
-                });
-            }
-        }
-        
         return Inertia::render('landing-page/index', [
-            'plans' => $plans,
+            'plans' => collect(),
             'testimonials' => [],
             'faqs' => [],
             'customPages' => LandingPageCustomPage::active()->ordered()->get() ?? [],

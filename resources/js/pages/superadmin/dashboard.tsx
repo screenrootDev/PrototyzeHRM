@@ -93,7 +93,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{'Active Plans'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.activePlans.toLocaleString()}</h3>
+                  <h3 className="mt-2 text-2xl font-bold">{stats.activePlans?.toLocaleString() || 0}</h3>
                 </div>
                 <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
                   <CreditCard className="h-5 w-5 text-purple-600 dark:text-purple-400" />
@@ -107,7 +107,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{'Pending Requests'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.pendingRequests.toLocaleString()}</h3>
+                  <h3 className="mt-2 text-2xl font-bold">{stats.pendingRequests?.toLocaleString() || 0}</h3>
                 </div>
                 <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
                   <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
@@ -121,7 +121,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{'Monthly Growth'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">+{stats.monthlyGrowth}%</h3>
+                  <h3 className="mt-2 text-2xl font-bold">+{stats.monthlyGrowth || 0}%</h3>
                 </div>
                 <div className="rounded-full bg-emerald-100 p-3 dark:bg-emerald-900">
                   <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
@@ -135,7 +135,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{'Total Companies'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.totalCompanies.toLocaleString()}</h3>
+                  <h3 className="mt-2 text-2xl font-bold">{stats.totalCompanies?.toLocaleString() || 0}</h3>
                 </div>
                 <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
                   <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -149,7 +149,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">{'Total Revenue'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{window.appSettings.formatCurrency(stats.totalRevenue.toLocaleString())}</h3>
+                  <h3 className="mt-2 text-2xl font-bold">{window.appSettings?.formatCurrency ? window.appSettings.formatCurrency(stats.totalRevenue || 0) : `$${stats.totalRevenue || 0}`}</h3>
                 </div>
                 <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
                   <DollarSign className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
@@ -228,7 +228,7 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold">${plan.revenue.toLocaleString()}</p>
+                      <p className="font-semibold">${plan.revenue?.toLocaleString() || 0}</p>
                       <p className="text-xs text-muted-foreground">revenue</p>
                     </div>
                   </div>

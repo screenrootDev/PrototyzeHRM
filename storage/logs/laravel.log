@@ -18278,3 +18278,7 @@
 #55 /Applications/XAMPP/xamppfiles/htdocs/PrototyzeHRM/index.php(21): require_once('/Applications/X...')
 #56 {main}
 "} 
+[2026-05-14 14:03:07] local.INFO: Impersonation started {"acting_user_id":1,"impersonated_user_id":"2","ip_address":"::1","timestamp":"2026-05-14 14:03:07"} 
+[2026-05-14 14:03:07] local.INFO: Impersonation successful, hard redirecting to dashboard {"url":"http://localhost/PrototyzeHRM/dashboard","new_user_id":2} 
+[2026-05-14 14:03:14] local.INFO: Impersonation ended {"timestamp":"2026-05-14 08:33:14"} 
+[2026-05-14 14:03:14] local.INFO: Leaving impersonation, hard redirecting {"url":"http://localhost/PrototyzeHRM/companies"} 

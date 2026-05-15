@@ -47,27 +47,13 @@ if (!function_exists('settings')) {
 
         if (is_null($user_id)) {
             if (auth()->user()) {
-                if (isSaas()) {
-                    if (!in_array(auth()->user()->type, ['superadmin', 'company'])) {
-                        $autherUserCreatedBy = auth()->user()->created_by;
-                        $user_id = getCompanyId($autherUserCreatedBy);
-                    } else {
-                        $user_id = auth()->id();
-                    }
+                if (in_array(auth()->user()->type, ['superadmin', 'company'])) {
+                    $user_id = auth()->id();
                 } else {
-                    // Non-SaaS: Company is top level
-                    if (auth()->user()->type === 'company') {
-                        $user_id = auth()->id();
-                    } else {
-                        $user_id = auth()->user()->created_by;
-                    }
+                    $user_id = auth()->user()->created_by;
                 }
             } else {
-                if (isSaas()) {
-                    $user = User::where('type', 'superadmin')->first();
-                } else {
-                    $user = User::where('type', 'company')->first();
-                }
+                $user = User::whereIn('type', ['superadmin', 'company'])->first();
                 $user_id = $user ? $user->id : null;
             }
         }
@@ -132,26 +118,13 @@ if (!function_exists('updateSetting')) {
     {
         if (is_null($user_id)) {
             if (auth()->user()) {
-                if (isSaas()) {
-                    if (!in_array(auth()->user()->type, ['superadmin', 'company'])) {
-                        $user_id = auth()->user()->created_by;
-                    } else {
-                        $user_id = auth()->id();
-                    }
+                if (in_array(auth()->user()->type, ['superadmin', 'company'])) {
+                    $user_id = auth()->id();
                 } else {
-                    // Non-SaaS: Company is top level
-                    if (auth()->user()->hasRole('company')) {
-                        $user_id = auth()->id();
-                    } else {
-                        $user_id = auth()->user()->created_by;
-                    }
+                    $user_id = auth()->user()->created_by;
                 }
             } else {
-                if (isSaas()) {
-                    $user = User::where('type', 'superadmin')->first();
-                } else {
-                    $user = User::where('type', 'company')->first();
-                }
+                $user = \App\Models\User::whereIn('type', ['superadmin', 'company'])->first();
                 $user_id = $user ? $user->id : null;
             }
         }
@@ -780,82 +753,6 @@ if (!function_exists('validatePaymentMethodConfig')) {
     }
 }
 
-if (!function_exists('calculatePlanPricing')) {
-    function calculatePlanPricing($plan, $couponCode = null, $billingCycle = 'monthly')
-    {
-        // $originalPrice = $plan->price;
-        $originalPrice = $plan->getPriceForCycle($billingCycle);
-        $discountAmount = 0;
-        $finalPrice = $originalPrice;
-        $couponId = null;
-
-
-        return [
-            'original_price' => $originalPrice,
-            'discount_amount' => $discountAmount,
-            'final_price' => $finalPrice,
-            'coupon_id' => $couponId,
-        ];
-    }
-}
-
-if (!function_exists('createPlanOrder')) {
-    function createPlanOrder($data)
-    {
-        $plan = Plan::findOrFail($data['plan_id']);
-        $pricing = calculatePlanPricing($plan, $data['coupon_code'] ?? null, $data['billing_cycle'] ?? 'monthly');
-
-        return PlanOrder::create([
-            'user_id' => $data['user_id'],
-            'plan_id' => $plan->id,
-            'coupon_id' => $pricing['coupon_id'],
-            'billing_cycle' => $data['billing_cycle'],
-            'payment_method' => $data['payment_method'],
-            'coupon_code' => $data['coupon_code'] ?? null,
-            'original_price' => $pricing['original_price'],
-            'discount_amount' => $pricing['discount_amount'],
-            'final_price' => $pricing['final_price'],
-            'payment_id' => $data['payment_id'],
-            'status' => $data['status'] ?? 'pending',
-            'ordered_at' => now(),
-        ]);
-    }
-}
-
-if (!function_exists('assignPlanToUser')) {
-    function assignPlanToUser($user, $plan, $billingCycle)
-    {
-        $expiresAt = $billingCycle === 'yearly' ? now()->addYear() : now()->addMonth();
-
-        \Log::info('Assigning plan ' . $plan->id . ' to user ' . $user->id . ' with billing cycle ' . $billingCycle);
-
-        $updated = $user->update([
-            'plan_id' => $plan->id,
-            'plan_expire_date' => $expiresAt,
-            'plan_is_active' => 1,
-        ]);
-
-        \Log::info('Plan assignment result: ' . ($updated ? 'success' : 'failed'));
-    }
-}
-
-if (!function_exists('processPaymentSuccess')) {
-    function processPaymentSuccess($data)
-    {
-        $plan = Plan::findOrFail($data['plan_id']);
-        $user = User::findOrFail($data['user_id']);
-
-        $planOrder = createPlanOrder(array_merge($data, ['status' => 'approved']));
-        assignPlanToUser($user, $plan, $data['billing_cycle']);
-
-        // Verify the plan was assigned
-        $user->refresh();
-
-
-        return $planOrder;
-    }
-}
-
 if (!function_exists('getPaymentGatewaySettings')) {
     function getPaymentGatewaySettings()
     {
@@ -990,7 +887,7 @@ if (!function_exists('createDefaultSettings')) {
             ];
         }
 
-        Setting::insert($settingsData);
+        Setting::insertOrIgnore($settingsData);
     }
 }
 
@@ -1284,9 +1181,7 @@ if (!function_exists('randomImage')) {
 if (!function_exists('isSaas')) {
     function isSaas()
     {
-        $isSaas = config('app.is_saas');
-
-        return $isSaas;
+        return false;
     }
 }
 if (!function_exists('isDemo')) {

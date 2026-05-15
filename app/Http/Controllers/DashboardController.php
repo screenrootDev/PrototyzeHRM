@@ -15,9 +15,6 @@ use App\Models\Meeting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
-use App\Models\Plan;
-use App\Models\PlanOrder;
-use App\Models\PlanRequest;
 
 
 class DashboardController extends Controller
@@ -54,7 +51,6 @@ class DashboardController extends Controller
             ['route' => 'users.index', 'permission' => 'manage-users'],
             ['route' => 'roles.index', 'permission' => 'manage-roles'],
 
-            ['route' => 'plans.index', 'permission' => 'manage-plans'],
             ['route' => 'settings.index', 'permission' => 'manage-settings'],
         ];
 
@@ -86,10 +82,8 @@ class DashboardController extends Controller
         // Get system-wide statistics
         $totalCompanies = User::where('type', 'company')->count();
         $totalUsers = User::where('type', '!=', 'superadmin')->where('type', '!=', 'super admin')->count();
-        $totalRevenue = PlanOrder::where('status', 'approved')->sum('final_price') ?? 0;
-        $activePlans = Plan::where('is_plan_enable', 'on')->count();
-
-        $pendingRequests = PlanRequest::where('status', 'pending')->count();
+        $totalEmployees = User::where('type', 'employee')->count();
+        $totalBranches = Branch::count();
 
         // Calculate monthly growth for companies
         $currentMonthCompanies = User::where('type', 'company')
@@ -108,9 +102,8 @@ class DashboardController extends Controller
             'stats' => [
                 'totalCompanies' => $totalCompanies,
                 'totalUsers' => $totalUsers,
-                'totalRevenue' => $totalRevenue,
-                'activePlans' => $activePlans,
-                'pendingRequests' => $pendingRequests,
+                'totalEmployees' => $totalEmployees,
+                'totalBranches' => $totalBranches,
                 'monthlyGrowth' => $monthlyGrowth,
             ],
             'recentActivity' => User::where('type', 'company')
@@ -126,17 +119,6 @@ class DashboardController extends Controller
                         'status' => 'active'
                     ];
                 }),
-            'topPlans' => Plan::withCount('users')
-                ->orderBy('users_count', 'desc')
-                ->take(5)
-                ->get()
-                ->map(function ($plan) {
-                    return [
-                        'name' => $plan->name,
-                        'subscribers' => $plan->users_count,
-                        'revenue' => $plan->users_count * $plan->price,
-                    ];
-                })
         ];
 
         return Inertia::render('superadmin/dashboard', [

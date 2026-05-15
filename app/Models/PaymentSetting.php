@@ -171,25 +171,6 @@ class PaymentSetting extends Model
 
     public static function getUserSettings($userId)
     {
-        if (!$userId) {
-            return [];
-        }
-        
-        $settings = self::where('user_id', $userId)->pluck('value', 'key')->toArray();
-        
-        // If no settings found for this user and it's not a superadmin, try to get from superadmin
-        if (empty($settings)) {
-            $user = \App\Models\User::find($userId);
-            if ($user && $user->type !== 'superadmin') {
-                $superAdmin = \App\Models\User::where('type', 'superadmin')->first();
-                if ($superAdmin) {
-                    $superAdminSettings = self::where('user_id', $superAdmin->id)->pluck('value', 'key')->toArray();
-                    // Merge settings, prioritizing user settings over superadmin settings
-                    $settings = array_merge($superAdminSettings, $settings);
-                }
-            }
-        }
-        
-        return $settings;
+        return [];
     }
 }

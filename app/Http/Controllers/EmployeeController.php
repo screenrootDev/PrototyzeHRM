@@ -104,30 +104,12 @@ class EmployeeController extends Controller
                 ->get(['id', 'name', 'department_id']);
 
 
-            // Get plan limits for company users and staff users (only in SaaS mode)
-            $planLimits = null;
-            if (isSaas()) {
-                if ($authUser->type === 'company' && $authUser->plan) {
-                    $currentUserCount = User::where('type', 'employee')->whereIn('created_by', getCompanyAndUsersId())->count();
-                    $planLimits = [
-                        'current_users' => $currentUserCount,
-                        'max_users' => $authUser->plan->max_employees,
-                        'can_create' => $currentUserCount < $authUser->plan->max_employees
-                    ];
-                }
-                // Check for staff users (created by company users)
-                elseif ($authUser->type !== 'superadmin' && $authUser->created_by) {
-                    $companyUser = User::find($authUser->created_by);
-                    if ($companyUser && $companyUser->type === 'company' && $companyUser->plan) {
-                        $currentUserCount = User::where('type', 'employee')->whereIn('created_by', getCompanyAndUsersId())->count();
-                        $planLimits = [
-                            'current_users' => $currentUserCount,
-                            'max_users' => $companyUser->plan->max_employees,
-                            'can_create' => $currentUserCount < $companyUser->plan->max_employees
-                        ];
-                    }
-                }
-            }
+            // Unlimited employees in this version
+            $planLimits = [
+                'current_users' => User::where('type', 'employee')->whereIn('created_by', getCompanyAndUsersId())->count(),
+                'max_users' => 'Unlimited',
+                'can_create' => true
+            ];
 
 
             return Inertia::render('hr/employees/index', [
@@ -253,7 +235,6 @@ class EmployeeController extends Controller
                 $user->email = $request->email;
                 $user->password = Hash::make($request->password);
                 $user->type = 'employee';
-                $user->lang = 'en';
                 $user->created_by = creatorId();
 
                 // Handle profile image upload for user

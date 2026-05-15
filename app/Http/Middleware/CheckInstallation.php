@@ -15,8 +15,8 @@ class CheckInstallation
     {
         // Skip check for installer routes, API routes, and static assets
         if (
-            $request->is('install/*') ||
-            $request->is('update/*') ||
+            $request->is('install*') ||
+            $request->is('update*') ||
             $request->is('css/*') ||
             $request->is('js/*') ||
             $request->is('images/*') ||
@@ -36,15 +36,8 @@ class CheckInstallation
         }
 
         // If logged in as superadmin and migrations needed, redirect to /update
-        if (isSaas()) {
-            if (auth()->check() && auth()->user()->hasRole('superadmin') && $this->needsMigration()) {
-                return redirect('/update');
-            }
-        } else {
-            if (auth()->check() && auth()->user()->hasRole('company') && $this->needsMigration()) {
-                return redirect('/update');
-            }
-            
+        if (auth()->check() && (auth()->user()->hasRole('superadmin') || auth()->user()->hasRole('company')) && $this->needsMigration()) {
+            return redirect('/update');
         }
 
 

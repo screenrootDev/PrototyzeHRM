@@ -74,7 +74,7 @@ class BiometricAttendanceController extends Controller
 
 
             if (isDemo()) {
-                $attendances = isSaas() ? $this->getSaasDemoData() : $this->getNonSaasDemoData();
+                $attendances = $this->getNonSaasDemoData();
             }
 
 
@@ -167,7 +167,7 @@ class BiometricAttendanceController extends Controller
             }
 
             if (isDemo()) {
-                $allDemoData = isSaas() ? $this->getSaasDemoData() : $this->getNonSaasDemoData();
+                $allDemoData = $this->getNonSaasDemoData();
                 $attendances = collect($allDemoData)
                     ->filter(function ($item) use ($employeeCode, $date) {
                         return $item['emp_code'] === $employeeCode &&

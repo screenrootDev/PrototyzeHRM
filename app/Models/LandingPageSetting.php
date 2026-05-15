@@ -30,8 +30,8 @@ class LandingPageSetting extends Model
         $settings = self::first();
 
         if (!$settings) {
-            $defaultConfig = isSaas() ? self::getSaasConfig() : self::getNonSaasConfig();
-            $companyName = isSaas() ? 'HRM SaaS' : 'HRM';
+            $defaultConfig = self::getNonSaasConfig();
+            $companyName = 'HRM';
 
             $settings = self::create([
                 'company_name' => $companyName,

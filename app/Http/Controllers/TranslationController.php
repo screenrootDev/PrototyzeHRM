@@ -32,8 +32,8 @@ class TranslationController extends BaseController
         // Demo mode handling
         if (config('app.is_demo') !== true) {
             if (auth()->check()) {
-                // Update authenticated user's language and direction settings
-                auth()->user()->update(['lang' => $locale]);
+                // Update authenticated user's language setting
+                updateSetting('defaultLanguage', $locale, auth()->id());
 
                 // Setting::updateOrCreate(
                 //     [
@@ -59,7 +59,7 @@ class TranslationController extends BaseController
                 // For unauthenticated users on auth pages, use superadmin's language
                 $superAdmin = User::where('type', 'superadmin')->first();
                 if ($superAdmin && request()->is('login', 'register', 'password/*', 'email/*')) {
-                    $locale = $superAdmin->lang ?? 'en';
+                    $locale = getSetting('defaultLanguage', 'en', $superAdmin->id);
                     $path = resource_path("lang/{$locale}.json");
 
                     if (!File::exists($path)) {
@@ -97,11 +97,11 @@ class TranslationController extends BaseController
 
         if (auth()->check()) {
             // For authenticated users, get from user preferences
-            return auth()->user()->lang ?? 'en';
+            return getSetting('defaultLanguage', 'en', auth()->id());
         } else if (request()->is('login', 'register', 'password/*', 'email/*')) {
             // For auth pages, get from superadmin
             $superAdmin = User::where('type', 'superadmin')->first();
-            return $superAdmin->lang ?? 'en';
+            return getSetting('defaultLanguage', 'en', $superAdmin->id);
         }
 
         // Default fallback

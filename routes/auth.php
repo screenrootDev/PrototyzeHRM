@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['guest', 'landing.enabled'])->group(function () {
 
-    Route::middleware('checksaas')->group(function () {
+    Route::group([], function () { // Removed checksaas
         Route::get('register', [RegisteredUserController::class, 'create'])
             ->name('register');
         Route::post('register', [RegisteredUserController::class, 'store']);

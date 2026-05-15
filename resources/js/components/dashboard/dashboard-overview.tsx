@@ -33,14 +33,7 @@ export function DashboardOverview({ userType, stats }: DashboardOverviewProps) {
       href: route('companies.index'),
       count: stats?.totalCompanies || 0
     },
-    {
-      title: 'Plan Management',
-      description: 'Create and manage subscription plans',
-      icon: CreditCard,
-      color: 'purple',
-      href: route('plans.index'),
-      count: stats?.activePlans || 0
-    },
+
 
     {
       title: 'System Growth',

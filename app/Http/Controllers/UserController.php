@@ -78,30 +78,12 @@ class UserController extends BaseController
                 $roles = Role::where('name', '!=', 'employee')->whereIn('created_by', getCompanyAndUsersId())->get();
             }
 
-            // Get plan limits for company users and staff users (only in SaaS mode)
-            $planLimits = null;
-            if (isSaas()) {
-                if ($authUser->type === 'company' && $authUser->plan) {
-                    $currentUserCount = User::whereIn('created_by', getCompanyAndUsersId())->where('type', '!=', 'employee')->count();
-                    $planLimits = [
-                        'current_users' => $currentUserCount,
-                        'max_users' => $authUser->plan->max_users,
-                        'can_create' => $currentUserCount < $authUser->plan->max_users
-                    ];
-                }
-                // Check for staff users (created by company users)
-                elseif ($authUser->type !== 'superadmin' && $authUser->created_by) {
-                    $companyUser = User::find($authUser->created_by);
-                    if ($companyUser && $companyUser->type === 'company' && $companyUser->plan) {
-                        $currentUserCount = User::whereIn('created_by', getCompanyAndUsersId())->where('type', '!=', 'employee')->count();
-                        $planLimits = [
-                            'current_users' => $currentUserCount,
-                            'max_users' => $companyUser->plan->max_users,
-                            'can_create' => $currentUserCount < $companyUser->plan->max_users
-                        ];
-                    }
-                }
-            }
+            // Unlimited users in this version
+            $planLimits = [
+                'current_users' => User::whereIn('created_by', getCompanyAndUsersId())->where('type', '!=', 'employee')->count(),
+                'max_users' => 'Unlimited',
+                'can_create' => true
+            ];
 
 
             return Inertia::render('users/index', [
@@ -126,32 +108,9 @@ class UserController extends BaseController
      */
     public function store(UserRequest $request)
     {
-        // Set user language same as creator (company)
-        $authUser = Auth::user();
         if (Auth::user()->can('create-users')) {
             $companySettings = settings();
-            $userLang = isset($companySettings['defaultLanguage']) ? $companySettings['defaultLanguage'] : $authUser->lang;
-            // Check plan limits for company users (only in SaaS mode)
-            if (isSaas() && $authUser->type === 'company' && $authUser->plan) {
-                $currentUserCount = User::where('created_by', $authUser->id)->count();
-                $maxUsers = $authUser->plan->max_users;
-
-                if ($currentUserCount >= $maxUsers) {
-                    return redirect()->back()->with('error', __('User limit exceeded. Your plan allows maximum :max users. Please upgrade your plan.', ['max' => $maxUsers]));
-                }
-            }
-            // Check plan limits for staff users (created by company users)
-            elseif (isSaas() && $authUser->type !== 'superadmin' && $authUser->created_by) {
-                $companyUser = User::find($authUser->created_by);
-                if ($companyUser && $companyUser->type === 'company' && $companyUser->plan) {
-                    $currentUserCount = User::where('created_by', $companyUser->id)->count();
-                    $maxUsers = $companyUser->plan->max_users;
-
-                    if ($currentUserCount >= $maxUsers) {
-                        return redirect()->back()->with('error', __('User limit exceeded. Your company plan allows maximum :max users. Please contact your administrator.', ['max' => $maxUsers]));
-                    }
-                }
-            }
+            // Plan limits removed - Unlimited users supported
 
             if (!in_array(auth()->user()->type, ['superadmin', 'company'])) {
                 $created_by = auth()->user()->created_by;
@@ -164,7 +123,6 @@ class UserController extends BaseController
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
                 'created_by' => creatorId(),
-                'lang' => $userLang,
             ]);
 
             if ($user && $request->roles) {
