@@ -415,5 +415,3 @@ export default function CandidateShow() {
     </PageTemplate>
   );
 }
-
-&874p#[=$Iru

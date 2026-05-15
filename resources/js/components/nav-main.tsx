@@ -1,4 +1,5 @@
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarMenuSub, SidebarMenuSubButton, SidebarMenuSubItem, useSidebar } from '@/components/ui/sidebar';
+import { cn } from "@/lib/utils";
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
@@ -148,16 +149,32 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             href={child.href || '#'}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`flex items-center gap-2 ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                                            className={cn(
+                                                "flex items-center gap-2 group/sub transition-all duration-300",
+                                                effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
+                                                isActive(child.href) ? "text-primary font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                            )}
                                         >
+                                            <div className={cn(
+                                                "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                                                isActive(child.href) ? "bg-primary scale-110 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                            )} />
                                             <span>{child.title}</span>
                                         </a>
                                     ) : (
                                         <Link
                                             href={child.href || '#'}
                                             prefetch
-                                            className={`flex items-center gap-2 ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                                            className={cn(
+                                                "flex items-center gap-2 group/sub transition-all duration-300",
+                                                effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
+                                                isActive(child.href) ? "text-primary font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                            )}
                                         >
+                                            <div className={cn(
+                                                "w-1.5 h-1.5 rounded-full transition-all duration-300",
+                                                isActive(child.href) ? "bg-primary scale-110 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                            )} />
                                             <span>{child.title}</span>
                                         </Link>
                                     )}
@@ -184,29 +201,37 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                         isActive={isChildActive(item.children)} 
                                         tooltip={{ children: item.title }}
                                         onClick={() => toggleExpand(item.title)}
+                                        className={cn(
+                                            "transition-all duration-300 h-10 group/item relative overflow-hidden",
+                                            isChildActive(item.children) 
+                                                ? "bg-primary/5 text-primary font-bold" 
+                                                : "hover:bg-accent/50"
+                                        )}
                                     >
                                         <div className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     <span>{state !== "collapsed" ? item.title : ""}</span>
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-primary")} />}
                                                     {state !== "collapsed" && (
                                                         expandedItems[item.title] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
                                                     )}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-primary")} />}
                                                     <div className="flex items-center gap-1">
                                                         {state !== "collapsed" && <span>{item.title}</span>}
                                                         {state !== "collapsed" && item.badge && (
-                                                            <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-primary text-white">
+                                                            <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md bg-primary text-primary-foreground shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">
                                                                 {item.badge.label}
                                                             </span>
                                                         )}
                                                     </div>
                                                     {state !== "collapsed" && (
-                                                        expandedItems[item.title] ? <ChevronDown className="h-3 w-3 ml-auto" /> : <ChevronRight className="h-3 w-3 ml-auto" />
+                                                        <div className={cn("ml-auto transition-transform duration-300", expandedItems[item.title] && "rotate-90")}>
+                                                            <ChevronRight className="h-3 w-3 opacity-40 group-hover/item:opacity-100" />
+                                                        </div>
                                                     )}
                                                 </>
                                             )}
@@ -220,22 +245,32 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                         ) : (
                             // Regular item without children
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild isActive={isActive(item.href)} tooltip={{ children: item.title }}>
+                                <SidebarMenuButton 
+                                    asChild 
+                                    isActive={isActive(item.href)} 
+                                    tooltip={{ children: item.title }}
+                                    className={cn(
+                                        "transition-all duration-300 h-10 group/item relative overflow-hidden",
+                                        isActive(item.href) 
+                                            ? "bg-primary/10 text-primary font-bold shadow-[inset_4px_0_12px_rgba(var(--primary-rgb),0.05)]" 
+                                            : "hover:bg-accent/50"
+                                    )}
+                                >
                                     {item.target === '_blank' ? (
                                         <a
                                             href={item.href || '#'}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className={`flex items-center gap-2 ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                                            className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
                                         >
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary shadow-primary/20")} />}
                                                     {state !== "collapsed" && <span>{item.title}</span>}
                                                 </>
                                             )}
@@ -244,16 +279,16 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                         <Link
                                             href={item.href || '#'}
                                             prefetch
-                                            className={`flex items-center gap-2 ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                                            className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
                                         >
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className="h-4 w-4" />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
                                                     {state !== "collapsed" && <span>{item.title}</span>}
                                                 </>
                                             )}

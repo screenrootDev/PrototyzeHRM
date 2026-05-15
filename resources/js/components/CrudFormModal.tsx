@@ -13,6 +13,9 @@ import { FormField } from '@/types/crud';
 import { MultiSelectField } from '@/components/multi-select-field';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge';
+import { Eye, Paperclip } from 'lucide-react';
+import React from 'react';
 
 import MediaPicker from '@/components/MediaPicker';
 import DependentDropdown from '@/components/DependentDropdown';
@@ -226,33 +229,91 @@ export function CrudFormModal({
       return field.render(field, formData, handleChange);
     }
 
-    // If in view mode, render as read-only
+    // If in view mode, render as read-only with premium styling
     if (mode === 'view') {
-      // Special handling for multi-select fields
-      if (field.type === 'multi-select') {
-        const selectedValues = Array.isArray(formData[field.name]) ? formData[field.name] : [];
-        const selectedLabels = selectedValues
-          .map((value: string) => {
+      const getDisplayValue = () => {
+        if (field.type === 'multi-select') {
+          const selectedValues = Array.isArray(formData[field.name]) ? formData[field.name] : [];
+          const labels = selectedValues.map((value: string) => {
             const option = field.options?.find(opt => opt.value === value);
             return option ? option.label : value;
-          })
-          .join(', ');
+          });
+          
+          if (labels.length === 0) return <span className="text-muted-foreground/50 italic">{"Not specified"}</span>;
+          
+          return (
+            <div className="flex flex-wrap gap-1.5 mt-1">
+              {labels.map((label: string, i: number) => (
+                <Badge key={i} variant="secondary" className="bg-primary/5 text-primary border-primary/20 font-bold px-2.5 py-0.5 text-[10px] uppercase tracking-wider">
+                  {label}
+                </Badge>
+              ))}
+            </div>
+          );
+        }
 
-        return (
-          <div className="p-2 border rounded-md bg-gray-50">
-            {selectedLabels || '-'}
-          </div>
-        );
-      }
+        if (field.type === 'select') {
+          const options = field.relation ? relationOptions[field.name] || [] : field.options || [];
+          const val = String(formData[field.name] || '');
+          const label = field.relation 
+            ? options.find((opt: any) => String(opt[field.relation!.valueField]) === val)?.[field.relation!.labelField]
+            : options.find((opt) => String(opt.value) === val)?.label;
+            
+          return label || val || <span className="text-muted-foreground/50 italic">{"Not specified"}</span>;
+        }
 
-      // For other field types
+        if (field.type === 'checkbox' || field.type === 'switch') {
+          const isChecked = formData[field.name] === true || formData[field.name] === 1 || formData[field.name] === '1';
+          return (
+            <div className="flex items-center gap-2 mt-1">
+              <div className={cn("w-2 h-2 rounded-full", isChecked ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" : "bg-gray-300")} />
+              <span className={cn("font-bold text-sm", isChecked ? "text-emerald-600" : "text-gray-500")}>
+                {isChecked ? 'Active / Enabled' : 'Inactive / Disabled'}
+              </span>
+            </div>
+          );
+        }
+
+        if (field.type === 'media-picker' || field.type === 'file') {
+          const val = formData[field.name];
+          if (!val) return <span className="text-muted-foreground/50 italic">{"No file attached"}</span>;
+          
+          const isImage = typeof val === 'string' && (val.match(/\.(jpg|jpeg|png|gif|webp)$/i) || val.startsWith('data:image'));
+          
+          return (
+            <div className="mt-2 group/media relative inline-block">
+              {isImage ? (
+                <div className="relative rounded-xl overflow-hidden border border-border shadow-sm">
+                  <img 
+                    src={val.startsWith('http') || val.startsWith('data:') ? val : `/storage/${val}`} 
+                    className="h-20 w-auto object-cover transition-transform duration-500 group-hover/media:scale-110" 
+                    alt="Preview"
+                  />
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/media:opacity-100 transition-opacity flex items-center justify-center">
+                    <Eye className="h-5 w-5 text-white" />
+                  </div>
+                </div>
+              ) : (
+                <Badge variant="outline" className="flex items-center gap-2 py-1.5 px-3 border-dashed">
+                  <Paperclip className="h-3 w-3" />
+                  {typeof val === 'string' ? val.split('/').pop() : 'Attachment'}
+                </Badge>
+              )}
+            </div>
+          );
+        }
+
+        return formData[field.name] || <span className="text-muted-foreground/50 italic">{"Not specified"}</span>;
+      };
+
       return (
-        <div className="p-2 border rounded-md bg-gray-50">
-          {field.type === 'select' && field.options ?
-            field.options.find(opt => opt.value === String(formData[field.name]))?.label || formData[field.name] || '-' :
-            field.type === 'checkbox' ?
-              (formData[field.name] === true || formData[field.name] === 1 || formData[field.name] === '1' ? 'Yes' : 'No') :
-              formData[field.name] || '-'}
+        <div className="relative group/field">
+          <div className="min-h-[42px] px-4 py-2.5 rounded-xl bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-white/10 transition-all group-hover/field:border-primary/20 group-hover/field:bg-white dark:group-hover/field:bg-white/10 shadow-sm overflow-hidden">
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/10 group-hover/field:bg-primary transition-colors" />
+            <div className="text-sm font-semibold text-foreground leading-relaxed">
+              {getDisplayValue()}
+            </div>
+          </div>
         </div>
       );
     }

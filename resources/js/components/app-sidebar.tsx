@@ -18,6 +18,25 @@ import { toast } from '@/components/custom-toast';
 import { getImagePath } from '@/utils/helpers';
 import { getCompanyId } from '@/utils/helpers';
 
+import { 
+    LayoutGridIcon, 
+    HouseIcon, 
+    LayersIcon, 
+    SparklesIcon, 
+    SettingsIcon,
+    UsersIcon,
+    ClipboardIcon,
+    FolderIcon,
+    FolderOpenIcon,
+    DashboardIcon,
+    DollarSignIcon,
+    UsersRoundIcon,
+    UserCheckIcon,
+    UserPlusIcon,
+    MessageCircleIcon,
+    LayoutListIcon
+} from '@animateicons/react/lucide';
+
 
 export function AppSidebar() {
     
@@ -35,18 +54,18 @@ export function AppSidebar() {
         {
             title: 'Dashboard',
             href: route('dashboard'),
-            icon: LayoutGrid,
+            icon: () => <LayoutGridIcon size={16} isAnimated={true} />,
         },
 
         {
             title: 'Companies',
             href: route('companies.index'),
-            icon: Briefcase,
+            icon: () => <HouseIcon size={16} isAnimated={true} />,
         },
         {
             title: 'Media Library',
             href: route('media-library'),
-            icon: Image,
+            icon: () => <LayersIcon size={16} isAnimated={true} />,
         },
 
 
@@ -55,7 +74,7 @@ export function AppSidebar() {
 
         {
             title: 'Landing Page',
-            icon: Palette,
+            icon: () => <SparklesIcon size={16} isAnimated={true} />,
             children: [
                 {
                     title: 'Landing Page',
@@ -75,7 +94,7 @@ export function AppSidebar() {
         {
             title: 'Settings',
             href: route('settings'),
-            icon: Settings,
+            icon: () => <SettingsIcon size={16} isAnimated={true} />,
         }
     ];
 
@@ -86,7 +105,7 @@ export function AppSidebar() {
             items.push({
                 title: 'Dashboard',
                 href: route('dashboard'),
-                icon: LayoutGrid,
+                icon: () => <LayoutGridIcon size={16} isAnimated={true} />,
             });
         }
 
@@ -109,7 +128,7 @@ export function AppSidebar() {
         if (staffChildren.length > 0) {
             items.push({
                 title: 'Staff',
-                icon: Users,
+                icon: () => <UsersIcon size={16} isAnimated={true} />,
                 children: staffChildren
             });
         }
@@ -373,7 +392,7 @@ export function AppSidebar() {
         if (hrChildren.length > 0) {
             items.push({
                 title: 'HR Management',
-                icon: Briefcase,
+                icon: () => <HouseIcon size={16} isAnimated={true} />,
                 children: hrChildren
             });
         }
@@ -523,7 +542,7 @@ export function AppSidebar() {
         if (recruitmentChildren.length > 0) {
             items.push({
                 title: 'Recruitment',
-                icon: Users,
+                icon: () => <UsersRoundIcon size={16} isAnimated={true} />,
                 children: recruitmentChildren
             });
         }
@@ -564,7 +583,7 @@ export function AppSidebar() {
         if (contractChildren.length > 0) {
             items.push({
                 title: 'Contract Management',
-                icon: FileText,
+                icon: () => <ClipboardIcon size={16} isAnimated={true} />,
                 children: contractChildren
             });
         }
@@ -605,7 +624,7 @@ export function AppSidebar() {
         if (documentChildren.length > 0) {
             items.push({
                 title: 'Document Management',
-                icon: Folder,
+                icon: () => <FolderOpenIcon size={16} isAnimated={true} />,
                 children: documentChildren
             });
         }
@@ -662,7 +681,7 @@ export function AppSidebar() {
         if (meetingChildren.length > 0) {
             items.push({
                 title: 'Meetings',
-                icon: Calendar,
+                icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
                 children: meetingChildren
             });
         }
@@ -674,7 +693,7 @@ export function AppSidebar() {
             items.push({
                 title: 'Calendar',
                 href: route('calendar.index'),
-                icon: Calendar,
+                icon: () => <LayoutListIcon size={16} isAnimated={true} />,
             });
         }
 
@@ -682,7 +701,7 @@ export function AppSidebar() {
             items.push({
                 title: 'Media Library',
                 href: route('media-library'),
-                icon: Image,
+                icon: () => <LayersIcon size={16} isAnimated={true} />,
             });
         }
 
@@ -720,7 +739,7 @@ export function AppSidebar() {
         if (leaveChildren.length > 0) {
             items.push({
                 title: 'Leave Management',
-                icon: CalendarDays,
+                icon: () => <LayoutListIcon size={16} isAnimated={true} />,
                 children: leaveChildren
             });
         }
@@ -759,7 +778,7 @@ export function AppSidebar() {
         if (attendanceChildren.length > 0) {
             items.push({
                 title: 'Attendance',
-                icon: Clock,
+                icon: () => <UserCheckIcon size={16} isAnimated={true} />,
                 children: attendanceChildren
             });
         }
@@ -769,7 +788,7 @@ export function AppSidebar() {
             items.push({
                 title: 'Biometric Attendance',
                 href: route('hr.biometric-attendance.index'),
-                icon: Fingerprint,
+                icon: () => <UserCheckIcon size={16} isAnimated={true} />,
             });
         }
 
@@ -787,7 +806,7 @@ export function AppSidebar() {
         if (timeTrackingChildren.length > 0) {
             items.push({
                 title: 'Time Tracking',
-                icon: Timer,
+                icon: () => <LayoutListIcon size={16} isAnimated={true} />,
                 children: timeTrackingChildren
             });
         }
@@ -828,7 +847,7 @@ export function AppSidebar() {
         if (payrollChildren.length > 0) {
             items.push({
                 title: 'Payroll Management',
-                icon: DollarSign,
+                icon: () => <DollarSignIcon size={16} isAnimated={true} />,
                 children: payrollChildren
             });
         }
@@ -844,7 +863,7 @@ export function AppSidebar() {
         if (!isSaas && hasPermission(permissions, 'manage-landing-page')) {
             items.push({
                 title: 'Landing Page',
-                icon: Palette,
+                icon: () => <SparklesIcon size={16} isAnimated={true} />,
                 children: [
                     {
                         title: 'Landing Page',
@@ -862,7 +881,7 @@ export function AppSidebar() {
             items.push({
                 title: 'Settings',
                 href: route('settings'),
-                icon: Settings,
+                icon: () => <SettingsIcon size={16} isAnimated={true} />,
             });
         }
 

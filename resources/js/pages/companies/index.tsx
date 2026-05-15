@@ -3,6 +3,7 @@ import { useState } from "react";
 import { PageTemplate } from "@/components/page-template";
 import { usePage, router } from "@inertiajs/react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { SearchAndFilterBar } from "@/components/ui/search-and-filter-bar";
 import { Card } from "@/components/ui/card";
@@ -52,6 +53,7 @@ import {
   Camera,
   Upload,
   Image as ImageIcon,
+  Mail,
 } from "lucide-react";
 import { getImagePath, getInitials } from "@/utils/helpers";
 import { toast } from "sonner";
@@ -596,21 +598,29 @@ export default function Companies() {
       sortable: true,
       render: (value: any, row: any) => {
         return (
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-white overflow-hidden">
-              {row.avatar ? (
-                <img
-                  src={getImagePath(row.avatar)}
-                  alt={row.name}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                getInitials(row.name)
-              )}
+          <div className="flex items-center gap-4 py-1">
+            <div className="relative group/avatar">
+              <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
+              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 overflow-hidden shadow-sm">
+                {row.avatar ? (
+                  <img
+                    src={getImagePath(row.avatar)}
+                    alt={row.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover/avatar:scale-110"
+                  />
+                ) : (
+                  <div className="font-black text-primary text-sm tracking-tighter">
+                    {getInitials(row.name)}
+                  </div>
+                )}
+              </div>
             </div>
-            <div>
-              <div className="font-medium">{row.name}</div>
-              <div className="text-sm text-muted-foreground">{row.email}</div>
+            <div className="flex flex-col">
+              <div className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors">{row.name}</div>
+              <div className="text-xs text-muted-foreground/70 font-medium flex items-center gap-1 mt-0.5">
+                <Mail className="h-3 w-3 opacity-50" />
+                {row.email}
+              </div>
             </div>
           </div>
         );
@@ -622,22 +632,21 @@ export default function Companies() {
       sortable: true,
       render: (value: string) => (
         <div className="flex items-center">
-          <div
+          <Badge 
+            variant="outline" 
             className={cn(
-              "h-2 w-2 rounded-full mr-2",
-              value === "active" ? "bg-green-500" : "bg-gray-400",
-            )}
-          ></div>
-          <span
-            className={cn(
-              "text-xs font-medium uppercase tracking-wider",
-              value === "active"
-                ? "text-green-600 dark:text-green-400"
-                : "text-gray-500 dark:text-gray-400",
+              "pl-1.5 pr-2.5 py-0.5 rounded-full border shadow-sm font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5",
+              value === "active" 
+                ? "bg-emerald-50/50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20" 
+                : "bg-gray-50/50 text-gray-500 border-gray-200 dark:bg-gray-500/10 dark:text-gray-400 dark:border-gray-500/20"
             )}
           >
+            <div className={cn(
+              "h-1.5 w-1.5 rounded-full",
+              value === "active" ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-gray-400"
+            )} />
             {value === "active" ? "Active" : "Inactive"}
-          </span>
+          </Badge>
         </div>
       ),
     },
@@ -779,20 +788,22 @@ export default function Companies() {
                       </td>
                     ))}
                     <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-1">
+                      <div className="flex justify-end items-center bg-gray-50/50 dark:bg-white/5 rounded-xl p-1 w-fit ml-auto border border-gray-100 dark:border-white/5">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               variant="ghost"
                               size="icon"
                               onClick={() => handleAction("login-as", company)}
-                              className="text-blue-500 hover:text-blue-700"
+                              className="h-8 w-8 text-blue-500 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg transition-all"
                             >
                               <ArrowUpRight className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{"Login as Company"}</TooltipContent>
+                          <TooltipContent className="bg-blue-600 text-white border-blue-600 font-bold text-xs">{"Login as Company"}</TooltipContent>
                         </Tooltip>
+
+                        <div className="w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
 
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -802,12 +813,12 @@ export default function Companies() {
                               onClick={() =>
                                 handleAction("company-info", company)
                               }
-                              className="text-blue-500 hover:text-blue-700"
+                              className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                             >
                               <Info className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{"Company Info"}</TooltipContent>
+                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">{"Company Info"}</TooltipContent>
                         </Tooltip>
 
                         <Tooltip>
@@ -818,13 +829,15 @@ export default function Companies() {
                               onClick={() =>
                                 handleAction("reset-password", company)
                               }
-                              className="text-blue-500 hover:text-blue-700"
+                              className="h-8 w-8 text-primary hover:text-primary hover:bg-primary/5 rounded-lg transition-all"
                             >
                               <KeyRound className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>{"Reset Password"}</TooltipContent>
+                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">{"Reset Password"}</TooltipContent>
                         </Tooltip>
+
+                        <div className="w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
 
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -834,7 +847,12 @@ export default function Companies() {
                               onClick={() =>
                                 handleAction("toggle-status", company)
                               }
-                              className="text-amber-500 hover:text-amber-700"
+                              className={cn(
+                                "h-8 w-8 rounded-lg transition-all",
+                                company.status === "active" 
+                                  ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10" 
+                                  : "text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                              )}
                             >
                               {company.status === "active" ? (
                                 <Lock className="h-4 w-4" />
@@ -843,7 +861,10 @@ export default function Companies() {
                               )}
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
+                          <TooltipContent className={cn(
+                            "font-bold text-xs border-none",
+                            company.status === "active" ? "bg-amber-600 text-white" : "bg-emerald-600 text-white"
+                          )}>
                             {company.status === "active"
                               ? "Disable Login"
                               : "Enable Login"}

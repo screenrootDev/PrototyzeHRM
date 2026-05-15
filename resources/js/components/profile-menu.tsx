@@ -42,12 +42,19 @@ export function ProfileMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="flex items-center gap-2 h-8 rounded-md">
-          <span className="text-sm font-medium hidden md:inline-block">{user?.name}</span>
-          <Avatar className="h-8 w-8">
-            <AvatarImage src={getAvatarUrl()} />
-            <AvatarFallback>{initials}</AvatarFallback>
-          </Avatar>
+        <Button 
+          variant="ghost" 
+          className="relative flex items-center gap-3 h-10 pl-1.5 pr-1.5 py-1.5 rounded-xl border border-transparent transition-none hover:bg-transparent hover:text-inherit"
+        >
+          <div className="relative group/avatar">
+            <Avatar className="h-9 w-9 rounded-full border border-border/50 shadow-sm">
+              <AvatarImage src={getAvatarUrl()} className="object-cover" />
+              <AvatarFallback className="bg-gradient-to-br from-primary/10 to-primary/5 text-primary text-xs font-black rounded-full">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-emerald-500 rounded-full border-2 border-background shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
+          </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="end" forceMount>
