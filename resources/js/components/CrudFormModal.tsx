@@ -587,13 +587,21 @@ export function CrudFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={`${getModalSizeClass()} max-h-[90vh]`} modalId={modalId}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description || " "}</DialogDescription>
+      <DialogContent className={cn(getModalSizeClass(), "max-h-[95vh] p-0 overflow-hidden border-none shadow-2xl")} modalId={modalId}>
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background pointer-events-none" />
+        <DialogHeader className="p-6 pb-4 relative border-b border-gray-100 dark:border-gray-800">
+          <div className="flex flex-col space-y-1.5 relative z-10">
+            <DialogTitle className="text-2xl font-extrabold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground/80 font-medium max-w-[90%]">
+              {description || `Manage details and settings for this ${title.toLowerCase()}`}
+            </DialogDescription>
+          </div>
+          <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         </DialogHeader>
-        <ScrollArea className="max-h-[70vh] pr-4">
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <ScrollArea className="max-h-[75vh] px-6 py-2">
+          <form onSubmit={handleSubmit} className="space-y-6 pb-6">
             {/* Price Summary Section */}
             {formConfig.priceSummary && (
               <div className="bg-gray-50 p-4 rounded-lg mb-4">
@@ -624,14 +632,14 @@ export function CrudFormModal({
                   return (
                     <div
                       key={field.name}
-                      className="space-y-2"
+                      className="space-y-1.5"
                       style={{
                         gridColumn: field.colSpan ? `span ${field.colSpan}` : 'span 1',
                         width: '100%'
                       }}
                     >
-                      <Label htmlFor={field.name} className="text-sm font-medium">
-                        {field.label} {field.required && !(field.type === 'file' && mode === 'edit') && <span className="text-red-500">*</span>}
+                      <Label htmlFor={field.name} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">
+                        {field.label} {field.required && !(field.type === 'file' && mode === 'edit') && <span className="text-primary">*</span>}
                       </Label>
                       {renderField(field)}
                       {errors[field.name] && (
@@ -696,12 +704,18 @@ export function CrudFormModal({
             )}
           </form>
         </ScrollArea>
-        <DialogFooter className="sm:justify-end">
-          <Button type="button" variant="outline" onClick={onClose}>
+        <DialogFooter className="px-6 py-4 bg-muted/30 backdrop-blur-sm border-t sm:justify-end gap-2">
+          <Button type="button" variant="ghost" onClick={onClose} className="px-6 hover:bg-muted/50 transition-colors">
             {"Cancel"}
           </Button>
           {mode !== 'view' && (
-            <Button type="button" onClick={handleSubmit}>{"Save"}</Button>
+            <Button 
+              type="button" 
+              onClick={handleSubmit} 
+              className="px-8 font-semibold shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+            >
+              {"Save Details"}
+            </Button>
           )}
         </DialogFooter>
       </DialogContent>

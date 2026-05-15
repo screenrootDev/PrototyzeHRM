@@ -1,47 +1,51 @@
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { RefreshCw, BarChart3, Nfc, Building2, CreditCard, Ticket, DollarSign, TrendingUp, Activity, UserPlus, AlertCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import { Badge } from '@/components/ui/badge';
-import { DashboardOverview } from '@/components/dashboard/dashboard-overview';
+import { 
+  RefreshCw, 
+  Users, 
+  UserCheck, 
+  UserMinus, 
+  UserPlus, 
+  Building2,
+  HardDrive, 
+  ShieldCheck, 
+  Activity
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 import { router } from '@inertiajs/react';
+import { cn } from '@/lib/utils';
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  Tooltip, 
+  ResponsiveContainer,
+  Cell
+} from 'recharts';
 
 interface SuperAdminDashboardData {
   stats: {
-    totalCompanies: number;
+    totalEmployees: number;
+    onLeaveToday: number;
+    absentToday: number;
     totalUsers: number;
-    totalNfcCards: number;
-    totalRevenue: number;
-    activePlans: number;
-    pendingRequests: number;
-    monthlyGrowth: number;
+    totalCompanies: number;
+    storageUsage: {
+      used: string;
+      percentage: number;
+    };
+    systemStatus: 'healthy' | 'warning' | 'critical';
   };
-  recentActivity: Array<{
-    id: number;
+  deptDistribution: Array<{
     name: string;
-    email: string;
-    registered_at: string;
-    status: string;
+    count: number;
   }>;
-  topPlans: Array<{
-    name: string;
-    subscribers: number;
-    revenue: number;
-  }>;
-}
-
-interface PageAction {
-  label: string;
-  icon: React.ReactNode;
-  variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  onClick: () => void;
 }
 
 export default function SuperAdminDashboard({ dashboardData }: { dashboardData: SuperAdminDashboardData }) {
-  
   const [isRefreshing, setIsRefreshing] = useState(false);
-
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -49,198 +53,178 @@ export default function SuperAdminDashboard({ dashboardData }: { dashboardData: 
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-
-
-
-
-  const pageActions: PageAction[] = [
+  const pageActions = [
     {
       label: 'Refresh',
-      icon: <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />,
-      variant: 'outline',
+      icon: <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} />,
+      variant: 'outline' as const,
       onClick: handleRefresh
     }
   ];
 
-  const stats = dashboardData?.stats || {
-    totalCompanies: 156,
-    totalNfcCards: 89,
-    totalRevenue: 45678,
-    activePlans: 89,
-    pendingRequests: 12,
-    monthlyGrowth: 15.2
-  };
+  const stats = dashboardData.stats;
+  const deptData = dashboardData.deptDistribution || [];
 
-  const recentActivity = dashboardData?.recentActivity || [];
-
-  const topPlans = dashboardData?.topPlans || [
-    { name: 'Professional', subscribers: 45, revenue: 13500 },
-    { name: 'Business', subscribers: 32, revenue: 9600 },
-    { name: 'Enterprise', subscribers: 12, revenue: 7200 },
-  ];
+  // Colors for chart bars
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4'];
 
   return (
     <PageTemplate 
-      title={'Dashboard'}
+      title="System Dashboard"
       url="/dashboard"
       actions={pageActions}
     >
-      <div className="space-y-6">
-        {/* Key Metrics */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Active Plans'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.activePlans?.toLocaleString() || 0}</h3>
-                </div>
-                <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
-                  <CreditCard className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Pending Requests'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.pendingRequests?.toLocaleString() || 0}</h3>
-                </div>
-                <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
-                  <AlertCircle className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Monthly Growth'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">+{stats.monthlyGrowth || 0}%</h3>
-                </div>
-                <div className="rounded-full bg-emerald-100 p-3 dark:bg-emerald-900">
-                  <TrendingUp className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-8">
+        {/* Top Stats Row - Refactored to 5 Columns */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <StatCard 
+            title="Employees" 
+            value={stats.totalEmployees} 
+            icon={<Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />}
+            bgColor="bg-blue-100 dark:bg-blue-900/30"
+          />
+          <StatCard 
+            title="On Leave" 
+            value={stats.onLeaveToday} 
+            icon={<UserMinus className="h-5 w-5 text-orange-600 dark:text-orange-400" />}
+            bgColor="bg-orange-100 dark:bg-orange-900/30"
+          />
+          <StatCard 
+            title="Companies" 
+            value={stats.totalCompanies} 
+            icon={<Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />}
+            bgColor="bg-emerald-100 dark:bg-emerald-900/30"
+          />
           
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Total Companies'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.totalCompanies?.toLocaleString() || 0}</h3>
-                </div>
-                <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
-                  <Building2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
+          <StatCard 
+            title="Storage" 
+            value={stats.storageUsage.used} 
+            icon={<HardDrive className="h-5 w-5 text-purple-600 dark:text-purple-400" />}
+            bgColor="bg-purple-100 dark:bg-purple-900/30"
+            footer={
+              <div className="mt-2 w-full">
+                <Progress value={stats.storageUsage.percentage} className="h-1" />
+                <p className="text-[10px] text-muted-foreground mt-1 text-right">{stats.storageUsage.percentage}%</p>
               </div>
-            </CardContent>
-          </Card>
+            }
+          />
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Total Revenue'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{window.appSettings?.formatCurrency ? window.appSettings.formatCurrency(stats.totalRevenue || 0) : `$${stats.totalRevenue || 0}`}</h3>
-                </div>
-                <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
-                  <DollarSign className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Total Users'}</p>
-                  <h3 className="mt-2 text-2xl font-bold">{stats.totalUsers?.toLocaleString() || 0}</h3>
-                </div>
-                <div className="rounded-full bg-indigo-100 p-3 dark:bg-indigo-900">
-                  <UserPlus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          
+          <StatCard 
+            title="Health" 
+            value={stats.systemStatus} 
+            icon={<ShieldCheck className={cn(
+              "h-5 w-5",
+              stats.systemStatus === 'healthy' ? "text-emerald-500" : "text-amber-500"
+            )} />}
+            bgColor={stats.systemStatus === 'healthy' ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-amber-100 dark:bg-amber-900/30"}
+            isStatus
+          />
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Recent Activity */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                {'Recently Registered Companies'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {recentActivity.length > 0 ? (
-                  recentActivity.map((company) => (
-                    <div key={company.id} className="flex items-start gap-3 p-3 rounded-lg bg-muted/50">
-                      <div className="w-2 h-2 rounded-full mt-2 bg-green-500" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium">{company.name}</p>
-                        <p className="text-xs text-muted-foreground">{company.email}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-muted-foreground">{company.registered_at}</p>
-                      </div>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-muted-foreground text-center py-4">{'No companies registered yet'}</p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Top Plans */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Ticket className="h-5 w-5" />
-                {'Top Performing Plans'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {topPlans.map((plan, index) => (
-                  <div key={plan.name} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-sm font-bold text-primary">#{index + 1}</span>
-                      </div>
-                      <div>
-                        <p className="font-medium">{plan.name}</p>
-                        <p className="text-sm text-muted-foreground">{plan.subscribers} subscribers</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-semibold">${plan.revenue?.toLocaleString() || 0}</p>
-                      <p className="text-xs text-muted-foreground">revenue</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+        {/* Chart Section */}
+        <div className="grid gap-6 lg:grid-cols-1">
+          <Card className="border-border/50 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border/50 bg-muted/20">
+              <h3 className="text-lg font-bold flex items-center gap-2">
+                <Activity className="h-5 w-5 text-primary" />
+                Employees By Department
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">Workforce distribution across the organization</p>
+            </div>
+            <CardContent className="p-8 h-[450px]">
+              {deptData.length > 0 ? (
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart
+                    data={deptData}
+                    layout="vertical"
+                    margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
+                  >
+                    <XAxis type="number" hide />
+                    <YAxis 
+                      dataKey="name" 
+                      type="category" 
+                      tick={{ fontSize: 11, fontWeight: 500 }} 
+                      width={140}
+                    />
+                    <Tooltip 
+                      cursor={{ fill: 'rgba(0,0,0,0.05)' }}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          return (
+                            <div className="bg-background/95 backdrop-blur-sm border border-border p-3 rounded-xl shadow-xl">
+                              <p className="text-xs font-bold text-foreground mb-1">{payload[0].payload.name}</p>
+                              <p className="text-sm font-black text-primary">{payload[0].value} <span className="text-[10px] font-normal text-muted-foreground">Employees</span></p>
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                    <Bar 
+                      dataKey="count" 
+                      radius={[0, 6, 6, 0]} 
+                      barSize={28}
+                    >
+                      {deptData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30">
+                  <Activity className="h-16 w-16 mb-4 animate-pulse" />
+                  <p className="text-sm font-medium">Gathering organizational data...</p>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
-
-        {/* Feature Overview */}
-        <DashboardOverview userType="superadmin" stats={stats} />
       </div>
     </PageTemplate>
+  );
+}
+
+function StatCard({ 
+  title, 
+  value, 
+  icon, 
+  bgColor, 
+  footer, 
+  isStatus = false 
+}: { 
+  title: string; 
+  value: number | string; 
+  icon: React.ReactNode; 
+  bgColor: string;
+  footer?: React.ReactNode;
+  isStatus?: boolean;
+}) {
+  return (
+    <Card className="overflow-hidden transition-all hover:shadow-lg border-border/50 group">
+      <CardContent className="p-6 flex flex-col items-start gap-4">
+        <div className={cn("rounded-2xl p-3 shadow-sm transition-transform group-hover:scale-110", bgColor)}>
+          {icon}
+        </div>
+        <div className="flex-1 w-full">
+          <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">{title}</p>
+          <div className="flex items-center gap-2">
+            {isStatus && (
+              <div className={cn(
+                "w-2 h-2 rounded-full animate-pulse",
+                value === 'healthy' ? "bg-emerald-500" : "bg-amber-500"
+              )} />
+            )}
+            <h3 className={cn(
+              "text-xl font-black tracking-tight text-foreground truncate",
+              isStatus && "capitalize"
+            )}>
+              {typeof value === 'number' ? value.toLocaleString() : value || 0}
+            </h3>
+          </div>
+          {footer}
+        </div>
+      </CardContent>
+    </Card>
   );
 }

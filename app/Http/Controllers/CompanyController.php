@@ -55,6 +55,7 @@ class CompanyController extends Controller
                 'status' => $company->status,
                 'created_at' => $company->created_at,
                 'total_storage_limit' => $company->total_storage_limit,
+                'avatar' => $company->avatar,
             ];
         });
 
@@ -72,6 +73,7 @@ class CompanyController extends Controller
             'password' => 'nullable|string|min:8',
             'status' => 'required|in:active,inactive',
             'total_storage_limit' => 'nullable|numeric|min:0',
+            'avatar' => 'nullable|string',
         ]);
 
         $company = new User;
@@ -86,6 +88,7 @@ class CompanyController extends Controller
         $company->type = 'company';
         $company->status = $validated['status'];
         $company->total_storage_limit = $validated['total_storage_limit'] ?? 5.00;
+        $company->avatar = $validated['avatar'] ?? null;
         $company->created_by = creatorId() ?? 1;
 
         // Language support has been removed
@@ -118,12 +121,17 @@ class CompanyController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $company->id,
             'total_storage_limit' => 'nullable|numeric|min:0',
+            'avatar' => 'nullable|string',
         ]);
 
         $company->name = $validated['name'];
         $company->email = $validated['email'];
         if (isset($validated['total_storage_limit'])) {
             $company->total_storage_limit = $validated['total_storage_limit'];
+        }
+        
+        if (array_key_exists('avatar', $validated)) {
+            $company->avatar = $validated['avatar'];
         }
 
         $company->save();

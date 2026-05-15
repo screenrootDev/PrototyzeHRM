@@ -12,6 +12,8 @@ use App\Models\JobPosting;
 use App\Models\LeaveApplication;
 use App\Models\LeaveType;
 use App\Models\Meeting;
+use App\Models\Holiday;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\User;
@@ -79,51 +81,180 @@ class DashboardController extends Controller
 
     private function renderSuperAdminDashboard()
     {
-        // Get system-wide statistics
-        $totalCompanies = User::where('type', 'company')->count();
-        $totalUsers = User::where('type', '!=', 'superadmin')->where('type', '!=', 'super admin')->count();
+        // Get organizational statistics
         $totalEmployees = User::where('type', 'employee')->count();
-        $totalBranches = Branch::count();
+        $totalUsers = User::count();
 
-        // Calculate monthly growth for companies
-        $currentMonthCompanies = User::where('type', 'company')
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
+        // On Leave Today
+        $onLeaveToday = LeaveApplication::where('status', 'approved')
+            ->whereDate('start_date', '<=', today())
+            ->whereDate('end_date', '>=', today())
             ->count();
-        $previousMonthCompanies = User::where('type', 'company')
-            ->whereMonth('created_at', now()->subMonth()->month)
-            ->whereYear('created_at', now()->subMonth()->year)
+
+        // Present Today (Attendance)
+        $presentToday = AttendanceRecord::whereDate('date', today())
+            ->where('status', 'present')
             ->count();
-        $monthlyGrowth = $previousMonthCompanies > 0
-            ? round((($currentMonthCompanies - $previousMonthCompanies) / $previousMonthCompanies) * 100, 1)
-            : ($currentMonthCompanies > 0 ? 100 : 0);
+
+        // Absent Today (Total - Present - On Leave)
+        $absentToday = max(0, $totalEmployees - $presentToday - $onLeaveToday);
+
+        // Total Companies
+        $totalCompanies = User::where('type', 'company')->count();
+
+        // Storage Usage
+        $totalSpace = disk_total_space(base_path());
+        $freeSpace = disk_free_space(base_path());
+        $usedSpace = $totalSpace - $freeSpace;
+        $storageUsedFormatted = $this->formatBytes($usedSpace);
+        $storagePercentage = round(($usedSpace / $totalSpace) * 100, 1);
+
+        // Combined Recent Activity
+        $recentHires = Employee::with(['user', 'designation'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get()
+            ->map(function ($emp) {
+                return [
+                    'id' => 'hire_' . $emp->id,
+                    'name' => $emp->user->name ?? 'New Employee',
+                    'type' => 'hire',
+                    'description' => "Joined as " . ($emp->designation->name ?? 'Team Member'),
+                    'timestamp' => $emp->created_at->diffForHumans(),
+                    'raw_time' => $emp->created_at
+                ];
+            });
+
+        $recentLeaves = LeaveApplication::with(['employee', 'leaveType'])
+            ->where('status', 'approved')
+            ->orderBy('updated_at', 'desc')
+            ->take(3)
+            ->get()
+            ->map(function ($leave) {
+                return [
+                    'id' => 'leave_' . $leave->id,
+                    'name' => $leave->employee->name ?? 'Employee',
+                    'type' => 'leave',
+                    'description' => "Leave approved: " . ($leave->leaveType->title ?? 'General'),
+                    'timestamp' => $leave->updated_at->diffForHumans(),
+                    'raw_time' => $leave->updated_at
+                ];
+            });
+
+        $recentAnnouncements = Announcement::orderBy('created_at', 'desc')
+            ->take(2)
+            ->get()
+            ->map(function ($ann) {
+                return [
+                    'id' => 'ann_' . $ann->id,
+                    'name' => 'Announcement',
+                    'type' => 'announcement',
+                    'description' => $ann->title,
+                    'timestamp' => $ann->created_at->diffForHumans(),
+                    'raw_time' => $ann->created_at
+                ];
+            });
+
+        $recentActivity = $recentHires->concat($recentLeaves)->concat($recentAnnouncements)
+            ->sortByDesc('raw_time')
+            ->take(10)
+            ->values();
+
+        $deptDistribution = \App\Models\Department::leftJoin('employees', 'departments.id', '=', 'employees.department_id')
+            ->select('departments.name', \DB::raw('count(employees.id) as count'))
+            ->groupBy('departments.id', 'departments.name')
+            ->orderBy('count', 'desc')
+            ->get();
 
         $dashboardData = [
             'stats' => [
-                'totalCompanies' => $totalCompanies,
-                'totalUsers' => $totalUsers,
                 'totalEmployees' => $totalEmployees,
-                'totalBranches' => $totalBranches,
-                'monthlyGrowth' => $monthlyGrowth,
+                'onLeaveToday' => $onLeaveToday,
+                'absentToday' => $absentToday,
+                'totalUsers' => $totalUsers,
+                'totalCompanies' => $totalCompanies,
+                'storageUsage' => [
+                    'used' => $storageUsedFormatted,
+                    'percentage' => $storagePercentage
+                ],
+                'systemStatus' => 'healthy'
             ],
-            'recentActivity' => User::where('type', 'company')
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get(['id', 'name', 'email', 'created_at'])
-                ->map(function ($company) {
-                    return [
-                        'id' => $company->id,
-                        'name' => $company->name,
-                        'email' => $company->email,
-                        'registered_at' => $company->created_at->diffForHumans(),
-                        'status' => 'active'
-                    ];
-                }),
+            'deptDistribution' => $deptDistribution,
+            'recentActivity' => $recentActivity,
+            'upcomingEvents' => $this->getUpcomingEvents(),
         ];
 
         return Inertia::render('superadmin/dashboard', [
             'dashboardData' => $dashboardData
         ]);
+    }
+
+    private function getUpcomingEvents()
+    {
+        $events = [];
+        $today = now();
+        $next7Days = now()->addDays(7);
+
+        // Birthdays (matching month and day)
+        $birthdays = Employee::with('user')
+            ->whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') BETWEEN ? AND ?", [
+                $today->format('m-d'),
+                $next7Days->format('m-d')
+            ])
+            ->get();
+
+        foreach ($birthdays as $emp) {
+            $events[] = [
+                'id' => 'bday_' . $emp->id,
+                'type' => 'birthday',
+                'name' => $emp->user->name ?? 'Employee',
+                'date' => Carbon::parse($emp->date_of_birth)->format('M d'),
+                'isToday' => Carbon::parse($emp->date_of_birth)->format('m-d') === $today->format('m-d')
+            ];
+        }
+
+        // Anniversaries (matching month and day, excluding current year hires)
+        $anniversaries = Employee::with('user')
+            ->whereRaw("DATE_FORMAT(date_of_joining, '%m-%d') BETWEEN ? AND ?", [
+                $today->format('m-d'),
+                $next7Days->format('m-d')
+            ])
+            ->whereYear('date_of_joining', '<', $today->year)
+            ->get();
+
+        foreach ($anniversaries as $emp) {
+            $events[] = [
+                'id' => 'anniv_' . $emp->id,
+                'type' => 'anniversary',
+                'name' => $emp->user->name ?? 'Employee',
+                'date' => Carbon::parse($emp->date_of_joining)->format('M d'),
+                'isToday' => Carbon::parse($emp->date_of_joining)->format('m-d') === $today->format('m-d')
+            ];
+        }
+
+        // Holidays
+        $holidays = Holiday::whereBetween('start_date', [$today->toDateString(), $next7Days->toDateString()])->get();
+        foreach ($holidays as $holiday) {
+            $events[] = [
+                'id' => 'hday_' . $holiday->id,
+                'type' => 'holiday',
+                'name' => $holiday->name,
+                'date' => Carbon::parse($holiday->start_date)->format('M d'),
+                'isToday' => Carbon::parse($holiday->start_date)->isToday()
+            ];
+        }
+
+        return collect($events)->sortBy('date')->values()->all();
+    }
+
+    private function formatBytes($bytes, $precision = 2)
+    {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 
     private function renderCompanyDashboard()

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import MediaLibraryModal from './MediaLibraryModal';
-import { Image as ImageIcon, X, FileText } from 'lucide-react';
-import { getImagePath } from '@/utils/helpers';
+import React, { useState, useEffect } from "react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import MediaLibraryModal from "./MediaLibraryModal";
+import { Image as ImageIcon, X, FileText } from "lucide-react";
+import { getImagePath } from "@/utils/helpers";
 
 interface MediaPickerProps {
   label?: string;
@@ -18,15 +18,14 @@ interface MediaPickerProps {
 
 export default function MediaPicker({
   label,
-  value = '',
+  value = "",
   onChange,
   multiple = false,
-  placeholder = 'Select image...',
+  placeholder = "Select image...",
   showPreview = true,
-  readOnly = false
+  readOnly = false,
 }: MediaPickerProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
 
   //   const handleSelect = (selectedUrl: string) => {
   //   // Convert full URL to path by removing domain
@@ -35,28 +34,28 @@ export default function MediaPicker({
   // };
   const handleSelect = (selectedUrl: string) => {
     // Extract only the filename from the full path
-    const filename = selectedUrl.split('/').pop() || selectedUrl;
+    const filename = selectedUrl.split("/").pop() || selectedUrl;
     onChange(filename);
   };
 
   const handleClear = () => {
-    onChange('');
+    onChange("");
   };
 
   // Ensure value is always a string, never null
-  const safeValue = value || '';
+  const safeValue = value || "";
 
   // Process the image URL for preview
   const getDisplayUrl = (url: string) => {
-    if (!url) return '';
+    if (!url) return "";
 
     // If it's already a full URL, use it as is
-    if (url.startsWith('http')) {
+    if (url.startsWith("http")) {
       return url;
     }
 
     // If it starts with /, add the base URL
-    if (url.startsWith('/')) {
+    if (url.startsWith("/")) {
       return getImagePath(url);
     }
     // Otherwise, prepend /storage/
@@ -67,18 +66,44 @@ export default function MediaPicker({
 
   const getFileIcon = (url: string) => {
     if (!url) return null;
-    const extension = url.split('.').pop()?.toLowerCase();
+    const extension = url.split(".").pop()?.toLowerCase();
 
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'].includes(extension || '')) {
+    if (
+      ["jpg", "jpeg", "png", "gif", "webp", "svg"].includes(extension || "")
+    ) {
       return null; // Return null for images to show actual image
     }
 
-    if (extension === 'pdf') return <div className="h-16 w-16 bg-red-500 rounded text-white text-xs flex items-center justify-center font-bold">PDF</div>;
-    if (['doc', 'docx'].includes(extension || '')) return <div className="h-16 w-16 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">DOC</div>;
-    if (['xls', 'xlsx', 'csv'].includes(extension || '')) return <div className="h-16 w-16 bg-green-500 rounded text-white text-xs flex items-center justify-center font-bold">XLS</div>;
-    if (['ppt', 'pptx'].includes(extension || '')) return <div className="h-16 w-16 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">PPT</div>;
+    if (extension === "pdf")
+      return (
+        <div className="h-16 w-16 bg-red-500 rounded text-white text-xs flex items-center justify-center font-bold">
+          PDF
+        </div>
+      );
+    if (["doc", "docx"].includes(extension || ""))
+      return (
+        <div className="h-16 w-16 bg-blue-500 rounded text-white text-xs flex items-center justify-center font-bold">
+          DOC
+        </div>
+      );
+    if (["xls", "xlsx", "csv"].includes(extension || ""))
+      return (
+        <div className="h-16 w-16 bg-green-500 rounded text-white text-xs flex items-center justify-center font-bold">
+          XLS
+        </div>
+      );
+    if (["ppt", "pptx"].includes(extension || ""))
+      return (
+        <div className="h-16 w-16 bg-orange-500 rounded text-white text-xs flex items-center justify-center font-bold">
+          PPT
+        </div>
+      );
 
-    return <div className="h-16 w-16 bg-gray-500 rounded text-white text-xs flex items-center justify-center font-bold">FILE</div>;
+    return (
+      <div className="h-16 w-16 bg-gray-500 rounded text-white text-xs flex items-center justify-center font-bold">
+        FILE
+      </div>
+    );
   };
 
   return (
@@ -129,13 +154,14 @@ export default function MediaPicker({
                   <img
                     src={url}
                     alt={`Preview ${index + 1}`}
-                    className="w-full h-20 object-cover rounded border"
+                    className="w-full h-full object-cover rounded border"
                     onError={(e) => {
                       // If image fails to load, show file icon
                       const target = e.target as HTMLImageElement;
                       const container = target.parentElement;
                       if (container) {
-                        container.innerHTML = '<div class="w-full h-20 flex items-center justify-center rounded border bg-muted"><div class="h-16 w-16 bg-gray-500 rounded text-white text-xs flex items-center justify-center font-bold">FILE</div></div>';
+                        container.innerHTML =
+                          '<div class="w-full h-20 flex items-center justify-center rounded border bg-muted"><div class="h-16 w-16 bg-gray-500 rounded text-white text-xs flex items-center justify-center font-bold">FILE</div></div>';
                       }
                     }}
                   />
