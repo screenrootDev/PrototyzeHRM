@@ -103,35 +103,51 @@ declare global {
 const getImagePath = (path: string, pageProps?: any): string => {
   if (!path) return '';
   if (path.startsWith('http')) return path;
-  // If path already contains storage/media, just prepend domain
-  if (path.includes('storage/media')) {
-    return path.startsWith('/') ? `${window.location.origin}${path}` : `${window.location.origin}/${path}`;
-  }
 
   try {
     const props = pageProps || usePage().props;
-    const dynamicPath = `${(props as any).globalSettings?.base_url || window.location.origin}/storage/media/`;
-    let imageUrlPrefix = (props as any).imageUrlPrefix || dynamicPath;
-
-    if (!imageUrlPrefix.includes('storage/media')) {
-      imageUrlPrefix = imageUrlPrefix.endsWith('/') ? imageUrlPrefix + 'storage/media/' : imageUrlPrefix + '/storage/media/';
+    const baseUrl = (props as any).globalSettings?.base_url || window.location.origin;
+    
+    // Ensure baseUrl doesn't end with slash for consistency
+    const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl;
+    
+    // If path already contains storage/media
+    if (path.includes('storage/media')) {
+      // If it's already an absolute path from the root (but missing domain)
+      if (path.startsWith('/')) {
+        // Check if it already includes the subdirectory in the path
+        const subDir = window.location.pathname.split('/')[1];
+        if (subDir && path.startsWith(`/${subDir}/`)) {
+          return `${window.location.origin}${path}`;
+        }
+        
+        // If it starts with /storage but needs the subdirectory
+        if (path.startsWith('/storage/')) {
+          const appPath = normalizedBaseUrl.replace(window.location.origin, '');
+          return `${window.location.origin}${appPath}${path}`;
+        }
+        
+        return `${window.location.origin}${path}`;
+      }
+      return `${normalizedBaseUrl}/${path}`;
     }
 
-    // Handle slash concatenation
-    const prefixEndsWithSlash = imageUrlPrefix.endsWith('/');
-    const pathStartsWithSlash = path.startsWith('/');
-
-    if (prefixEndsWithSlash && pathStartsWithSlash) {
-      return imageUrlPrefix + path.substring(1);
-    } else if (!prefixEndsWithSlash && !pathStartsWithSlash) {
-      return imageUrlPrefix + '/' + path;
-    } else {
-      return imageUrlPrefix + path;
+    // Default to storage/media/ prefix for simple filenames
+    let prefix = (props as any).imageUrlPrefix || `${normalizedBaseUrl}/storage/media/`;
+    if (!prefix.includes('storage/media')) {
+      prefix = prefix.endsWith('/') ? prefix + 'storage/media/' : prefix + '/storage/media/';
     }
+
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    const cleanPrefix = prefix.endsWith('/') ? prefix : prefix + '/';
+    
+    return cleanPrefix + cleanPath;
   }
   catch {
-    const fallbackPrefix = `${window.location.origin}/${window.location.pathname.split('/')[1]}/storage/media/`;
-    return path.startsWith('/') ? fallbackPrefix + path.substring(1) : fallbackPrefix + path;
+    const subDir = window.location.pathname.split('/')[1];
+    const prefix = subDir ? `${window.location.origin}/${subDir}/storage/media/` : `${window.location.origin}/storage/media/`;
+    const cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return prefix + cleanPath;
   }
 }
 

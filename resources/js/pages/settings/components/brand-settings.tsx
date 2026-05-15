@@ -40,9 +40,9 @@ const setCookie = (name: string, value: string, days = 365) => {
 const getCookie = (name: string): string | null => {
   if (typeof document === "undefined") return null;
   const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`)
+  const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
-    const cookieValue = parts.pop()?.split(';').shift();
+    const cookieValue = parts.pop()?.split(";").shift();
     return cookieValue ? decodeURIComponent(cookieValue) : null;
   }
   return null;
@@ -68,8 +68,8 @@ export const DEFAULT_BRAND_SETTINGS: BrandSettings = {
   logoDark: "logo/logo-dark.png",
   logoLight: "logo/logo-light.png",
   favicon: "logo/favicon.png",
-  titleText: "WorkDo",
-  footerText: "© 2024 WorkDo. All rights reserved.",
+  titleText: "PrototyzeHRM",
+  footerText: "© 2024 PrototyzeHRM. All rights reserved.",
   companyMobile: "",
   themeColor: "green",
   customColor: "#3b82f6",
@@ -99,14 +99,23 @@ export const getBrandSettings = (
 
       return {
         logoDark:
-          parsedBrand.logoDark !== undefined ? parsedBrand.logoDark :
-          (userSettings?.logoDark !== undefined ? userSettings.logoDark : DEFAULT_BRAND_SETTINGS.logoDark),
+          parsedBrand.logoDark !== undefined
+            ? parsedBrand.logoDark
+            : userSettings?.logoDark !== undefined
+              ? userSettings.logoDark
+              : DEFAULT_BRAND_SETTINGS.logoDark,
         logoLight:
-          parsedBrand.logoLight !== undefined ? parsedBrand.logoLight :
-          (userSettings?.logoLight !== undefined ? userSettings.logoLight : DEFAULT_BRAND_SETTINGS.logoLight),
+          parsedBrand.logoLight !== undefined
+            ? parsedBrand.logoLight
+            : userSettings?.logoLight !== undefined
+              ? userSettings.logoLight
+              : DEFAULT_BRAND_SETTINGS.logoLight,
         favicon:
-          parsedBrand.favicon !== undefined ? parsedBrand.favicon :
-          (userSettings?.favicon !== undefined ? userSettings.favicon : DEFAULT_BRAND_SETTINGS.favicon),
+          parsedBrand.favicon !== undefined
+            ? parsedBrand.favicon
+            : userSettings?.favicon !== undefined
+              ? userSettings.favicon
+              : DEFAULT_BRAND_SETTINGS.favicon,
         titleText:
           parsedBrand.titleText ||
           userSettings?.titleText ||
@@ -136,9 +145,18 @@ export const getBrandSettings = (
   // If we have settings from the backend, use those (non-demo mode)
   if (userSettings) {
     return {
-      logoDark: userSettings.logoDark !== undefined ? userSettings.logoDark : DEFAULT_BRAND_SETTINGS.logoDark,
-      logoLight: userSettings.logoLight !== undefined ? userSettings.logoLight : DEFAULT_BRAND_SETTINGS.logoLight,
-      favicon: userSettings.favicon !== undefined ? userSettings.favicon : DEFAULT_BRAND_SETTINGS.favicon,
+      logoDark:
+        userSettings.logoDark !== undefined
+          ? userSettings.logoDark
+          : DEFAULT_BRAND_SETTINGS.logoDark,
+      logoLight:
+        userSettings.logoLight !== undefined
+          ? userSettings.logoLight
+          : DEFAULT_BRAND_SETTINGS.logoLight,
+      favicon:
+        userSettings.favicon !== undefined
+          ? userSettings.favicon
+          : DEFAULT_BRAND_SETTINGS.favicon,
       titleText: userSettings.titleText || DEFAULT_BRAND_SETTINGS.titleText,
       footerText: userSettings.footerText || DEFAULT_BRAND_SETTINGS.footerText,
       companyMobile:
@@ -167,7 +185,6 @@ interface BrandSettingsProps {
 }
 
 export default function BrandSettings({ settings }: BrandSettingsProps) {
-  
   const { props } = usePage();
   const currentGlobalSettings = (props as any).globalSettings;
   const auth = (props as any).auth;
@@ -270,8 +287,6 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
     setBrandSettings((prev) => ({ ...prev, sidebarStyle: style }));
     updateStyle(style);
   };
-
-
 
   // Handle theme mode change
   const handleThemeModeChange = (mode: Appearance) => {
@@ -517,7 +532,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     name="titleText"
                     value={brandSettings.titleText}
                     onChange={handleInputChange}
-                    placeholder="WorkDo"
+                    placeholder="PrototyzeHRM"
                   />
                   <p className="text-xs text-muted-foreground">
                     {"Application title displayed in the browser tab"}
@@ -531,7 +546,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     name="footerText"
                     value={brandSettings.footerText}
                     onChange={handleInputChange}
-                    placeholder="© 2024 WorkDo. All rights reserved."
+                    placeholder="© 2024 PrototyzeHRM. All rights reserved."
                   />
                   <p className="text-xs text-muted-foreground">
                     {"Text displayed in the footer"}
@@ -567,9 +582,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                 <div className="space-y-4">
                   <div className="flex items-center">
                     <Palette className="h-5 w-5 mr-2 text-muted-foreground" />
-                    <h3 className="text-base font-medium">
-                      {"Theme Color"}
-                    </h3>
+                    <h3 className="text-base font-medium">{"Theme Color"}</h3>
                   </div>
                   <Separator className="my-2" />
 
@@ -675,9 +688,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
 
                   <div className="space-y-6">
                     <div>
-                      <Label className="mb-2 block">
-                        {"Sidebar Variant"}
-                      </Label>
+                      <Label className="mb-2 block">{"Sidebar Variant"}</Label>
                       <div className="grid grid-cols-3 gap-3">
                         {["inset", "floating", "minimal"].map((variant) => (
                           <Button
@@ -745,8 +756,6 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                     </div>
                   </div>
                 </div>
-
-
 
                 {/* Mode Section */}
                 <div className="space-y-4">

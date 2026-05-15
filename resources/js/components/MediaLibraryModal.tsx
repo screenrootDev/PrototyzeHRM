@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { Upload, X, Image as ImageIcon, Search, Plus, Check } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 import { hasPermission } from '@/utils/authorization';
+import { getImagePath } from '@/utils/helpers';
 
 interface MediaItem {
   id: number;
@@ -388,11 +389,11 @@ export default function MediaLibraryModal({
                       <div className="relative aspect-square bg-gradient-to-br from-muted/50 to-muted overflow-hidden flex items-center justify-center">
                         {item.mime_type.startsWith('image/') ? (
                           <img
-                            src={item.thumb_url}
+                            src={getImagePath(item.thumb_url || item.url)}
                             alt={item.name}
                             className="w-full h-full object-cover"
                             onError={(e) => {
-                              e.currentTarget.src = item.url;
+                              e.currentTarget.src = getImagePath(item.url);
                             }}
                           />
                         ) : (

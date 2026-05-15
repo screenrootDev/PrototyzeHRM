@@ -65,7 +65,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         <form method="POST" action={route('impersonate.leave')}>
                             <input type="hidden" name="_token" value={props.csrf_token} />
                             <Button variant="destructive" size="sm" className="h-8 px-3 text-[11px] font-bold uppercase tracking-wider rounded-lg shadow-lg shadow-red-500/20">
-                                Leave Impersonation
+                                Return Back
                             </Button>
                         </form>
                     )}
@@ -76,25 +76,25 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                             variant="ghost" 
                             size="icon" 
                             onClick={toggleFullScreen}
-                            className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border border-border/40 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm"
+                            className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md"
                         >
-                            <ScanIcon size={18} isAnimated={true} />
+                            <ScanIcon size={20} isAnimated={true} />
                         </Button>
                         <Button 
                             variant="ghost" 
                             size="icon" 
                             onClick={() => updateAppearance(appearance === 'dark' ? 'light' : 'dark')}
-                            className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border border-border/40 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm"
+                            className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md"
                         >
                             {appearance === 'dark' ? (
-                                <SunIcon size={18} isAnimated={true} color="#eab308" />
+                                <SunIcon size={20} isAnimated={true} color="#eab308" />
                             ) : (
-                                <MoonIcon size={18} isAnimated={true} />
+                                <MoonIcon size={20} isAnimated={true} />
                             )}
                         </Button>
                         <div className="relative">
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-full text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all border border-border/40 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm">
-                                <BellIcon size={18} isAnimated={true} />
+                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md">
+                                <BellIcon size={20} isAnimated={true} />
                             </Button>
                             <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-[9px] font-black text-primary-foreground border-2 border-white dark:border-gray-950 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 animate-pulse">
                                 2

@@ -601,7 +601,7 @@ export default function Companies() {
           <div className="flex items-center gap-4 py-1">
             <div className="relative group/avatar">
               <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
-              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 overflow-hidden shadow-sm">
+              <div className="relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 overflow-hidden shadow-sm">
                 {row.avatar ? (
                   <img
                     src={getImagePath(row.avatar)}
@@ -616,7 +616,9 @@ export default function Companies() {
               </div>
             </div>
             <div className="flex flex-col">
-              <div className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors">{row.name}</div>
+              <div className="font-bold text-foreground leading-tight group-hover:text-primary transition-colors">
+                {row.name}
+              </div>
               <div className="text-xs text-muted-foreground/70 font-medium flex items-center gap-1 mt-0.5">
                 <Mail className="h-3 w-3 opacity-50" />
                 {row.email}
@@ -632,19 +634,23 @@ export default function Companies() {
       sortable: true,
       render: (value: string) => (
         <div className="flex items-center">
-          <Badge 
-            variant="outline" 
+          <Badge
+            variant="outline"
             className={cn(
               "pl-1.5 pr-2.5 py-0.5 rounded-full border shadow-sm font-bold text-[10px] uppercase tracking-wider flex items-center gap-1.5",
-              value === "active" 
-                ? "bg-emerald-50/50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20" 
-                : "bg-gray-50/50 text-gray-500 border-gray-200 dark:bg-gray-500/10 dark:text-gray-400 dark:border-gray-500/20"
+              value === "active"
+                ? "bg-emerald-50/50 text-emerald-600 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/20"
+                : "bg-gray-50/50 text-gray-500 border-gray-200 dark:bg-gray-500/10 dark:text-gray-400 dark:border-gray-500/20",
             )}
           >
-            <div className={cn(
-              "h-1.5 w-1.5 rounded-full",
-              value === "active" ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" : "bg-gray-400"
-            )} />
+            <div
+              className={cn(
+                "h-1.5 w-1.5 rounded-full",
+                value === "active"
+                  ? "bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"
+                  : "bg-gray-400",
+              )}
+            />
             {value === "active" ? "Active" : "Inactive"}
           </Badge>
         </div>
@@ -800,7 +806,9 @@ export default function Companies() {
                               <ArrowUpRight className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent className="bg-blue-600 text-white border-blue-600 font-bold text-xs">{"Login as Company"}</TooltipContent>
+                          <TooltipContent className="bg-blue-600 text-white border-blue-600 font-bold text-xs">
+                            {"Login as Company"}
+                          </TooltipContent>
                         </Tooltip>
 
                         <div className="w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
@@ -818,7 +826,9 @@ export default function Companies() {
                               <Info className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">{"Company Info"}</TooltipContent>
+                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">
+                            {"Company Info"}
+                          </TooltipContent>
                         </Tooltip>
 
                         <Tooltip>
@@ -834,7 +844,9 @@ export default function Companies() {
                               <KeyRound className="h-4 w-4" />
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">{"Reset Password"}</TooltipContent>
+                          <TooltipContent className="bg-primary text-primary-foreground font-bold text-xs">
+                            {"Reset Password"}
+                          </TooltipContent>
                         </Tooltip>
 
                         <div className="w-px h-4 bg-gray-200 dark:bg-white/10 mx-0.5" />
@@ -849,9 +861,9 @@ export default function Companies() {
                               }
                               className={cn(
                                 "h-8 w-8 rounded-lg transition-all",
-                                company.status === "active" 
-                                  ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10" 
-                                  : "text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                                company.status === "active"
+                                  ? "text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/10"
+                                  : "text-emerald-500 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10",
                               )}
                             >
                               {company.status === "active" ? (
@@ -861,10 +873,14 @@ export default function Companies() {
                               )}
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent className={cn(
-                            "font-bold text-xs border-none",
-                            company.status === "active" ? "bg-amber-600 text-white" : "bg-emerald-600 text-white"
-                          )}>
+                          <TooltipContent
+                            className={cn(
+                              "font-bold text-xs border-none",
+                              company.status === "active"
+                                ? "bg-amber-600 text-white"
+                                : "bg-emerald-600 text-white",
+                            )}
+                          >
                             {company.status === "active"
                               ? "Disable Login"
                               : "Enable Login"}
@@ -1261,14 +1277,17 @@ export default function Companies() {
                       <Lock size={20} />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-foreground mb-1">Security Notice</p>
+                      <p className="text-sm font-bold text-foreground mb-1">
+                        Security Notice
+                      </p>
                       <p className="text-xs text-muted-foreground leading-relaxed">
-                        Resetting the password will revoke all current active sessions for <b>{currentCompany?.name}</b>.
+                        Resetting the password will revoke all current active
+                        sessions for <b>{currentCompany?.name}</b>.
                       </p>
                     </div>
                   </div>
                 </div>
-              )
+              ),
             },
             {
               name: "password",
