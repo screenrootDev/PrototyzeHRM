@@ -3,8 +3,17 @@ import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useLayout } from '@/contexts/LayoutContext';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
 import { ProfileMenu } from '@/components/profile-menu';
-import { usePage } from '@inertiajs/react';
-import { Search, Bell, Maximize, Moon, Sun, Languages } from 'lucide-react';
+import { usePage, router } from '@inertiajs/react';
+import { Search, Bell, Maximize, Moon, Sun, Languages, Clock } from 'lucide-react';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -92,14 +101,61 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                                 <MoonIcon size={20} isAnimated={true} />
                             )}
                         </Button>
-                        <div className="relative">
-                            <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md">
-                                <BellIcon size={20} isAnimated={true} />
-                            </Button>
-                            <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-[9px] font-black text-primary-foreground border-2 border-white dark:border-gray-950 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 animate-pulse">
-                                2
-                            </span>
-                        </div>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <div className="relative cursor-pointer">
+                                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md">
+                                        <BellIcon size={20} isAnimated={true} />
+                                    </Button>
+                                    {(props.auth?.notifications?.length ?? 0) > 0 && (
+                                        <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary text-[9px] font-black text-primary-foreground border-2 border-white dark:border-gray-950 rounded-full flex items-center justify-center shadow-lg shadow-primary/20 animate-pulse">
+                                            {props.auth.notifications.length}
+                                        </span>
+                                    )}
+                                </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-80">
+                                <DropdownMenuLabel className="flex items-center justify-between">
+                                    <span>Notifications</span>
+                                    {(props.auth?.notifications?.length ?? 0) > 0 && (
+                                        <button 
+                                            onClick={() => router.post(route('notifications.markAllAsRead'))}
+                                            className="text-xs text-primary font-normal hover:underline"
+                                        >
+                                            Mark all as read
+                                        </button>
+                                    )}
+                                </DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup className="max-h-[300px] overflow-y-auto">
+                                    {(!props.auth?.notifications || props.auth.notifications.length === 0) ? (
+                                        <div className="p-4 text-center text-sm text-muted-foreground">
+                                            No new notifications
+                                        </div>
+                                    ) : (
+                                        props.auth.notifications.map((notification: any) => (
+                                            <div key={notification.id}>
+                                                <DropdownMenuItem 
+                                                    onClick={() => router.post(route('notifications.markAsRead', notification.id))}
+                                                    className="flex flex-col items-start gap-1 p-3 cursor-pointer"
+                                                >
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="h-2 w-2 rounded-full bg-primary" />
+                                                        <span className="font-medium text-sm">{notification.data?.title || 'Notification'}</span>
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground pl-4 line-clamp-2">{notification.data?.message}</p>
+                                                    <div className="flex items-center gap-1 text-[10px] text-muted-foreground pl-4 mt-1">
+                                                        <Clock className="h-3 w-3" />
+                                                        <span>{new Date(notification.created_at).toLocaleDateString()}</span>
+                                                    </div>
+                                                </DropdownMenuItem>
+                                                <DropdownMenuSeparator />
+                                            </div>
+                                        ))
+                                    )}
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
 
                     <div className="h-8 w-[1px] bg-border/40 mx-1 hidden sm:block" />

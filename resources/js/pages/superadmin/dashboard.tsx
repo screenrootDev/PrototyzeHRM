@@ -10,10 +10,16 @@ import {
   HardDrive,
   ShieldCheck,
   Activity,
+  TrendingUp,
+  TrendingDown,
+  Plus,
+  Settings,
+  Clock,
+  ArrowRight,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { router } from "@inertiajs/react";
+import { router, Link } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
 import {
   BarChart,
@@ -41,6 +47,12 @@ interface SuperAdminDashboardData {
   deptDistribution: Array<{
     name: string;
     count: number;
+  }>;
+  activities?: Array<{
+    id: number;
+    title: string;
+    time: string;
+    type: "user" | "company" | "system";
   }>;
 }
 
@@ -98,6 +110,7 @@ export default function SuperAdminDashboard({
               <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
             }
             bgColor="bg-blue-100 dark:bg-blue-900/30"
+            trend={{ label: "+2% this month", isPositive: true }}
           />
           <StatCard
             title="On Leave"
@@ -106,6 +119,7 @@ export default function SuperAdminDashboard({
               <UserMinus className="h-5 w-5 text-orange-600 dark:text-orange-400" />
             }
             bgColor="bg-orange-100 dark:bg-orange-900/30"
+            trend={{ label: "-1% vs last week", isPositive: true }}
           />
           <StatCard
             title="Companies"
@@ -114,6 +128,7 @@ export default function SuperAdminDashboard({
               <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
             }
             bgColor="bg-emerald-100 dark:bg-emerald-900/30"
+            trend={{ label: "+1 this month", isPositive: true }}
           />
 
           <StatCard
@@ -162,9 +177,9 @@ export default function SuperAdminDashboard({
           />
         </div>
 
-        {/* Chart Section */}
-        <div className="grid gap-6 lg:grid-cols-1">
-          <Card className="border-border/50 shadow-sm overflow-hidden">
+        {/* Bottom Section - Chart & Actions */}
+        <div className="grid gap-6 lg:grid-cols-3">
+          <Card className="border-border/50 shadow-sm overflow-hidden lg:col-span-2">
             <div className="p-6 border-b border-border/50 bg-muted/20">
               <h3 className="text-lg font-bold flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" />
@@ -241,6 +256,11 @@ export default function SuperAdminDashboard({
               )}
             </CardContent>
           </Card>
+          
+          {/* Quick Actions Panel */}
+          <div className="lg:col-span-1">
+            <QuickActionsPanel />
+          </div>
         </div>
       </div>
     </PageTemplate>
@@ -254,6 +274,7 @@ function StatCard({
   bgColor,
   footer,
   isStatus = false,
+  trend,
 }: {
   title: string;
   value: number | string;
@@ -261,6 +282,7 @@ function StatCard({
   bgColor: string;
   footer?: React.ReactNode;
   isStatus?: boolean;
+  trend?: { label: string; isPositive: boolean };
 }) {
   return (
     <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-border/50 group bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm">
@@ -314,7 +336,99 @@ function StatCard({
               {typeof value === "number" ? value.toLocaleString() : value || 0}
             </h3>
           </div>
+          {trend && (
+            <div className="flex items-center gap-1 mt-1">
+              {trend.isPositive ? (
+                <TrendingUp className="w-3 h-3 text-emerald-500" />
+              ) : (
+                <TrendingDown className="w-3 h-3 text-rose-500" />
+              )}
+              <span
+                className={cn(
+                  "text-[10px] font-bold",
+                  trend.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                )}
+              >
+                {trend.label}
+              </span>
+            </div>
+          )}
           {footer}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function QuickActionsPanel() {
+  const mockActivities = [
+    { id: 1, title: "Acme Corp onboarding completed", time: "2 hours ago", type: "company" },
+    { id: 2, title: "System backup successful", time: "4 hours ago", type: "system" },
+    { id: 3, title: "John Doe admin login", time: "5 hours ago", type: "user" },
+    { id: 4, title: "Globex Corp added 5 employees", time: "1 day ago", type: "company" },
+  ];
+
+  return (
+    <Card className="border-border/50 shadow-sm overflow-hidden h-full flex flex-col">
+      <div className="p-6 border-b border-border/50 bg-muted/20">
+        <h3 className="text-lg font-bold flex items-center gap-2">
+          <Settings className="h-5 w-5 text-primary" />
+          Quick Actions
+        </h3>
+      </div>
+      <CardContent className="p-6 flex-1 flex flex-col gap-6">
+        <div className="grid gap-3">
+          <Link
+            href={route('companies.index')}
+            className="flex w-full text-left items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+          >
+            <div className="bg-primary/10 p-2 rounded-lg text-primary">
+              <Plus className="h-4 w-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">Add New Company</p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary opacity-50 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
+          </Link>
+          <Link
+            href={route('settings')}
+            className="flex w-full text-left items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-primary/5 transition-all group"
+          >
+            <div className="bg-primary/10 p-2 rounded-lg text-primary">
+              <Settings className="h-4 w-4" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">System Settings</p>
+            </div>
+            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary opacity-50 group-hover:opacity-100 transition-all group-hover:translate-x-1" />
+          </Link>
+        </div>
+
+        <div className="flex-1">
+          <h4 className="text-xs font-black text-muted-foreground uppercase mb-4 tracking-wider flex items-center gap-1.5">
+            <Clock className="h-3.5 w-3.5" /> Recent Activity
+          </h4>
+          <div className="space-y-4">
+            {mockActivities.map((activity) => (
+              <div key={activity.id} className="flex items-start gap-3">
+                <div className="mt-0.5">
+                  <div className={cn(
+                    "w-2 h-2 rounded-full",
+                    activity.type === "company" ? "bg-emerald-500" :
+                    activity.type === "system" ? "bg-purple-500" : "bg-blue-500"
+                  )} />
+                </div>
+                <div>
+                  <p className="text-sm font-medium leading-none mb-1 text-foreground">
+                    {activity.title}
+                  </p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {activity.time}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

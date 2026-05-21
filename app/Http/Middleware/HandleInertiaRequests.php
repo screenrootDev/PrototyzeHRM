@@ -101,6 +101,7 @@ class HandleInertiaRequests extends Middleware
                 'user' => $request->user(),
                 'roles' => fn() => $request->user()?->roles->pluck('name'),
                 'permissions' => fn() => $request->user()?->getAllPermissions()->pluck('name'),
+                'notifications' => fn() => $request->user()?->unreadNotifications,
             ],
             'userLanguage' => 'en',
             'isImpersonating' => session('impersonated_by') ? true : false,
