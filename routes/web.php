@@ -1061,3 +1061,4 @@ require __DIR__.'/auth.php';
 // Cookie consent routes
 Route::post('/cookie-consent/store', [CookieConsentController::class, 'store'])->name('cookie.consent.store');
 Route::get('/cookie-consent/download', [CookieConsentController::class, 'download'])->name('cookie.consent.download');
+

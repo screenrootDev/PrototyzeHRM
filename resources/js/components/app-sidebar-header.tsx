@@ -17,15 +17,35 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppearance } from '@/hooks/use-appearance';
 import { MoonIcon, SunIcon, BellIcon, SearchIcon, ScanIcon } from '@animateicons/react/lucide';
+import { SearchConsole } from '@/components/search-console';
 
 export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: BreadcrumbItemType[] }) {
     const { position } = useLayout();
     const { props } = usePage() as any;
-    const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const { appearance, updateAppearance } = useAppearance();
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Check if active element is an input or textarea to avoid overriding normal typing
+            const activeTag = document.activeElement?.tagName.toLowerCase();
+            if (activeTag === 'input' || activeTag === 'textarea') {
+                return;
+            }
+
+            if (((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') || e.key === '/') {
+                e.preventDefault();
+                setIsSearchOpen(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
 
     const toggleFullScreen = () => {
         if (!document.fullscreenElement) {
@@ -53,21 +73,17 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
 
                 {/* Right Side: Search, Utilities & Profile */}
                 <div className="flex items-center gap-3">
-                    {/* Global Search Bar */}
-                    <div className={cn(
-                        "relative hidden lg:flex items-center transition-all duration-300",
-                        isSearchFocused ? "w-80" : "w-64"
-                    )}>
-                        <div className="absolute left-3 h-4 w-4 flex items-center justify-center">
-                            <SearchIcon size={16} isAnimated={true} color={isSearchFocused ? "var(--primary)" : "currentColor"} />
-                        </div>
-                        <Input
-                            placeholder="Search console..."
-                            onFocus={() => setIsSearchFocused(true)}
-                            onBlur={() => setIsSearchFocused(false)}
-                            className="h-10 pl-10 pr-4 bg-gray-100/50 dark:bg-white/5 border-transparent focus-visible:ring-primary/20 focus-visible:border-primary/40 rounded-xl transition-all"
-                        />
-                    </div>
+                    {/* Global Search Button */}
+                    <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        onClick={() => setIsSearchOpen(true)}
+                        className="h-10 w-10 rounded-full text-gray-700 dark:text-gray-200 hover:text-primary hover:bg-primary/10 transition-all border border-border/60 bg-white dark:bg-gray-900 shadow-sm hover:shadow-md hidden lg:flex items-center justify-center"
+                    >
+                        <SearchIcon size={20} isAnimated={true} />
+                    </Button>
+
+                    <SearchConsole isOpen={isSearchOpen} onOpenChange={setIsSearchOpen} />
 
                     {/* Impersonation Notice */}
                     {props.isImpersonating && (
