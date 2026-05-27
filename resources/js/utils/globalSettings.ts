@@ -41,9 +41,9 @@ export function initializeGlobalSettings(settings: Record<string, any>) {
         floatNumber: settings.floatNumber === '0' ? false : true,
         currencySymbolSpace: settings.currencySymbolSpace === '1',
         currencySymbolPosition: settings.currencySymbolPosition || 'before',
-        currencySymbol: settings.currencySymbol || '$',
-        currencyCode: settings.currencyCode || 'USD',
-        currencyName: settings.currencyNname || 'US Dollar'
+        currencySymbol: settings.currencySymbol || '₹',
+        currencyCode: settings.currencyCode || 'INR',
+        currencyName: settings.currencyNname || 'Indian Rupee'
     };
 
     window.appSettings = {

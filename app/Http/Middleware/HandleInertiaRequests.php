@@ -59,8 +59,8 @@ class HandleInertiaRequests extends Middleware
         $settings = settings();
         // Get currency symbol (simplified as Currencies module is removed)
         $currencySettings = [
-            'currencySymbol' => $settings['currencySymbol'] ?? '$',
-            'currencyName' => $settings['currencyName'] ?? 'US Dollar',
+            'currencySymbol' => $settings['currencySymbol'] ?? '₹',
+            'currencyName' => $settings['currencyName'] ?? 'Indian Rupee',
         ];
 
         $availableLanguages = [];

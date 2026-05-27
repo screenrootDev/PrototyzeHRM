@@ -836,7 +836,7 @@ if (!function_exists('defaultSettings')) {
 
             // Currency Settings
             'decimalFormat' => '2',
-            'defaultCurrency' => 'USD',
+            'defaultCurrency' => 'INR',
             'decimalSeparator' => '.',
             'thousandsSeparator' => ',',
             'floatNumber' => true,
@@ -1223,10 +1223,10 @@ if (!function_exists('formatCurrency')) {
     function formatCurrency($amount, $user_id = null)
     {
         $settings = settings($user_id);
-        $currencyCode = $settings['defaultCurrency'] ?? 'USD';
+        $currencyCode = $settings['defaultCurrency'] ?? 'INR';
 
-        // Get currency symbol from settings or default to $
-        $symbol = $settings['currencySymbol'] ?? '$';
+        // Get currency symbol from settings or default to ₹
+        $symbol = $settings['currencySymbol'] ?? '₹';
 
         $decimalPlaces = (int) ($settings['decimalFormat'] ?? 2);
         $decimalSeparator = $settings['decimalSeparator'] ?? '.';

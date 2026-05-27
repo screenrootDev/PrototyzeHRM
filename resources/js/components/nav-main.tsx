@@ -152,12 +152,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             className={cn(
                                                 "flex items-center gap-2 group/sub transition-all duration-300",
                                                 effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
-                                                isActive(child.href) ? "text-primary font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                                isActive(child.href) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
                                             )}
                                         >
                                             <div className={cn(
                                                 "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                                                isActive(child.href) ? "bg-primary scale-110 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                                isActive(child.href) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
                                             )} />
                                             <span>{child.title}</span>
                                         </a>
@@ -168,12 +168,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             className={cn(
                                                 "flex items-center gap-2 group/sub transition-all duration-300",
                                                 effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
-                                                isActive(child.href) ? "text-primary font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                                isActive(child.href) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
                                             )}
                                         >
                                             <div className={cn(
                                                 "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                                                isActive(child.href) ? "bg-primary scale-110 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                                isActive(child.href) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
                                             )} />
                                             <span>{child.title}</span>
                                         </Link>
@@ -204,7 +204,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                         className={cn(
                                             "transition-all duration-300 h-10 group/item relative overflow-hidden",
                                             isChildActive(item.children) 
-                                                ? "bg-primary/5 text-primary font-bold" 
+                                                ? "bg-blue-500/5 text-blue-500 font-bold" 
                                                 : "hover:bg-accent/50"
                                         )}
                                     >
@@ -212,18 +212,18 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     <span>{state !== "collapsed" ? item.title : ""}</span>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-primary")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
                                                     {state !== "collapsed" && (
                                                         expandedItems[item.title] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
                                                     )}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-primary")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
                                                     <div className="flex items-center gap-1">
                                                         {state !== "collapsed" && <span>{item.title}</span>}
                                                         {state !== "collapsed" && item.badge && (
-                                                            <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md bg-primary text-primary-foreground shadow-[0_0_8px_rgba(var(--primary-rgb),0.3)]">
+                                                            <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md bg-blue-500 text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]">
                                                                 {item.badge.label}
                                                             </span>
                                                         )}
@@ -252,7 +252,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                     className={cn(
                                         "transition-all duration-300 h-10 group/item relative overflow-hidden",
                                         isActive(item.href) 
-                                            ? "bg-primary/10 text-primary font-bold shadow-[inset_4px_0_12px_rgba(var(--primary-rgb),0.05)]" 
+                                            ? "bg-blue-500/10 text-blue-500 font-bold shadow-[inset_4px_0_12px_rgba(59,130,246,0.05)]" 
                                             : "hover:bg-accent/50"
                                     )}
                                 >
@@ -266,11 +266,11 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary shadow-primary/20")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500 shadow-blue-500/20")} />}
                                                     {state !== "collapsed" && <span>{item.title}</span>}
                                                 </>
                                             )}
@@ -284,11 +284,11 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             {effectivePosition === 'right' ? (
                                                 <>
                                                     {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
                                                 </>
                                             ) : (
                                                 <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-primary")} />}
+                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
                                                     {state !== "collapsed" && <span>{item.title}</span>}
                                                 </>
                                             )}

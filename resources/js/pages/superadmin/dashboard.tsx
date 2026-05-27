@@ -16,6 +16,8 @@ import {
   Settings,
   Clock,
   ArrowRight,
+  Kanban,
+  ListFilter,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -101,53 +103,52 @@ export default function SuperAdminDashboard({
       actions={pageActions}
     >
       <div className="space-y-8">
-        {/* Top Stats Row - Refactored to 5 Columns */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
           <StatCard
             title="Employees"
             value={stats.totalEmployees}
-            icon={
-              <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-            }
-            bgColor="bg-blue-100 dark:bg-blue-900/30"
+            icon={<Users />}
+            bgColor="bg-emerald-500/15"
+            iconBgColor="bg-emerald-500"
+            decorativeIcon={<Kanban className="w-32 h-32 text-emerald-500" />}
             trend={{ label: "+2% this month", isPositive: true }}
           />
           <StatCard
             title="On Leave"
             value={stats.onLeaveToday}
-            icon={
-              <UserMinus className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-            }
-            bgColor="bg-orange-100 dark:bg-orange-900/30"
+            icon={<UserMinus />}
+            bgColor="bg-orange-500/15"
+            iconBgColor="bg-orange-500"
+            decorativeIcon={<ListFilter className="w-32 h-32 text-orange-500" />}
             trend={{ label: "-1% vs last week", isPositive: true }}
           />
           <StatCard
             title="Companies"
             value={stats.totalCompanies}
-            icon={
-              <Building2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
-            }
-            bgColor="bg-emerald-100 dark:bg-emerald-900/30"
+            icon={<Building2 />}
+            bgColor="bg-purple-500/15"
+            iconBgColor="bg-purple-500"
+            decorativeIcon={<ListFilter className="w-32 h-32 text-purple-500" />}
             trend={{ label: "+1 this month", isPositive: true }}
           />
 
           <StatCard
             title="Storage"
             value={stats.storageUsage.used}
-            icon={
-              <HardDrive className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-            }
-            bgColor="bg-purple-100 dark:bg-purple-900/30"
+            icon={<HardDrive />}
+            bgColor="bg-blue-500/15"
+            iconBgColor="bg-blue-500"
+            decorativeIcon={<Kanban className="w-32 h-32 text-blue-500" />}
             footer={
-              <div className="mt-3 w-full">
-                <div className="flex justify-between items-center mb-1.5">
-                  <div className="flex gap-1 h-1 flex-1 bg-muted rounded-full overflow-hidden mr-3">
+              <div className="w-full">
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-1 h-1 flex-1 bg-white/50 rounded-full overflow-hidden mr-3">
                     <div
-                      className="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full shadow-[0_0_10px_rgba(168,85,247,0.4)]"
+                      className="bg-blue-500 h-full rounded-full"
                       style={{ width: `${stats.storageUsage.percentage}%` }}
                     />
                   </div>
-                  <p className="text-[10px] font-black text-purple-600 dark:text-purple-400">
+                  <p className="text-[10px] font-black text-blue-600 dark:text-blue-400">
                     {stats.storageUsage.percentage}%
                   </p>
                 </div>
@@ -158,21 +159,18 @@ export default function SuperAdminDashboard({
           <StatCard
             title="Health"
             value={stats.systemStatus}
-            icon={
-              <ShieldCheck
-                className={cn(
-                  "h-5 w-5",
-                  stats.systemStatus === "healthy"
-                    ? "text-emerald-500"
-                    : "text-amber-500",
-                )}
-              />
-            }
+            icon={<ShieldCheck />}
             bgColor={
               stats.systemStatus === "healthy"
-                ? "bg-emerald-100 dark:bg-emerald-900/30"
-                : "bg-amber-100 dark:bg-amber-900/30"
+                ? "bg-emerald-500/15"
+                : "bg-amber-500/15"
             }
+            iconBgColor={
+              stats.systemStatus === "healthy"
+                ? "bg-emerald-500"
+                : "bg-amber-500"
+            }
+            decorativeIcon={<Kanban className={cn("w-32 h-32", stats.systemStatus === "healthy" ? "text-emerald-500" : "text-amber-500")} />}
             isStatus
           />
         </div>
@@ -272,6 +270,8 @@ function StatCard({
   value,
   icon,
   bgColor,
+  iconBgColor,
+  decorativeIcon,
   footer,
   isStatus = false,
   trend,
@@ -280,72 +280,63 @@ function StatCard({
   value: number | string;
   icon: React.ReactNode;
   bgColor: string;
+  iconBgColor: string;
+  decorativeIcon?: React.ReactNode;
   footer?: React.ReactNode;
   isStatus?: boolean;
   trend?: { label: string; isPositive: boolean };
 }) {
   return (
-    <Card className="relative overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 border-border/50 group bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm">
-      <div
-        className={cn(
-          "absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-[0.03] group-hover:opacity-[0.08] transition-opacity",
-          bgColor,
-        )}
-      />
-      <CardContent className="p-6 flex flex-col items-start gap-5 relative z-10">
-        <div
-          className={cn(
-            "rounded-2xl p-3.5 shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:rotate-6",
-            bgColor,
-          )}
-        >
+    <Card className={cn("relative overflow-hidden border-none shadow-sm transition-all duration-300 hover:shadow-md", bgColor)}>
+      {decorativeIcon && (
+        <div className="absolute top-0 right-0 -mr-4 -mt-4 opacity-10 pointer-events-none">
+          {decorativeIcon}
+        </div>
+      )}
+      
+      <CardContent className="p-6 flex flex-col relative z-10 h-full">
+        <div className={cn("w-12 h-12 rounded-lg flex items-center justify-center mb-5 shadow-sm", iconBgColor)}>
           {React.cloneElement(icon as React.ReactElement, {
-            className: cn(
-              (icon as React.ReactElement).props.className,
-              "h-6 w-6",
-            ),
+            className: "h-6 w-6 text-white",
           })}
         </div>
-        <div className="flex-1 w-full space-y-1">
-          <p className="text-[10px] font-extrabold text-muted-foreground/60 uppercase  mb-1">
-            {title}
-          </p>
-          <div className="flex items-center gap-3">
+        
+        <div className="flex-1 flex flex-col justify-end">
+          <div className="flex items-center gap-2 mb-1">
             {isStatus && (
               <div className="relative flex items-center justify-center">
                 <div
                   className={cn(
-                    "w-3 h-3 rounded-full animate-ping absolute opacity-75",
+                    "w-2.5 h-2.5 rounded-full animate-ping absolute opacity-75",
                     value === "healthy" ? "bg-emerald-400" : "bg-amber-400",
                   )}
                 />
                 <div
                   className={cn(
-                    "w-3 h-3 rounded-full relative shadow-sm",
+                    "w-2.5 h-2.5 rounded-full relative",
                     value === "healthy" ? "bg-emerald-500" : "bg-amber-500",
                   )}
                 />
               </div>
             )}
-            <h3
-              className={cn(
-                "text-3xl font-black tracking-tighter text-foreground truncate",
-                isStatus && "capitalize text-2xl",
-              )}
-            >
+            <h5 className={cn("text-lg font-semibold text-slate-800 dark:text-slate-200", isStatus && "capitalize")}>
               {typeof value === "number" ? value.toLocaleString() : value || 0}
-            </h3>
+            </h5>
           </div>
+          <p className="text-sm text-slate-700 dark:text-slate-300">
+            {title}
+          </p>
+          
           {trend && (
-            <div className="flex items-center gap-1 mt-1">
+            <div className="flex items-center gap-1.5 mt-3">
               {trend.isPositive ? (
-                <TrendingUp className="w-3 h-3 text-emerald-500" />
+                <TrendingUp className="w-3.5 h-3.5 text-emerald-500" />
               ) : (
-                <TrendingDown className="w-3 h-3 text-rose-500" />
+                <TrendingDown className="w-3.5 h-3.5 text-rose-500" />
               )}
               <span
                 className={cn(
-                  "text-[10px] font-bold",
+                  "text-xs font-semibold",
                   trend.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                 )}
               >
@@ -353,7 +344,7 @@ function StatCard({
               </span>
             </div>
           )}
-          {footer}
+          {footer && <div className="mt-4">{footer}</div>}
         </div>
       </CardContent>
     </Card>

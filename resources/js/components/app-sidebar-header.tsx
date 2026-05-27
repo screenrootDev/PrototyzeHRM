@@ -58,7 +58,7 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
     };
 
     return (
-        <header className="border-b border-border/40 bg-white/80 dark:bg-gray-950/80 backdrop-blur-md flex h-16 shrink-0 items-center transition-[width,height] ease-linear sticky top-0 z-50 px-4 md:px-6">
+        <header className="border-b  border-default-200 bg-white dark:bg-gray-950/80 backdrop-blur-md flex h-16 shrink-0 items-center transition-[width,height] ease-linear sticky top-0 z-50 px-4 md:px-6">
             <div className="flex w-full items-center justify-between gap-4">
                 {/* Left Side: Sidebar Toggle & Breadcrumbs */}
                 <div className="flex items-center gap-4 flex-1">

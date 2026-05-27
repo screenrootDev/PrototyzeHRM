@@ -55,12 +55,14 @@ class EmailTemplateSeeder extends Seeder
             foreach ($langCodes as $langCode) {
                 $translation = $templateData['translations'][$langCode] ?? $templateData['translations']['en'];
                 
+                if (\Illuminate\Support\Facades\Schema::hasTable('email_template_langs')) {
                 EmailTemplateLang::create([
                     'parent_id' => $template->id,
                     'lang' => $langCode,
                     'subject' => $translation['subject'],
                     'content' => $translation['content']
                 ]);
+            }
             }
 
             UserEmailTemplate::create([

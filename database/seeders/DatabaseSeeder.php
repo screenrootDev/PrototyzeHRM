@@ -15,7 +15,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        if (config('app.is_demo')) {
+        config(['app.is_demo' => true]);
+
+        if (true) { // config('app.is_demo') bypassed to force full seed
             $this->call([
                 // Core system seeders
                 PermissionSeeder::class,

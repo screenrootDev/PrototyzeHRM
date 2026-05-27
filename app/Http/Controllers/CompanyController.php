@@ -52,6 +52,7 @@ class CompanyController extends Controller
                 'id' => $company->id,
                 'name' => $company->name,
                 'email' => $company->email,
+                'phone' => $company->phone,
                 'status' => $company->status,
                 'created_at' => $company->created_at,
                 'total_storage_limit' => $company->total_storage_limit,
@@ -69,9 +70,10 @@ class CompanyController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'nullable|string|min:8',
-            'status' => 'required|in:active,inactive',
+            'email' => 'required|string|email|max:255|unique:users,email',
+            'phone' => 'required|string|max:20',
+            'password' => 'required|string|min:8',
+            'status' => 'nullable|in:active,inactive',
             'total_storage_limit' => 'nullable|numeric|min:0',
             'avatar' => 'nullable|string',
         ]);
@@ -79,6 +81,7 @@ class CompanyController extends Controller
         $company = new User;
         $company->name = $validated['name'];
         $company->email = $validated['email'];
+        $company->phone = $validated['phone'] ?? null;
 
         // Only set password if provided
         if (isset($validated['password'])) {
@@ -86,7 +89,7 @@ class CompanyController extends Controller
         }
 
         $company->type = 'company';
-        $company->status = $validated['status'];
+        $company->status = $validated['status'] ?? 'active';
         $company->total_storage_limit = $validated['total_storage_limit'] ?? 5.00;
         $company->avatar = $validated['avatar'] ?? null;
         $company->created_by = creatorId() ?? 1;
@@ -120,12 +123,16 @@ class CompanyController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $company->id,
+            'phone' => 'nullable|string|max:20',
             'total_storage_limit' => 'nullable|numeric|min:0',
             'avatar' => 'nullable|string',
         ]);
 
         $company->name = $validated['name'];
         $company->email = $validated['email'];
+        if ($request->has('phone')) {
+            $company->phone = $request->input('phone');
+        }
         if (isset($validated['total_storage_limit'])) {
             $company->total_storage_limit = $validated['total_storage_limit'];
         }

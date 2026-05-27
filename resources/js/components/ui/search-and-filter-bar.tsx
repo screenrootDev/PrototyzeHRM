@@ -67,7 +67,7 @@ export function SearchAndFilterBar({
             <div className="relative w-72">
               <div className="absolute inset-0 bg-primary/5 rounded-xl blur-md opacity-0 group-focus-within/search-form:opacity-100 transition-opacity" />
               <Search className={cn(
-                "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 transition-colors duration-300",
+                "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 z-10 pointer-events-none transition-colors duration-300",
                 searchTerm ? "text-primary" : "text-muted-foreground/60"
               )} />
               <Input
@@ -82,7 +82,6 @@ export function SearchAndFilterBar({
               size="sm" 
               className="h-10 px-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold tracking-tight"
             >
-              <Search className="h-4 w-4 mr-2" />
               {"Search"}
             </Button>
           </form>

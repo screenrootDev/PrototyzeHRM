@@ -35,7 +35,7 @@
     <title inertia><?php echo e(config('app.name', 'Laravel')); ?></title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=dm-sans:400,500,600,700" rel="stylesheet" />
     <script src="<?php echo e(asset('js/jquery.min.js')); ?>"></script>
     <?php echo app('Tighten\Ziggy\BladeRouteGenerator')->generate(); ?>
     <?php if(app()->environment('local')): ?>

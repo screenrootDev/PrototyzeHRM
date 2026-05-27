@@ -83,6 +83,41 @@ use Inertia\Inertia;
 
 Route::get('/', [LandingPageController::class, 'show'])->name('home');
 
+Route::get('/update-branches', function () {
+    try {
+        require base_path('update_screenroot_branches.php');
+    } catch (\Throwable $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
+Route::get('/dump-roles', function () {
+    $roles = \Illuminate\Support\Facades\DB::table('roles')->get();
+    $output = "<h2>All Roles in DB:</h2><ul>";
+    foreach ($roles as $role) {
+        $output .= "<li>ID: {$role->id}, Name: {$role->name}</li>";
+    }
+    $output .= "</ul>";
+    
+    $users = \Illuminate\Support\Facades\DB::table('users')->select('id', 'name', 'type', 'designation_id')->get();
+    $output .= "<h2>All Users:</h2><ul>";
+    foreach ($users as $u) {
+        $output .= "<li>ID: {$u->id}, Name: {$u->name}, Type: {$u->type}, Desig: {$u->designation_id}</li>";
+    }
+    $output .= "</ul>";
+    
+    $designations = \Illuminate\Support\Facades\DB::table('designations')->get();
+    $output .= "<h2>All Designations:</h2><ul>";
+    foreach ($designations as $d) {
+        $output .= "<li>ID: {$d->id}, Name: {$d->name}</li>";
+    }
+    $output .= "</ul>";
+    
+    return $output;
+});
+
+
+
 // Public form submission routes
 
 // Cashfree webhook (public route)

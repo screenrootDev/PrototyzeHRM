@@ -59,7 +59,7 @@ class BranchController extends Controller
                     'state' => 'nullable|string|max:100',
                     'country' => 'nullable|string|max:100',
                     'zip_code' => 'nullable|string|max:20',
-                    'phone' => 'nullable|string|max:20',
+                    'phone' => ['nullable', 'string', 'regex:/^[0-9]{10}$/'],
                     'email' => 'nullable|email|max:255',
                     'status' => 'nullable|in:active,inactive',
                 ]);
@@ -104,7 +104,7 @@ class BranchController extends Controller
                         'state' => 'nullable|string|max:100',
                         'country' => 'nullable|string|max:100',
                         'zip_code' => 'nullable|string|max:20',
-                        'phone' => 'nullable|string|max:20',
+                        'phone' => ['nullable', 'string', 'regex:/^[0-9]{10}$/'],
                         'email' => 'nullable|email|max:255',
                         'status' => 'nullable|in:active,inactive',
                     ]);

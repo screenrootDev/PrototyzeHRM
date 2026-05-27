@@ -47,6 +47,7 @@ import {
   Timer,
   Coins,
   Fingerprint,
+  IndianRupee,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -74,7 +75,6 @@ import {
   FolderIcon,
   FolderOpenIcon,
   DashboardIcon,
-  DollarSignIcon,
   UsersRoundIcon,
   UserCheckIcon,
   UserPlusIcon,
@@ -861,7 +861,7 @@ export function AppSidebar() {
     if (payrollChildren.length > 0) {
       items.push({
         title: "Payroll Management",
-        icon: () => <DollarSignIcon size={16} isAnimated={true} />,
+        icon: () => <IndianRupee size={16} />,
         children: payrollChildren,
       });
     }

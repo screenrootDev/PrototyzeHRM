@@ -378,7 +378,7 @@ export default function Branches() {
             { name: 'state', label: 'State/Province', type: 'text' },
             { name: 'country', label: 'Country', type: 'text' },
             { name: 'zip_code', label: 'ZIP/Postal Code', type: 'text' },
-            { name: 'phone', label: 'Phone', type: 'text' },
+            { name: 'phone', label: 'Phone', type: 'text', validation: { pattern: "^[0-9]{10}$", minLength: 10, maxLength: 10 } },
             { name: 'email', label: 'Email', type: 'email' },
             {
               name: 'status',

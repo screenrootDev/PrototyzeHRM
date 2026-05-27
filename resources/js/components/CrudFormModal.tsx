@@ -307,12 +307,9 @@ export function CrudFormModal({
       };
 
       return (
-        <div className="relative group/field">
-          <div className="min-h-[42px] px-4 py-2.5 rounded-xl bg-gray-50/50 dark:bg-white/5 border border-gray-100 dark:border-white/10 transition-all group-hover/field:border-primary/20 group-hover/field:bg-white dark:group-hover/field:bg-white/10 shadow-sm overflow-hidden">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary/10 group-hover/field:bg-primary transition-colors" />
-            <div className="text-sm font-semibold text-foreground leading-relaxed">
-              {getDisplayValue()}
-            </div>
+        <div className="relative py-1.5">
+          <div className="text-sm font-semibold text-foreground">
+            {getDisplayValue()}
           </div>
         </div>
       );
@@ -335,6 +332,11 @@ export function CrudFormModal({
             required={field.required}
             className={errors[field.name] ? 'border-red-500' : ''}
             disabled={mode === 'view'}
+            pattern={field.validation?.pattern}
+            min={field.validation?.min}
+            max={field.validation?.max}
+            minLength={field.validation?.minLength}
+            maxLength={field.validation?.maxLength}
           />
         );
 
@@ -648,9 +650,9 @@ export function CrudFormModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className={cn(getModalSizeClass(), "max-h-[95vh] p-0 overflow-hidden border-none shadow-2xl")} modalId={modalId}>
+      <DialogContent className={cn(getModalSizeClass(), "max-h-[95vh] p-0 overflow-hidden border-none shadow-2xl flex flex-col gap-0")} modalId={modalId}>
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-background pointer-events-none" />
-        <DialogHeader className="p-6 pb-4 relative border-b border-gray-100 dark:border-gray-800">
+        <DialogHeader className="p-6 pb-4 relative border-b border-gray-100 dark:border-gray-800 shrink-0">
           <div className="flex flex-col space-y-1.5 relative z-10">
             <DialogTitle className="text-2xl font-extrabold tracking-tight text-foreground bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70">
               {title}
@@ -661,7 +663,7 @@ export function CrudFormModal({
           </div>
           <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         </DialogHeader>
-        <ScrollArea className="max-h-[75vh] px-6 py-2">
+        <div className="flex-1 overflow-y-auto px-6 py-2 relative z-10">
           <form onSubmit={handleSubmit} className="space-y-6 pb-6">
             {/* Price Summary Section */}
             {formConfig.priceSummary && (
@@ -700,7 +702,7 @@ export function CrudFormModal({
                       }}
                     >
                       <Label htmlFor={field.name} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">
-                        {field.label} {field.required && !(field.type === 'file' && mode === 'edit') && <span className="text-primary">*</span>}
+                        {field.label} {field.required && mode !== 'view' && !(field.type === 'file' && mode === 'edit') && <span className="text-primary">*</span>}
                       </Label>
                       {renderField(field)}
                       {errors[field.name] && (
@@ -725,8 +727,8 @@ export function CrudFormModal({
                         flexGrow: field.width ? 0 : 1
                       }}
                     >
-                      <Label htmlFor={field.name} className="text-sm font-medium">
-                        {field.label} {field.required && !(field.type === 'file' && mode === 'edit') && <span className="text-red-500">*</span>}
+                      <Label htmlFor={field.name} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">
+                        {field.label} {field.required && mode !== 'view' && !(field.type === 'file' && mode === 'edit') && <span className="text-primary">*</span>}
                       </Label>
                       {renderField(field)}
                       {errors[field.name] && (
@@ -750,8 +752,8 @@ export function CrudFormModal({
                         className="space-y-2"
                         style={{ width: field.width || "100%" }}
                       >
-                        <Label htmlFor={field.name} className="text-sm font-medium">
-                          {field.label} {field.required && !(field.type === 'file' && mode === 'edit') && <span className="text-red-500">*</span>}
+                        <Label htmlFor={field.name} className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground ml-0.5">
+                          {field.label} {field.required && mode !== 'view' && !(field.type === 'file' && mode === 'edit') && <span className="text-primary">*</span>}
                         </Label>
                         {renderField(field)}
                         {errors[field.name] && (
@@ -764,8 +766,8 @@ export function CrudFormModal({
               ))
             )}
           </form>
-        </ScrollArea>
-        <DialogFooter className="px-6 py-4 bg-muted/30 backdrop-blur-sm border-t sm:justify-end gap-2">
+        </div>
+        <DialogFooter className="px-6 py-4 bg-muted/30 backdrop-blur-sm border-t sm:justify-end gap-2 shrink-0">
           <Button type="button" variant="ghost" onClick={onClose} className="px-6 hover:bg-muted/50 transition-colors">
             {"Cancel"}
           </Button>

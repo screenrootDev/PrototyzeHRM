@@ -54,6 +54,7 @@ import {
   Upload,
   Image as ImageIcon,
   Mail,
+  Building2,
 } from "lucide-react";
 import { getImagePath, getInitials } from "@/utils/helpers";
 import { toast } from "sonner";
@@ -63,45 +64,47 @@ import MediaLibraryModal from "@/components/MediaLibraryModal";
 const CompanyLogoField = ({
   value,
   onChange,
+  mode,
 }: {
   value: any;
   onChange: (val: any) => void;
+  mode?: "create" | "edit" | "view";
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <div className="col-span-full flex flex-col items-center justify-center space-y-4 mb-6">
-        <div
-          className="relative group cursor-pointer"
-          onClick={() => setIsModalOpen(true)}
-        >
-          <div className="h-32 w-32 rounded-3xl overflow-hidden border-2 border-primary/10 shadow-2xl transition-all duration-300 group-hover:border-primary/40 group-hover:shadow-primary/20 group-hover:-translate-y-1">
+      <div className="col-span-full space-y-3 mb-6">
+        <div className="flex items-start gap-4">
+          {/* Left Side: Dashed Placeholder */}
+          <div className="h-24 w-24 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-700 flex items-center justify-center bg-gray-50 dark:bg-gray-900 overflow-hidden shrink-0">
             {value ? (
               <img
                 src={getImagePath(value)}
-                className="h-full w-full object-cover"
-                alt="Logo"
+                className=""
+                alt="Company Logo"
               />
             ) : (
-              <div className="h-full w-full bg-gradient-to-br from-primary/5 to-primary/10 flex items-center justify-center text-primary/30">
-                <ImageIcon size={48} strokeWidth={1.5} />
-              </div>
+              <Building2 className="text-gray-300 dark:text-gray-600" size={32} />
             )}
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
-              <div className="bg-white/20 p-3 rounded-full backdrop-blur-md border border-white/30">
-                <Camera className="text-white" size={24} />
-              </div>
+          </div>
+
+          {/* Right Side: Upload Button & Text (Hidden in View Mode) */}
+          {mode !== "view" && (
+            <div className="flex flex-col items-start gap-2 mt-2">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="font-semibold text-gray-700 dark:text-gray-300 h-10 px-4 rounded-xl border-gray-200 dark:border-gray-800"
+                onClick={() => setIsModalOpen(true)}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload image
+              </Button>
+              <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                Recommended: Square PNG or JPG, max 2MB.
+              </p>
             </div>
-          </div>
-          <div className="absolute -bottom-2 -right-2 bg-primary text-primary-foreground p-2 rounded-xl shadow-xl border-2 border-white dark:border-gray-950 transform transition-transform group-hover:scale-110">
-            <Upload size={14} strokeWidth={2.5} />
-          </div>
-        </div>
-        <div className="text-center space-y-1">
-          <h4 className="text-sm font-bold tracking-tight">Brand Identity</h4>
-          <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-medium">
-            Recommended: Square SVG or PNG
-          </p>
+          )}
         </div>
       </div>
       <MediaLibraryModal
@@ -125,6 +128,7 @@ import {
 import { DatePicker } from "@/components/ui/date-picker";
 import { CrudFormModal } from "@/components/CrudFormModal";
 import { CrudDeleteModal } from "@/components/CrudDeleteModal";
+import { AddCompanyModal } from "./add-company-modal";
 
 export default function Companies() {
   const {
@@ -1115,7 +1119,14 @@ export default function Companies() {
         </div>
       )}
 
+      {/* Add New Company Modal (Custom UI) */}
+      <AddCompanyModal 
+        isOpen={isFormModalOpen && formMode === "create"} 
+        onClose={() => setIsFormModalOpen(false)} 
+      />
+
       {/* Form Modal */}
+      {formMode !== "create" && (
       <CrudFormModal
         isOpen={isFormModalOpen}
         onClose={() => setIsFormModalOpen(false)}
@@ -1145,6 +1156,7 @@ export default function Companies() {
                 <CompanyLogoField
                   value={formData.avatar}
                   onChange={(val) => onChange("avatar", val)}
+                  mode={formMode}
                 />
               ),
             },
@@ -1161,6 +1173,13 @@ export default function Companies() {
               type: "email",
               required: true,
               placeholder: "contact@company.com",
+            },
+            {
+              name: "phone",
+              label: "Phone Number",
+              type: "text",
+              required: false,
+              placeholder: "+91 98765 43210",
             },
             {
               name: "total_storage_limit",
@@ -1249,6 +1268,7 @@ export default function Companies() {
         mode={formMode}
         errors={errors}
       />
+      )}
 
       {/* Delete Modal */}
       <CrudDeleteModal

@@ -35,6 +35,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
   
   const { auth } = usePage<SharedData>().props;
   const [activeSection, setActiveSection] = useState('profile');
+  const [showPassword, setShowPassword] = useState(false);
   
   // Refs for each section
   const profileRef = useRef<HTMLDivElement>(null);
@@ -58,6 +59,16 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
     password: '',
     password_confirmation: '',
   });
+
+  const generatePassword = () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+';
+    let newPassword = '';
+    for (let i = 0; i < 16; i++) {
+      newPassword += chars[Math.floor(Math.random() * chars.length)];
+    }
+    setPasswordData((data) => ({ ...data, password: newPassword, password_confirmation: newPassword }));
+    setShowPassword(true);
+  };
 
   // Handle profile form submission
   const submitProfile = (e: React.FormEvent) => {
@@ -319,13 +330,18 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="password">{"New password"}</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="password">{"New password"}</Label>
+                      <Button type="button" variant="outline" size="sm" onClick={generatePassword} className="h-7 px-2 text-xs">
+                        Generate Password
+                      </Button>
+                    </div>
                     <Input
                       id="password"
                       ref={passwordInput}
                       value={passwordData.password}
                       onChange={(e) => setPasswordData('password', e.target.value)}
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className="mt-1 block w-full"
                       autoComplete="new-password"
                       placeholder="New password"
@@ -339,7 +355,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       id="password_confirmation"
                       value={passwordData.password_confirmation}
                       onChange={(e) => setPasswordData('password_confirmation', e.target.value)}
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       className="mt-1 block w-full"
                       autoComplete="new-password"
                       placeholder="Confirm password"
