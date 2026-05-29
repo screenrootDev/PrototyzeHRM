@@ -9,6 +9,10 @@ import { usePage } from '@inertiajs/react';
 import ReactApexChart from 'react-apexcharts';
 import { hasPermission } from '@/utils/authorization';
 import { format } from 'date-fns';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 interface CompanyDashboardData {
   stats: {
@@ -632,6 +636,140 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
             </Card>
           </div>
           )}
+        </div>
+
+        {/* Calendar and Leaves Row */}
+        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-5">
+          {/* Calendar */}
+          <div className="lg:col-span-2">
+            <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg overflow-hidden">
+              <CardHeader className="border-b-0 pb-2 pt-4">
+                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
+                  Events & Holidays Calendar
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-4">
+                <style dangerouslySetInnerHTML={{__html: `
+                  .fc .fc-toolbar-title { font-size: 1.125rem; font-weight: 600; color: #18181b; }
+                  .fc .fc-button-primary { background-color: #22c55e !important; border-color: #22c55e !important; }
+                  .fc .fc-button-primary:hover { background-color: #16a34a !important; border-color: #16a34a !important; }
+                  .fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active { background-color: #15803d !important; border-color: #15803d !important; }
+                  .fc-today-button { background-color: #64748b !important; border-color: #64748b !important; text-transform: capitalize; }
+                  .fc-today-button:hover { background-color: #475569 !important; border-color: #475569 !important; }
+                  .fc-today-button:disabled { background-color: #94a3b8 !important; border-color: #94a3b8 !important; opacity: 1 !important;}
+                  .fc th { padding: 10px 0 !important; color: #52525b; font-weight: 500; font-size: 0.875rem; border-color: #f4f4f5 !important; }
+                  .fc td, .fc th { border-color: #f4f4f5 !important; }
+                  .fc .fc-daygrid-day-number { color: #52525b; font-size: 0.875rem; font-weight: 500; padding: 8px !important; }
+                  .fc .fc-day-today { background-color: #f8fafc !important; }
+                  .fc-event { border: none !important; border-radius: 4px; padding: 2px 4px; font-size: 0.75rem; font-weight: 500; cursor: pointer; }
+                  .fc-theme-standard td, .fc-theme-standard th { border: 1px solid #e4e4e7 !important; }
+                `}} />
+                <FullCalendar
+                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+                  initialView="dayGridMonth"
+                  headerToolbar={{
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                  }}
+                  events={recentActivities.calendarEvents || []}
+                  height={550}
+                />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Leaves and Announcements */}
+          <div className="flex flex-col gap-5">
+            {/* Recent Leave Applications */}
+            <Card className="border border-zinc-100 shadow-sm bg-white rounded-lg flex-1">
+              <CardHeader className="border-b border-zinc-100 pb-3">
+                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
+                  Recent Leave Applications
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="max-h-[300px] overflow-y-auto px-5 pb-5 pt-4 custom-scrollbar">
+                  <div className="flex flex-col gap-3">
+                    {recentActivities.recentLeaveApplications && recentActivities.recentLeaveApplications.length > 0 ? (
+                      recentActivities.recentLeaveApplications.map((leave, index) => (
+                        <div key={index} className="flex flex-col p-4 border border-zinc-200 rounded-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden bg-white">
+                          <div className={`absolute left-0 top-0 bottom-0 w-1 ${
+                            leave.status === 'approved' ? 'bg-green-500' : 
+                            leave.status === 'rejected' ? 'bg-red-500' : 
+                            'bg-amber-400'
+                          }`}></div>
+                          
+                          <div className="flex justify-between items-start ml-2">
+                            <div className="flex items-start gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                                leave.status === 'approved' ? 'bg-green-100 text-green-600' : 
+                                leave.status === 'rejected' ? 'bg-red-100 text-red-600' : 
+                                'bg-amber-100 text-amber-600'
+                              }`}>
+                                <Calendar className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <h6 className="font-semibold text-zinc-800 text-sm">{leave.employee?.name} - {leave.leave_type?.name}</h6>
+                                <p className="text-zinc-500 text-xs mt-1">
+                                  {format(new Date(leave.start_date), 'yyyy-MM-dd')}
+                                  {leave.start_date !== leave.end_date && ` - ${format(new Date(leave.end_date), 'yyyy-MM-dd')}`} 
+                                  <span className="ml-1 text-zinc-400">({leave.total_days} {leave.total_days === 1 ? 'day' : 'days'})</span>
+                                </p>
+                              </div>
+                            </div>
+                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                              leave.status === 'approved' ? 'bg-green-100 text-green-700' : 
+                              leave.status === 'rejected' ? 'bg-red-100 text-red-700' : 
+                              'bg-amber-100 text-amber-700'
+                            }`}>
+                              {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
+                            </span>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-zinc-500 text-sm">No recent leave applications</div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Announcements */}
+            <Card className="border border-zinc-100 shadow-sm bg-white rounded-lg flex-1">
+              <CardHeader className="border-b border-zinc-100 pb-3">
+                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-800"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>
+                  Announcements
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="max-h-[230px] overflow-y-auto px-5 pb-5 pt-4 custom-scrollbar">
+                  <div className="flex flex-col gap-4">
+                    {recentActivities.announcements && recentActivities.announcements.length > 0 ? (
+                      recentActivities.announcements.slice(0,3).map((announcement, index) => (
+                        <div key={index} className="flex gap-3">
+                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                          </div>
+                          <div>
+                            <h6 className="font-semibold text-zinc-800 text-sm">{announcement.title}</h6>
+                            <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{announcement.description}</p>
+                            <p className="text-zinc-400 text-xs mt-1">{format(new Date(announcement.created_at), 'yyyy-MM-dd')}</p>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 text-zinc-500 text-sm">No announcements</div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
     </PageTemplate>

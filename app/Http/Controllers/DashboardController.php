@@ -257,6 +257,72 @@ class DashboardController extends Controller
         return collect($events)->sortBy('date')->values()->all();
     }
 
+    private function getCalendarEvents($companyUserIds = null)
+    {
+        $events = [];
+        $startOfMonth = now()->startOfMonth()->subDays(7);
+        $endOfMonth = now()->endOfMonth()->addDays(7);
+
+        // Fetch Holidays
+        $holidays = \App\Models\Holiday::whereBetween('start_date', [$startOfMonth, $endOfMonth])
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })->get();
+            
+        foreach ($holidays as $holiday) {
+            $events[] = [
+                'id' => 'hol_' . $holiday->id,
+                'title' => $holiday->name,
+                'start' => $holiday->start_date,
+                'end' => $holiday->end_date ?? $holiday->start_date,
+                'backgroundColor' => '#22c55e', // green
+                'borderColor' => '#22c55e',
+                'allDay' => true
+            ];
+        }
+
+        // Fetch Meetings
+        $meetings = \App\Models\Meeting::whereBetween('meeting_date', [$startOfMonth, $endOfMonth])
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })->get();
+
+        foreach ($meetings as $meeting) {
+            $events[] = [
+                'id' => 'meet_' . $meeting->id,
+                'title' => $meeting->title,
+                'start' => $meeting->meeting_date . 'T' . $meeting->start_time,
+                'end' => $meeting->meeting_date . 'T' . $meeting->end_time,
+                'backgroundColor' => '#8b5cf6', // purple
+                'borderColor' => '#8b5cf6',
+                'allDay' => false
+            ];
+        }
+
+        // Birthdays
+        $birthdays = \App\Models\Employee::with('user')
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })->get();
+            
+        foreach ($birthdays as $emp) {
+            if ($emp->date_of_birth) {
+                $dob = \Carbon\Carbon::parse($emp->date_of_birth);
+                $bdayThisYear = \Carbon\Carbon::create(now()->year, $dob->month, $dob->day);
+                $events[] = [
+                    'id' => 'bday_' . $emp->id,
+                    'title' => ($emp->user->name ?? 'Staff') . ' Birthday',
+                    'start' => $bdayThisYear->format('Y-m-d'),
+                    'backgroundColor' => '#ef4444', // red
+                    'borderColor' => '#ef4444',
+                    'allDay' => true
+                ];
+            }
+        }
+
+        return $events;
+    }
+
     private function formatBytes($bytes, $precision = 2)
     {
         $units = array('B', 'KB', 'MB', 'GB', 'TB');
@@ -421,18 +487,23 @@ class DashboardController extends Controller
 
         // Recent Activities
         $recentLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with(['employee', 'leaveType']);
-        if (config('app.is_demo') == true) {
+            ->with('employee');
+            
+        if ($user->type === 'employee') {
             $recentLeaves = $recentLeaves->whereIn('status', ['approved', 'absent'])->get();
         } else {
             $recentLeaves = $recentLeaves->whereIn('status', ['approved', 'absent'])
-                ->whereDate('start_date', '<=', today())
-                ->whereDate('end_date', '>=', today())
+                ->orderBy('created_at', 'desc')
+                ->take(5)
                 ->get();
         }
 
-
-
+        // Recent Leave Applications (All statuses)
+        $recentLeaveApplications = LeaveApplication::whereIn('created_by', $companyUserIds)
+            ->with(['employee.employee', 'leaveType'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
 
         $recentCandidates = Candidate::whereIn('created_by', $companyUserIds)
             ->with(['job'])
@@ -520,6 +591,8 @@ class DashboardController extends Controller
                 'missingAttendance' => $missingAttendance
             ],
             'upcomingEvents' => $this->getUpcomingEvents($companyUserIds),
+            'calendarEvents' => $this->getCalendarEvents($companyUserIds),
+            'recentLeaveApplications' => $recentLeaveApplications,
             'onboardingStatus' => $onboardingStatus,
             'todoList' => $todoList,
             'userType' => $user->type
