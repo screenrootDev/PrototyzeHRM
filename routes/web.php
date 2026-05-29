@@ -760,7 +760,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Meeting Types Routes
-        Route::middleware('permission:manage-meeting-types')->group(function () {
+        Route::middleware(['permission:manage-meeting-types', 'feature:meetings'])->group(function () {
             Route::get('meetings/meeting-types', [\App\Http\Controllers\MeetingTypeController::class, 'index'])->name('meetings.meeting-types.index');
             Route::post('meetings/meeting-types', [\App\Http\Controllers\MeetingTypeController::class, 'store'])->middleware('permission:create-meeting-types')->name('meetings.meeting-types.store');
             Route::put('meetings/meeting-types/{meetingType}', [\App\Http\Controllers\MeetingTypeController::class, 'update'])->middleware('permission:edit-meeting-types')->name('meetings.meeting-types.update');
@@ -769,7 +769,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Meeting Rooms Routes
-        Route::middleware('permission:manage-meeting-rooms')->group(function () {
+        Route::middleware(['permission:manage-meeting-rooms', 'feature:meetings'])->group(function () {
             Route::get('meetings/meeting-rooms', [\App\Http\Controllers\MeetingRoomController::class, 'index'])->name('meetings.meeting-rooms.index');
             Route::post('meetings/meeting-rooms', [\App\Http\Controllers\MeetingRoomController::class, 'store'])->middleware('permission:create-meeting-rooms')->name('meetings.meeting-rooms.store');
             Route::put('meetings/meeting-rooms/{meetingRoom}', [\App\Http\Controllers\MeetingRoomController::class, 'update'])->middleware('permission:edit-meeting-rooms')->name('meetings.meeting-rooms.update');
@@ -778,7 +778,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Meetings Routes
-        Route::middleware('permission:manage-meetings')->group(function () {
+        Route::middleware(['permission:manage-meetings', 'feature:meetings'])->group(function () {
             Route::get('meetings/meetings', [\App\Http\Controllers\MeetingController::class, 'index'])->name('meetings.meetings.index');
             Route::post('meetings/meetings', [\App\Http\Controllers\MeetingController::class, 'store'])->middleware('permission:create-meetings')->name('meetings.meetings.store');
             Route::put('meetings/meetings/{meeting}', [\App\Http\Controllers\MeetingController::class, 'update'])->middleware('permission:edit-meetings')->name('meetings.meetings.update');
@@ -787,7 +787,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Meeting Attendees Routes
-        Route::middleware('permission:manage-meeting-attendees')->group(function () {
+        Route::middleware(['permission:manage-meeting-attendees', 'feature:meetings'])->group(function () {
             Route::get('meetings/meeting-attendees', [\App\Http\Controllers\MeetingAttendeeController::class, 'index'])->name('meetings.meeting-attendees.index');
             Route::post('meetings/meeting-attendees', [\App\Http\Controllers\MeetingAttendeeController::class, 'store'])->middleware('permission:create-meeting-attendees')->name('meetings.meeting-attendees.store');
             Route::put('meetings/meeting-attendees/{meetingAttendee}', [\App\Http\Controllers\MeetingAttendeeController::class, 'update'])->middleware('permission:edit-meeting-attendees')->name('meetings.meeting-attendees.update');
@@ -797,7 +797,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Meeting Minutes Routes
-        Route::middleware('permission:manage-meeting-minutes')->group(function () {
+        Route::middleware(['permission:manage-meeting-minutes', 'feature:meetings'])->group(function () {
             Route::get('meetings/meeting-minutes', [\App\Http\Controllers\MeetingMinuteController::class, 'index'])->name('meetings.meeting-minutes.index');
             Route::post('meetings/meeting-minutes', [\App\Http\Controllers\MeetingMinuteController::class, 'store'])->middleware('permission:create-meeting-minutes')->name('meetings.meeting-minutes.store');
             Route::put('meetings/meeting-minutes/{meetingMinute}', [\App\Http\Controllers\MeetingMinuteController::class, 'update'])->middleware('permission:edit-meeting-minutes')->name('meetings.meeting-minutes.update');
@@ -805,7 +805,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         });
 
         // Action Items Routes
-        Route::middleware('permission:manage-action-items')->group(function () {
+        Route::middleware(['permission:manage-action-items', 'feature:meetings'])->group(function () {
             Route::get('meetings/action-items', [\App\Http\Controllers\ActionItemController::class, 'index'])->name('meetings.action-items.index');
             Route::post('meetings/action-items', [\App\Http\Controllers\ActionItemController::class, 'store'])->middleware('permission:create-action-items')->name('meetings.action-items.store');
             Route::put('meetings/action-items/{actionItem}', [\App\Http\Controllers\ActionItemController::class, 'update'])->middleware('permission:edit-action-items')->name('meetings.action-items.update');

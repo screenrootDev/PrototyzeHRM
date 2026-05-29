@@ -83,10 +83,12 @@ import {
 } from "@animateicons/react/lucide";
 
 export function AppSidebar() {
-  const { auth, globalSettings, companySlug } = usePage().props as any;
+  const { auth, globalSettings, companySlug, active_modules = [] } = usePage().props as any;
   const userRole = auth.user?.type || auth.user?.role;
   const permissions = auth?.permissions || [];
   const isSaas = globalSettings?.is_saas;
+
+  const isModuleEnabled = (module: string) => active_modules.includes(module);
 
   // Get current direction
   const isRtl = document.documentElement.dir === "rtl";
@@ -275,7 +277,7 @@ export function AppSidebar() {
       });
     }
 
-    if (performanceChildren.length > 0) {
+    if (isModuleEnabled("performance") && performanceChildren.length > 0) {
       hrChildren.push({
         title: "Performance",
         children: performanceChildren,
@@ -369,7 +371,7 @@ export function AppSidebar() {
       });
     }
 
-    if (assetChildren.length > 0) {
+    if (isModuleEnabled("assets") && assetChildren.length > 0) {
       hrChildren.push({
         title: "Asset Management",
         children: assetChildren,
@@ -409,7 +411,7 @@ export function AppSidebar() {
 
     // end
 
-    if (trainingChildren.length > 0) {
+    if (isModuleEnabled("training") && trainingChildren.length > 0) {
       hrChildren.push({
         title: "Training",
         children: trainingChildren,
@@ -564,7 +566,7 @@ export function AppSidebar() {
       }
     }
 
-    if (recruitmentChildren.length > 0) {
+    if (isModuleEnabled("recruitment") && recruitmentChildren.length > 0) {
       items.push({
         title: "Recruitment",
         icon: () => <UsersRoundIcon size={16} isAnimated={true} />,
@@ -603,7 +605,7 @@ export function AppSidebar() {
       });
     }
 
-    if (contractChildren.length > 0) {
+    if (isModuleEnabled("contracts") && contractChildren.length > 0) {
       items.push({
         title: "Contract Management",
         icon: () => <ClipboardIcon size={16} isAnimated={true} />,
@@ -642,7 +644,7 @@ export function AppSidebar() {
       });
     }
 
-    if (documentChildren.length > 0) {
+    if (isModuleEnabled("documents") && documentChildren.length > 0) {
       items.push({
         title: "Document Management",
         icon: () => <FolderOpenIcon size={16} isAnimated={true} />,
@@ -695,7 +697,7 @@ export function AppSidebar() {
       });
     }
 
-    if (meetingChildren.length > 0) {
+    if (isModuleEnabled("meetings") && meetingChildren.length > 0) {
       items.push({
         title: "Meetings",
         icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
@@ -753,7 +755,7 @@ export function AppSidebar() {
       });
     }
 
-    if (leaveChildren.length > 0) {
+    if (isModuleEnabled("leave") && leaveChildren.length > 0) {
       items.push({
         title: "Leave Management",
         icon: () => <LayoutListIcon size={16} isAnimated={true} />,
@@ -792,7 +794,7 @@ export function AppSidebar() {
       });
     }
 
-    if (attendanceChildren.length > 0) {
+    if (isModuleEnabled("attendance") && attendanceChildren.length > 0) {
       items.push({
         title: "Attendance",
         icon: () => <UserCheckIcon size={16} isAnimated={true} />,

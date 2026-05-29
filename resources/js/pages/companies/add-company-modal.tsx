@@ -20,12 +20,35 @@ import {
   Wand2,
   Eye,
   EyeOff,
+  Layers,
+  MessageCircle,
+  UsersRound,
+  Package,
+  GraduationCap,
+  Clipboard,
+  FolderOpen,
+  CalendarRange,
+  UserCheck,
+  Target,
 } from "lucide-react";
 import { getImagePath } from "@/utils/helpers";
 import MediaLibraryModal from "@/components/MediaLibraryModal";
 import { toast } from "sonner";
 import { router } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
+
+export const AVAILABLE_MODULES = [
+  { id: "meetings", label: "Meetings", icon: MessageCircle, color: "text-blue-500" },
+  { id: "recruitment", label: "Recruitment", icon: UsersRound, color: "text-indigo-500" },
+  { id: "assets", label: "Asset Management", icon: Package, color: "text-emerald-500" },
+  { id: "training", label: "Training", icon: GraduationCap, color: "text-amber-500" },
+  { id: "contracts", label: "Contract Management", icon: Clipboard, color: "text-rose-500" },
+  { id: "documents", label: "Document Management", icon: FolderOpen, color: "text-cyan-500" },
+  { id: "leave", label: "Leave Management", icon: CalendarRange, color: "text-orange-500" },
+  { id: "attendance", label: "Attendance", icon: UserCheck, color: "text-purple-500" },
+  { id: "performance", label: "Performance", icon: Target, color: "text-pink-500" },
+];
 
 export function AddCompanyModal({
   isOpen,
@@ -41,6 +64,7 @@ export function AddCompanyModal({
     phone: "",
     password: "",
     password_confirmation: "",
+    active_module: [] as string[],
   });
 
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
@@ -128,6 +152,7 @@ export function AddCompanyModal({
           phone: "",
           password: "",
           password_confirmation: "",
+          active_module: [],
         });
         setErrors({});
       },
@@ -327,6 +352,39 @@ export function AddCompanyModal({
                     <p className="mt-1 text-xs text-red-500">{errors.password_confirmation}</p>
                   )}
                 </div>
+              </div>
+            </div>
+
+            {/* SECTION 3: Modules */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-2">
+                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">Enabled Modules</h3>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                {AVAILABLE_MODULES.map((module) => (
+                  <div key={module.id} className="flex flex-row items-center space-x-3 space-y-0 rounded-md border border-gray-200 dark:border-gray-800 p-4 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                    <Checkbox
+                      id={`module-${module.id}`}
+                      checked={formData.active_module.includes(module.id)}
+                      onCheckedChange={(checked) => {
+                        setFormData(prev => {
+                          const current = [...prev.active_module];
+                          if (checked) {
+                            return { ...prev, active_module: [...current, module.id] };
+                          } else {
+                            return { ...prev, active_module: current.filter(id => id !== module.id) };
+                          }
+                        });
+                      }}
+                    />
+                    <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                      <module.icon className={`h-4 w-4 shrink-0 ${module.color}`} />
+                      <Label htmlFor={`module-${module.id}`} className="font-medium text-sm cursor-pointer text-gray-700 dark:text-gray-300 truncate">
+                        {module.label}
+                      </Label>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 

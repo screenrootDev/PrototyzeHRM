@@ -75,16 +75,19 @@ class HandleInertiaRequests extends Middleware
         $globalSettings['availableLanguages'] = $availableLanguages;
 
         $companySlug = '';
+        $activeModule = [];
         $checkUser = Auth::user();
         if ($checkUser && $checkUser->hasRole('company')) {
             $companySlug = Auth::user()->slug ?? '';
+            $activeModule = Auth::user()->active_module ?? [];
         } else {
             $authUser = Auth::user();
             if ($authUser) {
                 $getCompanyId = getCompanyId($authUser->id);
-                $getUser = Auth::user()->where('id', $getCompanyId)->first();
+                $getUser = \App\Models\User::where('id', $getCompanyId)->first();
                 if ($getUser) {
                     $companySlug = $getUser->slug;
+                    $activeModule = $getUser->active_module ?? [];
                 }
             }
         }
@@ -116,6 +119,7 @@ class HandleInertiaRequests extends Middleware
             'globalSettings' => $globalSettings,
             'is_demo' => config('app.is_demo'),
             'companySlug' => $companySlug,
+            'active_modules' => $activeModule,
         ];
     }
 }

@@ -60,6 +60,8 @@ import { getImagePath, getInitials } from "@/utils/helpers";
 import { toast } from "sonner";
 import PasswordField from "@/components/PasswordField";
 import MediaLibraryModal from "@/components/MediaLibraryModal";
+import { AVAILABLE_MODULES } from "./add-company-modal";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const CompanyLogoField = ({
   value,
@@ -1247,6 +1249,44 @@ export default function Companies() {
                     >
                       Reset Password
                     </Button>
+                  </div>
+                </div>
+              ),
+            },
+            {
+              name: "active_module",
+              label: "Enabled Modules",
+              type: "text",
+              colSpan: 2,
+              render: (field, formData, onChange, mode) => (
+                <div className="col-span-full mt-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    {AVAILABLE_MODULES.map((module) => {
+                      const isActive = (formData.active_module || []).includes(module.id);
+                      return (
+                        <div key={module.id} className="flex flex-row items-center space-x-3 space-y-0 rounded-md border border-gray-200 dark:border-gray-800 p-4 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
+                          <Checkbox
+                            id={`module-edit-${module.id}`}
+                            checked={isActive}
+                            disabled={mode === "view"}
+                            onCheckedChange={(checked) => {
+                              const current = formData.active_module || [];
+                              if (checked) {
+                                onChange("active_module", [...current, module.id]);
+                              } else {
+                                onChange("active_module", current.filter((id: string) => id !== module.id));
+                              }
+                            }}
+                          />
+                          <div className="flex items-center gap-2 overflow-hidden min-w-0">
+                            <module.icon className={`h-4 w-4 shrink-0 ${module.color}`} />
+                            <Label htmlFor={`module-edit-${module.id}`} className={`font-medium text-sm text-gray-700 dark:text-gray-300 truncate ${mode === "view" ? "" : "cursor-pointer"}`}>
+                              {module.label}
+                            </Label>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ),

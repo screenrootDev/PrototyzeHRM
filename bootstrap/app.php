@@ -36,6 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => App\Http\Middleware\EnsureEmailIsVerified::class,
             'setting' => \App\Http\Middleware\SettingMiddleware::class,
             'career.shared' => \App\Http\Middleware\CareerSharedDataMiddleware::class,
+            'feature' => \App\Http\Middleware\CheckFeatureAccess::class,
         ]);
 
         $middleware->validateCsrfTokens(
