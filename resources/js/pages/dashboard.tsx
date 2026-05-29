@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, TrendingUp, BarChart3, Bell, ExternalLink, Copy, CheckCircle } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { usePage } from '@inertiajs/react';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend, LineChart, Line, AreaChart, Area } from 'recharts';
+import ReactApexChart from 'react-apexcharts';
 import { hasPermission } from '@/utils/authorization';
+import { format } from 'date-fns';
 
 interface CompanyDashboardData {
   stats: {
@@ -23,9 +24,11 @@ interface CompanyDashboardData {
     onLeaveToday: number;
     activeJobPostings: number;
     totalCandidates: number;
+    totalPromotions?: number;
+    terminations?: number;
   };
   charts: {
-    departmentStats: Array<{name: string; value: number; color: string}>;
+    designationStats: Array<{name: string; value: number; color: string}>;
     hiringTrend: Array<{month: string; hires: number}>;
     candidateStatusStats: Array<{name: string; value: number; color: string}>;
     leaveTypesStats: Array<{name: string; value: number; color: string}>;
@@ -36,7 +39,27 @@ interface CompanyDashboardData {
     candidates: Array<any>;
     announcements: Array<any>;
     meetings: Array<any>;
+    pendingLeavesList?: Array<any>;
+    todayLeaves?: Array<any>;
+    missingAttendance?: Array<any>;
   };
+  upcomingEvents?: Array<{
+    id: string;
+    type: string;
+    name: string;
+    date: string;
+    isToday: boolean;
+  }>;
+  onboardingStatus?: Array<{
+    name: string;
+    role: string;
+    progress: number;
+  }>;
+  todoList?: Array<{
+    id: number;
+    task: string;
+    completed: boolean;
+  }>;
   userType: string;
 }
 
@@ -49,7 +72,8 @@ interface PageAction {
 
 export default function Dashboard({ dashboardData }: { dashboardData: CompanyDashboardData }) {
   
-  const { auth, companySlug } = usePage().props as any;
+  const { auth, companySlug, active_modules = [] } = usePage().props as any;
+  const isModuleEnabled = (module: string) => active_modules.includes(module);
   const [copied, setCopied] = useState(false);
 
   const handleCopyCareerLink = () => {
@@ -94,7 +118,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
   };
 
   const charts = dashboardData?.charts || {
-    departmentStats: [],
+    designationStats: [],
     hiringTrend: [],
     candidateStatusStats: [],
     leaveTypesStats: [],
@@ -107,8 +131,15 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
     leaves: [],
     candidates: [],
     announcements: [],
-    meetings: []
+    meetings: [],
+    pendingLeavesList: [],
+    todayLeaves: [],
+    missingAttendance: []
   };
+  
+  const upcomingEvents = dashboardData?.upcomingEvents || [];
+  const onboardingStatus = dashboardData?.onboardingStatus || [];
+  const todoList = dashboardData?.todoList || [];
 
   const userType = dashboardData?.userType || 'employee';
   const isCompanyUser = userType === 'company';
@@ -129,588 +160,479 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
       'Completed': 'bg-green-50 text-green-700 ring-green-600/20',
       'Cancelled': 'bg-red-50 text-red-700 ring-red-600/10'
     };
-    return colors[status] || 'bg-gray-50 text-gray-700 ring-gray-600/20';
+    return colors[status] || 'bg-zinc-50 text-zinc-700 ring-zinc-600/20';
   };
 
   return (
     <PageTemplate 
       title={'Dashboard'}
+      hideTitle={true}
       url="/dashboard"
-      actions={pageActions}
     >
-      <div className="space-y-6">
-        {/* Key Metrics */}
-        <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Total Employees'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.totalEmployees}</p>
-                  {isCompanyUser && (
-                    <p className="text-xs text-green-600 mt-1">+{stats.newEmployeesThisMonth} {'this month'}</p>
-                  )}
-                </div>
-                <div className="rounded-full bg-blue-100 p-3 dark:bg-blue-900">
-                  <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Branches'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.totalBranches}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.totalDepartments} {'departments'}</p>
-                </div>
-                <div className="rounded-full bg-green-100 p-3 dark:bg-green-900">
-                  <Building2 className="h-5 w-5 text-green-600 dark:text-green-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Attendance Rate'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.attendanceRate}%</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.presentToday} {'present today'}</p>
-                </div>
-                <div className="rounded-full bg-purple-100 p-3 dark:bg-purple-900">
-                  <Clock className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Pending Leaves'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.pendingLeaves}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{stats.onLeaveToday} {'on leave today'}</p>
-                </div>
-                <div className="rounded-full bg-yellow-100 p-3 dark:bg-yellow-900">
-                  <Calendar className="h-5 w-5 text-yellow-600 dark:text-yellow-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Active Jobs'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.activeJobPostings}</p>
-                  <p className="text-xs text-green-600 mt-1">+{stats.jobPostsThisMonth} {'this month'}</p>
-                </div>
-                <div className="rounded-full bg-orange-100 p-3 dark:bg-orange-900">
-                  <Briefcase className="h-5 w-5 text-orange-600 dark:text-orange-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{'Total Candidates'}</p>
-                  <p className="mt-2 text-2xl font-bold">{stats.totalCandidates}</p>
-                  <p className="text-xs text-green-600 mt-1">+{stats.candidatesThisMonth} {'this month'}</p>
-                </div>
-                <div className="rounded-full bg-indigo-100 p-3 dark:bg-indigo-900">
-                  <UserPlus className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="space-y-5">
+        
+        {/* Top Welcome Banner */}
+        <div className="mb-5 flex flex-col md:flex-row md:items-start justify-between gap-4">
+          <div className="lg:w-[800px] max-w-full">
+            <h5 className="mb-2 text-xl text-zinc-800 dark:text-zinc-200 font-semibold">Welcome {auth?.user?.first_name || auth?.user?.name || 'User'} 🎉</h5>
+            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Here is a quick overview of your company's core metrics today. Keep track of your workforce headcount, monitor daily attendance across all departments, and manage structural growth smoothly.
+            </p>
+          </div>
+          <div className="flex-shrink-0">
+             <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="cursor-pointer">
+                <RefreshCw size={16} className="mr-1 inline-block" />
+                Refresh
+             </Button>
+          </div>
         </div>
 
-        {/* Career Section */}
-        {stats.activeJobPostings > 0 && hasPermission(auth?.permissions || [], 'manage-career-page') && (
-        <Card className="relative overflow-hidden bg-white border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300 group">
-          {/* Floating bubbles */}
-          <div className="absolute top-4 right-8 w-3 h-3 bg-primary/20 rounded-full animate-bounce" style={{animationDelay: '0s', animationDuration: '3s'}}></div>
-          <div className="absolute top-12 right-16 w-2 h-2 bg-primary/30 rounded-full animate-bounce" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
-          <div className="absolute bottom-8 left-12 w-4 h-4 bg-primary/15 rounded-full animate-bounce" style={{animationDelay: '2s', animationDuration: '5s'}}></div>
-          <div className="absolute bottom-16 left-20 w-1.5 h-1.5 bg-primary/25 rounded-full animate-bounce" style={{animationDelay: '0.5s', animationDuration: '3.5s'}}></div>
-          <div className="absolute top-8 left-1/3 w-2.5 h-2.5 bg-primary/20 rounded-full animate-pulse" style={{animationDelay: '1.5s'}}></div>
-          
-          {/* Background elements */}
-          <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full -translate-y-10 translate-x-10 opacity-50 group-hover:scale-110 transition-transform duration-500"></div>
-          <div className="absolute bottom-0 left-0 w-16 h-16 bg-primary/15 rounded-full translate-y-8 -translate-x-8 opacity-40 group-hover:scale-105 transition-transform duration-700"></div>
-          
-          <CardContent className="relative p-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-5">
-                <div className="relative group-hover:scale-105 transition-transform duration-300">
-                  <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <Briefcase className="h-7 w-7 text-primary-foreground group-hover:rotate-12 transition-transform duration-300" />
-                  </div>
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-sm animate-pulse">
-                    <div className="w-2 h-2 bg-white rounded-full animate-ping" style={{animationDuration: '2s'}}></div>
-                  </div>
-                  {/* Orbiting dots */}
-                  <div className="absolute -top-2 -left-2 w-2 h-2 bg-primary/60 rounded-full animate-spin" style={{animationDuration: '8s'}}></div>
-                  <div className="absolute -bottom-2 -right-2 w-1.5 h-1.5 bg-primary/40 rounded-full animate-spin" style={{animationDuration: '6s', animationDirection: 'reverse'}}></div>
-                </div>
-                <div className="group-hover:translate-x-2 transition-transform duration-300">
-                  <h3 className="text-xl font-bold text-gray-800 mb-1 group-hover:text-primary transition-colors duration-300">{'Join Our Team'}</h3>
-                  <p className="text-gray-600 mb-3 group-hover:text-gray-700 transition-colors duration-300">{'Discover amazing career opportunities'}</p>
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="flex items-center space-x-1">
-                        <div className="w-2 h-2 bg-primary/70 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
-                        <div className="w-2 h-2 bg-primary/50 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
-                        <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
-                      </div>
-                      <span className="text-primary font-semibold text-sm group-hover:scale-105 transition-transform duration-200">{stats.activeJobPostings} {'open positions'}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="flex flex-col space-y-3 group-hover:translate-x-1 transition-transform duration-300">
-                <Button
-                  onClick={handleCopyCareerLink}
-                  variant="outline"
-                  className="border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50 hover:scale-105 transition-all duration-200 shadow-sm"
-                >
-                  {copied ? (
-                    <>
-                      <CheckCircle className="h-4 w-4 mr-2 text-primary animate-pulse" />
-                      {'Copied!'}
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="h-4 w-4 mr-2 group-hover:rotate-12 transition-transform duration-200" />
-                      {'Copy Link'}
-                    </>
-                  )}
-                </Button>
-                <Button
-                  onClick={openCareerPage}
-                  className="bg-primary hover:bg-primary/90 hover:scale-105 text-primary-foreground transition-all duration-200 shadow-md hover:shadow-lg relative overflow-hidden"
-                >
-                  {/* Button shine effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
-                  <ExternalLink className="h-4 w-4 mr-2 group-hover:translate-x-1 transition-transform duration-200 relative z-10" />
-                  <span className="relative z-10">{'View Careers'}</span>
-                </Button>
-              </div>
+        {/* 8-Card Stats Layout */}
+        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
+          {/* Row 1 */}
+          {/* Total Employees */}
+          <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-blue-700 font-medium text-sm">Total Employees</span>
+              <Users className="w-5 h-5 text-blue-500" />
             </div>
-          </CardContent>
-        </Card>
-        )}
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.totalEmployees || 0}</h3>
+              <p className="text-xs text-blue-600 mt-1">Active employees</p>
+            </div>
+          </div>
 
-        {/* Charts Section */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Department Distribution Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                <BarChart3 className="h-5 w-5" />
-                {'Department Distribution'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {charts.departmentStats.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={charts.departmentStats}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}
-                      outerRadius={80}
-                      dataKey="value"
-                    >
-                      {charts.departmentStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No department data available'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Present Today */}
+          <div className="bg-green-50/80 border border-green-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-green-700 font-medium text-sm">Present Today</span>
+              <UserCheck className="w-5 h-5 text-green-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.presentToday || 0}</h3>
+              <p className="text-xs text-green-600 mt-1">{stats.attendanceRate || 0}% attendance rate</p>
+            </div>
+          </div>
 
-          {/* Hiring Trend Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                <TrendingUp className="h-5 w-5" />
-                {'Hiring Trend (6 Months)'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {charts.hiringTrend.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <BarChart data={charts.hiringTrend}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="hires" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No hiring data available'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Absent Today */}
+          <div className="bg-red-50/80 border border-red-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-red-700 font-medium text-sm">Absent Today</span>
+              <UserX className="w-5 h-5 text-red-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{Math.max(0, (stats.totalEmployees || 0) - (stats.presentToday || 0) - (stats.onLeaveToday || 0))}</h3>
+              <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
+                <TrendingUp className="w-3 h-3" /> +1 from yesterday
+              </p>
+            </div>
+          </div>
 
-          {/* Candidate Status Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                <UserPlus className="h-5 w-5" />
-                {'Candidate Status'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {charts.candidateStatusStats.length > 0 ? (
-                <ResponsiveContainer width="100%" height={200}>
-                  <PieChart>
-                    <Pie
-                      data={charts.candidateStatusStats}
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      dataKey="value"
-                    >
-                      {charts.candidateStatusStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No candidate data available'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* On Leave */}
+          <div className="bg-purple-50/80 border border-purple-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-purple-700 font-medium text-sm">On Leave</span>
+              <Calendar className="w-5 h-5 text-purple-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.onLeaveToday || 0}</h3>
+              <p className="text-xs text-purple-600 mt-1">{stats.pendingLeaves || 0} pending approvals</p>
+            </div>
+          </div>
 
-          {/* Leave Types Chart */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-                <Calendar className="h-5 w-5" />
-                {'Leave Types'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {charts.leaveTypesStats.length > 0 ? (
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={charts.leaveTypesStats}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      dataKey="value"
-                    >
-                      {charts.leaveTypesStats.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend wrapperStyle={{ fontSize: '12px' }} />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No leave types available'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Row 2 */}
+          {/* Total Branch */}
+          <div className="bg-teal-50/80 border border-teal-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-teal-700 font-medium text-sm">Total Branch</span>
+              <Building2 className="w-5 h-5 text-teal-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.totalBranches || 0}</h3>
+              <p className="text-xs text-teal-600 mt-1">Active branches</p>
+            </div>
+          </div>
+
+          {/* Total Department */}
+          <div className="bg-indigo-50/80 border border-indigo-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-indigo-700 font-medium text-sm">Total Department</span>
+              <Briefcase className="w-5 h-5 text-indigo-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.totalDepartments || 0}</h3>
+              <p className="text-xs text-indigo-600 mt-1">Across all branches</p>
+            </div>
+          </div>
+
+          {/* Total Promotions */}
+          <div className="bg-emerald-50/80 border border-emerald-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-emerald-700 font-medium text-sm">Total Promotions</span>
+              <TrendingUp className="w-5 h-5 text-emerald-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.totalPromotions || 0}</h3>
+              <p className="text-xs text-emerald-600 mt-1">This year</p>
+            </div>
+          </div>
+
+          {/* Terminations */}
+          <div className="bg-rose-50/80 border border-rose-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
+            <div className="flex justify-between items-start">
+              <span className="text-rose-700 font-medium text-sm">Terminations</span>
+              <TrendingDown className="w-5 h-5 text-rose-500" />
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold text-slate-800">{stats.terminations || 0}</h3>
+              <p className="text-xs text-rose-600 mt-1">This month</p>
+            </div>
+          </div>
         </div>
 
-        {/* Recent Activities */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          {/* Recent Leave Applications */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-lg font-semibold">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-5 w-5" />
-                  {'Recent Leave Applications'}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{recentActivities.leaves.length}</Badge>
-                  <button 
-                    onClick={() => window.location.href = route('hr.leave-applications.index')}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
-                  >
-                    {'View All'}
-                  </button>
-                </div>
+
+
+        {/* Custom Row: Designation Distribution & Quick Actions */}
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+          {/* Designation Distribution */}
+          <Card className="border-none shadow-sm h-full flex flex-col">
+            <CardHeader className="border-b-0 pb-4">
+              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                <Briefcase className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
+                Designation Distribution
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              {recentActivities.leaves.length > 0 ? (
-                <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {recentActivities.leaves.map((leave, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium">{leave.employee?.name || 'Employee'}</p>
-                          <Badge variant="outline" className={`text-xs ring-1 ring-inset ${getStatusColor(leave.status)}`}>
-                            {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {leave.leave_type?.name || 'Leave'} • {(() => {
-                            try {
-                              return leave.start_date ? format(new Date(leave.start_date), 'MMM dd') : 'N/A';
-                            } catch {
-                              return 'Invalid date';
-                            }
-                          })()} - {(() => {
-                            try {
-                              return leave.end_date ? format(new Date(leave.end_date), 'MMM dd') : 'N/A';
-                            } catch {
-                              return 'Invalid date';
-                            }
-                          })()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No recent leave applications'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            <CardContent className="p-0">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                  {charts.designationStats.length > 0 ? (() => {
+                    const maxVal = Math.max(...charts.designationStats.map(d => d.value), 1);
+                    return charts.designationStats.map((desig, index) => {
+                      const nameParts = desig.name.split(' (');
+                      const desigName = nameParts[0];
+                      const branchName = nameParts.length > 1 ? '(' + nameParts[1] : '';
 
-          {/* Recent Candidates */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-lg font-semibold">
-                <div className="flex items-center gap-2">
-                  <UserPlus className="h-5 w-5" />
-                  {'Recent Candidates'}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{recentActivities.candidates.length}</Badge>
-                  <button 
-                    onClick={() => window.location.href = route('hr.recruitment.candidates.index')}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
-                  >
-                    {'View All'}
-                  </button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentActivities.candidates.length > 0 ? (
-                <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {recentActivities.candidates.map((candidate, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium">{candidate.first_name} {candidate.last_name}</p>
-                          <Badge variant="outline" className={`text-xs ring-1 ring-inset ${getStatusColor(candidate.status)}`}>
-                            {candidate.status}
-                          </Badge>
+                      return (
+                        <div key={index} className="mb-2 last:mb-0">
+                          <div className="flex justify-between items-center mb-1">
+                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                              {desigName}
+                              {branchName && <span className="text-zinc-500 font-normal ml-1">{branchName}</span>}
+                            </span>
+                            <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{desig.value}</span>
+                          </div>
+                          <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5">
+                            <div 
+                              className="h-1.5 rounded-full" 
+                              style={{ width: `${(desig.value / maxVal) * 100}%`, backgroundColor: desig.color || '#3b82f6' }}
+                            ></div>
+                          </div>
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          {candidate.job?.title || 'Job'} • {(() => {
-                            try {
-                              return candidate.created_at ? format(new Date(candidate.created_at), 'MMM dd, yyyy') : 'N/A';
-                            } catch {
-                              return 'Invalid date';
-                            }
-                          })()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                      );
+                    });
+                  })() : (
+                    <div className="text-center py-10 text-zinc-500 text-sm">No designation data</div>
+                  )}
                 </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No recent candidates'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Announcements */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-lg font-semibold">
-                <div className="flex items-center gap-2">
-                  <Bell className="h-5 w-5" />
-                  {'Recent Announcements'}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{recentActivities.announcements.length}</Badge>
-                  <button 
-                    onClick={() => window.location.href = route('hr.announcements.index')}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
-                  >
-                    {'View All'}
-                  </button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentActivities.announcements.length > 0 ? (
-                <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {recentActivities.announcements.map((announcement, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium">{announcement.title}</p>
-                          {announcement.is_high_priority && (
-                            <Badge variant="outline" className="text-xs ring-1 ring-inset bg-red-50 text-red-700 ring-red-600/20">
-                              High Priority
-                            </Badge>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {announcement.category} • {(() => {
-                            try {
-                              return announcement.created_at ? format(new Date(announcement.created_at), 'MMM dd, yyyy') : 'N/A';
-                            } catch {
-                              return 'Invalid date';
-                            }
-                          })()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No recent announcements'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Meetings */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between text-lg font-semibold">
-                <div className="flex items-center gap-2">
-                  <Users className="h-5 w-5" />
-                  {'Recent Meetings'}
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="secondary">{recentActivities.meetings.length}</Badge>
-                  <button 
-                    onClick={() => window.location.href = route('meetings.meetings.index')}
-                    className="px-2 py-1 text-xs bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-md font-medium transition-colors"
-                  >
-                    {'View All'}
-                  </button>
-                </div>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {recentActivities.meetings.length > 0 ? (
-                <div className="space-y-3 max-h-80 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {recentActivities.meetings.map((meeting, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <p className="font-medium">{meeting.title}</p>
-                          <Badge variant="outline" className={`text-xs ring-1 ring-inset ${getStatusColor(meeting.status)}`}>
-                            {meeting.status}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">
-                          {(() => {
-                            try {
-                              if (!meeting.meeting_date) return 'No date set';
-                              const date = new Date(meeting.meeting_date);
-                              if (isNaN(date.getTime())) return 'Invalid date';
-                              const dateStr = format(date, 'MMM dd, yyyy');
-                              const timeStr = meeting.start_time && meeting.end_time ? ` • ${meeting.start_time} - ${meeting.end_time}` : '';
-                              return dateStr + timeStr;
-                            } catch {
-                              return 'Invalid date';
-                            }
-                          })()}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-muted-foreground">
-                  {'No recent meetings'}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Employee Growth Chart - Full Width */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-              <TrendingUp className="h-5 w-5" />
-              {'Employee Growth'} ({new Date().getFullYear()})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {charts.employeeGrowthChart.length > 0 ? (
-              <ResponsiveContainer width="100%" height={400}>
-                <AreaChart data={charts.employeeGrowthChart}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                  <XAxis dataKey="month" stroke="#6b7280" />
-                  <YAxis stroke="#6b7280" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: '#ffffff', 
-                      border: '1px solid #e5e7eb', 
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
-                    }} 
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="employees" 
-                    stroke="#3b82f6" 
-                    strokeWidth={3}
-                    fillOpacity={0.2} 
-                    fill="#3b82f6"
-                    dot={{ fill: '#3b82f6', strokeWidth: 2, r: 5 }}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            ) : (
-              <div className="text-center py-8 text-muted-foreground">
-                {'No employee growth data available'}
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+
+          {/* Quick Actions */}
+          <Card className="border-none shadow-sm h-full flex flex-col">
+            <CardHeader className="border-b-0 pb-4">
+              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
+                <Layers className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
+                Quick Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                  {[
+                    { label: 'Add New Employee', icon: UserPlus },
+                    { label: 'Mark Attendance', icon: Clock },
+                    { label: 'Apply for Leave', icon: Calendar },
+                    { label: 'Process Payroll', icon: CreditCard },
+                    { label: 'Create Promotion', icon: TrendingUp },
+                    { label: 'Create Resignation', icon: TrendingDown },
+                    { label: 'Create Holiday', icon: Calendar },
+                    { label: 'Create Warning', icon: AlertTriangle }
+                  ].map((action, i) => (
+                    <div 
+                      key={i} 
+                      className="flex items-center gap-4 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 cursor-pointer transition-colors"
+                    >
+                      <action.icon className="w-4 h-4 text-zinc-700 dark:text-zinc-300 ml-1" />
+                      <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{action.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Custom Row: Leave & Attendance Status */}
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+          {/* Employees on Leave */}
+          <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg">
+            <CardHeader className="border-b-0 pb-4">
+              <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
+                Employees on Leave
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                  {recentActivities.todayLeaves && recentActivities.todayLeaves.length > 0 ? (
+                    recentActivities.todayLeaves.map((leave, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 border border-zinc-200 rounded-md">
+                        <div className="flex items-center gap-3">
+                          <img 
+                            src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(leave.employee?.name || 'Unknown') + '&background=random'} 
+                            alt="Avatar" 
+                            className="w-10 h-10 rounded-md object-cover bg-zinc-100"
+                          />
+                          <div>
+                            <h6 className="font-semibold text-zinc-800 text-sm">{leave.employee?.name}</h6>
+                            <p className="text-zinc-500 text-xs">{leave.leave_type?.name || 'Leave'}</p>
+                          </div>
+                        </div>
+                        <div className="text-sm font-medium text-zinc-600">
+                          {leave.total_days} {leave.total_days === 1 ? 'day' : 'days'}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-zinc-500 text-sm border border-zinc-200 rounded-md">No employees on leave today</div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Missing Attendance Today */}
+          <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg">
+            <CardHeader className="border-b-0 pb-4">
+              <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
+                <UserX className="w-5 h-5 text-zinc-800" strokeWidth={2} />
+                Missing Attendance Today
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                  {recentActivities.missingAttendance && recentActivities.missingAttendance.length > 0 ? (
+                    recentActivities.missingAttendance.map((record, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 border border-zinc-200 rounded-md">
+                        <img 
+                          src={record.employee?.avatar ? `/storage/media/${record.employee.avatar}` : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(record.employee?.name || 'Unknown') + '&background=random'} 
+                          alt="Avatar" 
+                          className="w-10 h-10 rounded-md object-cover bg-zinc-100"
+                        />
+                        <div>
+                          <h6 className="font-semibold text-zinc-800 text-sm">{record.employee?.name}</h6>
+                          <p className="text-zinc-500 text-xs">{record.employee?.employee?.employee_id || 'ID N/A'}</p>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-8 text-zinc-500 text-sm border border-zinc-200 rounded-md">All attendance marked for today</div>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* New Cards Row 2 */}
+        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
+          {/* Onboarding Status */}
+          <Card className="border-none shadow-sm h-full flex flex-col">
+            <CardHeader className="border-b-0 pb-4">
+              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Onboarding Status</CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[300px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-5">
+                  {onboardingStatus.map((person, index) => (
+                    <div key={index}>
+                      <div className="flex justify-between items-center mb-2">
+                        <div>
+                          <h6 className="font-semibold text-zinc-800 dark:text-zinc-200 text-sm">{person.name}</h6>
+                          <p className="text-zinc-500 text-xs">{person.role}</p>
+                        </div>
+                        <span className="text-xs font-semibold text-primary">{person.progress}%</span>
+                      </div>
+                      <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5">
+                        <div className="bg-primary h-1.5 rounded-full" style={{ width: `${person.progress}%` }}></div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* HR To-Do List */}
+          <Card className="border-none shadow-sm h-full flex flex-col">
+            <CardHeader className="border-b-0 pb-4 flex flex-row items-center justify-between">
+              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">To-Do List</CardTitle>
+              <button className="text-primary hover:bg-primary/10 p-1 rounded transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </button>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[300px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                <div className="flex flex-col gap-3">
+                  {todoList.map((todo) => (
+                    <label key={todo.id} className="flex items-start gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded cursor-pointer transition-colors">
+                      <input type="checkbox" defaultChecked={todo.completed} className="mt-0.5 rounded border-zinc-300 text-primary focus:ring-primary/20" />
+                      <span className={`text-sm ${todo.completed ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-300'}`}>{todo.task}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bottom Section: Tables */}
+        <div className="grid lg:grid-cols-4 grid-cols-1 gap-5">
+          {/* Employee Performance */}
+          {isModuleEnabled('recruitment') && (
+          <div className="lg:col-span-3 col-span-1">
+            <Card className="border-none shadow-sm overflow-hidden mb-5">
+              <CardHeader className="flex flex-row items-center justify-between border-b-0 pb-4">
+                <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Employee Performance</CardTitle>
+                <div className="flex gap-3 items-center">
+                  <div className="relative hidden sm:block">
+                    <input type="email" className="h-9 w-64 rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-9 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary" placeholder="Search for...." />
+                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-500"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                  </div>
+                  <button onClick={() => window.location.href = route('hr.recruitment.candidates.index')} className="px-3 py-1.5 text-sm border border-dashed border-primary text-primary hover:bg-primary/5 rounded font-medium transition-colors flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Export
+                  </button>
+                </div>
+              </CardHeader>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-zinc-200 dark:divide-white/10 text-left">
+                  <thead className="bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400">
+                    <tr>
+                      <th className="py-3 px-4 w-12"><input type="checkbox" className="rounded border-zinc-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/20" /></th>
+                      <th className="px-3.5 py-3 text-sm font-medium">ID</th>
+                      <th className="px-3.5 py-3 text-sm font-medium">Name</th>
+                      <th className="px-3.5 py-3 text-sm font-medium">Designation</th>
+                      <th className="px-3.5 py-3 text-sm font-medium">Performance</th>
+                      <th className="px-3.5 py-3 text-sm font-medium">Status</th>
+                      <th className="px-3.5 py-3 text-sm font-medium">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-zinc-200 dark:divide-white/10 bg-white dark:bg-card">
+                    {recentActivities.candidates.slice(0, 5).map((candidate, index) => (
+                      <tr key={index} className="text-zinc-800 dark:text-zinc-200 text-sm whitespace-nowrap hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition-colors">
+                        <td className="py-3.5 pl-4"><input type="checkbox" className="rounded border-zinc-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary/20" /></td>
+                        <td className="px-3.5 py-2">TW-{1001 + index}</td>
+                        <td className="px-3.5 py-2.5">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-full bg-green-100 dark:bg-green-900/50 flex items-center justify-center text-green-600 font-bold text-sm uppercase">
+                              {candidate.first_name?.[0] || 'U'}{candidate.last_name?.[0] || ''}
+                            </div>
+                            <div>
+                              <h6 className="font-semibold mb-0.5">{candidate.first_name} {candidate.last_name}</h6>
+                              <p className="text-zinc-500 text-xs">{candidate.email || 'No email'}</p>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-3.5 py-2.5">{candidate.job?.title || 'Candidate'}</td>
+                        <td className="px-3.5 py-2.5 text-green-500">Good</td>
+                        <td className="px-3.5 py-2.5">
+                          <span className="inline-flex items-center gap-x-1.5 py-0.5 px-2.5 rounded text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/30">Active</span>
+                        </td>
+                        <td className="px-3.5 py-2.5">
+                          <span className="inline-flex justify-start gap-2.5">
+                            <button className="w-8 h-8 flex items-center justify-center rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 hover:text-primary hover:bg-primary/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg></button>
+                            <button className="w-8 h-8 flex items-center justify-center rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                    {recentActivities.candidates.length === 0 && (
+                      <tr><td colSpan={7} className="py-12 text-center text-zinc-500">No recent candidates found</td></tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </div>
+          )}
+
+          {/* Upcoming Scheduled */}
+          {isModuleEnabled('meetings') && (
+          <div className="col-span-1">
+            <Card className="border-none shadow-sm h-full flex flex-col">
+              <CardHeader className="border-b-0 pb-4 flex justify-between flex-row items-center">
+                <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Upcoming Scheduled</CardTitle>
+                <div className="dropdown relative">
+                   <button className="text-zinc-400 hover:text-zinc-600">
+                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="12" cy="5" r="1"></circle><circle cx="12" cy="19" r="1"></circle></svg>
+                   </button>
+                </div>
+              </CardHeader>
+              <CardContent className="p-0">
+                <div className="max-h-[420px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+                  <div className="flex flex-col gap-4">
+                    {recentActivities.meetings.slice(0, 5).map((meeting, index) => (
+                      <div key={index} className="border border-zinc-200 dark:border-zinc-800 rounded-md overflow-hidden bg-white dark:bg-card">
+                        <div className="flex justify-between items-center p-3 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50">
+                          <div className="flex items-center gap-3">
+                            <div className="w-9 h-9 rounded-md bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
+                              <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                            </div>
+                            <div>
+                              <h6 className="font-semibold text-zinc-800 dark:text-zinc-200 text-sm">{meeting.title}</h6>
+                              <p className="text-zinc-500 text-xs mt-0.5 truncate max-w-[120px]">{meeting.description || 'General Meeting'}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-3">
+                          <div className="flex justify-between items-center gap-3 text-sm">
+                            <div className="flex gap-3 text-zinc-500 dark:text-zinc-400 text-xs">
+                              <div className="flex items-center font-medium">
+                                <Calendar className="h-3.5 w-3.5 mr-1 text-zinc-400" />
+                                <span>
+                                  {(() => {
+                                    try { return meeting.meeting_date ? format(new Date(meeting.meeting_date), 'dd MMM') : 'N/A'; }
+                                    catch { return 'Invalid'; }
+                                  })()}
+                                </span>
+                              </div>
+                              <div className="flex items-center font-medium">
+                                <Clock className="h-3.5 w-3.5 mr-1 text-zinc-400" />
+                                <span>{meeting.start_time || 'N/A'}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {recentActivities.meetings.length === 0 && (
+                      <div className="text-center py-10 text-zinc-500">
+                        <p>No upcoming meetings</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+          )}
+        </div>
       </div>
     </PageTemplate>
   );

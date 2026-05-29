@@ -563,7 +563,7 @@ export default function BrandSettings({ settings }: BrandSettingsProps) {
                       name="companyMobile"
                       value={brandSettings.companyMobile || ""}
                       onChange={handleInputChange}
-                      placeholder="+1 234 567 8900"
+                      placeholder="+91 98765 43210"
                     />
                     <p className="text-xs text-muted-foreground">
                       {"Company contact mobile number"}

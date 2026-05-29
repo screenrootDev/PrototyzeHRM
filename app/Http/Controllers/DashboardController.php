@@ -7,6 +7,7 @@ use App\Models\AttendanceRecord;
 use App\Models\Branch;
 use App\Models\Candidate;
 use App\Models\Department;
+use App\Models\Designation;
 use App\Models\Employee;
 use App\Models\JobPosting;
 use App\Models\LeaveApplication;
@@ -189,7 +190,7 @@ class DashboardController extends Controller
         ]);
     }
 
-    private function getUpcomingEvents()
+    private function getUpcomingEvents($companyUserIds = null)
     {
         $events = [];
         $today = now();
@@ -197,6 +198,9 @@ class DashboardController extends Controller
 
         // Birthdays (matching month and day)
         $birthdays = Employee::with('user')
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })
             ->whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') BETWEEN ? AND ?", [
                 $today->format('m-d'),
                 $next7Days->format('m-d')
@@ -215,6 +219,9 @@ class DashboardController extends Controller
 
         // Anniversaries (matching month and day, excluding current year hires)
         $anniversaries = Employee::with('user')
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })
             ->whereRaw("DATE_FORMAT(date_of_joining, '%m-%d') BETWEEN ? AND ?", [
                 $today->format('m-d'),
                 $next7Days->format('m-d')
@@ -233,7 +240,10 @@ class DashboardController extends Controller
         }
 
         // Holidays
-        $holidays = Holiday::whereBetween('start_date', [$today->toDateString(), $next7Days->toDateString()])->get();
+        $holidays = Holiday::whereBetween('start_date', [$today->toDateString(), $next7Days->toDateString()])
+            ->when($companyUserIds, function($query) use ($companyUserIds) {
+                return $query->whereIn('created_by', $companyUserIds);
+            })->get();
         foreach ($holidays as $holiday) {
             $events[] = [
                 'id' => 'hday_' . $holiday->id,
@@ -307,25 +317,26 @@ class DashboardController extends Controller
             ->where('status', 'Published')->count();
         $totalCandidates = Candidate::whereIn('created_by', $companyUserIds)->count();
 
-        // Department Distribution for Chart
+        // Designation Distribution for Chart
         $predefinedColors = ['#4F46E5', '#0075BD', '#F59E0B', '#EF4444', '#3B82F6', '#D946EF'];
 
-        $departmentStats = Department::whereIn('created_by', $companyUserIds)
+        $designationStats = Designation::whereIn('created_by', $companyUserIds)
             ->withCount('employees')
-            ->with('branch')
+            ->with('department')
             ->orderBy('employees_count', 'desc')
             ->when(config('app.is_demo') == true, function ($query) {
                 return $query->take(6);
             })
             ->get()
-            ->map(function ($dept, $index) use ($predefinedColors) {
-                $displayName = $dept->name . ' (' . $dept->branch->name . ')';
+            ->map(function ($desig, $index) use ($predefinedColors) {
+                $displayName = $desig->name;
+                if ($desig->department) {
+                    $displayName .= ' (' . $desig->department->name . ')';
+                }
                 return [
                     'name' => $displayName,
-                    'value' => $dept->employees_count,
-                    'color' => config('app.is_demo') == true
-                        ? ($predefinedColors[$index] ?? '#' . substr(md5($displayName), 0, 6))
-                        : '#' . substr(md5($displayName), 0, 6)
+                    'value' => $desig->employees_count,
+                    'color' => $predefinedColors[$index % count($predefinedColors)]
                 ];
             });
 
@@ -428,6 +439,25 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
+            
+        $pendingLeavesList = LeaveApplication::whereIn('created_by', $companyUserIds)
+            ->where('status', 'pending')
+            ->with(['employee', 'leaveType'])
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+            
+        $onboardingStatus = [
+            ['name' => 'Alice Johnson', 'role' => 'Software Engineer', 'progress' => 80],
+            ['name' => 'Bob Smith', 'role' => 'Marketing Specialist', 'progress' => 45],
+            ['name' => 'Charlie Brown', 'role' => 'Sales Representative', 'progress' => 100]
+        ];
+
+        $todoList = [
+            ['id' => 1, 'task' => 'Review Payroll for May', 'completed' => false],
+            ['id' => 2, 'task' => 'Schedule interview with John Doe', 'completed' => true],
+            ['id' => 3, 'task' => 'Approve pending leave requests', 'completed' => false]
+        ];
 
         // Recent Announcements
         $recentAnnouncements = Announcement::whereIn('created_by', $companyUserIds)
@@ -439,6 +469,23 @@ class DashboardController extends Controller
         $recentMeetings = Meeting::whereIn('created_by', $companyUserIds)
             ->orderBy('created_at', 'desc')
             ->take(5)
+            ->get();
+
+        // Today's Leaves
+        $todayLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
+            ->with(['employee.employee', 'leaveType'])
+            ->where('status', 'approved')
+            ->whereDate('start_date', '<=', today())
+            ->whereDate('end_date', '>=', today())
+            ->get();
+
+        // Missing Attendance Today
+        $missingAttendance = AttendanceRecord::whereIn('created_by', $companyUserIds)
+            ->with(['employee.employee'])
+            ->whereDate('date', today())
+            ->where(function($q) {
+                $q->where('status', 'absent')->orWhere('is_absent', true);
+            })
             ->get();
 
         $dashboardData = [
@@ -457,7 +504,7 @@ class DashboardController extends Controller
                 'totalCandidates' => $totalCandidates
             ],
             'charts' => [
-                'departmentStats' => $departmentStats,
+                'designationStats' => $designationStats,
                 'hiringTrend' => $hiringTrend,
                 'candidateStatusStats' => $candidateStatusStats,
                 'leaveTypesStats' => $leaveTypesStats,
@@ -467,8 +514,14 @@ class DashboardController extends Controller
                 'leaves' => $recentLeaves,
                 'candidates' => $recentCandidates,
                 'announcements' => $recentAnnouncements,
-                'meetings' => $recentMeetings
+                'meetings' => $recentMeetings,
+                'pendingLeavesList' => $pendingLeavesList,
+                'todayLeaves' => $todayLeaves,
+                'missingAttendance' => $missingAttendance
             ],
+            'upcomingEvents' => $this->getUpcomingEvents($companyUserIds),
+            'onboardingStatus' => $onboardingStatus,
+            'todoList' => $todoList,
             'userType' => $user->type
         ];
 

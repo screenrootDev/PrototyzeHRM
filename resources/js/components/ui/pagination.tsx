@@ -40,7 +40,7 @@ export function Pagination({
 
   return (
     <div className={cn(
-      "p-4 border-t dark:border-gray-700 flex items-center justify-between dark:bg-gray-900",
+      "p-4  dark:border-gray-700 flex items-center justify-between dark:bg-gray-900",
       className
     )}>
       <div className="text-sm text-muted-foreground dark:text-gray-300">

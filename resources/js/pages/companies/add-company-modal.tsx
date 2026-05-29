@@ -30,6 +30,9 @@ import {
   CalendarRange,
   UserCheck,
   Target,
+  Fingerprint,
+  Timer,
+  IndianRupee,
 } from "lucide-react";
 import { getImagePath } from "@/utils/helpers";
 import MediaLibraryModal from "@/components/MediaLibraryModal";
@@ -48,6 +51,9 @@ export const AVAILABLE_MODULES = [
   { id: "leave", label: "Leave Management", icon: CalendarRange, color: "text-orange-500" },
   { id: "attendance", label: "Attendance", icon: UserCheck, color: "text-purple-500" },
   { id: "performance", label: "Performance", icon: Target, color: "text-pink-500" },
+  { id: "biometric", label: "Biometric Attendance", icon: Fingerprint, color: "text-teal-500" },
+  { id: "time_tracking", label: "Time Tracking", icon: Timer, color: "text-sky-500" },
+  { id: "payroll", label: "Payroll Management", icon: IndianRupee, color: "text-emerald-600" },
 ];
 
 export function AddCompanyModal({

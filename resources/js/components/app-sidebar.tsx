@@ -803,7 +803,7 @@ export function AppSidebar() {
     }
 
     // Biometric Attendance
-    if (hasPermission(permissions, "manage-biometric-attendance")) {
+    if (isModuleEnabled("biometric") && hasPermission(permissions, "manage-biometric-attendance")) {
       items.push({
         title: "Biometric Attendance",
         href: route("hr.biometric-attendance.index"),
@@ -821,7 +821,7 @@ export function AppSidebar() {
       });
     }
 
-    if (timeTrackingChildren.length > 0) {
+    if (isModuleEnabled("time_tracking") && timeTrackingChildren.length > 0) {
       items.push({
         title: "Time Tracking",
         icon: () => <LayoutListIcon size={16} isAnimated={true} />,
@@ -860,7 +860,7 @@ export function AppSidebar() {
       });
     }
 
-    if (payrollChildren.length > 0) {
+    if (isModuleEnabled("payroll") && payrollChildren.length > 0) {
       items.push({
         title: "Payroll Management",
         icon: () => <IndianRupee size={16} />,
