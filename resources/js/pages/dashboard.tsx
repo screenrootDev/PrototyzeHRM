@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-import { usePage } from '@inertiajs/react';
+import { usePage, Link } from '@inertiajs/react';
 import ReactApexChart from 'react-apexcharts';
 import { hasPermission } from '@/utils/authorization';
 import { format } from 'date-fns';
@@ -195,103 +195,134 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
           {/* Row 1 */}
           {/* Total Employees */}
-          <div className="bg-blue-50/80 border border-blue-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-blue-700 font-medium text-sm">Total Employees</span>
-              <Users className="w-5 h-5 text-blue-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.totalEmployees || 0}</h3>
-              <p className="text-xs text-blue-600 mt-1">Active employees</p>
-            </div>
-          </div>
+          <Link href={route('hr.employees.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-blue-700">Total Employees</CardTitle>
+                <Users className="h-5 w-5 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-blue-900">{stats.totalEmployees || 0}</div>
+                <div className="flex items-center text-xs text-blue-600 mt-1">
+                  <span>Active employees</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Present Today */}
-          <div className="bg-green-50/80 border border-green-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-green-700 font-medium text-sm">Present Today</span>
-              <UserCheck className="w-5 h-5 text-green-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.presentToday || 0}</h3>
-              <p className="text-xs text-green-600 mt-1">{stats.attendanceRate || 0}% attendance rate</p>
-            </div>
-          </div>
+          <Link href={route('hr.attendance-records.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-green-700">Present Today</CardTitle>
+                <UserCheck className="h-5 w-5 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-green-900">{stats.presentToday || 0}</div>
+                <div className="flex items-center text-xs text-green-600 mt-1">
+                  <span>{stats.attendanceRate || 0}% attendance rate</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Absent Today */}
-          <div className="bg-red-50/80 border border-red-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-red-700 font-medium text-sm">Absent Today</span>
-              <UserX className="w-5 h-5 text-red-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{Math.max(0, (stats.totalEmployees || 0) - (stats.presentToday || 0) - (stats.onLeaveToday || 0))}</h3>
-              <p className="text-xs text-red-600 mt-1 flex items-center gap-1">
-                <TrendingUp className="w-3 h-3" /> +1 from yesterday
-              </p>
-            </div>
-          </div>
+          <Link href={route('hr.attendance-records.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-red-700">Absent Today</CardTitle>
+                <UserX className="h-5 w-5 text-red-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-red-900">{Math.max(0, (stats.totalEmployees || 0) - (stats.presentToday || 0) - (stats.onLeaveToday || 0))}</div>
+                <div className="flex items-center text-xs text-red-600 mt-1">
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  <span>+1 from yesterday</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* On Leave */}
-          <div className="bg-purple-50/80 border border-purple-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-purple-700 font-medium text-sm">On Leave</span>
-              <Calendar className="w-5 h-5 text-purple-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.onLeaveToday || 0}</h3>
-              <p className="text-xs text-purple-600 mt-1">{stats.pendingLeaves || 0} pending approvals</p>
-            </div>
-          </div>
+          <Link href={route('hr.leave-applications.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-purple-700">On Leave</CardTitle>
+                <Calendar className="h-5 w-5 text-purple-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-purple-900">{stats.onLeaveToday || 0}</div>
+                <div className="flex items-center text-xs text-purple-600 mt-1">
+                  <span>{stats.pendingLeaves || 0} pending approvals</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Row 2 */}
           {/* Total Branch */}
-          <div className="bg-teal-50/80 border border-teal-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-teal-700 font-medium text-sm">Total Branch</span>
-              <Building2 className="w-5 h-5 text-teal-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.totalBranches || 0}</h3>
-              <p className="text-xs text-teal-600 mt-1">Active branches</p>
-            </div>
-          </div>
+          <Link href={route('hr.branches.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-teal-50 to-teal-100 border-teal-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-teal-700">Total Branch</CardTitle>
+                <Building2 className="h-5 w-5 text-teal-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-teal-900">{stats.totalBranches || 0}</div>
+                <div className="flex items-center text-xs text-teal-600 mt-1">
+                  <span>Active branches</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Total Department */}
-          <div className="bg-indigo-50/80 border border-indigo-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-indigo-700 font-medium text-sm">Total Department</span>
-              <Briefcase className="w-5 h-5 text-indigo-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.totalDepartments || 0}</h3>
-              <p className="text-xs text-indigo-600 mt-1">Across all branches</p>
-            </div>
-          </div>
+          <Link href={route('hr.departments.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-indigo-50 to-indigo-100 border-indigo-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-indigo-700">Total Department</CardTitle>
+                <Briefcase className="h-5 w-5 text-indigo-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-indigo-900">{stats.totalDepartments || 0}</div>
+                <div className="flex items-center text-xs text-indigo-600 mt-1">
+                  <span>Across all branches</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Total Promotions */}
-          <div className="bg-emerald-50/80 border border-emerald-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-emerald-700 font-medium text-sm">Total Promotions</span>
-              <TrendingUp className="w-5 h-5 text-emerald-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.totalPromotions || 0}</h3>
-              <p className="text-xs text-emerald-600 mt-1">This year</p>
-            </div>
-          </div>
+          <Link href={route('hr.promotions.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-emerald-700">Total Promotions</CardTitle>
+                <TrendingUp className="h-5 w-5 text-emerald-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-emerald-900">{stats.totalPromotions || 0}</div>
+                <div className="flex items-center text-xs text-emerald-600 mt-1">
+                  <span>This year</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           {/* Terminations */}
-          <div className="bg-rose-50/80 border border-rose-100 rounded-xl p-5 flex flex-col justify-between h-[120px]">
-            <div className="flex justify-between items-start">
-              <span className="text-rose-700 font-medium text-sm">Terminations</span>
-              <TrendingDown className="w-5 h-5 text-rose-500" />
-            </div>
-            <div>
-              <h3 className="text-3xl font-bold text-slate-800">{stats.terminations || 0}</h3>
-              <p className="text-xs text-rose-600 mt-1">This month</p>
-            </div>
-          </div>
+          <Link href={route('hr.terminations.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
+            <Card className="bg-gradient-to-r from-rose-50 to-rose-100 border-rose-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-semibold text-rose-700">Terminations</CardTitle>
+                <TrendingDown className="h-5 w-5 text-rose-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-3xl font-bold text-rose-900">{stats.terminations || 0}</div>
+                <div className="flex items-center text-xs text-rose-600 mt-1">
+                  <span>This month</span>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
 
 
@@ -404,7 +435,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                             <p className="text-zinc-500 text-xs">{leave.leave_type?.name || 'Leave'}</p>
                           </div>
                         </div>
-                        <div className="text-sm font-medium text-zinc-600">
+                        <div className="text-xs text-gray-600">
                           {leave.total_days} {leave.total_days === 1 ? 'day' : 'days'}
                         </div>
                       </div>
@@ -451,57 +482,6 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
           </Card>
         </div>
 
-        {/* New Cards Row 2 */}
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
-          {/* Onboarding Status */}
-          <Card className="border-none shadow-sm h-full flex flex-col">
-            <CardHeader className="border-b-0 pb-4">
-              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">Onboarding Status</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-[300px] overflow-y-auto px-5 pb-5 custom-scrollbar">
-                <div className="flex flex-col gap-5">
-                  {onboardingStatus.map((person, index) => (
-                    <div key={index}>
-                      <div className="flex justify-between items-center mb-2">
-                        <div>
-                          <h6 className="font-semibold text-zinc-800 dark:text-zinc-200 text-sm">{person.name}</h6>
-                          <p className="text-zinc-500 text-xs">{person.role}</p>
-                        </div>
-                        <span className="text-xs font-semibold text-primary">{person.progress}%</span>
-                      </div>
-                      <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5">
-                        <div className="bg-primary h-1.5 rounded-full" style={{ width: `${person.progress}%` }}></div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* HR To-Do List */}
-          <Card className="border-none shadow-sm h-full flex flex-col">
-            <CardHeader className="border-b-0 pb-4 flex flex-row items-center justify-between">
-              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200">To-Do List</CardTitle>
-              <button className="text-primary hover:bg-primary/10 p-1 rounded transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              </button>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-[300px] overflow-y-auto px-5 pb-5 custom-scrollbar">
-                <div className="flex flex-col gap-3">
-                  {todoList.map((todo) => (
-                    <label key={todo.id} className="flex items-start gap-3 p-2 hover:bg-zinc-50 dark:hover:bg-zinc-900/50 rounded cursor-pointer transition-colors">
-                      <input type="checkbox" defaultChecked={todo.completed} className="mt-0.5 rounded border-zinc-300 text-primary focus:ring-primary/20" />
-                      <span className={`text-sm ${todo.completed ? 'text-zinc-400 line-through' : 'text-zinc-700 dark:text-zinc-300'}`}>{todo.task}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
 
         {/* Bottom Section: Tables */}
         <div className="grid lg:grid-cols-4 grid-cols-1 gap-5">
@@ -693,16 +673,12 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardContent className="p-0">
                 <div className="max-h-[300px] overflow-y-auto px-5 pb-5 pt-4 custom-scrollbar">
                   <div className="flex flex-col gap-3">
-                    {recentActivities.recentLeaveApplications && recentActivities.recentLeaveApplications.length > 0 ? (
-                      recentActivities.recentLeaveApplications.map((leave, index) => (
+                    {dashboardData.recentLeaveApplications && dashboardData.recentLeaveApplications.length > 0 ? (
+                      dashboardData.recentLeaveApplications.map((leave, index) => (
                         <div key={index} className="flex flex-col p-4 border border-zinc-200 rounded-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden bg-white">
-                          <div className={`absolute left-0 top-0 bottom-0 w-1 ${
-                            leave.status === 'approved' ? 'bg-green-500' : 
-                            leave.status === 'rejected' ? 'bg-red-500' : 
-                            'bg-amber-400'
-                          }`}></div>
+                       
                           
-                          <div className="flex justify-between items-start ml-2">
+                          <div className="flex justify-between items-start">
                             <div className="flex items-start gap-3">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                                 leave.status === 'approved' ? 'bg-green-100 text-green-600' : 
@@ -712,7 +688,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                                 <Calendar className="w-4 h-4" />
                               </div>
                               <div>
-                                <h6 className="font-semibold text-zinc-800 text-sm">{leave.employee?.name} - {leave.leave_type?.name}</h6>
+                                <h6 className="text-sm font-medium">{leave.employee?.name} - {leave.leave_type?.name}</h6>
                                 <p className="text-zinc-500 text-xs mt-1">
                                   {format(new Date(leave.start_date), 'yyyy-MM-dd')}
                                   {leave.start_date !== leave.end_date && ` - ${format(new Date(leave.end_date), 'yyyy-MM-dd')}`} 

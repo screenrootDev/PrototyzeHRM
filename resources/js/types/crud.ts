@@ -36,6 +36,7 @@ export interface TableAction {
   className?: string;
   requiredPermission?: string;
   condition?: (row: any) => boolean;
+  animated?: boolean;
 }
 
 export interface TableConfig {

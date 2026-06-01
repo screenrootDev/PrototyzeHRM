@@ -18,9 +18,50 @@ import {
 import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-react';
 import * as LucidIcons from 'lucide-react';
+import * as AnimateIcons from '@animateicons/react/lucide';
 import { hasPermission } from '@/utils/authorization';
 import { TableColumn, TableAction } from '@/types/crud';
 import { Link } from '@inertiajs/react';
+import React, { useRef } from 'react';
+
+const AnimatedTableActionButton = ({ iconName, label, onClick, className, href, openInNewTab }: any) => {
+  const iconRef = useRef<any>(null);
+  const Icon = (AnimateIcons as any)[iconName + 'Icon'] || (LucidIcons as any)[iconName];
+  
+  const buttonContent = (
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn("h-8 w-8 group", className)}
+      onClick={onClick}
+      onMouseEnter={() => iconRef.current?.startAnimation?.()}
+      onMouseLeave={() => iconRef.current?.stopAnimation?.()}
+    >
+      <div className="transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
+        <Icon ref={iconRef} size={16} isAnimated={true} />
+      </div>
+    </Button>
+  );
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {href ? (
+            <Link href={href} target={openInNewTab ? '_blank' : undefined}>
+              {buttonContent}
+            </Link>
+          ) : (
+            buttonContent
+          )}
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{label}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 
 interface CrudTableProps {
@@ -41,6 +82,7 @@ interface CrudTableProps {
   };
   showActionsAsIcons?: boolean;
   showActions?: boolean;
+  emptyState?: React.ReactNode;
 }
 
 export function CrudTable({
@@ -56,6 +98,7 @@ export function CrudTable({
   permissions,
   entityPermissions,
   showActions = true,
+  emptyState,
 }: CrudTableProps) {
   
   const renderSortIcon = (column: TableColumn) => {
@@ -122,6 +165,19 @@ export function CrudTable({
               ? action.href(row)
               : action.href.replace(':id', row.id);
 
+            if (action.animated) {
+              return (
+                <AnimatedTableActionButton 
+                  key={index}
+                  iconName={action.icon}
+                  label={action.label}
+                  href={href}
+                  openInNewTab={action.openInNewTab}
+                  className={action.className}
+                />
+              );
+            }
+
             return (
               <TooltipProvider key={index}>
                 <Tooltip>
@@ -144,6 +200,18 @@ export function CrudTable({
             );
           }
 
+          if (action.animated) {
+            return (
+              <AnimatedTableActionButton 
+                key={index}
+                iconName={action.icon}
+                label={action.label}
+                onClick={() => onAction(action.action || '', row)}
+                className={action.className}
+              />
+            );
+          }
+
           // Handle regular action buttons
           return (
             <TooltipProvider key={index}>
@@ -153,7 +221,7 @@ export function CrudTable({
                     variant="ghost"
                     size="icon"
                     className={cn("h-8 w-8", action.className)}
-                    onClick={() => onAction(action.action, row)}
+                    onClick={() => onAction(action.action || '', row)}
                   >
                     <IconComponent size={16} />
                   </Button>
@@ -307,9 +375,9 @@ export function CrudTable({
               </TableCell> */}
               <TableCell
                 colSpan={columns.length + (showActions && hasAnyActionPermission ? 2 : 1)}
-                className="text-muted-foreground h-24 text-center dark:text-gray-400"
+                className="text-muted-foreground h-24 text-center dark:text-gray-400 p-0"
               >
-                {'No results found.'}
+                {emptyState ? emptyState : 'No results found.'}
               </TableCell>
             </TableRow>
           )}

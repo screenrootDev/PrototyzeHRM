@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { toast } from '@/components/custom-toast';
 
@@ -21,6 +22,7 @@ export default function EmployeeEdit() {
   const { employee, branches, departments, designations, documentTypes, shifts, attendancePolicies } = usePage().props as any;
 
   // State
+  const [activeTab, setActiveTab] = useState('personal');
   const [formData, setFormData] = useState<Record<string, any>>({
     name: employee.name || '',
     employee_id: employee.employee?.employee_id || '',
@@ -277,12 +279,18 @@ export default function EmployeeEdit() {
       ]}
     >
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Basic Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{'Basic Information'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 mb-4">
+            <TabsTrigger value="personal">{'Personal'}</TabsTrigger>
+            <TabsTrigger value="employment">{'Employment'}</TabsTrigger>
+            <TabsTrigger value="contact">{'Contact'}</TabsTrigger>
+            <TabsTrigger value="banking">{'Banking'}</TabsTrigger>
+            <TabsTrigger value="documents">{'Documents'}</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="personal">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="name" required>{'Full Name'}</Label>
@@ -424,15 +432,13 @@ export default function EmployeeEdit() {
                 {errors.profile_image && <p className="text-red-500 text-xs">{errors.profile_image}</p>}
               </div>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Employment Details Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{'Employment Details'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <TabsContent value="employment">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="branch_id" required>{'Branch'}</Label>
@@ -593,15 +599,13 @@ export default function EmployeeEdit() {
                 {errors.attendance_policy_id && <p className="text-red-500 text-xs">{errors.attendance_policy_id}</p>}
               </div>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Contact Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{'Contact Information'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <TabsContent value="contact">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="address_line_1" required>{'Address Line 1'}</Label>
@@ -716,15 +720,13 @@ export default function EmployeeEdit() {
                 </div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Banking Information Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{'Banking Information'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <TabsContent value="banking">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="bank_name" required>{'Bank Name'}</Label>
@@ -811,15 +813,13 @@ export default function EmployeeEdit() {
                 {errors.salary && <p className="text-red-500 text-xs">{errors.salary}</p>}
               </div>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
-        {/* Documents Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>{'Documents'}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+          <TabsContent value="documents">
+            <Card>
+              <CardContent className="space-y-4 pt-6">
             {/* Existing Documents */}
             {existingDocuments.length > 0 && (
               <div className="mb-6">
@@ -972,11 +972,13 @@ export default function EmployeeEdit() {
                 {'Add Document'}
               </Button>
             </div>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
 
         {/* Submit Buttons */}
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-between space-x-4 mt-6">
           <Button
             type="button"
             variant="outline"
@@ -984,12 +986,29 @@ export default function EmployeeEdit() {
           >
             {'Cancel'}
           </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Saving...' : 'Update Employee'}
-          </Button>
+          <div className="flex space-x-2">
+            {activeTab !== 'documents' && (
+              <Button
+                type="button"
+                onClick={() => {
+                  const tabs = ['personal', 'employment', 'contact', 'banking', 'documents'];
+                  const currentIndex = tabs.indexOf(activeTab);
+                  if (currentIndex < tabs.length - 1) setActiveTab(tabs[currentIndex + 1]);
+                }}
+              >
+                {'Next'}
+              </Button>
+            )}
+            {activeTab === 'documents' && (
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="bg-green-600 hover:bg-green-700 text-white"
+              >
+                {isSubmitting ? 'Saving...' : 'Update Employee'}
+              </Button>
+            )}
+          </div>
         </div>
       </form>
     </PageTemplate>

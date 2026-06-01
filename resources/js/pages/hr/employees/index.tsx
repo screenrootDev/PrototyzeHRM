@@ -1,21 +1,64 @@
 // pages/hr/employees/index.tsx
-import { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus, Eye, Edit, Trash2, Lock, Unlock, MoreHorizontal, Key } from 'lucide-react';
+import { Plus, Users, Edit, MoreHorizontal, Unlock } from 'lucide-react';
+import { 
+  EyeIcon, 
+  Trash2Icon, 
+  KeyIcon, 
+  LockIcon 
+} from '@animateicons/react/lucide';
 import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
 import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
 import { useInitials } from '@/hooks/use-initials';
+import { NoRecordsFound } from '@/components/ui/no-records-found';
 
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import {CrudFormModal} from '@/components/CrudFormModal';
 import { getImagePath } from '@/utils/helpers';
+
+const AnimatedActionButton = ({ icon: Icon, onClick, className, children, size = 16 }: any) => {
+  const iconRef = useRef<any>(null);
+  return (
+    <Button 
+      variant="ghost" 
+      size="sm" 
+      onClick={onClick} 
+      className={className + " group"}
+      onMouseEnter={() => iconRef.current?.startAnimation?.()}
+      onMouseLeave={() => iconRef.current?.stopAnimation?.()}
+    >
+      <div className="transition-transform duration-300 group-hover:scale-125 flex items-center justify-center">
+        <Icon ref={iconRef} size={size} isAnimated={true} />
+      </div>
+      {children}
+    </Button>
+  );
+};
+
+const AnimatedActionMenuItem = ({ icon: Icon, onClick, className, children, size = 16 }: any) => {
+  const iconRef = useRef<any>(null);
+  return (
+    <DropdownMenuItem 
+      onClick={onClick} 
+      className={className + " group cursor-pointer"}
+      onMouseEnter={() => iconRef.current?.startAnimation?.()}
+      onMouseLeave={() => iconRef.current?.stopAnimation?.()}
+    >
+      <div className="mr-2 flex items-center justify-center transition-transform duration-300 group-hover:scale-125">
+        <Icon ref={iconRef} size={size} isAnimated={true} />
+      </div>
+      {children}
+    </DropdownMenuItem>
+  );
+};
 
 export default function Employees() {
   
@@ -207,6 +250,23 @@ export default function Employees() {
   // Define table columns
   const columns = [
     { 
+      key: 'employee_id', 
+      label: 'Employee ID',
+      sortable: false,
+      render: (value: any, row: any) => {
+        const empId = row.employee?.employee_id || '-';
+        if (empId === '-') return empId;
+        return (
+          <span 
+            className="cursor-pointer font-medium text-primary hover:underline"
+            onClick={() => handleAction('view', row)}
+          >
+            {empId}
+          </span>
+        );
+      }
+    },
+    { 
       key: 'name', 
       label: 'Name', 
       sortable: true,
@@ -226,14 +286,6 @@ export default function Employees() {
             </div>
           </div>
         );
-      }
-    },
-    { 
-      key: 'employee_id', 
-      label: 'Employee ID',
-      sortable: false,
-      render: (value: any, row: any) => {
-        return row.employee?.employee_id || '-';
       }
     },
     { 
@@ -293,7 +345,8 @@ export default function Employees() {
       icon: 'Eye', 
       action: 'view', 
       className: 'text-blue-500',
-      requiredPermission: 'view-employees'
+      requiredPermission: 'view-employees',
+      animated: true
     },
     { 
       label: 'Edit', 
@@ -307,21 +360,24 @@ export default function Employees() {
       icon: 'Key', 
       action: 'change-password', 
       className: 'text-green-500',
-      requiredPermission: 'edit-employees'
+      requiredPermission: 'edit-employees',
+      animated: true
     },
     { 
       label: 'Toggle Status', 
       icon: 'Lock', 
       action: 'toggle-status', 
       className: 'text-amber-500',
-      requiredPermission: 'edit-employees'
+      requiredPermission: 'edit-employees',
+      animated: true
     },
     { 
       label: 'Delete', 
       icon: 'Trash2', 
       action: 'delete', 
       className: 'text-red-500',
-      requiredPermission: 'delete-employees'
+      requiredPermission: 'delete-employees',
+      animated: true
     }
   ];
 
@@ -452,6 +508,19 @@ export default function Employees() {
               edit: 'edit-employees',
               delete: 'delete-employees'
             }}
+            emptyState={
+              <NoRecordsFound
+                icon={Users}
+                title="No Employees found"
+                description="Get started by creating your first Employee."
+                hasFilters={hasActiveFilters()}
+                onClearFilters={handleResetFilters}
+                createPermission="create-employees"
+                onCreateClick={handleAddNew}
+                createButtonText="Create Employee"
+                className="h-auto py-12"
+              />
+            }
           />
 
           {/* Pagination section */}
@@ -467,143 +536,114 @@ export default function Employees() {
       ) : (
         <div>
           {/* Grid View */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {employees?.data?.map((employee: any) => (
-              <Card key={employee.id} className="bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow">
+          {(!employees?.data || employees.data.length === 0) ? (
+            <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
+              <NoRecordsFound
+                icon={Users}
+                title="No Employees found"
+                description="Get started by creating your first Employee."
+                hasFilters={hasActiveFilters()}
+                onClearFilters={handleResetFilters}
+                createPermission="create-employees"
+                onCreateClick={handleAddNew}
+                createButtonText="Create Employee"
+                className="h-auto py-12"
+              />
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                {employees.data.map((employee: any) => (
+              <Card key={employee.id} className="p-0 hover:shadow-lg transition-all duration-200 relative overflow-hidden flex flex-col h-full min-w-0 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
                 {/* Header */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex items-start space-x-4">
-                      <div className="h-16 w-16 rounded-full bg-primary text-white flex items-center justify-center text-lg font-bold overflow-hidden">
-                        {employee.avatar ? (
-                          <img src={getImagePath(employee.avatar)} alt={employee.name} className="h-full w-full object-cover" />
-                        ) : (
-                          getInitials(employee.name)
-                        )}
+                <div className="p-4 bg-gradient-to-r from-primary/5 to-transparent border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+                  <div className="flex items-center gap-3">
+                    {employee.avatar ? (
+                      <img src={getImagePath(employee.avatar)} alt={employee.name} className="w-12 h-12 object-cover rounded-lg border border-gray-200 dark:border-gray-700" />
+                    ) : (
+                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center font-bold text-primary">
+                        {getInitials(employee.name)}
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-1">{employee.name}</h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">{employee.email}</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">{employee.employee?.employee_id || '-'}</p>
-                        <div className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-                          employee.employee?.employee_status === 'active' 
-                            ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
-                            : employee.employee?.employee_status === 'inactive'
-                              ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
-                              : employee.employee?.employee_status === 'probation'
-                                ? 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
-                                : employee.employee?.employee_status === 'terminated'
-                                  ? 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
-                                  : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
-                        }`}>
-                          {employee.employee?.employee_status === 'active' && 'Active'}
-                          {employee.employee?.employee_status === 'inactive' && 'Inactive'}
-                          {employee.employee?.employee_status === 'probation' && 'Probation'}
-                          {employee.employee?.employee_status === 'terminated' && 'Terminated'}
-                          {!employee.employee?.employee_status && 'Active'}
-                        </div>
-                      </div>
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-sm text-gray-900 dark:text-white">{employee.employee?.employee_id || '-'}</h3>
                     </div>
-                    
-                    {/* Actions dropdown */}
+                  </div>
+                </div>
+
+                {/* Body Details */}
+                <div className="p-4 flex-1 min-h-0">
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Employee Name"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">{employee.name || '-'}</p>
+                    </div>
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Branch"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">{employee.employee?.branch?.name || '-'}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Department"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">{employee.employee?.department?.name || '-'}</p>
+                    </div>
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Designation"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">{employee.employee?.designation?.name || '-'}</p>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Employment Type"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">
+                        {employee.employee?.employment_type || '-'}
+                      </p>
+                    </div>
+                    <div className="text-xs min-w-0">
+                      <p className="text-muted-foreground mb-1 text-[10px] uppercase tracking-wide font-semibold">{"Date Of Joining"}</p>
+                      <p className="font-medium text-xs text-gray-900 dark:text-gray-100 truncate">
+                        {employee.employee?.date_of_joining 
+                          ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()) 
+                          : '-'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Footer Actions */}
+                <div className="flex justify-end gap-1 p-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/50 flex-shrink-0 mt-auto">
+                  {hasPermission(permissions, 'view-employees') && (
+                    <AnimatedActionButton icon={EyeIcon} onClick={() => handleAction('view', employee)} className="h-9 w-9 p-0 text-green-600 hover:text-green-700 hover:bg-green-50 dark:hover:bg-green-900/20" />
+                  )}
+                  {hasPermission(permissions, 'edit-employees') && (
+                    <Button variant="ghost" size="sm" onClick={() => handleAction('edit', employee)} className="h-9 w-9 p-0 text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  )}
+                  {hasPermission(permissions, 'delete-employees') && (
+                    <AnimatedActionButton icon={Trash2Icon} onClick={() => handleAction('delete', employee)} className="h-9 w-9 p-0 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20" />
+                  )}
+                  
+                  {hasPermission(permissions, 'edit-employees') && (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
+                        <Button variant="ghost" size="sm" className="h-9 w-9 p-0 text-gray-400 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-48 z-50" sideOffset={5}>
-                        {hasPermission(permissions, 'view-employees') && (
-                          <DropdownMenuItem onClick={() => handleAction('view', employee)}>
-                            <Eye className="h-4 w-4 mr-2" />
-                            <span>{"View Employee"}</span>
-                          </DropdownMenuItem>
-                        )}
-                        {hasPermission(permissions, 'edit-employees') && (
-                          <DropdownMenuItem onClick={() => handleAction('change-password', employee)}>
-                            <Key className="h-4 w-4 mr-2" />
-                            <span>{"Change Password"}</span>
-                          </DropdownMenuItem>
-                        )}
-                        {hasPermission(permissions, 'edit-employees') && (
-                          <DropdownMenuItem onClick={() => handleAction('toggle-status', employee)}>
-                            {employee.status === 'active' ? 
-                              <Lock className="h-4 w-4 mr-2" /> : 
-                              <Unlock className="h-4 w-4 mr-2" />
-                            }
-                            <span>{employee.status === 'active' ? "Deactivate" : "Activate"}</span>
-                          </DropdownMenuItem>
-                        )}
-                        <DropdownMenuSeparator />
-                        {hasPermission(permissions, 'edit-employees') && (
-                          <DropdownMenuItem onClick={() => handleAction('edit', employee)} className="text-amber-600">
-                            <Edit className="h-4 w-4 mr-2" />
-                            <span>{"Edit"}</span>
-                          </DropdownMenuItem>
-                        )}
-                        {hasPermission(permissions, 'delete-employees') && (
-                          <DropdownMenuItem onClick={() => handleAction('delete', employee)} className="text-rose-600">
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            <span>{"Delete"}</span>
-                          </DropdownMenuItem>
-                        )}
+                      <DropdownMenuContent align="end" className="w-48 z-50">
+                        <AnimatedActionMenuItem icon={KeyIcon} onClick={() => handleAction('change-password', employee)}>
+                          <span>{"Change Password"}</span>
+                        </AnimatedActionMenuItem>
+                        <AnimatedActionMenuItem icon={employee.status === 'active' ? LockIcon : Unlock} onClick={() => handleAction('toggle-status', employee)}>
+                          <span>{employee.status === 'active' ? "Deactivate" : "Activate"}</span>
+                        </AnimatedActionMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
-                  </div>
-                  
-                  {/* Department & Designation info */}
-                  <div className="border border-gray-200 dark:border-gray-700 rounded-md p-3 mb-4">
-                    <div className="text-sm mb-1">
-                      <span className="font-medium">{"Department"}:</span> {employee.employee?.department?.name || '-'}
-                    </div>
-                    <div className="text-sm">
-                      <span className="font-medium">{"Designation"}:</span> {employee.employee?.designation?.name || '-'}
-                    </div>
-                  </div>
-                
-                  {/* Joined date */}
-                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-4">
-                    {"Joined:"} {employee.employee?.date_of_joining ? (window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false) || new Date(employee.employee.date_of_joining).toLocaleDateString()) : '-'}
-                  </div>
-                
-                  {/* Action buttons */}
-                  <div className="flex gap-2">
-                    {hasPermission(permissions, 'edit-employees') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleAction('edit', employee)}
-                        className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
-                      >
-                        <Edit className="h-4 w-4 mr-2" />
-                        {"Edit"}
-                      </Button>
-                    )}
-                    
-                    {hasPermission(permissions, 'view-employees') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleAction('view', employee)}
-                        className="flex-1 h-9 text-sm border-gray-300 dark:border-gray-600 dark:text-gray-200"
-                      >
-                        <Eye className="h-4 w-4 mr-2" />
-                        {"View"}
-                      </Button>
-                    )}
-                    
-                    {hasPermission(permissions, 'delete-employees') && (
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => handleAction('delete', employee)}
-                        className="flex-1 h-9 text-sm text-gray-700 border-gray-300 dark:border-gray-600 dark:text-gray-200"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        {"Delete"}
-                      </Button>
-                    )}
-                  </div>
+                  )}
                 </div>
               </Card>
             ))}
@@ -620,6 +660,8 @@ export default function Employees() {
               onPageChange={(url) => router.get(url)}
             />
           </div>
+          </>
+          )}
         </div>
       )}
 

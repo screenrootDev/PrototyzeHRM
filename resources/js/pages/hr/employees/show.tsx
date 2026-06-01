@@ -166,8 +166,8 @@ export default function EmployeeShow() {
                   <span className="text-sm">{'Employee ID'}: {employee.employee?.employee_id}</span>
                 </div>
                 <div className="flex items-center">
-                  <Mail className="h-4 w-4 mr-2 text-muted-foreground" />
-                  <span className="text-sm">{employee.email}</span>
+                  <Mail className="h-4 w-4 mr-2 text-muted-foreground flex-shrink-0" />
+                  <span className="text-sm break-all">{employee.email}</span>
                 </div>
                 {employee.employee?.phone && (
                   <div className="flex items-center">
@@ -239,7 +239,7 @@ export default function EmployeeShow() {
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground">{'Email'}</h4>
-                      <p>{employee.email}</p>
+                      <p className="break-all">{employee.email}</p>
                     </div>
                     <div>
                       <h4 className="text-sm font-medium text-muted-foreground">{'Phone Number'}</h4>

@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/ui/date-picker';
-import { Filter, Search, List, LayoutGrid } from 'lucide-react';
+import { Filter, Search, List, LayoutGrid, ChevronDown, X } from 'lucide-react';
 import { useState } from 'react';
 
 
@@ -36,6 +36,7 @@ interface SearchAndFilterBarProps {
   showViewToggle?: boolean;
   activeView?: 'list' | 'grid';
   onViewChange?: (view: 'list' | 'grid') => void;
+  placeholder?: string;
 }
 
 export function SearchAndFilterBar({
@@ -56,75 +57,59 @@ export function SearchAndFilterBar({
   showViewToggle = false,
   activeView = 'list',
   onViewChange,
+  placeholder = "Search Employees...",
 }: SearchAndFilterBarProps) {
   
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <form onSubmit={onSearch} className="flex gap-2.5 group/search-form">
-            <div className="relative w-72">
-              <div className="absolute inset-0 bg-primary/5 rounded-xl blur-md opacity-0 group-focus-within/search-form:opacity-100 transition-opacity" />
-              <Search className={cn(
-                "absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 z-10 pointer-events-none transition-colors duration-300",
-                searchTerm ? "text-primary" : "text-muted-foreground/60"
-              )} />
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex-1 max-w-md">
+          <form onSubmit={onSearch} className="flex items-center gap-2">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder={"Search intelligence..."}
+                placeholder={placeholder}
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="w-full pl-10 h-10 bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm border-border/50 focus-visible:ring-primary/20 focus-visible:border-primary/50 rounded-xl shadow-sm transition-all"
+                className={cn("w-full pl-10", searchTerm ? "pr-10" : "")}
               />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    onSearchChange('');
+                    setTimeout(() => {
+                      if (onSearch) {
+                        const form = document.createElement('form');
+                        onSearch({ preventDefault: () => {}, target: form } as unknown as React.FormEvent);
+                      }
+                    }, 0);
+                  }}
+                  className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
             </div>
-            <Button 
-              type="submit" 
-              size="sm" 
-              className="h-10 px-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all font-bold tracking-tight"
-            >
-              {"Search"}
-            </Button>
+            <Button type="submit">Search</Button>
           </form>
-          
-          {filters.length > 0 && (
-            <div className="ml-1">
-              <Button
-                variant={hasActiveFilters() ? "default" : "outline"}
-                size="sm"
-                className={cn(
-                  "h-10 px-4 rounded-xl font-bold transition-all border-border/50",
-                  hasActiveFilters() 
-                    ? "shadow-lg shadow-primary/20" 
-                    : "bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm hover:bg-white dark:hover:bg-white/10"
-                )}
-                onClick={() => setShowFilters(!showFilters)}
-              >
-                <Filter className={cn("h-4 w-4 mr-2 transition-transform", showFilters && "rotate-180")} />
-                {showFilters ? 'Hide Filters' : 'Filters'}
-                {hasActiveFilters() && (
-                  <div className="ml-2 relative flex items-center justify-center h-5 w-5">
-                    <div className="absolute inset-0 bg-primary-foreground/40 rounded-full animate-ping" />
-                    <span className="relative bg-primary-foreground text-primary rounded-full w-full h-full flex items-center justify-center text-[10px] font-black">
-                      {activeFilterCount()}
-                    </span>
-                  </div>
-                )}
-              </Button>
-            </div>
-          )}
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {showViewToggle && onViewChange && (
-            <div className="flex items-center bg-gray-100/50 dark:bg-white/5 p-1 rounded-xl border border-border/50 backdrop-blur-sm">
+            <div className="flex items-center bg-gray-100 p-1 rounded-md">
               <Button 
                 size="icon" 
                 variant="ghost"
+                type="button"
                 className={cn(
-                  "h-8 w-8 rounded-lg transition-all",
+                  "h-8 w-8 rounded-sm transition-all",
                   activeView === 'list' 
-                    ? "bg-white dark:bg-gray-800 shadow-sm text-primary" 
-                    : "text-muted-foreground/60 hover:text-foreground"
+                    ? "bg-white shadow-sm text-primary" 
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => onViewChange('list')}
               >
@@ -133,11 +118,12 @@ export function SearchAndFilterBar({
               <Button 
                 size="icon" 
                 variant="ghost"
+                type="button"
                 className={cn(
-                  "h-8 w-8 rounded-lg transition-all",
+                  "h-8 w-8 rounded-sm transition-all",
                   activeView === 'grid' 
-                    ? "bg-white dark:bg-gray-800 shadow-sm text-primary" 
-                    : "text-muted-foreground/60 hover:text-foreground"
+                    ? "bg-white shadow-sm text-primary" 
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => onViewChange('grid')}
               >
@@ -147,43 +133,62 @@ export function SearchAndFilterBar({
           )}
           
           <div className="flex items-center gap-2">
-            <Label className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-widest whitespace-nowrap">{"Items Per Page"}</Label>
             <Select
               value={currentPerPage}
               onValueChange={onPerPageChange}
             >
-              <SelectTrigger className="w-20 h-10 rounded-xl bg-white/50 dark:bg-gray-950/50 backdrop-blur-sm border-border/50 font-bold text-xs">
-                <SelectValue />
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="10 per page" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-border/50">
+              <SelectContent>
                 {perPageOptions.map(option => (
-                  <SelectItem key={option} value={option.toString()} className="text-xs font-medium focus:bg-primary/5 focus:text-primary rounded-lg mx-1 my-0.5">
-                    {option}
+                  <SelectItem key={option} value={option.toString()}>
+                    {option} per page
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
+
+          {filters.length > 0 && (
+            <div className="relative">
+              <Button
+                type="button"
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter className="h-4 w-4" />
+                Filters
+                <ChevronDown className={cn("h-4 w-4 transition-transform", showFilters && "rotate-180")} />
+              </Button>
+              {hasActiveFilters() && (
+                <span className="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium">
+                  {activeFilterCount()}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {showFilters && filters.length > 0 && (
-        <div className="w-full mt-4 p-5 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-border/50 rounded-2xl shadow-xl animate-in fade-in slide-in-from-top-4 duration-300 relative overflow-hidden">
-          <div className="flex flex-wrap gap-6 items-end relative z-10">
+        <div className="p-6 bg-blue-50/30 border-t mt-4 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {filters.map((filter) => (
-              <div key={filter.name} className="space-y-2.5">
-                <Label className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.15em] ml-1">{filter.label}</Label>
+              <div key={filter.name}>
+                <Label className="block text-sm font-medium text-gray-700 mb-2">{filter.label}</Label>
                 {filter.type === 'select' && filter.options && (
                   <Select
                     value={filter.value as string}
                     onValueChange={filter.onChange}
                   >
-                    <SelectTrigger className="w-48 h-10 rounded-xl bg-background/50 border-border/50 focus:ring-primary/20 font-semibold text-sm">
+                    <SelectTrigger className="w-full h-10 bg-white">
                       <SelectValue placeholder={`Select ${filter.label}`} />
                     </SelectTrigger>
-                    <SelectContent searchable={filter.searchable} className="rounded-xl border-border/50 max-h-[300px]">
+                    <SelectContent searchable={filter.searchable}>
                       {filter.options.map((option) => (
-                        <SelectItem key={option.value || 'empty'} value={option.value || '_empty_'} disabled={option.disabled} className="text-sm font-medium focus:bg-primary/5 focus:text-primary rounded-lg mx-1 my-0.5">
+                        <SelectItem key={option.value || 'empty'} value={option.value || '_empty_'} disabled={option.disabled}>
                           {option.label}
                         </SelectItem>
                       ))}
@@ -191,7 +196,7 @@ export function SearchAndFilterBar({
                   </Select>
                 )}
                 {filter.type === 'date' && (
-                  <div className="w-48">
+                  <div className="w-full">
                     <DatePicker
                       selected={filter.value as Date | undefined}
                       onSelect={filter.onChange}
@@ -202,27 +207,26 @@ export function SearchAndFilterBar({
               </div>
             ))}
 
-            <div className="flex gap-2.5 ml-auto">
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-10 px-5 rounded-xl font-bold border-border/50 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/20 transition-all"
-                onClick={onResetFilters}
-                disabled={!hasActiveFilters()}
-              >
-                {"Clear All"}
-              </Button>
-              
+            <div className="flex items-end gap-2">
               {onApplyFilters && (
                 <Button
                   variant="default"
                   size="sm"
-                  className="h-10 px-6 rounded-xl font-bold shadow-lg shadow-primary/20 transition-all"
+                  className="bg-[#22c55e] hover:bg-[#16a34a] text-white"
                   onClick={onApplyFilters}
                 >
-                  {"Apply Intelligence"}
+                  Apply
                 </Button>
               )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="bg-white"
+                onClick={onResetFilters}
+                disabled={!hasActiveFilters()}
+              >
+                Clear
+              </Button>
             </div>
           </div>
         </div>
