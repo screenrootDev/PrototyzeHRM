@@ -1,355 +1,226 @@
-// pages/hr/attendance-records/index.tsx
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
-import { Plus, Clock, LogIn, LogOut } from 'lucide-react';
+import { Plus, Download, Upload, Check, X, Flag, Star, Ban, Minus, Clock, ArrowLeftToLine, Timer, Search, Filter, CircleDashed } from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
-import { CrudTable } from '@/components/CrudTable';
-import { CrudFormModal } from '@/components/CrudFormModal';
-import { CrudDeleteModal } from '@/components/CrudDeleteModal';
 import { toast } from '@/components/custom-toast';
-
 import { Pagination } from '@/components/ui/pagination';
-import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { getImagePath } from '@/utils/helpers';
 
 export default function AttendanceRecords() {
-  
-  const { auth, attendanceRecords, employees, filters: pageFilters = {} } = usePage().props as any;
+  const { auth, attendanceData, employees, daysInMonth, workingDaysInMonth, currentMonth, currentYear, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
   // State
   const [searchTerm, setSearchTerm] = useState(pageFilters.search || '');
   const [selectedEmployee, setSelectedEmployee] = useState(pageFilters.employee_id || 'all');
-  const [selectedStatus, setSelectedStatus] = useState(pageFilters.status || 'all');
-  const [dateFrom, setDateFrom] = useState(pageFilters.date_from || '');
-  const [dateTo, setDateTo] = useState(pageFilters.date_to || '');
-  const [showFilters, setShowFilters] = useState(false);
+  
+  const [selectedMonth, setSelectedMonth] = useState(pageFilters.month || (currentMonth || new Date().getMonth() + 1).toString());
+  const [selectedYear, setSelectedYear] = useState(pageFilters.year || (currentYear || new Date().getFullYear()).toString());
+  
+  const [showFilters, setShowFilters] = useState(true);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
-  const [formMode, setFormMode] = useState<'create' | 'edit' | 'view'>('create');
+  const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+  const [perPage, setPerPage] = useState(pageFilters.per_page || "10");
 
-  // Check if any filters are active
-  const hasActiveFilters = () => {
-    return searchTerm !== '' || selectedEmployee !== 'all' || selectedStatus !== 'all' || dateFrom !== '' || dateTo !== '';
-  };
+  const months = [
+    { value: '1', label: 'January' },
+    { value: '2', label: 'February' },
+    { value: '3', label: 'March' },
+    { value: '4', label: 'April' },
+    { value: '5', label: 'May' },
+    { value: '6', label: 'June' },
+    { value: '7', label: 'July' },
+    { value: '8', label: 'August' },
+    { value: '9', label: 'September' },
+    { value: '10', label: 'October' },
+    { value: '11', label: 'November' },
+    { value: '12', label: 'December' },
+  ];
 
-  // Count active filters
-  const activeFilterCount = () => {
-    return (searchTerm ? 1 : 0) + (selectedEmployee !== 'all' ? 1 : 0) + (selectedStatus !== 'all' ? 1 : 0) + (dateFrom ? 1 : 0) + (dateTo ? 1 : 0);
-  };
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    applyFilters();
-  };
+  const currentYr = new Date().getFullYear();
+  const years = Array.from({ length: 5 }, (_, i) => {
+    const y = (currentYr - 2 + i).toString();
+    return { value: y, label: y };
+  });
 
   const applyFilters = () => {
     router.get(route('hr.attendance-records.index'), {
       page: 1,
       search: searchTerm || undefined,
       employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
-      status: selectedStatus !== 'all' ? selectedStatus : undefined,
-      date_from: dateFrom || undefined,
-      date_to: dateTo || undefined,
-      per_page: pageFilters.per_page
+      month: selectedMonth,
+      year: selectedYear,
+      per_page: perPage
     }, { preserveState: true, preserveScroll: true });
   };
 
-  const handleSort = (field: string) => {
-    const direction = pageFilters.sort_field === field && pageFilters.sort_direction === 'asc' ? 'desc' : 'asc';
+  const handleResetFilters = () => {
+    setSearchTerm('');
+    setSelectedEmployee('all');
+    setSelectedMonth((new Date().getMonth() + 1).toString());
+    setSelectedYear((new Date().getFullYear()).toString());
 
     router.get(route('hr.attendance-records.index'), {
-      sort_field: field,
-      sort_direction: direction,
       page: 1,
-      search: searchTerm || undefined,
-      employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
-      status: selectedStatus !== 'all' ? selectedStatus : undefined,
-      date_from: dateFrom || undefined,
-      date_to: dateTo || undefined,
-      per_page: pageFilters.per_page
+      per_page: perPage,
+      month: new Date().getMonth() + 1,
+      year: new Date().getFullYear()
     }, { preserveState: true, preserveScroll: true });
   };
 
-  const handleAction = (action: string, item: any) => {
-    setCurrentItem(item);
-
-    switch (action) {
-      case 'view':
-        setFormMode('view');
-        setIsFormModalOpen(true);
-        break;
-      case 'edit':
-        setFormMode('edit');
-        setIsFormModalOpen(true);
-        break;
-      case 'delete':
-        setIsDeleteModalOpen(true);
-        break;
+  const handleCellClick = (empId: number, day: number, dayData: any, isFuture: boolean) => {
+    if (!hasPermission(permissions, 'edit-attendance-records') && !hasPermission(permissions, 'create-attendance-records')) {
+      return;
     }
-  };
+    
+    // Disable clicking on future dates if we want (optional, but standard practice)
+    // if (isFuture) return;
 
-  const handleAddNew = () => {
-    setCurrentItem(null);
-    setFormMode('create');
+    const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    
+    if (dayData && dayData.record_id) {
+      setFormMode('edit');
+      setCurrentItem({
+        id: dayData.record_id,
+        employee_id: empId.toString(),
+        date: dateStr,
+        status: dayData.status,
+        clock_in: dayData.clock_in,
+        clock_out: dayData.clock_out
+      });
+    } else {
+      if (!hasPermission(permissions, 'create-attendance-records')) return;
+      setFormMode('create');
+      setCurrentItem({
+        employee_id: empId.toString(),
+        date: dateStr,
+        status: 'present'
+      });
+    }
     setIsFormModalOpen(true);
   };
 
   const handleFormSubmit = (formData: any) => {
     if (formMode === 'create') {
       toast.loading('Creating attendance record...');
-
       router.post(route('hr.attendance-records.store'), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
-          if (page.props.flash.success) {
-            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
-            toast.error(page.props.flash.error);          }
+          if (page.props.flash.success) toast.success(page.props.flash.success);
+          else if (page.props.flash.error) toast.error(page.props.flash.error);
         },
         onError: (errors) => {
           toast.dismiss();
-          if (typeof errors === 'string') {
-            toast.error(errors);
-          } else {
-            toast.error(`Failed to create attendance record: ${Object.values(errors).join(', ')}`);
-          }
+          if (typeof errors === 'string') toast.error(errors);
+          else toast.error(`Failed to create attendance record: ${Object.values(errors).join(', ')}`);
         }
       });
     } else if (formMode === 'edit') {
       toast.loading('Updating attendance record...');
-
       router.put(route('hr.attendance-records.update', currentItem.id), formData, {
         onSuccess: (page) => {
           setIsFormModalOpen(false);
           toast.dismiss();
-          if (page.props.flash.success) {
-            toast.success(page.props.flash.success);          } else if (page.props.flash.error) {
-            toast.error(page.props.flash.error);          }
+          if (page.props.flash.success) toast.success(page.props.flash.success);
+          else if (page.props.flash.error) toast.error(page.props.flash.error);
         },
         onError: (errors) => {
           toast.dismiss();
-          if (typeof errors === 'string') {
-            toast.error(errors);
-          } else {
-            toast.error(`Failed to update attendance record: ${Object.values(errors).join(', ')}`);
-          }
+          if (typeof errors === 'string') toast.error(errors);
+          else toast.error(`Failed to update attendance record: ${Object.values(errors).join(', ')}`);
         }
       });
     }
   };
 
-  const handleDeleteConfirm = () => {
-    toast.loading('Deleting attendance record...');
+  // Pre-calculate dates for table headers
+  const gridDates = useMemo(() => {
+    const dates = [];
+    for (let i = 1; i <= daysInMonth; i++) {
+      const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
+      const d = new Date(dateStr);
+      const dayName = d.toLocaleDateString('en-US', { weekday: 'short' });
+      dates.push({
+        day: i,
+        dayName,
+        isWeekend: d.getDay() === 0 || d.getDay() === 6,
+        isFuture: d > new Date()
+      });
+    }
+    return dates;
+  }, [daysInMonth, selectedMonth, selectedYear]);
 
-    router.delete(route('hr.attendance-records.destroy', currentItem.id), {
-      onSuccess: (page) => {
-        setIsDeleteModalOpen(false);
-        toast.dismiss();
-        if (page.props.flash.success) {
-          toast.success(page.props.flash.success);        } else if (page.props.flash.error) {
-          toast.error(page.props.flash.error);        }
-      },
-      onError: (errors) => {
-        toast.dismiss();
-        if (typeof errors === 'string') {
-          toast.error(errors);
-        } else {
-          toast.error(`Failed to delete attendance record: ${Object.values(errors).join(', ')}`);
-        }
-      }
-    });
+  const renderStatusCell = (dayData: any, isFuture: boolean, isWeekend: boolean) => {
+    if (isFuture && !dayData?.status) {
+      return <Minus className="h-4 w-4 text-gray-300 mx-auto" />;
+    }
+    
+    if (isWeekend && !dayData?.status) {
+      return <Ban className="h-4 w-4 text-gray-300 mx-auto" />;
+    }
+
+    if (!dayData || !dayData.status) {
+      return <CircleDashed className="h-4 w-4 text-gray-300 mx-auto" title="Attendance Not Added" />;
+    }
+    
+    switch (dayData.status) {
+      case 'present':
+        return <Check className="h-4 w-4 text-[#20c997] font-bold mx-auto stroke-[3]" title={`In: ${dayData.clock_in || '--'} Out: ${dayData.clock_out || '--'}`} />;
+      case 'absent':
+        return <X className="h-4 w-4 text-red-500 font-bold mx-auto stroke-[3]" />;
+      case 'half_day':
+        return <span className="font-bold text-yellow-500 flex justify-center text-sm">½</span>;
+      case 'on_leave':
+        return <Flag className="h-4 w-4 text-red-600 fill-current mx-auto" title={dayData.leave_type} />;
+      case 'holiday':
+        return <Star className="h-4 w-4 text-yellow-400 fill-current mx-auto" />;
+      default:
+        return <CircleDashed className="h-4 w-4 text-gray-300 mx-auto" />;
+    }
   };
 
-  const handleResetFilters = () => {
-    setSearchTerm('');
-    setSelectedEmployee('all');
-    setSelectedStatus('all');
-    setDateFrom('');
-    setDateTo('');
-    setShowFilters(false);
-
-    router.get(route('hr.attendance-records.index'), {
-      page: 1,
-      per_page: pageFilters.per_page
-    }, { preserveState: true, preserveScroll: true });
-  };
-
-  // Define page actions
-  const pageActions = [];
-
-  // Add the "Add New Record" button if user has permission
+  const pageActions = [
+    {
+      label: 'Export',
+      icon: <Download className="h-4 w-4 mr-2" />,
+      variant: 'outline' as const,
+      onClick: () => {}
+    },
+    {
+      label: 'Import',
+      icon: <Upload className="h-4 w-4 mr-2" />,
+      variant: 'outline' as const,
+      onClick: () => {}
+    }
+  ];
+  
   if (hasPermission(permissions, 'create-attendance-records')) {
     pageActions.push({
       label: 'Add Record',
       icon: <Plus className="h-4 w-4 mr-2" />,
       variant: 'default',
-      onClick: () => handleAddNew()
+      className: 'bg-[#20c997] hover:bg-[#1ba87e] border-none text-white',
+      onClick: () => {
+        setFormMode('create');
+        setCurrentItem(null);
+        setIsFormModalOpen(true);
+      }
     });
   }
 
   const breadcrumbs = [
     { title: 'Dashboard', href: route('dashboard') },
-    { title: 'Shift Management', href: route('hr.attendance-records.index') },
-    { title: 'Attendance Records' }
-  ];
-
-  // Define table columns
-  const columns = [
-    {
-      key: 'employee',
-      label: 'Employee',
-      render: (value: any, row: any) => row.employee?.name || '-'
-    },
-    {
-      key: 'date',
-      label: 'Date',
-      sortable: true,
-      render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
-    },
-    {
-      key: 'shift',
-      label: 'Shift',
-      render: (value: any, row: any) => row.shift?.name || '-'
-    },
-    {
-      key: 'clock_in',
-      label: 'Clock In',
-      render: (value: string) => (
-
-        <span className="font-mono text-green-600">{window.appSettings.formatTime(value) || '-'}</span>
-      )
-    },
-    {
-      key: 'clock_out',
-      label: 'Clock Out',
-      render: (value: string) => (
-        <span className="font-mono text-red-600">{window.appSettings.formatTime(value) || '-'}</span>
-      )
-    },
-    {
-      key: 'total_hours',
-      label: 'Total Hours',
-      render: (value: number) => (
-        <span className="font-mono">{Number(value).toFixed(2)}h</span>
-      )
-    },
-    {
-      key: 'overtime_hours',
-      label: 'Overtime',
-      render: (value: number, row: any) => (
-        <div className="text-sm">
-          <span className={`font-mono ${value > 0 ? 'text-orange-600' : 'text-gray-500'}`}>
-            {Number(value).toFixed(2)}h
-          </span>
-          {value > 0 && row.overtime_amount && (
-            <div className="text-xs text-green-600">
-              {window.appSettings?.formatCurrency(row.overtime_amount)}
-            </div>
-          )}
-        </div>
-      )
-    },
-    {
-      key: 'status',
-      label: 'Status',
-      render: (value: string, row: any) => {
-        const statusConfig = {
-          present: {
-            label: 'Present',
-            className: 'bg-green-50 text-green-700 ring-green-600/20'
-          },
-          absent: {
-            label: 'Absent',
-            className: 'bg-red-50 text-red-700 ring-red-600/20'
-          },
-          half_day: {
-            label: 'Half Day',
-            className: 'bg-yellow-50 text-yellow-700 ring-yellow-600/20'
-          },
-          on_leave: {
-            label: row.leave_type ? `${'On Leave'} (${row.leave_type.name})` : 'On Leave',
-            className: 'bg-blue-50 text-blue-700 ring-blue-600/20'
-          },
-          holiday: {
-            label: 'Holiday',
-            className: 'bg-purple-50 text-purple-700 ring-purple-600/20'
-          }
-        };
-
-        const config = statusConfig[value as keyof typeof statusConfig] || {
-          label: value || '-',
-          className: 'bg-gray-50 text-gray-700 ring-gray-600/20'
-        };
-
-        return (
-          <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${config.className}`}>
-              {value === 'on_leave' ? 'On Leave' : config.label}
-            </span>
-            {value === 'on_leave' && row.leave_type && (
-              <span className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium bg-indigo-50 text-indigo-700 ring-1 ring-inset ring-indigo-600/20">
-                {row.leave_type.name}
-              </span>
-            )}
-            {row.is_late && (
-              <span className="inline-flex items-center rounded-md px-1 py-0.5 text-xs font-medium bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20">
-                {'Late'}
-              </span>
-            )}
-            {row.is_early_departure && (
-              <span className="inline-flex items-center rounded-md px-1 py-0.5 text-xs font-medium bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-600/20">
-                {'Early'}
-              </span>
-            )}
-          </div>
-        );
-      }
-    }
-  ];
-
-  // Define table actions
-  const actions = [
-    {
-      label: 'View',
-      icon: 'Eye',
-      action: 'view',
-      className: 'text-blue-500',
-      requiredPermission: 'view-attendance-records'
-    },
-    {
-      label: 'Edit',
-      icon: 'Edit',
-      action: 'edit',
-      className: 'text-amber-500',
-      requiredPermission: 'edit-attendance-records'
-    },
-    {
-      label: 'Delete',
-      icon: 'Trash2',
-      action: 'delete',
-      className: 'text-red-500',
-      requiredPermission: 'delete-attendance-records'
-    }
-  ];
-
-  // Prepare options for filters and forms
-  const employeeOptions = [
-    { value: 'all', label: 'All Employees', disabled: true },
-    ...(employees || []).map((emp: any) => ({
-      value: emp.id.toString(),
-      label: emp.name
-    }))
-  ];
-
-  const statusOptions = [
-    { value: 'all', label: 'All Statuses', disabled: true },
-    { value: 'present', label: 'Present' },
-    { value: 'absent', label: 'Absent' },
-    { value: 'half_day', label: 'Half Day' },
-    { value: 'on_leave', label: 'On Leave' },
-    { value: 'holiday', label: 'Holiday' }
+    { title: 'HRM', href: route('hr.attendance-records.index') },
+    { title: 'Attendances' }
   ];
 
   return (
@@ -360,159 +231,364 @@ export default function AttendanceRecords() {
       breadcrumbs={breadcrumbs}
       noPadding
     >
-      {/* Search and filters section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-4 p-4">
-        <SearchAndFilterBar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
-          filters={[
-            {
-              name: 'employee_id',
-              label: 'Employee',
-              type: 'select',
-              value: selectedEmployee,
-              onChange: setSelectedEmployee,
-              options: employeeOptions,
-              searchable: true
-            },
-            {
-              name: 'status',
-              label: 'Status',
-              type: 'select',
-              value: selectedStatus,
-              onChange: setSelectedStatus,
-              options: statusOptions
-            },
-            {
-              name: 'date_from',
-              label: 'Date From',
-              type: 'date',
-              value: dateFrom,
-              onChange: setDateFrom
-            },
-            {
-              name: 'date_to',
-              label: 'Date To',
-              type: 'date',
-              value: dateTo,
-              onChange: setDateTo
-            }
-          ]}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          hasActiveFilters={hasActiveFilters}
-          activeFilterCount={activeFilterCount}
-          onResetFilters={handleResetFilters}
-          onApplyFilters={applyFilters}
-          currentPerPage={pageFilters.per_page?.toString() || "10"}
-          onPerPageChange={(value) => {
-            router.get(route('hr.attendance-records.index'), {
-              page: 1,
-              per_page: parseInt(value),
-              search: searchTerm || undefined,
-              employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
-              status: selectedStatus !== 'all' ? selectedStatus : undefined,
-              date_from: dateFrom || undefined,
-              date_to: dateTo || undefined
-            }, { preserveState: true, preserveScroll: true });
-          }}
-        />
+      <div className="flex flex-col gap-4">
+        {/* Filter Section matching ERPGo */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 p-5">
+          <div className="flex flex-col gap-4">
+            {/* Top row of filters */}
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-2 max-w-sm w-full">
+                <div className="relative w-full">
+                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                  <Input 
+                    type="text" 
+                    placeholder="Search..." 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-9 h-10 border-gray-200"
+                  />
+                </div>
+                <Button 
+                  onClick={applyFilters} 
+                  className="bg-[#20c997] hover:bg-[#1ba87e] text-white h-10 px-4 whitespace-nowrap"
+                >
+                  <Search className="h-4 w-4 mr-2" /> Search
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setShowFilters(!showFilters)}
+                  className="h-10 px-4 whitespace-nowrap text-gray-600 border-gray-200 bg-gray-50 hover:bg-gray-100"
+                >
+                  <Filter className="h-4 w-4 mr-2" /> {showFilters ? 'Hide Filters' : 'Show Filters'}
+                </Button>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-gray-500 font-medium">Per Page:</span>
+                <Select value={perPage} onValueChange={(val) => {
+                  setPerPage(val);
+                  router.get(route('hr.attendance-records.index'), {
+                    page: 1,
+                    per_page: parseInt(val),
+                    search: searchTerm || undefined,
+                    employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
+                    month: selectedMonth,
+                    year: selectedYear
+                  }, { preserveState: true, preserveScroll: true });
+                }}>
+                  <SelectTrigger className="w-[80px] h-9 border-gray-200">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Bottom row of filters */}
+            {showFilters && (
+              <div className="flex items-end gap-4 mt-2">
+                <div className="space-y-1.5 w-64">
+                  <Label className="text-sm font-semibold text-gray-700">Employee</Label>
+                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                    <SelectTrigger className="w-full border-gray-200">
+                      <SelectValue placeholder="All Employees" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Employees</SelectItem>
+                      {employees?.map((emp: any) => (
+                        <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5 w-48">
+                  <Label className="text-sm font-semibold text-gray-700">Month</Label>
+                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger className="w-full border-gray-200">
+                      <SelectValue placeholder="Select Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {months.map(m => (
+                        <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5 w-48">
+                  <Label className="text-sm font-semibold text-gray-700">Year</Label>
+                  <Select value={selectedYear} onValueChange={setSelectedYear}>
+                    <SelectTrigger className="w-full border-gray-200">
+                      <SelectValue placeholder="Select Year" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {years.map(y => (
+                        <SelectItem key={y.value} value={y.value}>{y.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button 
+                  onClick={applyFilters} 
+                  className="bg-[#20c997] hover:bg-[#1ba87e] text-white"
+                >
+                  Apply Filters
+                </Button>
+                
+                <Button 
+                  variant="ghost" 
+                  onClick={handleResetFilters} 
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  Reset Filters
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Legend */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-gray-600">
+          <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-[#20c997] stroke-[3]" /> Present</div>
+          <div className="flex items-center gap-1.5"><X className="h-4 w-4 text-red-500 stroke-[3]" /> Absent</div>
+          <div className="flex items-center gap-1.5"><span className="text-yellow-500 font-bold text-sm leading-none">½</span> Half Day</div>
+          <div className="flex items-center gap-1.5"><Flag className="h-4 w-4 text-red-600 fill-current" /> On Leave</div>
+          <div className="flex items-center gap-1.5"><Star className="h-4 w-4 text-yellow-400 fill-current" /> Holiday</div>
+          <div className="flex items-center gap-1.5"><Ban className="h-4 w-4 text-gray-400" /> Day Off</div>
+          <div className="flex items-center gap-1.5"><Minus className="h-4 w-4 text-gray-400" /> Future</div>
+          <div className="flex items-center gap-1.5"><CircleDashed className="h-4 w-4 text-gray-400" /> Attendance Not Added</div>
+          <div className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-orange-500" /> Late</div>
+          <div className="flex items-center gap-1.5"><ArrowLeftToLine className="h-4 w-4 text-red-400" /> Early Departure</div>
+          <div className="flex items-center gap-1.5"><Timer className="h-4 w-4 text-blue-500" /> Overtime</div>
+        </div>
+
+        {/* Main Grid */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 overflow-hidden w-full">
+          <div className="p-4 border-b border-gray-100 text-center relative bg-gray-50/50">
+            <h3 className="text-sm font-bold text-gray-800">
+              {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
+            </h3>
+          </div>
+
+          <div className="w-full grid bg-white text-sm" style={{ gridTemplateColumns: '220px minmax(0, 1fr) 70px' }}>
+            {/* LEFT PANE: Fixed Width */}
+            <div className="flex flex-col border-r border-gray-100 z-10 shadow-[2px_0_8px_rgba(0,0,0,0.02)]">
+              <div className="h-[56px] px-3 flex items-center text-xs font-bold text-gray-800 border-b border-gray-100">
+                Employee
+              </div>
+              {!attendanceData?.data || attendanceData?.data?.length === 0 ? (
+                <div className="h-[52px] px-3 flex items-center text-gray-500 border-b border-gray-100"></div>
+              ) : (
+                attendanceData?.data?.map((row: any) => (
+                  <div key={`emp-${row.employee.id}`} className="h-[52px] px-3 flex items-center border-b border-gray-100 bg-white hover:bg-gray-50 transition-colors">
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-8 rounded-full overflow-hidden bg-gray-100 shrink-0">
+                        <img 
+                          src={row.employee.avatar ? getImagePath(row.employee.avatar) : `https://ui-avatars.com/api/?name=${encodeURIComponent(row.employee.name)}&color=7F9CF5&background=EBF4FF`} 
+                          alt={row.employee.name}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <div className="flex flex-col min-w-[120px]">
+                        <span className="font-bold text-gray-800 text-xs truncate max-w-[140px]" title={row.employee.name}>{row.employee.name}</span>
+                        <span className="text-[10px] text-gray-500 truncate max-w-[140px]" title={row.employee.designation || row.employee.employee_id}>{row.employee.designation || row.employee.employee_id}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* MIDDLE PANE: Scrollable */}
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+              <div className="flex flex-col w-max">
+                <div className="h-[56px] flex border-b border-gray-100">
+                  {gridDates.map((date) => (
+                    <div key={`header-${date.day}`} className="w-[44px] shrink-0 flex flex-col items-center justify-center border-r border-gray-100 last:border-r-0">
+                      <span className="font-bold text-gray-700 text-xs">{date.day}</span>
+                      <span className="text-[9px] text-gray-400 uppercase leading-none mt-0.5">{date.dayName}</span>
+                    </div>
+                  ))}
+                </div>
+                {!attendanceData?.data || attendanceData?.data?.length === 0 ? (
+                  <div className="h-[52px] flex items-center justify-center text-gray-500 border-b border-gray-100">
+                    No attendance records found for the selected criteria.
+                  </div>
+                ) : (
+                  attendanceData?.data?.map((row: any) => (
+                    <div key={`dates-${row.employee.id}`} className="h-[52px] flex border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      {gridDates.map((date) => {
+                        const dayData = row.days[date.day];
+                        return (
+                          <div 
+                            key={`cell-${row.employee.id}-${date.day}`}
+                            className="w-[44px] shrink-0 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors border-r border-gray-50/50 last:border-r-0"
+                            onClick={() => handleCellClick(row.employee.id, date.day, dayData, date.isFuture)}
+                          >
+                            {renderStatusCell(dayData, date.isFuture, date.isWeekend)}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT PANE: Fixed Width */}
+            <div className="w-[70px] shrink-0 flex flex-col border-l border-gray-100 z-10 shadow-[-2px_0_8px_rgba(0,0,0,0.02)]">
+              <div className="h-[56px] flex justify-center items-center text-xs font-bold text-gray-800 border-b border-gray-100">
+                Total
+              </div>
+              {!attendanceData?.data || attendanceData?.data?.length === 0 ? (
+                <div className="h-[52px] flex items-center justify-center border-b border-gray-100"></div>
+              ) : (
+                attendanceData?.data?.map((row: any) => {
+                  const workingDays = workingDaysInMonth || 22;
+                  return (
+                    <div key={`total-${row.employee.id}`} className="h-[52px] flex items-center justify-center text-xs font-bold text-gray-800 border-b border-gray-100 bg-gray-50/30 hover:bg-gray-100/90 transition-colors">
+                      {row.summary.present}/{workingDays}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+          <div className="p-4 border-t border-gray-100 bg-gray-50/50">
+            <Pagination
+              from={attendanceData?.from || 0}
+              to={attendanceData?.to || 0}
+              total={attendanceData?.total || 0}
+              links={attendanceData?.links}
+              entityName={"employees"}
+              onPageChange={(url) => router.get(url)}
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Content section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-        <CrudTable
-          columns={columns}
-          actions={actions}
-          data={attendanceRecords?.data || []}
-          from={attendanceRecords?.from || 1}
-          onAction={handleAction}
-          sortField={pageFilters.sort_field}
-          sortDirection={pageFilters.sort_direction}
-          onSort={handleSort}
-          permissions={permissions}
-          entityPermissions={{
-            view: 'view-attendance-records',
-            create: 'create-attendance-records',
-            edit: 'edit-attendance-records',
-            delete: 'delete-attendance-records'
-          }}
-        />
+      <Dialog open={isFormModalOpen} onOpenChange={setIsFormModalOpen}>
+        <DialogContent className="sm:max-w-[700px] p-0 overflow-hidden border-none shadow-2xl rounded-xl bg-white">
+          <DialogHeader className="p-5 pb-4 border-b border-gray-100 flex flex-row items-center justify-between">
+            <DialogTitle className="text-lg font-bold text-gray-800 tracking-tight">
+              {formMode === 'create' ? 'Create Attendance' : 'Edit Attendance'}
+            </DialogTitle>
+          </DialogHeader>
 
-        {/* Pagination section */}
-        <Pagination
-          from={attendanceRecords?.from || 0}
-          to={attendanceRecords?.to || 0}
-          total={attendanceRecords?.total || 0}
-          links={attendanceRecords?.links}
-          entityName={"attendance records"}
-          onPageChange={(url) => router.get(url)}
-        />
-      </div>
+          <div className="p-6 pt-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleFormSubmit(currentItem); }} className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Employee <span className="text-red-500">*</span></Label>
+                    <Select 
+                      value={currentItem?.employee_id || ''} 
+                      onValueChange={(val) => setCurrentItem({...currentItem, employee_id: val})}
+                    >
+                      <SelectTrigger className="w-full h-11 border-gray-200">
+                        <SelectValue placeholder="Select Employee" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {employees?.map((emp: any) => (
+                          <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-      {/* Form Modal */}
-      <CrudFormModal
-        isOpen={isFormModalOpen}
-        onClose={() => setIsFormModalOpen(false)}
-        onSubmit={handleFormSubmit}
-        formConfig={{
-          fields: [
-            {
-              name: 'employee_id',
-              label: 'Employee',
-              type: 'select',
-              required: true,
-              searchable: true,
-              options: employees ? employees.map((emp: any) => ({
-                value: emp.id.toString(),
-                label: emp.name
-              })) : []
-            },
-            { name: 'date', label: 'Date', type: 'date', required: true },
-            { name: 'clock_in', label: 'Clock In Time', type: 'time' },
-            { name: 'clock_out', label: 'Clock Out Time', type: 'time' },
-            { name: 'break_hours', label: 'Break Hours', type: 'number', min: 0, step: 0.5, defaultValue: 1 },
-            {
-              name: 'status',
-              label: 'Status',
-              type: 'select',
-              required: true,
-              options: [
-                { value: 'present', label: 'Present' },
-                { value: 'absent', label: 'Absent' },
-                { value: 'half_day', label: 'Half Day' },
-                { value: 'on_leave', label: 'On Leave' },
-                { value: 'holiday', label: 'Holiday' }
-              ]
-            },
-            { name: 'is_holiday', label: 'Holiday', type: 'checkbox', defaultValue: false },
-            { name: 'notes', label: 'Notes', type: 'textarea' }
-          ],
-          modalSize: 'lg'
-        }}
-        initialData={currentItem ? {
-          ...currentItem,
-          date: currentItem.date ? window.appSettings.formatDateTimeSimple(currentItem.date, false) : currentItem.date
-        } : null}
-        title={
-          formMode === 'create'
-            ? 'Add New Attendance Record'
-            : formMode === 'edit'
-              ? 'Edit Attendance Record'
-              : 'View Attendance Record'
-        }
-        mode={formMode}
-      />
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Clock In Time <span className="text-red-500">*</span></Label>
+                    <Input 
+                      type="time" 
+                      value={currentItem?.clock_in || ''} 
+                      onChange={(e) => setCurrentItem({...currentItem, clock_in: e.target.value})} 
+                      placeholder="Select Clock In Time"
+                      className="h-11 border-gray-200"
+                    />
+                  </div>
 
-      {/* Delete Modal */}
-      <CrudDeleteModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
-        itemName={currentItem?.employee?.name || ''}
-        entityName="attendance record"
-      />
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Notes</Label>
+                    <Textarea 
+                      value={currentItem?.notes || ''} 
+                      onChange={(e) => setCurrentItem({...currentItem, notes: e.target.value})} 
+                      placeholder="Enter Notes"
+                      className="resize-none min-h-[100px] border-gray-200"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Date <span className="text-red-500">*</span></Label>
+                    <Input 
+                      type="date" 
+                      value={currentItem?.date || ''} 
+                      onChange={(e) => setCurrentItem({...currentItem, date: e.target.value})} 
+                      placeholder="Select Date"
+                      className="h-11 border-gray-200"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Clock Out Time</Label>
+                    <Input 
+                      type="time" 
+                      value={currentItem?.clock_out || ''} 
+                      onChange={(e) => setCurrentItem({...currentItem, clock_out: e.target.value})} 
+                      placeholder="Select Clock Out Time"
+                      className="h-11 border-gray-200"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-semibold text-gray-700">Status <span className="text-red-500">*</span></Label>
+                    <Select 
+                      value={currentItem?.status || 'present'} 
+                      onValueChange={(val) => setCurrentItem({...currentItem, status: val})}
+                    >
+                      <SelectTrigger className="w-full h-11 border-gray-200">
+                        <SelectValue placeholder="Select Status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="present">Present</SelectItem>
+                        <SelectItem value="absent">Absent</SelectItem>
+                        <SelectItem value="half_day">Half Day</SelectItem>
+                        <SelectItem value="on_leave">On Leave</SelectItem>
+                        <SelectItem value="holiday">Holiday</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              <DialogFooter className="mt-8 flex justify-end gap-3 pt-4">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={() => setIsFormModalOpen(false)}
+                  className="px-6 py-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 font-medium h-11 rounded-md"
+                >
+                  Cancel
+                </Button>
+                <Button 
+                  type="submit" 
+                  className="px-8 py-2 bg-[#20c997] hover:bg-[#1ba87e] text-white font-medium h-11 rounded-md border-none"
+                >
+                  {formMode === 'create' ? 'Create' : 'Update'}
+                </Button>
+              </DialogFooter>
+            </form>
+          </div>
+        </DialogContent>
+      </Dialog>
     </PageTemplate>
   );
 }

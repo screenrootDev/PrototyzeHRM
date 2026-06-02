@@ -19,78 +19,159 @@ class AttendanceRecordController extends Controller
     public function index(Request $request)
     {
         if (Auth::user()->can('manage-attendance-records')) {
-            $query = AttendanceRecord::with(['employee', 'shift', 'attendancePolicy', 'creator'])
-                ->where(function ($q) {
-                    if (Auth::user()->can('manage-any-attendance-records')) {
-                        $q->whereIn('created_by', getCompanyAndUsersId());
-                    } elseif (Auth::user()->can('manage-own-attendance-records')) {
-                        $q->where('created_by', Auth::id())->orWhere('employee_id', Auth::id());
+            $month = $request->month ?? date('m');
+            $year = $request->year ?? date('Y');
+            $dateObj = Carbon::createFromDate($year, $month, 1);
+            $daysInMonth = $dateObj->daysInMonth;
+            
+            $startDate = $dateObj->copy()->startOfMonth()->format('Y-m-d');
+            $endDate = $dateObj->copy()->endOfMonth()->format('Y-m-d');
+
+            // 1. Get employees query
+            $employeeQuery = User::emp()
+                ->with('employee')
+                ->whereIn('created_by', getCompanyAndUsersId())
+                ->where('status', 'active');
+
+            if (Auth::user()->can('manage-own-attendance-records') && !Auth::user()->can('manage-any-attendance-records')) {
+                $employeeQuery->where(function ($q) {
+                    $q->where('created_by', Auth::id())->orWhere('id', Auth::id());
+                });
+            }
+
+            // Handle filters
+            if ($request->has('search') && !empty($request->search)) {
+                $employeeQuery->where('name', 'like', '%' . $request->search . '%');
+            }
+            if ($request->has('employee_id') && !empty($request->employee_id) && $request->employee_id !== 'all') {
+                $employeeQuery->where('id', $request->employee_id);
+            }
+
+            // Paginate employees
+            $employeesList = $employeeQuery->paginate($request->per_page ?? 10);
+            $employeeIds = $employeesList->pluck('id');
+
+            // 2. Fetch Attendance Records for the current month
+            $attendanceRecords = AttendanceRecord::with(['shift'])
+                ->whereIn('employee_id', $employeeIds)
+                ->whereBetween('date', [$startDate, $endDate])
+                ->get()
+                ->groupBy('employee_id');
+
+            // 3. Fetch Leaves for the current month to show L for missing records
+            $leaves = \App\Models\LeaveApplication::with('leaveType')
+                ->whereIn('employee_id', $employeeIds)
+                ->where('status', 'approved')
+                ->where(function($q) use ($startDate, $endDate) {
+                    $q->whereBetween('start_date', [$startDate, $endDate])
+                      ->orWhereBetween('end_date', [$startDate, $endDate])
+                      ->orWhere(function($sq) use ($startDate, $endDate) {
+                          $sq->where('start_date', '<=', $startDate)
+                             ->where('end_date', '>=', $endDate);
+                      });
+                })->get();
+
+            // Format leave lookup
+            $leaveLookup = [];
+            foreach ($leaves as $leave) {
+                $start = Carbon::parse($leave->start_date)->max($dateObj->copy()->startOfMonth());
+                $end = Carbon::parse($leave->end_date)->min($dateObj->copy()->endOfMonth());
+                for ($d = $start->copy(); $d->lte($end); $d->addDay()) {
+                    $leaveLookup[$leave->employee_id][$d->format('Y-m-d')] = $leave;
+                }
+            }
+
+            // 4. Format Grid Data
+            $attendanceData = [];
+            foreach ($employeesList as $emp) {
+                $empId = $emp->id;
+                $empRecords = $attendanceRecords->get($empId, collect())->keyBy('date');
+                
+                $days = [];
+                $summary = [
+                    'present' => 0,
+                    'absent' => 0,
+                    'leave' => 0,
+                    'half_day' => 0,
+                    'holiday' => 0,
+                ];
+
+                for ($i = 1; $i <= $daysInMonth; $i++) {
+                    $dateStr = $dateObj->copy()->day($i)->format('Y-m-d');
+                    
+                    if ($empRecords->has($dateStr)) {
+                        $record = $empRecords->get($dateStr);
+                        // Convert status to grid format
+                        $status = $record->status;
+                        $days[$i] = [
+                            'status' => $status,
+                            'record_id' => $record->id,
+                            'clock_in' => $record->clock_in,
+                            'clock_out' => $record->clock_out
+                        ];
+                        
+                        if ($status === 'present') $summary['present']++;
+                        elseif ($status === 'absent') $summary['absent']++;
+                        elseif ($status === 'half_day') $summary['half_day']++;
+                        elseif ($status === 'on_leave') $summary['leave']++;
+                        elseif ($status === 'holiday') $summary['holiday']++;
                     } else {
-                        $q->whereRaw('1 = 0');
+                        // Check if on leave
+                        if (isset($leaveLookup[$empId][$dateStr])) {
+                            $days[$i] = [
+                                'status' => 'on_leave',
+                                'leave_type' => $leaveLookup[$empId][$dateStr]->leaveType->name ?? 'Leave',
+                                'record_id' => null
+                            ];
+                            $summary['leave']++;
+                        } else {
+                            // Empty day
+                            $days[$i] = [
+                                'status' => null,
+                                'record_id' => null
+                            ];
+                        }
                     }
-                });
-
-            // Handle search
-            if ($request->has('search') && ! empty($request->search)) {
-                $query->where(function ($q) use ($request) {
-                    $q->whereHas('employee', function ($subQ) use ($request) {
-                        $subQ->where('name', 'like', '%'.$request->search.'%');
-                    });
-                });
-            }
-
-            // Handle employee filter
-            if ($request->has('employee_id') && ! empty($request->employee_id) && $request->employee_id !== 'all') {
-                $query->where('employee_id', $request->employee_id);
-            }
-
-            // Handle status filter
-            if ($request->has('status') && ! empty($request->status) && $request->status !== 'all') {
-                $query->where('status', $request->status);
-            }
-
-            // Handle date range filter
-            if ($request->has('date_from') && ! empty($request->date_from)) {
-                $query->where('date', '>=', $request->date_from);
-            }
-            if ($request->has('date_to') && ! empty($request->date_to)) {
-                $query->where('date', '<=', $request->date_to);
-            }
-
-            // Handle sorting
-            if ($request->has('sort_field') && ! empty($request->sort_field)) {
-                $query->orderBy($request->sort_field, $request->sort_direction ?? 'asc');
-            } else {
-                $query->orderBy('id', 'desc');
-            }
-
-            $attendanceRecords = $query->paginate($request->per_page ?? 10);
-
-            // Add leave type information for on_leave records
-            $attendanceRecords->getCollection()->transform(function ($record) {
-                if ($record->status === 'on_leave') {
-                    $leaveApplication = \App\Models\LeaveApplication::where('employee_id', $record->employee_id)
-                        ->whereDate('start_date', '<=', $record->date)
-                        ->whereDate('end_date', '>=', $record->date)
-                        ->where('status', 'approved')
-                        ->with('leaveType')
-                        ->first();
-
-                    $record->leave_type = $leaveApplication?->leaveType;
                 }
 
-                return $record;
-            });
+                $attendanceData[] = [
+                    'employee' => [
+                        'id' => $empId,
+                        'name' => $emp->name,
+                        'employee_id' => $emp->employee->employee_id ?? ''
+                    ],
+                    'days' => $days,
+                    'summary' => $summary
+                ];
+            }
 
-            // Get employees for filter dropdown
-            $employees = User::where('type', 'employee')
-                ->whereIn('created_by', getCompanyAndUsersId())
-                ->get(['id', 'name']);
+            // Calculate total working days in the month
+            $settings = settings();
+            $workingDaysSetting = isset($settings['working_days']) ? json_decode($settings['working_days'], true) : [1, 2, 3, 4, 5];
+            
+            $workingDaysInMonth = 0;
+            for ($i = 1; $i <= $daysInMonth; $i++) {
+                $dayOfWeek = $dateObj->copy()->day($i)->dayOfWeekIso;
+                if (in_array($dayOfWeek, $workingDaysSetting)) {
+                    $workingDaysInMonth++;
+                }
+            }
+
+            // Reconstruct paginated result to pass to frontend
+            $paginationData = $employeesList->toArray();
+            $paginationData['data'] = $attendanceData;
+
+            // Optional: get all employees for filter dropdown
+            $filterEmployees = $this->getFilteredEmployees();
 
             return Inertia::render('hr/attendance-records/index', [
-                'attendanceRecords' => $attendanceRecords,
-                'employees' => $this->getFilteredEmployees(),
-                'filters' => $request->all(['search', 'employee_id', 'status', 'date_from', 'date_to', 'sort_field', 'sort_direction', 'per_page']),
+                'attendanceData' => $paginationData,
+                'employees' => $filterEmployees,
+                'daysInMonth' => $daysInMonth,
+                'workingDaysInMonth' => $workingDaysInMonth,
+                'currentMonth' => (int)$month,
+                'currentYear' => (int)$year,
+                'filters' => $request->all(['search', 'employee_id', 'status', 'month', 'year', 'per_page']),
             ]);
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
