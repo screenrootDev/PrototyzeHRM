@@ -3,9 +3,15 @@ import * as LucidIcons from 'lucide-react';
 
 export interface NavItem {
   title: string;
-  href: string;
-  icon: LucideIcon;
+  href?: string;
+  icon?: LucideIcon | ((...args: any[]) => any);
   permission?: string;
+  children?: NavItem[];
+  badge?: { label: string };
+  target?: string;
+  defaultOpen?: boolean;
+  /** Section group label rendered above the first item that has a new group value */
+  group?: string;
 }
 
 export interface TableColumn {

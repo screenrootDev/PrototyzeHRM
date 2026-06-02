@@ -187,119 +187,146 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
         );
     };
     
-    return (
-        <SidebarGroup className="px-1.5 py-0">
-            <SidebarGroupLabel className={`flex w-full text-xs ${effectivePosition === 'right' ? 'justify-end' : 'justify-start'}`}>Platform</SidebarGroupLabel>
-            <SidebarMenu>
-                {items.map((item) => (
-                    <div key={item.title}>
-                        {item.children ? (
-                            // Parent item with children
-                            <>
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton 
-                                        isActive={isChildActive(item.children)} 
-                                        tooltip={{ children: item.title }}
-                                        onClick={() => toggleExpand(item.title)}
-                                        className={cn(
-                                            "transition-all duration-300 h-10 group/item relative overflow-hidden",
-                                            isChildActive(item.children) 
-                                                ? "bg-blue-500/5 text-blue-500 font-bold" 
-                                                : "hover:bg-accent/50"
+    // Build grouped sections from items
+    const groupedSections = items.reduce<Array<{ groupLabel: string | null; items: NavItem[] }>>(
+        (acc, item) => {
+            const groupLabel = item.group ?? null;
+            const last = acc[acc.length - 1];
+            if (!last || last.groupLabel !== groupLabel) {
+                acc.push({ groupLabel, items: [item] });
+            } else {
+                last.items.push(item);
+            }
+            return acc;
+        },
+        []
+    );
+
+    const renderNavItem = (item: NavItem) => (
+        <div key={item.title}>
+            {item.children ? (
+                <>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton
+                            isActive={isChildActive(item.children)}
+                            tooltip={{ children: item.title }}
+                            onClick={() => toggleExpand(item.title)}
+                            className={cn(
+                                "transition-all duration-300 h-10 group/item relative overflow-hidden",
+                                isChildActive(item.children)
+                                    ? "bg-blue-500/5 text-blue-500 font-bold"
+                                    : "hover:bg-accent/50"
+                            )}
+                        >
+                            <div className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
+                                {effectivePosition === 'right' ? (
+                                    <>
+                                        <span>{state !== "collapsed" ? item.title : ""}</span>
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
+                                        {state !== "collapsed" && (
+                                            expandedItems[item.title] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
                                         )}
-                                    >
-                                        <div className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
-                                            {effectivePosition === 'right' ? (
-                                                <>
-                                                    <span>{state !== "collapsed" ? item.title : ""}</span>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
-                                                    {state !== "collapsed" && (
-                                                        expandedItems[item.title] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
-                                                    )}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
-                                                    <div className="flex items-center gap-1">
-                                                        {state !== "collapsed" && <span>{item.title}</span>}
-                                                        {state !== "collapsed" && item.badge && (
-                                                            <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md bg-blue-500 text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]">
-                                                                {item.badge.label}
-                                                            </span>
-                                                        )}
-                                                    </div>
-                                                    {state !== "collapsed" && (
-                                                        <div className={cn("ml-auto transition-transform duration-300", expandedItems[item.title] && "rotate-90")}>
-                                                            <ChevronRight className="h-3 w-3 opacity-40 group-hover/item:opacity-100" />
-                                                        </div>
-                                                    )}
-                                                </>
+                                    </>
+                                ) : (
+                                    <>
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
+                                        <div className="flex items-center gap-1">
+                                            {state !== "collapsed" && <span>{item.title}</span>}
+                                            {state !== "collapsed" && item.badge && (
+                                                <span className="px-1.5 py-0.5 text-[9px] font-black uppercase tracking-tighter rounded-md bg-blue-500 text-white shadow-[0_0_8px_rgba(59,130,246,0.3)]">
+                                                    {item.badge.label}
+                                                </span>
                                             )}
                                         </div>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                                
-                                {/* Child items */}
-                                {state !== "collapsed" && expandedItems[item.title] && renderSubMenu(item.children)}
-                            </>
-                        ) : (
-                            // Regular item without children
-                            <SidebarMenuItem>
-                                <SidebarMenuButton 
-                                    asChild 
-                                    isActive={isActive(item.href)} 
-                                    tooltip={{ children: item.title }}
-                                    className={cn(
-                                        "transition-all duration-300 h-10 group/item relative overflow-hidden",
-                                        isActive(item.href) 
-                                            ? "bg-blue-500/10 text-blue-500 font-bold shadow-[inset_4px_0_12px_rgba(59,130,246,0.05)]" 
-                                            : "hover:bg-accent/50"
-                                    )}
-                                >
-                                    {item.target === '_blank' ? (
-                                        <a
-                                            href={item.href || '#'}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
-                                        >
-                                            {effectivePosition === 'right' ? (
-                                                <>
-                                                    {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500 shadow-blue-500/20")} />}
-                                                    {state !== "collapsed" && <span>{item.title}</span>}
-                                                </>
-                                            )}
-                                        </a>
-                                    ) : (
-                                        <Link
-                                            href={item.href || '#'}
-                                            prefetch
-                                            className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
-                                        >
-                                            {effectivePosition === 'right' ? (
-                                                <>
-                                                    {state !== "collapsed" && <span>{item.title}</span>}
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
-                                                </>
-                                            ) : (
-                                                <>
-                                                    {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
-                                                    {state !== "collapsed" && <span>{item.title}</span>}
-                                                </>
-                                            )}
-                                        </Link>
-                                    )}
-                                </SidebarMenuButton>
-                            </SidebarMenuItem>
+                                        {state !== "collapsed" && (
+                                            <div className={cn("ml-auto transition-transform duration-300", expandedItems[item.title] && "rotate-90")}>
+                                                <ChevronRight className="h-3 w-3 opacity-40 group-hover/item:opacity-100" />
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                    {state !== "collapsed" && expandedItems[item.title] && renderSubMenu(item.children)}
+                </>
+            ) : (
+                <SidebarMenuItem>
+                    <SidebarMenuButton
+                        asChild
+                        isActive={isActive(item.href)}
+                        tooltip={{ children: item.title }}
+                        className={cn(
+                            "transition-all duration-300 h-10 group/item relative overflow-hidden",
+                            isActive(item.href)
+                                ? "bg-blue-500/10 text-blue-500 font-bold shadow-[inset_4px_0_12px_rgba(59,130,246,0.05)]"
+                                : "hover:bg-accent/50"
                         )}
-                    </div>
-                ))}
-            </SidebarMenu>
-        </SidebarGroup>
+                    >
+                        {item.target === '_blank' ? (
+                            <a
+                                href={item.href || '#'}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                            >
+                                {effectivePosition === 'right' ? (
+                                    <>
+                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
+                                    </>
+                                ) : (
+                                    <>
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500 shadow-blue-500/20")} />}
+                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                    </>
+                                )}
+                            </a>
+                        ) : (
+                            <Link
+                                href={item.href || '#'}
+                                prefetch
+                                className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
+                            >
+                                {effectivePosition === 'right' ? (
+                                    <>
+                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
+                                    </>
+                                ) : (
+                                    <>
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
+                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                    </>
+                                )}
+                            </Link>
+                        )}
+                    </SidebarMenuButton>
+                </SidebarMenuItem>
+            )}
+        </div>
+    );
+
+    return (
+        <div className="px-1.5 py-0">
+            {groupedSections.map((section, sectionIdx) => (
+                <SidebarGroup key={sectionIdx} className="px-0 py-0 mb-0">
+                    {section.groupLabel && state !== "collapsed" && (
+                        <SidebarGroupLabel
+                            className={cn(
+                                "flex w-full mt-1.5 mb-0 px-2",
+                                "text-[14px] font-bold capitalize tracking-wide text-gray-500 dark:text-gray-400 leading-none",
+                                effectivePosition === 'right' ? 'justify-end' : 'justify-start'
+                            )}
+                        >
+                            {section.groupLabel}
+                        </SidebarGroupLabel>
+                    )}
+                    <SidebarMenu>
+                        {section.items.map(renderNavItem)}
+                    </SidebarMenu>
+                </SidebarGroup>
+            ))}
+        </div>
     );
 }

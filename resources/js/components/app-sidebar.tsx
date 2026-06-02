@@ -100,22 +100,26 @@ export function AppSidebar() {
       title: "Dashboard",
       href: route("dashboard"),
       icon: () => <LayoutGridIcon size={16} isAnimated={true} />,
+      group: "Overview",
     },
 
     {
       title: "Companies",
       href: route("companies.index"),
       icon: () => <HouseIcon size={16} isAnimated={true} />,
+      group: "Overview",
     },
     {
       title: "Media Library",
       href: route("media-library"),
       icon: () => <LayersIcon size={16} isAnimated={true} />,
+      group: "Overview",
     },
 
     {
       title: "Landing Page",
       icon: () => <SparklesIcon size={16} isAnimated={true} />,
+      group: "System",
       children: [
         {
           title: "Landing Page",
@@ -136,17 +140,18 @@ export function AppSidebar() {
       title: "Settings",
       href: route("settings"),
       icon: () => <SettingsIcon size={16} isAnimated={true} />,
+      group: "System",
     },
   ];
 
   const getCompanyNavItems = (): NavItem[] => {
     const items: NavItem[] = [];
-    // Dashboard - only show if user has dashboard permission
     if (hasPermission(permissions, "manage-dashboard")) {
       items.push({
         title: "Dashboard",
         href: route("dashboard"),
         icon: () => <LayoutGridIcon size={16} isAnimated={true} />,
+        group: "Overview",
       });
     }
 
@@ -168,6 +173,7 @@ export function AppSidebar() {
       items.push({
         title: "Staff",
         icon: () => <UsersIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
         children: staffChildren,
       });
     }
@@ -422,6 +428,7 @@ export function AppSidebar() {
       items.push({
         title: "HR Management",
         icon: () => <HouseIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
         children: hrChildren,
       });
     }
@@ -570,6 +577,7 @@ export function AppSidebar() {
       items.push({
         title: "Recruitment",
         icon: () => <UsersRoundIcon size={16} isAnimated={true} />,
+        group: "Talent & Growth",
         children: recruitmentChildren,
       });
     }
@@ -609,6 +617,7 @@ export function AppSidebar() {
       items.push({
         title: "Contract Management",
         icon: () => <ClipboardIcon size={16} isAnimated={true} />,
+        group: "Legal & Compliance",
         children: contractChildren,
       });
     }
@@ -648,6 +657,7 @@ export function AppSidebar() {
       items.push({
         title: "Document Management",
         icon: () => <FolderOpenIcon size={16} isAnimated={true} />,
+        group: "Legal & Compliance",
         children: documentChildren,
       });
     }
@@ -701,6 +711,7 @@ export function AppSidebar() {
       items.push({
         title: "Meetings",
         icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
+        group: "Collaboration",
         children: meetingChildren,
       });
     }
@@ -713,6 +724,7 @@ export function AppSidebar() {
         title: "Calendar",
         href: route("calendar.index"),
         icon: () => <LayoutListIcon size={16} isAnimated={true} />,
+        group: "Overview",
       });
     }
 
@@ -721,6 +733,7 @@ export function AppSidebar() {
         title: "Media Library",
         href: route("media-library"),
         icon: () => <LayersIcon size={16} isAnimated={true} />,
+        group: "Overview",
       });
     }
 
@@ -759,6 +772,7 @@ export function AppSidebar() {
       items.push({
         title: "Leave Management",
         icon: () => <LayoutListIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
         children: leaveChildren,
       });
     }
@@ -798,16 +812,17 @@ export function AppSidebar() {
       items.push({
         title: "Attendance",
         icon: () => <UserCheckIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
         children: attendanceChildren,
       });
     }
 
-    // Biometric Attendance
     if (isModuleEnabled("biometric") && hasPermission(permissions, "manage-biometric-attendance")) {
       items.push({
         title: "Biometric Attendance",
         href: route("hr.biometric-attendance.index"),
         icon: () => <UserCheckIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
       });
     }
 
@@ -825,6 +840,7 @@ export function AppSidebar() {
       items.push({
         title: "Time Tracking",
         icon: () => <LayoutListIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
         children: timeTrackingChildren,
       });
     }
@@ -864,15 +880,16 @@ export function AppSidebar() {
       items.push({
         title: "Payroll Management",
         icon: () => <IndianRupee size={16} />,
+        group: "Finance & Assets",
         children: payrollChildren,
       });
     }
 
-    // Landing Page - only show in non-SaaS mode for company users
     if (!isSaas && hasPermission(permissions, "manage-landing-page")) {
       items.push({
         title: "Landing Page",
         icon: () => <SparklesIcon size={16} isAnimated={true} />,
+        group: "System",
         children: [
           {
             title: "Landing Page",
@@ -891,6 +908,7 @@ export function AppSidebar() {
         title: "Settings",
         href: route("settings"),
         icon: () => <SettingsIcon size={16} isAnimated={true} />,
+        group: "System",
       });
     }
 
