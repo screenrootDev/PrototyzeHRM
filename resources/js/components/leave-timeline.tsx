@@ -82,49 +82,56 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
   const monthName = new Date(currentYear, currentMonth - 1, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
   return (
-    <div className="bg-white rounded-lg border shadow-sm mb-6 overflow-hidden">
+    <div className="flex flex-col gap-4 mb-6">
       {/* Header */}
-      <div className="p-4 border-b flex justify-between items-center bg-gray-50/50">
-        <div className="flex items-center gap-4">
-          <Button variant="outline" size="icon" onClick={handlePrevMonth} className="h-8 w-8">
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <span className="font-semibold text-base min-w-[150px] text-center">{monthName}</span>
-          <Button variant="outline" size="icon" onClick={handleNextMonth} className="h-8 w-8">
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-        <div className="w-[200px]">
-          <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-            <SelectTrigger className="h-8">
-              <SelectValue placeholder="All Employees" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Employees</SelectItem>
-              {employees.map((emp) => (
-                <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm p-4">
+        <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="icon" onClick={handlePrevMonth} className="h-8 w-8">
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-gray-100 min-w-[140px] text-center">
+              {monthName}
+            </h2>
+            <Button variant="outline" size="icon" onClick={handleNextMonth} className="h-8 w-8">
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-400">Employee</label>
+            <div className="w-full sm:w-[180px]">
+              <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
+                <SelectTrigger className="h-10">
+                  <SelectValue placeholder="All Employees" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Employees</SelectItem>
+                  {employees.map((emp) => (
+                    <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Legend */}
-      <div className="p-3 border-b flex flex-wrap gap-4 text-xs items-center">
-        <span className="font-semibold text-muted-foreground mr-2">Legend:</span>
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm px-4 py-3 flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+        <span className="font-medium text-gray-700 dark:text-gray-300">Legend:</span>
         {leaveTypes.map(type => (
-          <div key={type.id} className="flex items-center gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: type.color || '#ccc' }} />
-            <span className="text-muted-foreground">{type.name}</span>
-          </div>
+          <span key={type.id} className="flex items-center gap-1.5">
+            <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: type.color || '#ccc', borderColor: type.color || '#ccc' }} />
+            <span className="font-medium" style={{ color: type.color || '#666' }}>{type.name}</span>
+          </span>
         ))}
       </div>
 
       {/* Timeline Grid */}
-      <div className="w-full">
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
         <div className="w-full flex flex-col">
           {/* Grid Header */}
-          <div className="flex border-b bg-gray-50/50 w-full">
+          <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 w-full">
             <div className="w-[180px] md:w-[220px] flex-shrink-0 p-3 border-r font-medium flex items-center text-sm text-muted-foreground">
               Employee
             </div>
@@ -141,8 +148,8 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
           {/* Grid Rows */}
           {groupedLeaves.length > 0 ? (
             groupedLeaves.map(({ employee, leaves }) => (
-              <div key={employee.id} className="flex border-b last:border-0 hover:bg-gray-50/50 transition-colors w-full">
-                <div className="w-[180px] md:w-[220px] flex-shrink-0 p-2 md:p-2.5 border-r flex items-center gap-2 md:gap-3 bg-white sticky left-0 z-10">
+              <div key={employee.id} className="flex border-b border-gray-200 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors w-full">
+                <div className="w-[180px] md:w-[220px] flex-shrink-0 p-2 md:p-4 border-r border-gray-200 dark:border-gray-700 flex items-center gap-2 md:gap-3 bg-white dark:bg-gray-900 sticky left-0 z-10">
                   <Avatar className="h-8 w-8">
                     {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
                     <AvatarFallback>{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
