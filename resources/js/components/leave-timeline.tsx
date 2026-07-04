@@ -147,25 +147,26 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
       </div>
 
       {/* Timeline Grid */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 overflow-hidden w-full relative z-0">
-        <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <table className="w-full caption-bottom text-sm border-separate border-spacing-0 min-w-max">
-            <thead>
-              <tr>
-                <th className="h-[72px] px-4 py-3 text-left align-middle text-sm font-bold text-gray-800 sticky left-0 z-20 bg-white border-r border-b border-gray-100 shadow-[2px_0_8px_rgba(0,0,0,0.02)] min-w-[220px] w-[220px]">
-                  Employee
-                </th>
+      <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="relative w-full overflow-auto dark:bg-gray-900">
+            <table className="w-full caption-bottom text-sm text-foreground dark:bg-gray-900">
+              <thead className="[&_tr]:border-b">
+                <tr className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-foreground bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <th className="h-[72px] align-middle [&:has([role=checkbox])]:pr-0 sticky left-0 z-20 bg-gray-50 dark:bg-gray-800 text-left px-4 py-3 font-semibold text-gray-700 dark:text-gray-300 min-w-[140px] w-[140px] sm:min-w-[200px] sm:w-[200px] border-r border-gray-200 dark:border-gray-700">
+                    Employee
+                  </th>
                 {daysArray.map((day, i) => (
-                  <th key={i} className={`h-[72px] px-1.5 py-1 align-middle font-normal border-b border-r border-gray-100 min-w-[130px] w-[130px] ${day.isWeekend ? 'bg-gray-100/50' : 'bg-gray-50/50'}`}>
+                  <th key={i} className="h-[72px] align-middle [&:has([role=checkbox])]:pr-0 dark:bg-gray-900 text-center px-2 py-3 font-medium min-w-[130px] border-r border-gray-200 dark:border-gray-700 last:border-r-0 text-gray-600 dark:text-gray-400">
                     <div className="flex flex-col items-center justify-center">
-                      <span className="font-bold text-gray-700 text-sm">{day.date}</span>
-                      <span className="text-[10px] text-gray-400 uppercase leading-none mt-1">{day.dayName}</span>
+                      <span className="font-semibold text-sm">{day.date}</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500 uppercase leading-none mt-1">{day.dayName}</span>
                     </div>
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="[&_tr:last-child]:border-0">
               {!groupedLeaves || groupedLeaves.length === 0 ? (
                 <tr>
                   <td className="p-8 text-center text-gray-500 border-b border-gray-100 sticky left-0 bg-white z-10" colSpan={daysInMonth + 1}>
@@ -196,9 +197,8 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                     
                     // Render empty cells before this leave
                     while (currentDay < startDay) {
-                      const isWeekend = daysArray[currentDay - 1].isWeekend;
                       rowCells.push(
-                        <td key={`empty-${currentDay}`} className={`border-b border-r border-gray-50/50 h-[72px] min-w-[130px] w-[130px] ${isWeekend ? 'bg-gray-50/30' : ''}`}></td>
+                        <td key={`empty-${currentDay}`} className="p-4 [&:has([role=checkbox])]:pr-0 text-foreground px-1.5 py-1 align-middle min-w-[130px] h-[72px] border-r border-gray-200 dark:border-gray-700 last:border-r-0"></td>
                       );
                       currentDay++;
                     }
@@ -210,7 +210,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                       const leaveType = leave.leave_type;
                       
                       rowCells.push(
-                        <td key={leave.id} colSpan={span} className="p-1 border-b border-r border-gray-50/50 h-[72px] align-middle" style={{ minWidth: `${span * 130}px` }}>
+                        <td key={leave.id} colSpan={span} className="p-4 [&:has([role=checkbox])]:pr-0 text-foreground px-1.5 py-1 align-middle h-[72px] border-r border-gray-200 dark:border-gray-700" style={{ minWidth: `${span * 130}px` }}>
                           <div 
                             className="rounded-lg px-2.5 py-1.5 text-xs border transition-opacity flex flex-col justify-center h-full cursor-pointer hover:opacity-90"
                             style={{
@@ -232,26 +232,25 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
 
                   // Render remaining empty cells
                   while (currentDay <= daysInMonth) {
-                    const isWeekend = daysArray[currentDay - 1].isWeekend;
                     rowCells.push(
-                      <td key={`empty-${currentDay}`} className={`border-b border-r border-gray-50/50 h-[72px] min-w-[130px] w-[130px] ${isWeekend ? 'bg-gray-50/30' : ''}`}></td>
+                      <td key={`empty-${currentDay}`} className="p-4 [&:has([role=checkbox])]:pr-0 text-foreground px-1.5 py-1 align-middle min-w-[130px] h-[72px] border-r border-gray-200 dark:border-gray-700 last:border-r-0"></td>
                     );
                     currentDay++;
                   }
 
                   return (
-                    <tr key={`emp-row-${employee.id}`} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="h-[72px] px-4 align-middle sticky left-0 z-10 bg-white border-r border-b border-gray-100 shadow-[2px_0_8px_rgba(0,0,0,0.02)] min-w-[220px] w-[220px]">
+                    <tr key={`emp-row-${employee.id}`} className="data-[state=selected]:bg-muted text-foreground dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors">
+                      <td className="p-4 align-middle [&:has([role=checkbox])]:pr-0 text-foreground sticky left-0 z-10 bg-white dark:bg-gray-900 px-4 py-3 border-r border-gray-200 dark:border-gray-700 min-w-[140px] w-[140px] sm:min-w-[200px] sm:w-[200px] h-[72px]">
                         <div className="flex items-center gap-3">
-                          <div className="h-9 w-9 rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                          <div className="flex items-center justify-center rounded-full bg-primary/10 text-primary font-semibold text-sm overflow-hidden shrink-0 h-9 w-9">
                             <Avatar className="h-full w-full">
                               {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
                               <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                           </div>
-                          <div className="flex flex-col min-w-[120px]">
-                            <span className="font-medium text-gray-800 text-sm truncate max-w-[140px]" title={employee?.name}>{employee?.name}</span>
-                            <span className="text-[11px] text-gray-500 truncate max-w-[140px]" title={employee?.type || 'Employee'}>{employee?.type || 'Employee'}</span>
+                          <div className="min-w-0">
+                            <div className="font-medium text-sm text-gray-900 dark:text-gray-100 truncate">{employee.name}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">{employee.designation?.name || 'Employee'}</div>
                           </div>
                         </div>
                       </td>
@@ -262,6 +261,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
               )}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </div>
