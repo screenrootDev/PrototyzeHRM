@@ -66,6 +66,32 @@ class LeaveApplicationController extends Controller
 
             $leaveApplications = $query->paginate($request->per_page ?? 10);
 
+            // Timeline logic
+            $timelineMonth = $request->input('timeline_month', Carbon::now()->month);
+            $timelineYear = $request->input('timeline_year', Carbon::now()->year);
+            $timelineStartDate = Carbon::create($timelineYear, $timelineMonth, 1)->startOfDay();
+            $timelineEndDate = $timelineStartDate->copy()->endOfMonth()->endOfDay();
+
+            $timelineLeaves = LeaveApplication::with(['employee' => function($q) {
+                    $q->select('id', 'name', 'avatar', 'type');
+                }, 'leaveType' => function($q) {
+                    $q->select('id', 'name', 'color');
+                }])
+                ->where(function ($q) {
+                    if (Auth::user()->can('manage-any-leave-applications')) {
+                        $q->whereIn('created_by',  getCompanyAndUsersId());
+                    } elseif (Auth::user()->can('manage-own-leave-applications')) {
+                        $q->where('created_by', Auth::id())->orWhere('employee_id', Auth::id())->orWhere('approved_by', Auth::id());
+                    } else {
+                        $q->whereRaw('1 = 0');
+                    }
+                })
+                ->where('status', '!=', 'rejected')
+                ->where(function ($q) use ($timelineStartDate, $timelineEndDate) {
+                    $q->where('start_date', '<=', $timelineEndDate)
+                      ->where('end_date', '>=', $timelineStartDate);
+                })
+                ->get();
             // Get employees for filter dropdown
             $employees = User::where('type', 'employee')
                 ->whereIn('created_by', getCompanyAndUsersId())
@@ -78,9 +104,12 @@ class LeaveApplicationController extends Controller
 
             return Inertia::render('hr/leave-applications/index', [
                 'leaveApplications' => $leaveApplications,
+                'timelineLeaves' => $timelineLeaves,
+                'timelineMonth' => (int)$timelineMonth,
+                'timelineYear' => (int)$timelineYear,
                 'employees' => $this->getFilteredEmployees(),
                 'leaveTypes' => $leaveTypes,
-                'filters' => $request->all(['search', 'employee_id', 'leave_type_id', 'status', 'sort_field', 'sort_direction', 'per_page']),
+                'filters' => $request->all(['search', 'employee_id', 'leave_type_id', 'status', 'sort_field', 'sort_direction', 'per_page', 'timeline_month', 'timeline_year']),
             ]);
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));

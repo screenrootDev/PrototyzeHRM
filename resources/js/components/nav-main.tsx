@@ -116,9 +116,9 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     const isActive = (href?: string) => {
         if (!href) return false;
         
-        // Extract pathname from href if it's a full URL
-        const hrefPath = href.startsWith('http') ? new URL(href).pathname : href;
-        const currentPath = page.url;
+        // Extract pathname from href if it's a full URL and ignore query params
+        const hrefPath = href.startsWith('http') ? new URL(href).pathname : href.split('?')[0];
+        const currentPath = page.url.split('?')[0];
         
         const active = currentPath === hrefPath || currentPath.startsWith(hrefPath + '/');
         return active;

@@ -12,10 +12,13 @@ import { toast } from '@/components/custom-toast';
 
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { LeaveTimeline } from '@/components/leave-timeline';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function LeaveApplications() {
   
-  const { auth, leaveApplications, employees, leaveTypes, filters: pageFilters = {} } = usePage().props as any;
+  const { auth, leaveApplications, employees, leaveTypes, timelineLeaves, timelineMonth, timelineYear, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
 
   // State
@@ -52,7 +55,9 @@ export default function LeaveApplications() {
       employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
       leave_type_id: selectedLeaveType !== 'all' ? selectedLeaveType : undefined,
       status: selectedStatus !== 'all' ? selectedStatus : undefined,
-      per_page: pageFilters.per_page
+      per_page: pageFilters.per_page,
+      timeline_month: timelineMonth,
+      timeline_year: timelineYear
     }, { preserveState: true, preserveScroll: true });
   };
 
@@ -67,7 +72,9 @@ export default function LeaveApplications() {
       employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
       leave_type_id: selectedLeaveType !== 'all' ? selectedLeaveType : undefined,
       status: selectedStatus !== 'all' ? selectedStatus : undefined,
-      per_page: pageFilters.per_page
+      per_page: pageFilters.per_page,
+      timeline_month: timelineMonth,
+      timeline_year: timelineYear
     }, { preserveState: true, preserveScroll: true });
   };
 
@@ -229,7 +236,18 @@ export default function LeaveApplications() {
     {
       key: 'employee',
       label: 'Employee',
-      render: (value: any, row: any) => row.employee?.name || '-'
+      render: (value: any, row: any) => (
+        <div className="flex items-center gap-3">
+          <Avatar className="h-9 w-9">
+            {row.employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(row.employee.avatar) : row.employee.avatar} /> : null}
+            <AvatarFallback>{row.employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col">
+            <span className="font-semibold text-sm text-gray-900 dark:text-gray-100">{row.employee?.name || '-'}</span>
+            <span className="text-xs text-muted-foreground">{row.employee?.email || row.employee?.employee_id || 'Employee'}</span>
+          </div>
+        </div>
+      )
     },
     {
       key: 'leave_type',
@@ -276,7 +294,7 @@ export default function LeaveApplications() {
           rejected: 'bg-red-50 text-red-700 ring-red-600/20'
         };
         return (
-          <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${statusColors[value as keyof typeof statusColors]}`}>
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ring-1 ring-inset ${statusColors[value as keyof typeof statusColors]}`}>
             {value.charAt(0).toUpperCase() + value.slice(1)}
           </span>
         );
@@ -356,6 +374,20 @@ export default function LeaveApplications() {
     { value: 'rejected', label: 'Rejected' }
   ];
 
+  const handleTabChange = (value: string) => {
+    setSelectedStatus(value);
+    router.get(route('hr.leave-applications.index'), {
+      page: 1,
+      search: searchTerm || undefined,
+      employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
+      leave_type_id: selectedLeaveType !== 'all' ? selectedLeaveType : undefined,
+      status: value !== 'all' ? value : undefined,
+      per_page: pageFilters.per_page,
+      timeline_month: timelineMonth,
+      timeline_year: timelineYear
+    }, { preserveState: true, preserveScroll: true });
+  };
+
   return (
     <PageTemplate
       title={"Leave Applications"}
@@ -364,89 +396,101 @@ export default function LeaveApplications() {
       breadcrumbs={breadcrumbs}
       noPadding
     >
-      {/* Search and filters section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-4 p-4">
-        <SearchAndFilterBar
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
-          filters={[
-            {
-              name: 'employee_id',
-              label: 'Employee',
-              type: 'select',
-              value: selectedEmployee,
-              onChange: setSelectedEmployee,
-              options: employeeOptions,
-              searchable: true
-            },
-            {
-              name: 'leave_type_id',
-              label: 'Leave Type',
-              type: 'select',
-              value: selectedLeaveType,
-              onChange: setSelectedLeaveType,
-              options: leaveTypeOptions,
-              searchable: true
-            },
-            {
-              name: 'status',
-              label: 'Status',
-              type: 'select',
-              value: selectedStatus,
-              onChange: setSelectedStatus,
-              options: statusOptions
-            }
-          ]}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
-          hasActiveFilters={hasActiveFilters}
-          activeFilterCount={activeFilterCount}
-          onResetFilters={handleResetFilters}
-          onApplyFilters={applyFilters}
-          currentPerPage={pageFilters.per_page?.toString() || "10"}
-          onPerPageChange={(value) => {
-            router.get(route('hr.leave-applications.index'), {
-              page: 1,
-              per_page: parseInt(value),
-              search: searchTerm || undefined,
-              employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
-              leave_type_id: selectedLeaveType !== 'all' ? selectedLeaveType : undefined,
-              status: selectedStatus !== 'all' ? selectedStatus : undefined
-            }, { preserveState: true, preserveScroll: true });
-          }}
-        />
-      </div>
-
-      {/* Content section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-        <CrudTable
-          columns={columns}
-          actions={actions}
-          data={leaveApplications?.data || []}
-          from={leaveApplications?.from || 1}
-          onAction={handleAction}
-          sortField={pageFilters.sort_field}
-          sortDirection={pageFilters.sort_direction}
-          onSort={handleSort}
-          permissions={permissions}
-          entityPermissions={{
-            view: 'view-leave-applications',
-            create: 'create-leave-applications',
-            edit: 'edit-leave-applications',
-            delete: 'delete-leave-applications'
-          }}
+      <div className="flex flex-col gap-6">
+        <LeaveTimeline 
+          leaves={timelineLeaves || []} 
+          currentMonth={timelineMonth || new Date().getMonth() + 1}
+          currentYear={timelineYear || new Date().getFullYear()}
+          leaveTypes={leaveTypes || []}
+          employees={employees || []}
         />
 
-        {/* Pagination section */}
-        <Pagination
-          from={leaveApplications?.from || 0}
-          to={leaveApplications?.to || 0}
-          total={leaveApplications?.total || 0}
-          links={leaveApplications?.links}
-          entityName={"leave applications"}
-          onPageChange={(url) => router.get(url)}
-        />
+        <Tabs defaultValue={selectedStatus === 'all' ? 'pending' : selectedStatus} onValueChange={handleTabChange} className="w-full">
+          <div className="flex items-center justify-between mb-4">
+            <TabsList>
+              <TabsTrigger value="pending">Pending Leaves</TabsTrigger>
+              <TabsTrigger value="approved">Approved Leaves</TabsTrigger>
+              <TabsTrigger value="rejected">Rejected Leaves</TabsTrigger>
+              <TabsTrigger value="all">All Leaves</TabsTrigger>
+            </TabsList>
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-4 p-4 border">
+            <SearchAndFilterBar
+              searchTerm={searchTerm}
+              onSearchChange={setSearchTerm}
+              onSearch={handleSearch}
+              filters={[
+                {
+                  name: 'employee_id',
+                  label: 'Employee',
+                  type: 'select',
+                  value: selectedEmployee,
+                  onChange: setSelectedEmployee,
+                  options: employeeOptions,
+                  searchable: true
+                },
+                {
+                  name: 'leave_type_id',
+                  label: 'Leave Type',
+                  type: 'select',
+                  value: selectedLeaveType,
+                  onChange: setSelectedLeaveType,
+                  options: leaveTypeOptions,
+                  searchable: true
+                }
+              ]}
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+              hasActiveFilters={hasActiveFilters}
+              activeFilterCount={activeFilterCount}
+              onResetFilters={handleResetFilters}
+              onApplyFilters={applyFilters}
+              currentPerPage={pageFilters.per_page?.toString() || "10"}
+              onPerPageChange={(value) => {
+                router.get(route('hr.leave-applications.index'), {
+                  page: 1,
+                  per_page: parseInt(value),
+                  search: searchTerm || undefined,
+                  employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
+                  leave_type_id: selectedLeaveType !== 'all' ? selectedLeaveType : undefined,
+                  status: selectedStatus !== 'all' ? selectedStatus : undefined,
+                  timeline_month: timelineMonth,
+                  timeline_year: timelineYear
+                }, { preserveState: true, preserveScroll: true });
+              }}
+            />
+          </div>
+
+          <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden border">
+            <CrudTable
+              columns={columns}
+              actions={actions}
+              data={leaveApplications?.data || []}
+              from={leaveApplications?.from || 1}
+              onAction={handleAction}
+              sortField={pageFilters.sort_field}
+              sortDirection={pageFilters.sort_direction}
+              onSort={handleSort}
+              permissions={permissions}
+              entityPermissions={{
+                view: 'view-leave-applications',
+                create: 'create-leave-applications',
+                edit: 'edit-leave-applications',
+                delete: 'delete-leave-applications'
+              }}
+            />
+
+            <Pagination
+              from={leaveApplications?.from || 0}
+              to={leaveApplications?.to || 0}
+              total={leaveApplications?.total || 0}
+              links={leaveApplications?.links}
+              entityName={"leave applications"}
+              onPageChange={(url) => router.get(url)}
+            />
+          </div>
+        </Tabs>
       </div>
 
       {/* Form Modal */}
