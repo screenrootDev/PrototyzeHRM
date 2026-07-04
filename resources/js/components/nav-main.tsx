@@ -15,7 +15,15 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     // Check if the document is in RTL mode
     const isRtl = document.documentElement.dir === 'rtl';
     
-    const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({});
+    const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) return JSON.parse(saved);
+            } catch (e) {}
+        }
+        return {};
+    });
     
     // Determine the actual position considering RTL mode
     const effectivePosition = isRtl ? (position === 'left' ? 'right' : 'left') : position;
@@ -23,7 +31,15 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     // Initialize expanded state
     useEffect(() => {
         // Start with a clean slate - close all menus
-        const newExpandedItems: Record<string, boolean> = {};
+        let newExpandedItems: Record<string, boolean> = {};
+        try {
+            const savedState = localStorage.getItem(STORAGE_KEY);
+            if (savedState) {
+                newExpandedItems = JSON.parse(savedState);
+            }
+        } catch (e) {
+            console.error('Error reading navigation state:', e);
+        }
         
         // Process menus that should be expanded
         const processMenuItems = (menuItems: NavItem[], parentKey?: string) => {
@@ -165,6 +181,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                         <Link
                                             href={child.href || '#'}
                                             prefetch
+                                            preserveScroll
                                             className={cn(
                                                 "flex items-center gap-2 group/sub transition-all duration-300",
                                                 effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
@@ -286,6 +303,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                             <Link
                                 href={item.href || '#'}
                                 prefetch
+                                preserveScroll
                                 className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}
                             >
                                 {effectivePosition === 'right' ? (
