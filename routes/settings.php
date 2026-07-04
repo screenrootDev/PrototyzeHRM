@@ -56,7 +56,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('settings/brand', [SystemSettingsController::class, 'updateBrand'])->name('settings.brand.update');
     Route::post('settings/storage', [SystemSettingsController::class, 'updateStorage'])->name('settings.storage.update');
     Route::post('settings/recaptcha', [SystemSettingsController::class, 'updateRecaptcha'])->name('settings.recaptcha.update');
-    Route::post('settings/chatgpt', [SystemSettingsController::class, 'updateChatgpt'])->name('settings.chatgpt.update');
+        Route::post('settings/ai-agent', [SystemSettingsController::class, 'updateAIAgentSettings'])->name('settings.ai-agent.update');
+    Route::get('settings/ai-agent/providers', [SystemSettingsController::class, 'getAIAgentProviders'])->name('settings.ai-agent.providers');
+Route::post('settings/chatgpt', [SystemSettingsController::class, 'updateChatgpt'])->name('settings.chatgpt.update');
     Route::post('settings/cookie', [SystemSettingsController::class, 'updateCookie'])->name('settings.cookie.update');
     Route::post('settings/seo', [SystemSettingsController::class, 'updateSeo'])->name('settings.seo.update');
     Route::post('settings/cache/clear', [SystemSettingsController::class, 'clearCache'])->name('settings.cache.clear');

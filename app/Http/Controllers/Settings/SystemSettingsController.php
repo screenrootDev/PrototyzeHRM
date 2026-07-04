@@ -337,4 +337,41 @@ class SystemSettingsController extends Controller
             return redirect()->back()->with('error', __('Failed to clear cache: :error', ['error' => $e->getMessage()]));
         }
     }
-}   
+
+    public function updateAIAgentSettings(Request $request)
+    {
+        $request->validate([
+            'settings.ai_agent_provider' => 'required|string|in:openai,anthropic,google',
+            'settings.ai_agent_model' => 'required|string|max:255',
+            'settings.ai_agent_api_key' => 'required|string|max:255',
+        ]);
+
+        $settings = $request->input('settings');
+
+        foreach ($settings as $key => $value) {
+            updateSetting($key, $value);
+        }
+
+        return redirect()->back()->with('success', __('AI Agent settings saved successfully.'));
+    }
+
+    public function getAIAgentProviders()
+    {
+        $providers = [
+            'openai'    => [
+                'name'   => 'OpenAI',
+                'models' => ['gpt-4o', 'gpt-4o-mini', 'gpt-4.1', 'gpt-4.1-mini', 'gpt-4.1-nano', 'o3', 'o4-mini']
+            ],
+            'anthropic' => [
+                'name'   => 'Anthropic (Claude)',
+                'models' => ['claude-opus-4-8', 'claude-sonnet-4-6', 'claude-haiku-4-5-20251001']
+            ],
+            'google'    => [
+                'name'   => 'Google (Gemini)',
+                'models' => ['gemini-2.5-pro', 'gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash', 'gemini-2.0-flash-lite', 'gemini-flash-latest']
+            ]
+        ];
+
+        return response()->json(['providers' => $providers]);
+    }
+}

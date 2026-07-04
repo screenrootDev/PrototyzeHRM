@@ -155,6 +155,23 @@ export function AppSidebar() {
       });
     }
 
+    // Always show AI Agent and Messenger for now
+    items.push({
+      title: "AI Agent",
+      href: route("ai-agent.chat.page"),
+      icon: () => <SparklesIcon size={16} isAnimated={true} />,
+      group: "Overview",
+      badge: "NEW"
+    });
+
+    items.push({
+      title: "Messenger",
+      href: route("messenger.index"),
+      icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
+      group: "Overview",
+    });
+
+
     // Staff section - only show if user has any staff-related permissions
     const staffChildren = [];
     if (hasPermission(permissions, "manage-users")) {

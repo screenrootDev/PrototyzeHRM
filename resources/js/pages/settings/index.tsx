@@ -11,6 +11,7 @@ import { usePage } from '@inertiajs/react';
 
 
 
+import AIAgentSettings from './components/ai-agent-settings';
 import BrandSettings from './components/brand-settings';
 import EmailSettings from './components/email-settings';
 import StorageSettings from './components/storage-settings';
@@ -89,6 +90,12 @@ export default function Settings() {
       permission: 'manage-recaptcha-settings'
     },
     {
+      title: 'AI Agent Settings',
+      href: '#ai-agent-settings',
+      icon: <Bot className="h-4 w-4 mr-2" />,
+      permission: 'manage-ai-agent'
+    },
+    {
       title: 'Chat GPT Settings',
       href: '#chatgpt-settings',
       icon: <Bot className="h-4 w-4 mr-2" />,
@@ -147,7 +154,7 @@ export default function Settings() {
     // For company users, show different settings based on SaaS mode
     if (auth.user && auth.user.type === 'company') {
       // In non-SaaS mode, allow additional settings
-      const allowedPermissions = ['manage-system-settings', 'manage-email-settings', 'manage-currency-settings', 'manage-brand-settings', 'manage-webhook-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings', 'settings'];
+      const allowedPermissions = ['manage-ai-agent', 'manage-system-settings', 'manage-email-settings', 'manage-currency-settings', 'manage-brand-settings', 'manage-webhook-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings', 'settings'];
       if (!isSaas) {
         allowedPermissions.push('manage-storage-settings', 'manage-recaptcha-settings', 'manage-chatgpt-settings', 'manage-cookie-settings', 'manage-seo-settings', 'manage-cache-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings');
       }
@@ -159,6 +166,8 @@ export default function Settings() {
   // Refs for each section
   const systemSettingsRef = useRef<HTMLDivElement>(null);
   const brandSettingsRef = useRef<HTMLDivElement>(null);
+  const aiAgentSettingsRef = useRef<HTMLDivElement>(null);
+  
 
 
   const workingDaysSettingsRef = useRef<HTMLDivElement>(null);
@@ -350,6 +359,13 @@ export default function Settings() {
           {(auth.permissions?.includes('manage-recaptcha-settings') || auth.user?.type === 'superadmin' || (auth.user?.type === 'company' && !isSaas)) && (
             <section id="recaptcha-settings" ref={recaptchaSettingsRef} className="mb-8">
               <RecaptchaSettings settings={systemSettings} />
+            </section>
+          )}
+
+          {/* AI Agent Settings Section */}
+          {(auth.permissions?.includes('manage-ai-agent') || auth.user?.type === 'company' || auth.user?.type === 'superadmin') && (
+            <section id="ai-agent-settings" ref={aiAgentSettingsRef} className="mb-8">
+              <AIAgentSettings userSettings={systemSettings} auth={auth} />
             </section>
           )}
 

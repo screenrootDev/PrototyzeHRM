@@ -23,79 +23,84 @@ declare global {
 /**
  * Get admin setting value
  */
-// const getAdminSetting = (key: string) => {
-//   try {
-//     const { props } = usePage();
-//     const adminSettings = (props as any).adminAllSetting || {};
-//     return adminSettings[key];
-//   } catch {
-//     return null;
-//   }
-// };
+export const getAdminSetting = (key: string, pageProps?: any) => {
+  try {
+    let adminSettings;
+    if (pageProps?.adminAllSetting) {
+      adminSettings = pageProps.adminAllSetting;
+    } else {
+      const { props } = usePage();
+      adminSettings = (props as any).adminAllSetting || {};
+    }
+    return adminSettings[key];
+  } catch {
+    return null;
+  }
+};
 
 /**
  * Format date to readable format
  */
-// const formatDate = (date: string | Date): string => {
-//   if (!date) return '';
-//   const format = getCompanySetting('dateFormat') || 'Y-m-d';
-//   const d = new Date(date);
-//   const year = d.getFullYear();
-//   const month = String(d.getMonth() + 1).padStart(2, '0');
-//   const day = String(d.getDate()).padStart(2, '0');
+export const formatDate = (date: string | Date): string => {
+  if (!date) return '';
+  const format = 'Y-m-d';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
 
-//   return format
-//     .replace('Y', String(year))
-//     .replace('m', month)
-//     .replace('d', day);
-// };
+  return format
+    .replace('Y', String(year))
+    .replace('m', month)
+    .replace('d', day);
+};
 
 /**
  * Format time to readable format
  */
-// const formatTime = (time: string): string => {
-//   if (!time) return '';
-//   const timeFormat = getCompanySetting('timeFormat') || 'H:i';
-//   const [hours, minutes] = time.split(':');
-//   const h = parseInt(hours);
-//   const m = String(parseInt(minutes)).padStart(2, '0');
+export const formatTime = (time: string): string => {
+  if (!time) return '';
+  const timeFormat = 'H:i';
+  const [hours, minutes] = time.split(':');
+  const h = parseInt(hours);
+  const m = String(parseInt(minutes)).padStart(2, '0');
 
-//   if (timeFormat === 'g:i A') {
-//     const period = h >= 12 ? 'PM' : 'AM';
-//     const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
-//     return `${displayHour}:${m} ${period}`;
-//   }
+  if (timeFormat === 'g:i A') {
+    const period = h >= 12 ? 'PM' : 'AM';
+    const displayHour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${displayHour}:${m} ${period}`;
+  }
 
-//   return timeFormat
-//     .replace('H', String(h).padStart(2, '0'))
-//     .replace('i', m);
-// };
+  return timeFormat
+    .replace('H', String(h).padStart(2, '0'))
+    .replace('i', m);
+};
 
 /**
  * Format date and time to readable format
  */
-// const formatDateTime = (date: string | Date): string => {
-//   if (!date) return '';
-//   const dateFormat = getCompanySetting('dateFormat') || 'Y-m-d';
-//   const timeFormat = getCompanySetting('timeFormat') || 'H:i';
-//   const d = new Date(date);
-//   const year = d.getFullYear();
-//   const month = String(d.getMonth() + 1).padStart(2, '0');
-//   const day = String(d.getDate()).padStart(2, '0');
-//   const hours = String(d.getHours()).padStart(2, '0');
-//   const minutes = String(d.getMinutes()).padStart(2, '0');
+export const formatDateTime = (date: string | Date): string => {
+  if (!date) return '';
+  const dateFormat = 'Y-m-d';
+  const timeFormat = 'H:i';
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
 
-//   const formattedDate = dateFormat
-//     .replace('Y', String(year))
-//     .replace('m', month)
-//     .replace('d', day);
+  const formattedDate = dateFormat
+    .replace('Y', String(year))
+    .replace('m', month)
+    .replace('d', day);
 
-//   const formattedTime = timeFormat
-//     .replace('H', hours)
-//     .replace('i', minutes);
+  const formattedTime = timeFormat
+    .replace('H', hours)
+    .replace('i', minutes);
 
-//   return `${formattedDate} ${formattedTime}`;
-// };
+  return `${formattedDate} ${formattedTime}`;
+};
 
 /**
  * Get full image path
@@ -229,3 +234,26 @@ export {
   getCookie,
   getInitials,
 };
+export const adminPackages = (pageProps?: any): string[] => {
+    return [];
+};
+
+export const downloadFile = (url: string): void => {
+    // Create a temporary link
+    const link = document.createElement('a');
+    link.href = url;
+    link.target = '_blank';  // opens in new tab
+    link.rel = 'noopener noreferrer';
+
+    // Optional: if it's a direct downloadable file, force download
+    if (url.match(/\.(pdf|jpg|png|jpeg|docx|zip)$/i)) {
+      link.download = '';
+    }else{
+      link.download = url.split('/').pop() || '';
+    }
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+};
+
