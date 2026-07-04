@@ -148,8 +148,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
 
       {/* Timeline Grid */}
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-          <div className="relative w-full overflow-auto dark:bg-gray-900">
+        <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] w-full">
             <table className="w-full caption-bottom text-sm text-foreground dark:bg-gray-900">
               <thead className="[&_tr]:border-b">
                 <tr className="transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-foreground bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
@@ -261,7 +260,6 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
               )}
             </tbody>
           </table>
-          </div>
         </div>
       </div>
     </div>
