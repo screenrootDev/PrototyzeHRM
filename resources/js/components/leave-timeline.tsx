@@ -147,88 +147,73 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
       </div>
 
       {/* Timeline Grid */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 overflow-hidden w-full">
-        <div className="w-full grid bg-white text-sm" style={{ gridTemplateColumns: '220px minmax(0, 1fr)' }}>
-          {/* LEFT PANE: Fixed Width */}
-          <div className="flex flex-col border-r border-gray-100 z-10 shadow-[2px_0_8px_rgba(0,0,0,0.02)]">
-            <div className="h-[72px] px-4 flex items-center text-sm font-bold text-gray-800 border-b border-gray-100 bg-gray-50/50">
-              Employee
-            </div>
-            
-            {!groupedLeaves || groupedLeaves.length === 0 ? (
-              <div className="h-[72px] px-4 flex items-center text-gray-500 border-b border-gray-100"></div>
-            ) : (
-              groupedLeaves.map(({ employee }) => (
-                <div key={`emp-${employee.id}`} className="h-[72px] px-4 flex items-center border-b border-gray-100 bg-white hover:bg-gray-50/50 transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="h-9 w-9 rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
-                      <Avatar className="h-full w-full">
-                        {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
-                        <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                    </div>
-                    <div className="flex flex-col min-w-[120px]">
-                      <span className="font-medium text-gray-800 text-sm truncate max-w-[140px]" title={employee?.name}>{employee?.name}</span>
-                      <span className="text-[11px] text-gray-500 truncate max-w-[140px]" title={employee?.type || 'Employee'}>{employee?.type || 'Employee'}</span>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* RIGHT PANE: Scrollable Dates */}
-          <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
-            <div className="flex flex-col w-max relative">
-              <div className="h-[72px] flex border-b border-gray-100 bg-gray-50/50">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 overflow-hidden w-full relative z-0">
+        <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <table className="w-full caption-bottom text-sm border-separate border-spacing-0 min-w-max">
+            <thead>
+              <tr>
+                <th className="h-[72px] px-4 py-3 text-left align-middle text-sm font-bold text-gray-800 sticky left-0 z-20 bg-white border-r border-b border-gray-100 shadow-[2px_0_8px_rgba(0,0,0,0.02)] min-w-[220px] w-[220px]">
+                  Employee
+                </th>
                 {daysArray.map((day, i) => (
-                  <div key={`header-${i}`} className={`min-w-[130px] w-[130px] shrink-0 flex flex-col items-center justify-center border-r border-gray-100 last:border-r-0 ${day.isWeekend ? 'bg-gray-100/50' : ''}`}>
-                    <span className="font-bold text-gray-700 text-sm">{day.date}</span>
-                    <span className="text-[10px] text-gray-400 uppercase leading-none mt-1">{day.dayName}</span>
-                  </div>
+                  <th key={i} className={`h-[72px] px-1.5 py-1 align-middle font-normal border-b border-r border-gray-100 min-w-[130px] w-[130px] ${day.isWeekend ? 'bg-gray-100/50' : 'bg-gray-50/50'}`}>
+                    <div className="flex flex-col items-center justify-center">
+                      <span className="font-bold text-gray-700 text-sm">{day.date}</span>
+                      <span className="text-[10px] text-gray-400 uppercase leading-none mt-1">{day.dayName}</span>
+                    </div>
+                  </th>
                 ))}
-              </div>
-              
+              </tr>
+            </thead>
+            <tbody>
               {!groupedLeaves || groupedLeaves.length === 0 ? (
-                <div className="h-[72px] flex items-center justify-center text-gray-500 border-b border-gray-100 px-8">
-                  No leave applications found for this month.
-                </div>
+                <tr>
+                  <td className="p-8 text-center text-gray-500 border-b border-gray-100 sticky left-0 bg-white z-10" colSpan={daysInMonth + 1}>
+                    No leave applications found for this month.
+                  </td>
+                </tr>
               ) : (
-                groupedLeaves.map(({ employee, leaves }) => (
-                  <div key={`dates-${employee.id}`} className="h-[72px] flex border-b border-gray-100 hover:bg-gray-50/50 transition-colors relative">
-                    {/* Background Grid Cells */}
-                    {daysArray.map((_, i) => (
-                      <div key={`cell-${i}`} className="min-w-[130px] w-[130px] shrink-0 border-r border-gray-50/50 last:border-r-0 pointer-events-none" />
-                    ))}
+                groupedLeaves.map(({ employee, leaves }) => {
+                  
+                  const timelineStart = new Date(currentYear, currentMonth - 1, 1);
+                  const timelineEnd = new Date(currentYear, currentMonth, 0);
+
+                  // Filter and sort leaves
+                  const validLeaves = leaves.filter((leave: any) => {
+                    const start = new Date(leave.start_date);
+                    const end = new Date(leave.end_date);
+                    return !(end < timelineStart || start > timelineEnd);
+                  }).sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
+
+                  let currentDay = 1;
+                  const rowCells = [];
+
+                  for (const leave of validLeaves) {
+                    const start = new Date(leave.start_date);
+                    const end = new Date(leave.end_date);
+                    let startDay = start < timelineStart ? 1 : start.getDate();
+                    let endDay = end > timelineEnd ? daysInMonth : end.getDate();
                     
-                    {/* Leave Blocks Overlay */}
-                    {leaves.map((leave: any) => {
-                      const start = new Date(leave.start_date);
-                      const end = new Date(leave.end_date);
-                      const timelineStart = new Date(currentYear, currentMonth - 1, 1);
-                      const timelineEnd = new Date(currentYear, currentMonth, 0);
-
-                      // Skip if completely outside this month
-                      if (end < timelineStart || start > timelineEnd) return null;
-
-                      // Calculate start and end indices (1-indexed based)
-                      let startDay = start < timelineStart ? 1 : start.getDate();
-                      let endDay = end > timelineEnd ? daysInMonth : end.getDate();
-
-                      const span = endDay - startDay + 1;
-                      const startPos = Math.max(0, startDay - 1);
-                      const widthSpan = Math.min(daysInMonth - startPos, endDay - startPos + 1);
+                    // Render empty cells before this leave
+                    while (currentDay < startDay) {
+                      const isWeekend = daysArray[currentDay - 1].isWeekend;
+                      rowCells.push(
+                        <td key={`empty-${currentDay}`} className={`border-b border-r border-gray-50/50 h-[72px] min-w-[130px] w-[130px] ${isWeekend ? 'bg-gray-50/30' : ''}`}></td>
+                      );
+                      currentDay++;
+                    }
+                    
+                    // Render the leave cell
+                    if (currentDay <= endDay) {
+                      const span = endDay - currentDay + 1;
                       const color = leave.leave_type?.color || '#ccc';
                       const leaveType = leave.leave_type;
-                          
-                      return (
-                          <div
-                            key={leave.id}
-                            className="absolute top-1/2 -translate-y-1/2 rounded-lg px-2.5 py-1.5 text-xs border transition-opacity flex flex-col justify-center cursor-pointer hover:opacity-90 z-10 overflow-hidden"
+                      
+                      rowCells.push(
+                        <td key={leave.id} colSpan={span} className="p-1 border-b border-r border-gray-50/50 h-[72px] align-middle" style={{ minWidth: `${span * 130}px` }}>
+                          <div 
+                            className="rounded-lg px-2.5 py-1.5 text-xs border transition-opacity flex flex-col justify-center h-full cursor-pointer hover:opacity-90"
                             style={{
-                              left: `calc(${startPos} * (100% / ${daysInMonth}) + 4px)`,
-                              width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 8px)`,
-                              height: 'calc(100% - 8px)',
                               backgroundColor: hexToRgba(color, 0.133),
                               borderColor: hexToRgba(color, 0.4),
                               color: color,
@@ -236,20 +221,47 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                             }}
                             title={`${leaveType?.name}: ${leave.start_date} to ${leave.end_date}`}
                           >
-                            {span >= 1 ? (
-                              <>
-                                <div className="font-semibold text-xs leading-tight truncate">{leaveType?.name}</div>
-                                <div className="text-[10px] mt-0.5 opacity-80">{leaveType?.is_paid ? 'Paid Leave' : 'Unpaid Leave'}</div>
-                              </>
-                            ) : ''}
+                            <div className="font-semibold text-xs leading-tight truncate">{leaveType?.name}</div>
+                            <div className="text-[10px] mt-0.5 opacity-80">{leaveType?.is_paid ? 'Paid Leave' : 'Unpaid Leave'}</div>
                           </div>
-                        );
-                    })}
-                  </div>
-                ))
+                        </td>
+                      );
+                      currentDay = endDay + 1;
+                    }
+                  }
+
+                  // Render remaining empty cells
+                  while (currentDay <= daysInMonth) {
+                    const isWeekend = daysArray[currentDay - 1].isWeekend;
+                    rowCells.push(
+                      <td key={`empty-${currentDay}`} className={`border-b border-r border-gray-50/50 h-[72px] min-w-[130px] w-[130px] ${isWeekend ? 'bg-gray-50/30' : ''}`}></td>
+                    );
+                    currentDay++;
+                  }
+
+                  return (
+                    <tr key={`emp-row-${employee.id}`} className="hover:bg-gray-50/50 transition-colors">
+                      <td className="h-[72px] px-4 align-middle sticky left-0 z-10 bg-white border-r border-b border-gray-100 shadow-[2px_0_8px_rgba(0,0,0,0.02)] min-w-[220px] w-[220px]">
+                        <div className="flex items-center gap-3">
+                          <div className="h-9 w-9 rounded-full overflow-hidden bg-gray-100 shrink-0 border border-gray-200">
+                            <Avatar className="h-full w-full">
+                              {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
+                              <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            </Avatar>
+                          </div>
+                          <div className="flex flex-col min-w-[120px]">
+                            <span className="font-medium text-gray-800 text-sm truncate max-w-[140px]" title={employee?.name}>{employee?.name}</span>
+                            <span className="text-[11px] text-gray-500 truncate max-w-[140px]" title={employee?.type || 'Employee'}>{employee?.type || 'Employee'}</span>
+                          </div>
+                        </div>
+                      </td>
+                      {rowCells}
+                    </tr>
+                  );
+                })
               )}
-            </div>
-          </div>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
