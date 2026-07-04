@@ -148,7 +148,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
 
       {/* Timeline Grid */}
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-        <div className="w-full overflow-x-auto">
+        <div className="w-full overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           <div className="min-w-max flex flex-col relative">
             {/* Grid Header */}
             <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 w-full">
