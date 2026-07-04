@@ -121,18 +121,18 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
       </div>
 
       {/* Timeline Grid */}
-      <div className="overflow-x-auto">
-        <div className="min-w-max">
+      <div className="w-full">
+        <div className="w-full flex flex-col">
           {/* Grid Header */}
-          <div className="flex border-b bg-gray-50/50">
-            <div className="w-[250px] flex-shrink-0 p-3 border-r font-medium flex items-center text-sm text-muted-foreground">
+          <div className="flex border-b bg-gray-50/50 w-full">
+            <div className="w-[180px] md:w-[220px] flex-shrink-0 p-3 border-r font-medium flex items-center text-sm text-muted-foreground">
               Employee
             </div>
-            <div className="flex flex-1">
+            <div className="flex flex-1 min-w-0">
               {daysArray.map((day, i) => (
-                <div key={i} className={`flex-1 min-w-[36px] flex flex-col items-center justify-center py-1.5 border-r ${day.isWeekend ? 'bg-gray-100 text-muted-foreground' : 'text-gray-700'}`}>
-                  <span className="text-xs font-medium">{day.date}</span>
-                  <span className="text-[10px] uppercase font-semibold">{day.dayName}</span>
+                <div key={i} className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 border-r ${day.isWeekend ? 'bg-gray-100 text-muted-foreground' : 'text-gray-700'}`}>
+                  <span className="text-[11px] font-medium leading-none">{day.date}</span>
+                  <span className="text-[9px] uppercase font-semibold mt-1">{day.dayName}</span>
                 </div>
               ))}
             </div>
@@ -141,8 +141,8 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
           {/* Grid Rows */}
           {groupedLeaves.length > 0 ? (
             groupedLeaves.map(({ employee, leaves }) => (
-              <div key={employee.id} className="flex border-b last:border-0 hover:bg-gray-50/50 transition-colors">
-                <div className="w-[250px] flex-shrink-0 p-2.5 border-r flex items-center gap-3 bg-white sticky left-0 z-10">
+              <div key={employee.id} className="flex border-b last:border-0 hover:bg-gray-50/50 transition-colors w-full">
+                <div className="w-[180px] md:w-[220px] flex-shrink-0 p-2 md:p-2.5 border-r flex items-center gap-2 md:gap-3 bg-white sticky left-0 z-10">
                   <Avatar className="h-8 w-8">
                     {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
                     <AvatarFallback>{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -152,10 +152,10 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                     <span className="text-[11px] text-muted-foreground truncate">{employee?.type || 'Employee'}</span>
                   </div>
                 </div>
-                <div className="flex flex-1 relative">
-                  {/* Background Grid Lines */}
-                  {daysArray.map((day, i) => (
-                    <div key={i} className={`flex-1 min-w-[36px] border-r ${day.isWeekend ? 'bg-gray-50' : ''}`} />
+                <div className="flex flex-1 min-w-0 relative">
+                  {/* Grid lines for each day */}
+                  {daysArray.map((_, i) => (
+                    <div key={i} className="flex-1 min-w-0 border-r h-[50px] pointer-events-none" />
                   ))}
                   
                   {/* Leave Blocks */}
@@ -174,23 +174,25 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
 
                     const span = endDay - startDay + 1;
                     
-                    // Width is percentage based on total days
-                    const widthPercent = (span / daysInMonth) * 100;
-                    const leftPercent = ((startDay - 1) / daysInMonth) * 100;
-
+                    const startPos = Math.max(0, startDay - 1);
+                    const widthSpan = Math.min(daysInMonth - startPos, endDay - startPos + 1);
+                    const color = leave.leave_type?.color || '#ccc';
+                    const leaveType = leave.leave_type;
+                        
                     return (
-                      <div 
+                      <div
                         key={leave.id}
-                        className="absolute h-6 top-1/2 -translate-y-1/2 rounded-sm shadow-sm flex items-center justify-center overflow-hidden px-1.5 text-[10px] text-white font-medium truncate z-0"
+                        className="absolute top-1/2 -translate-y-1/2 rounded-md text-[9px] font-medium text-white flex items-center justify-center shadow-sm overflow-hidden whitespace-nowrap"
                         style={{
-                          left: `calc(${leftPercent}% + 2px)`,
-                          width: `calc(${widthPercent}% - 4px)`,
-                          backgroundColor: leave.leave_type?.color || '#ccc',
+                          left: `calc(${startPos} * (100% / ${daysInMonth}) + 2px)`,
+                          width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 4px)`,
+                          height: '24px',
+                          backgroundColor: color,
                           opacity: leave.status === 'pending' ? 0.7 : 1,
                         }}
-                        title={`${leave.leave_type?.name} (${leave.status})`}
+                        title={`${leaveType?.name}: ${leave.start_date} to ${leave.end_date}`}
                       >
-                        {span >= 2 ? leave.leave_type?.name : ''}
+                        {span >= 2 ? leaveType?.name : ''}
                       </div>
                     );
                   })}
@@ -198,7 +200,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
               </div>
             ))
           ) : (
-            <div className="p-8 text-center text-sm text-muted-foreground">
+            <div className="p-8 text-center text-muted-foreground w-full">
               No leave applications found for this month.
             </div>
           )}
