@@ -182,7 +182,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
             <div className="flex flex-col w-max relative">
               <div className="h-[72px] flex border-b border-gray-100 bg-gray-50/50">
                 {daysArray.map((day, i) => (
-                  <div key={`header-${i}`} className={`w-[50px] shrink-0 flex flex-col items-center justify-center border-r border-gray-100 last:border-r-0 ${day.isWeekend ? 'bg-gray-100/50' : ''}`}>
+                  <div key={`header-${i}`} className={`min-w-[130px] w-[130px] shrink-0 flex flex-col items-center justify-center border-r border-gray-100 last:border-r-0 ${day.isWeekend ? 'bg-gray-100/50' : ''}`}>
                     <span className="font-bold text-gray-700 text-sm">{day.date}</span>
                     <span className="text-[10px] text-gray-400 uppercase leading-none mt-1">{day.dayName}</span>
                   </div>
@@ -198,7 +198,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                   <div key={`dates-${employee.id}`} className="h-[72px] flex border-b border-gray-100 hover:bg-gray-50/50 transition-colors relative">
                     {/* Background Grid Cells */}
                     {daysArray.map((_, i) => (
-                      <div key={`cell-${i}`} className="w-[50px] shrink-0 border-r border-gray-50/50 last:border-r-0 pointer-events-none" />
+                      <div key={`cell-${i}`} className="min-w-[130px] w-[130px] shrink-0 border-r border-gray-50/50 last:border-r-0 pointer-events-none" />
                     ))}
                     
                     {/* Leave Blocks Overlay */}
