@@ -222,25 +222,28 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                       const leaveType = leave.leave_type;
                           
                       return (
-                        <div
-                          key={leave.id}
-                          className="absolute top-1/2 -translate-y-1/2 rounded-md text-xs font-medium flex items-center shadow-sm overflow-hidden whitespace-nowrap z-10"
-                          style={{
-                            left: `calc(${startPos} * (100% / ${daysInMonth}) + 4px)`,
-                            width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 8px)`,
-                            height: '32px',
-                            backgroundColor: hexToRgba(color, 0.15),
-                            borderColor: hexToRgba(color, 0.4),
-                            borderWidth: '1px',
-                            color: color,
-                            opacity: leave.status === 'pending' ? 0.7 : 1,
-                            paddingLeft: '12px'
-                          }}
-                          title={`${leaveType?.name}: ${leave.start_date} to ${leave.end_date}`}
-                        >
-                          {span >= 2 ? leaveType?.name : ''}
-                        </div>
-                      );
+                          <div
+                            key={leave.id}
+                            className="absolute top-1/2 -translate-y-1/2 rounded-lg px-2.5 py-1.5 text-xs border transition-opacity flex flex-col justify-center cursor-pointer hover:opacity-90 z-10 overflow-hidden"
+                            style={{
+                              left: `calc(${startPos} * (100% / ${daysInMonth}) + 4px)`,
+                              width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 8px)`,
+                              height: 'calc(100% - 8px)',
+                              backgroundColor: hexToRgba(color, 0.133),
+                              borderColor: hexToRgba(color, 0.4),
+                              color: color,
+                              opacity: leave.status === 'pending' ? 0.7 : 1,
+                            }}
+                            title={`${leaveType?.name}: ${leave.start_date} to ${leave.end_date}`}
+                          >
+                            {span >= 1 ? (
+                              <>
+                                <div className="font-semibold text-xs leading-tight truncate">{leaveType?.name}</div>
+                                <div className="text-[10px] mt-0.5 opacity-80">{leaveType?.is_paid ? 'Paid Leave' : 'Unpaid Leave'}</div>
+                              </>
+                            ) : ''}
+                          </div>
+                        );
                     })}
                   </div>
                 ))
