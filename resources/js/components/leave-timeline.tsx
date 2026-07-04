@@ -5,6 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { router } from '@inertiajs/react';
 
+const hexToRgba = (hex: string, alpha: number) => {
+  if (!hex) return `rgba(204, 204, 204, ${alpha})`;
+  if (!/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) return hex;
+  let c = hex.substring(1).split('');
+  if (c.length === 3) {
+    c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+  }
+  const colorNum = parseInt(c.join(''), 16);
+  return `rgba(${[(colorNum >> 16) & 255, (colorNum >> 8) & 255, colorNum & 255].join(', ')}, ${alpha})`;
+};
+
 interface TimelineProps {
   leaves: any[];
   currentMonth: number;
@@ -121,49 +132,58 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
         <span className="font-medium text-gray-700 dark:text-gray-300">Legend:</span>
         {leaveTypes.map(type => (
           <span key={type.id} className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full inline-block border" style={{ backgroundColor: type.color || '#ccc', borderColor: type.color || '#ccc' }} />
-            <span className="font-medium" style={{ color: type.color || '#666' }}>{type.name}</span>
+            <span 
+              className="w-3 h-3 rounded-full inline-block border" 
+              style={{ 
+                backgroundColor: hexToRgba(type.color, 0.133), 
+                borderColor: hexToRgba(type.color, 0.4) 
+              }} 
+            />
+            <span className="font-medium" style={{ color: type.color || '#666' }}>
+              {type.name}
+            </span>
           </span>
         ))}
       </div>
 
       {/* Timeline Grid */}
       <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm overflow-hidden">
-        <div className="w-full flex flex-col">
-          {/* Grid Header */}
-          <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 w-full">
-            <div className="w-[180px] md:w-[220px] flex-shrink-0 p-3 border-r font-medium flex items-center text-sm text-muted-foreground">
-              Employee
-            </div>
-            <div className="flex flex-1 min-w-0">
-              {daysArray.map((day, i) => (
-                <div key={i} className={`flex-1 min-w-0 flex flex-col items-center justify-center py-1.5 border-r ${day.isWeekend ? 'bg-gray-100 text-muted-foreground' : 'text-gray-700'}`}>
-                  <span className="text-[11px] font-medium leading-none">{day.date}</span>
-                  <span className="text-[9px] uppercase font-semibold mt-1">{day.dayName}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Grid Rows */}
-          {groupedLeaves.length > 0 ? (
-            groupedLeaves.map(({ employee, leaves }) => (
-              <div key={employee.id} className="flex border-b border-gray-200 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors w-full">
-                <div className="w-[180px] md:w-[220px] flex-shrink-0 p-2 md:p-4 border-r border-gray-200 dark:border-gray-700 flex items-center gap-2 md:gap-3 bg-white dark:bg-gray-900 sticky left-0 z-10">
-                  <Avatar className="h-8 w-8">
-                    {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
-                    <AvatarFallback>{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col overflow-hidden">
-                    <span className="font-medium text-sm truncate">{employee?.name}</span>
-                    <span className="text-[11px] text-muted-foreground truncate">{employee?.type || 'Employee'}</span>
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-max flex flex-col relative">
+            {/* Grid Header */}
+            <div className="flex border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/30 w-full">
+              <div className="w-[180px] sm:w-[200px] flex-shrink-0 p-3 border-r border-gray-200 dark:border-gray-700 font-medium flex items-center text-sm text-muted-foreground sticky left-0 z-20 bg-gray-50 dark:bg-gray-800">
+                Employee
+              </div>
+              <div className="flex flex-1">
+                {daysArray.map((day, i) => (
+                  <div key={i} className={`flex-1 min-w-[130px] flex flex-col items-center justify-center py-2.5 border-r border-gray-200 dark:border-gray-700 ${day.isWeekend ? 'bg-gray-100 dark:bg-gray-800/50 text-muted-foreground' : 'text-gray-900 dark:text-gray-100'}`}>
+                    <span className="text-sm font-semibold leading-none">{day.date}</span>
+                    <span className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{day.dayName}</span>
                   </div>
-                </div>
-                <div className="flex flex-1 min-w-0 relative">
-                  {/* Grid lines for each day */}
-                  {daysArray.map((_, i) => (
-                    <div key={i} className="flex-1 min-w-0 border-r h-[50px] pointer-events-none" />
-                  ))}
+                ))}
+              </div>
+            </div>
+
+            {/* Grid Rows */}
+            {groupedLeaves.length > 0 ? (
+              groupedLeaves.map(({ employee, leaves }) => (
+                <div key={employee.id} className="flex border-b border-gray-200 dark:border-gray-700 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 transition-colors w-full">
+                  <div className="w-[180px] sm:w-[200px] flex-shrink-0 p-4 border-r border-gray-200 dark:border-gray-700 flex items-center gap-3 bg-white dark:bg-gray-900 sticky left-0 z-10 h-[72px]">
+                    <Avatar className="h-9 w-9">
+                      {employee?.avatar ? <AvatarImage src={(window as any).storage ? (window as any).storage(employee.avatar) : employee.avatar} /> : null}
+                      <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">{employee?.name?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col overflow-hidden min-w-0">
+                      <span className="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{employee?.name}</span>
+                      <span className="text-xs text-gray-500 dark:text-gray-400 truncate">{employee?.type || 'Employee'}</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-1 relative h-[72px]">
+                    {/* Grid lines for each day */}
+                    {daysArray.map((_, i) => (
+                      <div key={i} className="flex-1 min-w-[130px] border-r border-gray-200 dark:border-gray-700 h-[72px] pointer-events-none" />
+                    ))}
                   
                   {/* Leave Blocks */}
                   {leaves.map((leave: any) => {
@@ -180,7 +200,6 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                     let endDay = end > timelineEnd ? daysInMonth : end.getDate();
 
                     const span = endDay - startDay + 1;
-                    
                     const startPos = Math.max(0, startDay - 1);
                     const widthSpan = Math.min(daysInMonth - startPos, endDay - startPos + 1);
                     const color = leave.leave_type?.color || '#ccc';
@@ -189,17 +208,21 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
                     return (
                       <div
                         key={leave.id}
-                        className="absolute top-1/2 -translate-y-1/2 rounded-md text-[9px] font-medium text-white flex items-center justify-center shadow-sm overflow-hidden whitespace-nowrap"
+                        className="absolute top-1/2 -translate-y-1/2 rounded-md text-xs font-medium flex items-center shadow-sm overflow-hidden whitespace-nowrap"
                         style={{
-                          left: `calc(${startPos} * (100% / ${daysInMonth}) + 2px)`,
-                          width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 4px)`,
-                          height: '24px',
-                          backgroundColor: color,
+                          left: `calc(${startPos} * (100% / ${daysInMonth}) + 4px)`,
+                          width: `calc(${widthSpan} * (100% / ${daysInMonth}) - 8px)`,
+                          height: '32px',
+                          backgroundColor: hexToRgba(color, 0.15),
+                          borderColor: hexToRgba(color, 0.4),
+                          borderWidth: '1px',
+                          color: color,
                           opacity: leave.status === 'pending' ? 0.7 : 1,
+                          paddingLeft: '12px'
                         }}
                         title={`${leaveType?.name}: ${leave.start_date} to ${leave.end_date}`}
                       >
-                        {span >= 2 ? leaveType?.name : ''}
+                        {span >= 1 ? leaveType?.name : ''}
                       </div>
                     );
                   })}
@@ -213,6 +236,7 @@ export function LeaveTimeline({ leaves, currentMonth, currentYear, leaveTypes, e
           )}
         </div>
       </div>
+    </div>
     </div>
   );
 }
