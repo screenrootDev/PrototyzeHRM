@@ -214,11 +214,11 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     const groupedSections = items.reduce<Array<{ groupLabel: string | null; items: NavItem[] }>>(
         (acc, item) => {
             const groupLabel = item.group ?? null;
-            const last = acc[acc.length - 1];
-            if (!last || last.groupLabel !== groupLabel) {
-                acc.push({ groupLabel, items: [item] });
+            const existingGroup = acc.find(g => g.groupLabel === groupLabel);
+            if (existingGroup) {
+                existingGroup.items.push(item);
             } else {
-                last.items.push(item);
+                acc.push({ groupLabel, items: [item] });
             }
             return acc;
         },

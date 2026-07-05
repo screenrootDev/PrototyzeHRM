@@ -1256,6 +1256,78 @@ export default function Companies() {
                   </div>
                 </div>
               ),
+            },
+            {
+              name: "active_module",
+              label: "Assigned Modules",
+              type: "custom",
+              colSpan: 2,
+              conditional: (mode) => mode === "edit" || mode === "view",
+              render: (field, formData, onChange) => {
+                const isView = formMode === "view";
+                return (
+                  <div className="space-y-4 col-span-2 mt-4 pt-4 border-t border-dashed border-gray-200 dark:border-gray-800">
+                    <div>
+                      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
+                        Active Modules
+                      </h3>
+                      <p className="text-xs text-gray-500 mb-3">
+                        {isView ? "Modules available for this company" : "Select the modules available for this company"}
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                      {availableModules.map((module: any) => {
+                        const Icon = iconMap[module.icon] || Package;
+                        const isChecked = Array.isArray(formData.active_module) && formData.active_module.includes(module.module);
+                        
+                        return (
+                          <div key={module.id} className={cn(
+                            "relative flex items-start space-x-3 p-3 rounded-lg border transition-colors",
+                            isChecked 
+                              ? "border-primary/50 bg-primary/5 dark:bg-primary/10" 
+                              : "border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900/50 hover:bg-gray-50 dark:hover:bg-gray-800/50",
+                            isView && "opacity-80"
+                          )}>
+                            <div className="flex items-center h-5">
+                              <Checkbox
+                                id={`edit-module-${module.module}`}
+                                checked={isChecked}
+                                disabled={isView}
+                                onCheckedChange={(checked) => {
+                                  if (isView) return;
+                                  const current = [...(formData.active_module || [])];
+                                  if (checked) {
+                                    onChange("active_module", [...current, module.module]);
+                                  } else {
+                                    onChange("active_module", current.filter((id: string) => id !== module.module));
+                                  }
+                                }}
+                              />
+                            </div>
+                            <div className="flex flex-col min-w-0 flex-1">
+                              <label htmlFor={`edit-module-${module.module}`} className={cn("text-sm font-medium cursor-pointer select-none", isChecked ? "text-primary dark:text-primary-400" : "text-gray-900 dark:text-gray-100")}>
+                                <div className="flex items-center gap-2">
+                                  <div className={cn(
+                                    "p-1.5 rounded-md", 
+                                    isChecked 
+                                      ? "bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary-300"
+                                      : module.color ? module.color.replace('text-', 'bg-').replace('-500', '-50') : "bg-gray-100 dark:bg-gray-800",
+                                    !isChecked && module.color ? module.color : ""
+                                  )}>
+                                    <Icon className="h-4 w-4" />
+                                  </div>
+                                  {module.label || module.name}
+                                </div>
+                              </label>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              },
             }
           ],
           modalSize: "lg",
