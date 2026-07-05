@@ -46,7 +46,7 @@ interface SuperAdminDashboardData {
     };
     systemStatus: "healthy" | "warning" | "critical";
   };
-  deptDistribution: Array<{
+  companyDistribution: Array<{
     name: string;
     count: number;
   }>;
@@ -83,7 +83,7 @@ export default function SuperAdminDashboard({
   ];
 
   const stats = dashboardData.stats;
-  const deptData = dashboardData.deptDistribution || [];
+  const companyData = dashboardData.companyDistribution || [];
 
   // Colors for chart bars
   const COLORS = [
@@ -181,17 +181,17 @@ export default function SuperAdminDashboard({
             <div className="p-6 border-b border-border/50 bg-muted/20">
               <h3 className="text-lg font-bold flex items-center gap-2">
                 <Activity className="h-5 w-5 text-primary" />
-                Employees By Department
+                Employees By Company
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                Workforce distribution across the organization
+                Workforce distribution across companies
               </p>
             </div>
             <CardContent className="p-8 h-[450px]">
-              {deptData.length > 0 ? (
+              {companyData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
-                    data={deptData}
+                    data={companyData}
                     layout="vertical"
                     margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
                   >
@@ -224,7 +224,7 @@ export default function SuperAdminDashboard({
                       }}
                     />
                     <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={28}>
-                      {deptData.map((entry, index) => (
+                      {companyData.map((entry, index) => (
                         <Cell
                           key={`cell-${index}`}
                           fill={COLORS[index % COLORS.length]}
