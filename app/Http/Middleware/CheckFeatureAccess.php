@@ -41,6 +41,12 @@ class CheckFeatureAccess
             }
         }
 
+        // Filter against globally enabled add-ons
+        if (!empty($activeModules)) {
+            $globalEnabledAddOns = \App\Models\AddOn::where('is_enable', true)->pluck('id')->toArray();
+            $activeModules = array_intersect($activeModules, $globalEnabledAddOns);
+        }
+
         // Check if the requested feature is enabled
         if (!in_array($feature, $activeModules)) {
             // Return 403 Forbidden if feature is disabled

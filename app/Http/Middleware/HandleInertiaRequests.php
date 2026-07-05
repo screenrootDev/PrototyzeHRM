@@ -92,6 +92,11 @@ class HandleInertiaRequests extends Middleware
             }
         }
 
+        // Filter against globally enabled add-ons
+        if (!empty($activeModule)) {
+            $globalEnabledAddOns = \App\Models\AddOn::where('is_enable', true)->pluck('id')->toArray();
+            $activeModule = array_values(array_intersect($activeModule, $globalEnabledAddOns));
+        }
 
         return [
             ...parent::share($request),

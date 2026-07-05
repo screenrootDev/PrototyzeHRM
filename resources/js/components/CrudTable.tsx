@@ -322,13 +322,14 @@ export function CrudTable({
       <Table>
         <TableHeader>
           <TableRow className="bg-gray-50 dark:bg-gray-800 border-b">
-            <TableHead className="w-12 py-2.5 font-semibold">#</TableHead>
-            {columns.map((column) => (
+            <TableHead className="w-[48px] min-w-[48px] max-w-[48px] py-2.5 font-semibold sticky left-0 z-20 bg-gray-50 dark:bg-gray-800">#</TableHead>
+            {columns.map((column, i) => (
               <TableHead
                 key={column.key}
                 className={cn(
                   "py-2.5 font-semibold",
                   column.sortable && "cursor-pointer select-none",
+                  i === 0 && "sticky left-[48px] z-20 bg-gray-50 dark:bg-gray-800 border-r-2 border-gray-200 dark:border-gray-700",
                   column.className
                 )}
                 onClick={() => handleSort(column)}
@@ -339,29 +340,26 @@ export function CrudTable({
                 </div>
               </TableHead>
             ))}
-            {/* <TableHead className="w-24 py-2.5 font-semibold text-right">{"Actions"}</TableHead> */}
             {showActions && hasAnyActionPermission && <TableHead className="w-24 py-2.5 text-right font-semibold">{'Actions'}</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length > 0 ? (
             data.map((row, index) => (
-              <TableRow key={row.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
-                <TableCell className="font-medium py-2.5">{from + index}</TableCell>
-                {columns.map((col) => (
+              <TableRow key={row.id || index} className="group hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
+                <TableCell className="font-medium py-2.5 sticky left-0 z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors">{from + index}</TableCell>
+                {columns.map((col, i) => (
                   <TableCell
                     key={col.key}
                     className={cn(
                       "py-2.5",
+                      i === 0 && "sticky left-[48px] z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors border-r-2 border-gray-200 dark:border-gray-700",
                       col.className
                     )}
                   >
                     {renderCellContent(row, col)}
                   </TableCell>
                 ))}
-                {/* <TableCell className="py-2.5 text-right">
-                  {renderActionButtons(row)}
-                </TableCell> */}
                 {showActions && hasAnyActionPermission && <TableCell className="py-2.5 text-right">{renderActionButtons(row)}</TableCell>}
               </TableRow>
             ))

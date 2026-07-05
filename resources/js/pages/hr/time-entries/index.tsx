@@ -253,6 +253,7 @@ export default function TimeEntries() {
     {
       key: 'project',
       label: 'Project',
+      className: 'hidden md:table-cell',
       render: (value: string) => (
         <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${value 
           ? 'bg-purple-50 text-purple-700 ring-1 ring-inset ring-purple-600/20'
@@ -265,8 +266,9 @@ export default function TimeEntries() {
     {
       key: 'description',
       label: 'Description',
+      className: 'hidden lg:table-cell max-w-[150px] sm:max-w-[200px] md:max-w-[250px] lg:max-w-[300px]',
       render: (value: string) => (
-        <div className="max-w-xs truncate" title={value}>
+        <div className="truncate" title={value}>
           {value}
         </div>
       )
@@ -291,6 +293,7 @@ export default function TimeEntries() {
       key: 'created_at',
       label: 'Submitted On',
       sortable: true,
+      className: 'hidden sm:table-cell',
       render: (value: string) => window.appSettings?.formatDateTimeSimple(value, false) || new Date(value).toLocaleDateString()
     }
   ];
