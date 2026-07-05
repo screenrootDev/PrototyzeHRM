@@ -23,6 +23,7 @@ export interface NavItem {
         label: string;
         variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost';
     };
+    exact?: boolean;
 }
 
 export interface BreadcrumbItem {

@@ -78,17 +78,17 @@ export function SidebarStyleSettings() {
             <VariantButton 
               variant="sidebar"
               isActive={settings.variant === 'sidebar'}
-              onClick={() => updateVarian'sidebar'}
+              onClick={() => updateVariant('sidebar')}
             />
             <VariantButton 
               variant="floating"
               isActive={settings.variant === 'floating'}
-              onClick={() => updateVarian'floating'}
+              onClick={() => updateVariant('floating')}
             />
             <VariantButton 
               variant="inset"
               isActive={settings.variant === 'inset'}
-              onClick={() => updateVarian'inset'}
+              onClick={() => updateVariant('inset')}
             />
           </div>
         </div>

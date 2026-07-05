@@ -25,6 +25,8 @@ import { Progress } from "@/components/ui/progress";
 import { router, Link } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
 import {
+  PieChart,
+  Pie,
   BarChart,
   Bar,
   XAxis,
@@ -248,20 +250,26 @@ export default function SuperAdminDashboard({
             <CardContent className="p-8 h-[450px]">
               {companyData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={companyData}
-                    layout="vertical"
-                    margin={{ top: 5, right: 30, left: 60, bottom: 5 }}
-                  >
-                    <XAxis type="number" hide />
-                    <YAxis
-                      dataKey="name"
-                      type="category"
-                      tick={{ fontSize: 11, fontWeight: 500 }}
-                      width={140}
-                    />
+                  <PieChart>
+                    <Pie
+                      data={companyData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={80}
+                      outerRadius={140}
+                      paddingAngle={5}
+                      dataKey="count"
+                      nameKey="name"
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    >
+                      {companyData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
                     <Tooltip
-                      cursor={{ fill: "rgba(0,0,0,0.05)" }}
                       content={({ active, payload }) => {
                         if (active && payload && payload.length) {
                           return (
@@ -281,15 +289,8 @@ export default function SuperAdminDashboard({
                         return null;
                       }}
                     />
-                    <Bar dataKey="count" radius={[0, 6, 6, 0]} barSize={28}>
-                      {companyData.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={COLORS[index % COLORS.length]}
-                        />
-                      ))}
-                    </Bar>
-                  </BarChart>
+                    <Legend />
+                  </PieChart>
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full flex flex-col items-center justify-center space-y-6">

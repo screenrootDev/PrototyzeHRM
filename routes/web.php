@@ -3,8 +3,9 @@
 use App\Http\Controllers\AamarpayPaymentController;
 use App\Http\Controllers\AIAgentChatController;
 use App\Http\Controllers\AIAgentChatPageController;
-use App\Http\Controllers\MessengerController;
-use App\Http\Controllers\AnnouncementController;
+use App\Http\Controllers\HelpdeskCategoryController;
+use App\Http\Controllers\HelpdeskTicketController;
+use App\Http\Controllers\HelpdeskReplyController;use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\AssetController;
 use App\Http\Controllers\AssetTypeController;
 use App\Http\Controllers\AuthorizeNetPaymentController;
@@ -1052,6 +1053,13 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::put('companies/{company}/upgrade-plan', [CompanyController::class, 'upgradePlan'])->middleware('permission:upgrade-plan-companies')->name('companies.upgrade-plan');
         });
 
+        // Add-ons Manager routes
+        Route::middleware(['permission:manage-add-on'])->group(function () {
+            Route::get('add-ons', [\App\Http\Controllers\AddOnController::class, 'index'])->name('addons.index');
+            Route::put('add-ons/{id}/toggle', [\App\Http\Controllers\AddOnController::class, 'toggle'])->name('addons.toggle');
+            Route::get('add-ons/upload', [\App\Http\Controllers\AddOnController::class, 'upload'])->name('addons.upload');
+            Route::post('add-ons/install', [\App\Http\Controllers\AddOnController::class, 'install'])->name('addons.install');
+        });
 
         // Plan Requests routes
         Route::middleware(['permission:manage-plan-requests'])->group(function () {
@@ -1073,21 +1081,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::get('/sessions/{session}/messages', [AIAgentChatPageController::class, 'getMessages'])->name('sessions.messages');
         });
 
-        // Messenger routes
-        Route::get('messenger', [MessengerController::class, 'index'])->name('messenger.index');
-        Route::post('messenger/send', [MessengerController::class, 'send'])->name('messenger.send');
-        Route::get('messenger/contacts', [MessengerController::class, 'getContacts'])->name('messenger.contacts');
-        Route::get('messenger/messages/{userId}', [MessengerController::class, 'getMessages'])->name('messenger.messages');
-        Route::post('messenger/toggle-favorite', [MessengerController::class, 'toggleFavorite'])->name('messenger.toggle-favorite');
-        Route::get('messenger/favorites', [MessengerController::class, 'getFavorites'])->name('messenger.favorites');
-        Route::put('messenger/messages/{messageId}/edit', [MessengerController::class, 'editMessage'])->name('messenger.edit-message');
-        Route::delete('messenger/messages/{messageId}', [MessengerController::class, 'deleteMessage'])->name('messenger.delete-message');
-        Route::post('/messenger/set-offline', [MessengerController::class, 'setOffline'])->name('messenger.set-offline');
-        Route::post('/messenger/update-presence', [MessengerController::class, 'updatePresence'])->name('messenger.update-presence');
-        Route::get('/messenger/online-users', [MessengerController::class, 'getOnlineUsers'])->name('messenger.online-users');
-        Route::post('/messenger/toggle-pin', [MessengerController::class, 'togglePin'])->name('messenger.toggle-pin');
-        Route::get('/messenger/pinned', [MessengerController::class, 'getPinned'])->name('messenger.pinned');
-        Route::get('/messenger/check-new-messages', [MessengerController::class, 'checkNewMessages'])->name('messenger.check-new-messages');
+
 
         // Landing Page content management (Super Admin only)
         Route::middleware('App\Http\Middleware\SuperAdminMiddleware')->group(function () {
@@ -1100,6 +1094,15 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
                 'update' => 'landing-page.custom-pages.update',
                 'destroy' => 'landing-page.custom-pages.destroy',
             ]);
+        });
+
+        // Helpdesk routes
+        Route::prefix('helpdesk')->group(function () {
+            Route::resource('categories', HelpdeskCategoryController::class)->names('helpdesk-categories');
+            Route::get('tickets/today', [HelpdeskTicketController::class, 'today'])->name('helpdesk-tickets.today');
+            Route::resource('tickets', HelpdeskTicketController::class)->names('helpdesk-tickets');
+            Route::post('tickets/{ticket}/replies', [HelpdeskReplyController::class, 'store'])->name('helpdesk-replies.store');
+            Route::delete('replies/{reply}', [HelpdeskReplyController::class, 'destroy'])->name('helpdesk-replies.destroy');
         });
 
         // Calendar routes

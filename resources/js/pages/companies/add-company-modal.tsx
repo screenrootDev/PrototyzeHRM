@@ -41,27 +41,29 @@ import { router } from "@inertiajs/react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export const AVAILABLE_MODULES = [
-  { id: "meetings", label: "Meetings", icon: MessageCircle, color: "text-blue-500" },
-  { id: "recruitment", label: "Recruitment", icon: UsersRound, color: "text-indigo-500" },
-  { id: "assets", label: "Asset Management", icon: Package, color: "text-emerald-500" },
-  { id: "training", label: "Training", icon: GraduationCap, color: "text-amber-500" },
-  { id: "contracts", label: "Contract Management", icon: Clipboard, color: "text-rose-500" },
-  { id: "documents", label: "Document Management", icon: FolderOpen, color: "text-cyan-500" },
-  { id: "leave", label: "Leave Management", icon: CalendarRange, color: "text-orange-500" },
-  { id: "attendance", label: "Attendance", icon: UserCheck, color: "text-purple-500" },
-  { id: "performance", label: "Performance", icon: Target, color: "text-pink-500" },
-  { id: "biometric", label: "Biometric Attendance", icon: Fingerprint, color: "text-teal-500" },
-  { id: "time_tracking", label: "Time Tracking", icon: Timer, color: "text-sky-500" },
-  { id: "payroll", label: "Payroll Management", icon: IndianRupee, color: "text-emerald-600" },
-];
+export const iconMap: Record<string, any> = {
+  MessageCircle,
+  UsersRound,
+  Package,
+  GraduationCap,
+  Clipboard,
+  FolderOpen,
+  CalendarRange,
+  UserCheck,
+  Target,
+  Fingerprint,
+  Timer,
+  IndianRupee,
+};
 
 export function AddCompanyModal({
   isOpen,
   onClose,
+  availableModules = [],
 }: {
   isOpen: boolean;
   onClose: () => void;
+  availableModules?: any[];
 }) {
   const [formData, setFormData] = useState({
     avatar: "",
@@ -367,30 +369,32 @@ export function AddCompanyModal({
                 <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">Enabled Modules</h3>
               </div>
               <div className="grid grid-cols-2 gap-4">
-                {AVAILABLE_MODULES.map((module) => (
+                {availableModules.map((module) => {
+                  const Icon = iconMap[module.icon] || Package;
+                  return (
                   <div key={module.id} className="flex flex-row items-center space-x-3 space-y-0 rounded-md border border-gray-200 dark:border-gray-800 p-4 transition-all hover:bg-gray-50 dark:hover:bg-gray-800/50">
                     <Checkbox
                       id={`module-${module.id}`}
-                      checked={formData.active_module.includes(module.id)}
+                      checked={formData.active_module.includes(module.module)}
                       onCheckedChange={(checked) => {
                         setFormData(prev => {
                           const current = [...prev.active_module];
                           if (checked) {
-                            return { ...prev, active_module: [...current, module.id] };
+                            return { ...prev, active_module: [...current, module.module] };
                           } else {
-                            return { ...prev, active_module: current.filter(id => id !== module.id) };
+                            return { ...prev, active_module: current.filter(id => id !== module.module) };
                           }
                         });
                       }}
                     />
                     <div className="flex items-center gap-2 overflow-hidden min-w-0">
-                      <module.icon className={`h-4 w-4 shrink-0 ${module.color}`} />
+                      <Icon className={`h-4 w-4 shrink-0 ${module.color}`} />
                       <Label htmlFor={`module-${module.id}`} className="font-medium text-sm cursor-pointer text-gray-700 dark:text-gray-300 truncate">
                         {module.label}
                       </Label>
                     </div>
                   </div>
-                ))}
+                )})}
               </div>
             </div>
 

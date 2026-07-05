@@ -1,15 +1,17 @@
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useForm } from "@inertiajs/react";
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import InputError from "@/components/input-error";
+import InputError from "@/components/ui/input-error";
 import { CreateHelpdeskCategoryProps, CreateHelpdeskCategoryFormData } from './types';
 
 export default function Create({ onSuccess }: CreateHelpdeskCategoryProps) {
-        const { data, setData, post, processing, errors } = useForm<CreateHelpdeskCategoryFormData>({
+    const { t } = useTranslation();
+    const { data, setData, post, processing, errors } = useForm<CreateHelpdeskCategoryFormData>({
         name: '',
         description: '',
         color: '#3B82F6',
@@ -28,35 +30,35 @@ export default function Create({ onSuccess }: CreateHelpdeskCategoryProps) {
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create Helpdesk Category</DialogTitle>
+                <DialogTitle>{t('Create Helpdesk Category')}</DialogTitle>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-4">
                 <div>
-                    <Label htmlFor="name">Name</Label>
+                    <Label htmlFor="name">{t('Name')}</Label>
                     <Input
                         id="name"
                         value={data.name}
                         onChange={(e) => setData('name', e.target.value)}
-                        placeholder="Enter category name"
+                        placeholder={t('Enter category name')}
                         required
                     />
                     <InputError message={errors.name} />
                 </div>
 
                 <div>
-                    <Label htmlFor="description">Description</Label>
+                    <Label htmlFor="description">{t('Description')}</Label>
                     <Textarea
                         id="description"
                         value={data.description}
                         onChange={(e) => setData('description', e.target.value)}
-                        placeholder="Enter category description"
+                        placeholder={t('Enter category description')}
                         rows={3}
                     />
                     <InputError message={errors.description} />
                 </div>
 
                 <div>
-                    <Label htmlFor="color">Color</Label>
+                    <Label htmlFor="color">{t('Color')}</Label>
                     <Input
                         id="color"
                         type="color"
@@ -68,7 +70,7 @@ export default function Create({ onSuccess }: CreateHelpdeskCategoryProps) {
                 </div>
 
                 <div>
-                    <Label htmlFor="is_active">Active</Label>
+                    <Label htmlFor="is_active">{t('Active')}</Label>
                     <div className="mt-2">
                         <Switch
                             id="is_active"
@@ -81,10 +83,10 @@ export default function Create({ onSuccess }: CreateHelpdeskCategoryProps) {
 
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={onSuccess}>
-                        Cancel
+                        {t('Cancel')}
                     </Button>
                     <Button type="submit" disabled={processing}>
-                        {processing ? 'Creating...' : 'Create'}
+                        {processing ? t('Creating...') : t('Create')}
                     </Button>
                 </div>
             </form>

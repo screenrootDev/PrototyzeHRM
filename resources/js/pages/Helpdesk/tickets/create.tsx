@@ -1,16 +1,18 @@
 import { DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useForm, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RichTextEditor } from "@/components/ui/rich-text-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import InputError from "@/components/input-error";
+import InputError from "@/components/ui/input-error";
 import { CreateHelpdeskTicketProps, CreateHelpdeskTicketFormData } from './types';
 
 export default function Create({ onSuccess }: { onSuccess: () => void }) {
     const { categories, companies, auth } = usePage<CreateHelpdeskTicketProps>().props;
-        const { data, setData, post, processing, errors } = useForm<CreateHelpdeskTicketFormData>({
+    const { t } = useTranslation();
+    const { data, setData, post, processing, errors } = useForm<CreateHelpdeskTicketFormData>({
         title: '',
         description: '',
         priority: 'medium',
@@ -30,34 +32,34 @@ export default function Create({ onSuccess }: { onSuccess: () => void }) {
     return (
         <DialogContent>
             <DialogHeader>
-                <DialogTitle>Create Support Ticket</DialogTitle>
+                <DialogTitle>{t('Create Support Ticket')}</DialogTitle>
             </DialogHeader>
             <form onSubmit={submit} className="space-y-4">
                 <div>
-                    <Label htmlFor="title">Title</Label>
+                    <Label htmlFor="title">{t('Title')}</Label>
                     <Input
                         id="title"
                         value={data.title}
                         onChange={(e) => setData('title', e.target.value)}
-                        placeholder="Enter ticket title"
+                        placeholder={t('Enter ticket title')}
                         required
                     />
                     <InputError message={errors.title} />
                 </div>
 
                 <div>
-                    <Label htmlFor="description" required>Description</Label>
+                    <Label htmlFor="description" required>{t('Description')}</Label>
                     <RichTextEditor
                         content={data.description}
                         onChange={(value) => setData('description', value)}
-                        placeholder="Describe your issue in detail"
+                        placeholder={t('Describe your issue in detail')}
                     />
                     <InputError message={errors.description} />
                 </div>
 
                 {auth.user?.type === 'superadmin' && (
                     <div>
-                        <Label htmlFor="company_id">User</Label>
+                        <Label htmlFor="company_id">{t('User')}</Label>
                         <Select value={data.company_id?.toString() || ''} onValueChange={(value) => setData('company_id', parseInt(value))}>
                             <SelectTrigger>
                                 <SelectValue placeholder={companies.length === 0 ? "No users available" : "Select user"} />
@@ -70,9 +72,9 @@ export default function Create({ onSuccess }: { onSuccess: () => void }) {
                                 ))}
                             </SelectContent>
                         </Select>
-                        {companies.length === 0 && auth.user?.permissions?.includes('create-users') && (
+                        {companies.length === 0 && auth.permissions?.includes('create-users') && (
                             <p className="text-xs text-gray-500 mb-1">
-                                Create users here. <button onClick={() => router.get(route('users.index'))} className="text-blue-600 hover:underline">Create users</button>
+                                {t('Create users here.')} <button onClick={() => router.get(route('users.index'))} className="text-blue-600 hover:underline">{t('Create users')}</button>
                             </p>
                         )}
                         <InputError message={errors.company_id} />
@@ -81,7 +83,7 @@ export default function Create({ onSuccess }: { onSuccess: () => void }) {
 
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <Label htmlFor="category_id">Category</Label>
+                        <Label htmlFor="category_id">{t('Category')}</Label>
                         <Select value={data.category_id.toString()} onValueChange={(value) => setData('category_id', parseInt(value))}>
                             <SelectTrigger>
                                 <SelectValue placeholder={categories.length === 0 ? "No categories available" : "Select category"} />
@@ -94,25 +96,25 @@ export default function Create({ onSuccess }: { onSuccess: () => void }) {
                                 ))}
                             </SelectContent>
                         </Select>
-                        {categories.length === 0 && auth.user?.permissions?.includes('create-helpdesk-categories') && (
+                        {categories.length === 0 && auth.permissions?.includes('create-helpdesk-categories') && (
                             <p className="text-xs text-gray-500 mb-1">
-                                Create category here. <button onClick={() => router.get(route('helpdesk-categories.index'))} className="text-blue-600 hover:underline">Create category</button>
+                                {t('Create category here.')} <button onClick={() => router.get(route('helpdesk-categories.index'))} className="text-blue-600 hover:underline">{t('Create category')}</button>
                             </p>
                         )}
                         <InputError message={errors.category_id} />
                     </div>
 
                     <div>
-                        <Label htmlFor="priority">Priority</Label>
+                        <Label htmlFor="priority">{t('Priority')}</Label>
                         <Select value={data.priority} onValueChange={(value) => setData('priority', value as any)}>
                             <SelectTrigger>
                                 <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="low">Low</SelectItem>
-                                <SelectItem value="medium">Medium</SelectItem>
-                                <SelectItem value="high">High</SelectItem>
-                                <SelectItem value="urgent">Urgent</SelectItem>
+                                <SelectItem value="low">{t('Low')}</SelectItem>
+                                <SelectItem value="medium">{t('Medium')}</SelectItem>
+                                <SelectItem value="high">{t('High')}</SelectItem>
+                                <SelectItem value="urgent">{t('Urgent')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <InputError message={errors.priority} />
@@ -121,10 +123,10 @@ export default function Create({ onSuccess }: { onSuccess: () => void }) {
 
                 <div className="flex justify-end gap-2">
                     <Button type="button" variant="outline" onClick={onSuccess}>
-                        Cancel
+                        {t('Cancel')}
                     </Button>
                     <Button type="submit" disabled={processing}>
-                        {processing ? 'Creating...' : 'Create'}
+                        {processing ? t('Creating...') : t('Create')}
                     </Button>
                 </div>
             </form>

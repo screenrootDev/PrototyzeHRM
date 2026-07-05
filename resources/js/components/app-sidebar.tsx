@@ -137,6 +137,32 @@ export function AppSidebar() {
     //     icon: Mail,
     // },
     {
+      title: "Add-on Manager",
+      href: route("addons.index"),
+      icon: () => <LayersIcon size={16} isAnimated={true} />,
+      group: "System",
+    },
+    {
+      title: "Helpdesk",
+      icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
+      group: "System",
+      children: [
+        {
+          title: "All Tickets",
+          href: route("helpdesk-tickets.index"),
+          exact: true,
+        },
+        {
+          title: "Today's Tickets",
+          href: route("helpdesk-tickets.today"),
+        },
+        {
+          title: "Categories",
+          href: route("helpdesk-categories.index"),
+        },
+      ],
+    },
+    {
       title: "Settings",
       href: route("settings"),
       icon: () => <SettingsIcon size={16} isAnimated={true} />,
@@ -165,10 +191,24 @@ export function AppSidebar() {
     });
 
     items.push({
-      title: "Messenger",
-      href: route("messenger.index"),
+      title: "Helpdesk",
       icon: () => <MessageCircleIcon size={16} isAnimated={true} />,
       group: "Overview",
+      children: [
+        {
+          title: "All Tickets",
+          href: route("helpdesk-tickets.index"),
+          exact: true,
+        },
+        {
+          title: "Today's Tickets",
+          href: route("helpdesk-tickets.today"),
+        },
+        {
+          title: "Categories",
+          href: route("helpdesk-categories.index"),
+        },
+      ],
     });
 
 

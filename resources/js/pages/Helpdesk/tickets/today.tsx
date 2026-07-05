@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useFlashMessages } from '@/hooks/useFlashMessages';
 import { useDeleteHandler } from '@/hooks/useDeleteHandler';
-import AppLayout from "@/layouts/app-layout";
+import { PageTemplate } from '@/components/page-template';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
@@ -15,7 +16,8 @@ import Edit from './edit';
 import { TodayTicketsProps, HelpdeskTicketModalState } from './types';
 
 export default function Today() {
-        const { tickets, stats, auth } = usePage<TodayTicketsProps>().props;
+    const { t } = useTranslation();
+    const { tickets, stats, auth } = usePage<TodayTicketsProps>().props;
 
     const [searchQuery, setSearchQuery] = useState('');
     const [activePriorityFilter, setActivePriorityFilter] = useState<string>('all');
@@ -29,7 +31,7 @@ export default function Today() {
 
     const { deleteState, openDeleteDialog, closeDeleteDialog, confirmDelete } = useDeleteHandler({
         routeName: 'helpdesk-tickets.destroy',
-        defaultMessage: 'Are you sure you want to delete this ticket?'
+        defaultMessage: t('Are you sure you want to delete this ticket?')
     });
 
     const handleSearch = (e: React.FormEvent) => {
@@ -76,10 +78,10 @@ export default function Today() {
         const diffInHours = Math.floor(diffInMinutes / 60);
         const diffInDays = Math.floor(diffInHours / 24);
 
-        if (diffInMinutes < 1) return 'Just now';
-        if (diffInMinutes < 60) return `${diffInMinutes}m $ago`;
-        if (diffInHours < 24) return `${diffInHours}h $ago`;
-        return `${diffInDays}d $ago`;
+        if (diffInMinutes < 1) return t('Just now');
+        if (diffInMinutes < 60) return `${diffInMinutes}m ${t('ago')}`;
+        if (diffInHours < 24) return `${diffInHours}h ${t('ago')}`;
+        return `${diffInDays}d ${t('ago')}`;
     };
 
     const isOld = (dateString: string) => {
@@ -155,7 +157,7 @@ export default function Today() {
                     <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-2 flex-1">
                             {/* Ticket ID */}
-                            {auth.user?.permissions?.includes('view-helpdesk-tickets') ? (
+                            {auth.permissions?.includes('view-helpdesk-tickets') ? (
                                 <button
                                     onClick={() => router.get(route('helpdesk-tickets.show', ticket.id))}
                                     className="text-base font-bold text-blue-600 hover:text-blue-700 hover:underline"
@@ -188,7 +190,7 @@ export default function Today() {
                                 ? 'bg-blue-100 text-blue-800' 
                                 : 'bg-yellow-100 text-yellow-800'
                         }`}>
-                            {ticket.status === 'open' ? 'Open' : 'In Progress'}
+                            {ticket.status === 'open' ? t('Open') : t('In Progress')}
                         </span>
                     </div>
 
@@ -233,7 +235,7 @@ export default function Today() {
                             <div className="flex items-center gap-1">
                                 <Clock className="h-3 w-3" />
                                 <span className={old ? 'text-red-600 font-semibold' : ''}>
-                                    Created: {getTimeAgo(ticket.created_at)}
+                                    {t('Created')}: {getTimeAgo(ticket.created_at)}
                                 </span>
                             </div>
 
@@ -255,7 +257,7 @@ export default function Today() {
                     {/* Actions Row */}
                     <div className="flex items-center gap-2">
                         {/* Reply Button */}
-                        {auth.user?.permissions?.includes('view-helpdesk-tickets') && (
+                        {auth.permissions?.includes('view-helpdesk-tickets') && (
                             <Button 
                                 variant="outline" 
                                 size="sm" 
@@ -263,12 +265,12 @@ export default function Today() {
                                 className="flex-1 h-8 text-xs"
                             >
                                 <MessageSquare className="h-3.5 w-3.5 mr-1" />
-                                Reply
+                                {t('Reply')}
                             </Button>
                         )}
 
                         {/* Quick Status Change */}
-                        {auth.user?.permissions?.includes('edit-helpdesk-tickets') && (
+                        {auth.permissions?.includes('edit-helpdesk-tickets') && (
                             <>
                                 {ticket.status === 'open' && (
                                     <Button 
@@ -278,7 +280,7 @@ export default function Today() {
                                         className="flex-1 h-8 text-xs border-yellow-300 text-yellow-700 hover:bg-yellow-50"
                                     >
                                         <PlayCircle className="h-3.5 w-3.5 mr-1" />
-                                        Start
+                                        {t('Start')}
                                     </Button>
                                 )}
                                 {ticket.status === 'in_progress' && (
@@ -289,7 +291,7 @@ export default function Today() {
                                         className="flex-1 h-8 text-xs border-green-300 text-green-700 hover:bg-green-50"
                                     >
                                         <CheckCircle className="h-3.5 w-3.5 mr-1" />
-                                        Resolve
+                                        {t('Resolve')}
                                     </Button>
                                 )}
                             </>
@@ -297,7 +299,7 @@ export default function Today() {
 
                         {/* Edit & Delete */}
                         <TooltipProvider>
-                            {auth.user?.permissions?.includes('edit-helpdesk-tickets') && (
+                            {auth.permissions?.includes('edit-helpdesk-tickets') && (
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger asChild>
                                         <Button 
@@ -309,11 +311,11 @@ export default function Today() {
                                             <EditIcon className="h-4 w-4" />
                                         </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent><p>Edit</p></TooltipContent>
+                                    <TooltipContent><p>{t('Edit')}</p></TooltipContent>
                                 </Tooltip>
                             )}
 
-                            {auth.user?.permissions?.includes('delete-helpdesk-tickets') && (
+                            {auth.permissions?.includes('delete-helpdesk-tickets') && (
                                 <Tooltip delayDuration={300}>
                                     <TooltipTrigger asChild>
                                         <Button
@@ -325,7 +327,7 @@ export default function Today() {
                                             <Trash2 className="h-4 w-4" />
                                         </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent><p>Delete</p></TooltipContent>
+                                    <TooltipContent><p>{t('Delete')}</p></TooltipContent>
                                 </Tooltip>
                             )}
                         </TooltipProvider>
@@ -357,11 +359,11 @@ export default function Today() {
     };
 
     return (
-        <AppLayout
-            breadcrumbs={[{label: 'Helpdesk'} , {label: 'Today\'s Tickets'}]}
-            pageTitle="Manage Today\'s Tickets"
+        <PageTemplate
+            breadcrumbs={[{title: t('Helpdesk')} , {title: t('Today\'s Tickets')}]}
+            pageTitle={t('Manage Today\'s Tickets')}
         >
-            <Head title="Today\'s Tickets" />
+            <Head title={t('Today\'s Tickets')} />
 
             {/* Compact Statistics + Search Bar */}
             <Card className="mb-6">
@@ -370,7 +372,7 @@ export default function Today() {
                         {/* Statistics */}
                         <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 text-sm">
                             <div className="flex items-center gap-2">
-                                <span className="text-gray-500 font-medium">Total:</span>
+                                <span className="text-gray-500 font-medium">{t('Total')}:</span>
                                 <span className="text-xl font-bold text-gray-900">{stats.total}</span>
                             </div>
                             
@@ -378,19 +380,19 @@ export default function Today() {
 
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                                 <div className="flex items-center gap-1.5">
-                                    <div className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-semibold">Urgent</div>
+                                    <div className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-semibold">{t('Urgent')}</div>
                                     <span className="font-semibold text-gray-900">{stats.urgent}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <div className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">High</div>
+                                    <div className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">{t('High')}</div>
                                     <span className="font-semibold text-gray-900">{stats.high}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <div className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Medium</div>
+                                    <div className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">{t('Medium')}</div>
                                     <span className="font-semibold text-gray-900">{stats.medium}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <div className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Low</div>
+                                    <div className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-semibold">{t('Low')}</div>
                                     <span className="font-semibold text-gray-900">{stats.low}</span>
                                 </div>
                             </div>
@@ -399,11 +401,11 @@ export default function Today() {
 
                             <div className="flex flex-wrap items-center gap-3 sm:gap-4">
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-gray-600">Open:</span>
+                                    <span className="text-gray-600">{t('Open')}:</span>
                                     <span className="font-semibold text-blue-600">{stats.open}</span>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <span className="text-gray-600">In Progress:</span>
+                                    <span className="text-gray-600">{t('In Progress')}:</span>
                                     <span className="font-semibold text-yellow-600">{stats.in_progress}</span>
                                 </div>
                             </div>
@@ -417,37 +419,37 @@ export default function Today() {
                                     <div className="flex items-center">
                                         <Filter className="h-4 w-4 mr-2" />
                                         <span>
-                                            {activePriorityFilter === 'all' && 'All'}
-                                            {activePriorityFilter === 'urgent' && 'Urgent'}
-                                            {activePriorityFilter === 'high' && 'High'}
-                                            {activePriorityFilter === 'medium' && 'Medium'}
-                                            {activePriorityFilter === 'low' && 'Low'}
+                                            {activePriorityFilter === 'all' && t('All')}
+                                            {activePriorityFilter === 'urgent' && t('Urgent')}
+                                            {activePriorityFilter === 'high' && t('High')}
+                                            {activePriorityFilter === 'medium' && t('Medium')}
+                                            {activePriorityFilter === 'low' && t('Low')}
                                         </span>
                                     </div>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">All ({stats.total})</SelectItem>
+                                    <SelectItem value="all">{t('All')} ({stats.total})</SelectItem>
                                     <SelectItem value="urgent">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-semibold">Urgent</span>
+                                            <span className="px-2 py-0.5 bg-red-100 text-red-800 rounded-full text-xs font-semibold">{t('Urgent')}</span>
                                             <span>({stats.urgent})</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="high">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">High</span>
+                                            <span className="px-2 py-0.5 bg-orange-100 text-orange-800 rounded-full text-xs font-semibold">{t('High')}</span>
                                             <span>({stats.high})</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="medium">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">Medium</span>
+                                            <span className="px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full text-xs font-semibold">{t('Medium')}</span>
                                             <span>({stats.medium})</span>
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="low">
                                         <div className="flex items-center gap-2">
-                                            <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-semibold">Low</span>
+                                            <span className="px-2 py-0.5 bg-green-100 text-green-800 rounded-full text-xs font-semibold">{t('Low')}</span>
                                             <span>({stats.low})</span>
                                         </div>
                                     </SelectItem>
@@ -459,12 +461,12 @@ export default function Today() {
                                 type="text"
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                placeholder="Search tickets..."
+                                placeholder={t('Search tickets...')}
                                 className="w-full lg:w-64"
                             />
                             {searchQuery && (
                                 <Button type="button" variant="ghost" size="sm" onClick={clearSearch}>
-                                    Clear
+                                    {t('Clear')}
                                 </Button>
                             )}
                         </form>
@@ -485,14 +487,14 @@ export default function Today() {
                     <CardContent className="text-center py-12">
                         <Clock className="h-12 w-12 text-gray-400 mx-auto mb-3" />
                         <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                            {searchQuery ? 'No tickets found' : 'No pending tickets'}
+                            {searchQuery ? t('No tickets found') : t('No pending tickets')}
                         </h3>
                         <p className="text-sm text-gray-500">
-                            {searchQuery ? 'Try adjusting your search query' : 'All tickets are resolved or closed. Great job!'}
+                            {searchQuery ? t('Try adjusting your search query') : t('All tickets are resolved or closed. Great job!')}
                         </p>
                         {searchQuery && (
                             <Button variant="outline" size="sm" onClick={clearSearch} className="mt-4">
-                                Clear Search
+                                {t('Clear Search')}
                             </Button>
                         )}
                     </CardContent>
@@ -508,12 +510,12 @@ export default function Today() {
             <ConfirmationDialog
                 open={deleteState.isOpen}
                 onOpenChange={closeDeleteDialog}
-                title="Delete Ticket"
+                title={t('Delete Ticket')}
                 message={deleteState.message}
-                confirmText="Delete"
+                confirmText={t('Delete')}
                 onConfirm={confirmDelete}
                 variant="destructive"
             />
-        </AppLayout>
+        </PageTemplate>
     );
 }

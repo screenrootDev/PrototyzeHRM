@@ -3,7 +3,8 @@ import { Head, usePage, router } from '@inertiajs/react';
 import { useFlashMessages } from '@/hooks/useFlashMessages';
 import { useDeleteHandler } from '@/hooks/useDeleteHandler';
 import { usePageButtons } from '@/hooks/usePageButtons';
-import AppLayout from "@/layouts/app-layout";
+import { useTranslation } from 'react-i18next';
+import { PageTemplate } from '@/components/page-template';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
@@ -22,7 +23,8 @@ import { HelpdeskCategoriesIndexProps, HelpdeskCategoryFilters, HelpdeskCategory
 
 export default function Index() {
     const { categories, auth } = usePage<HelpdeskCategoriesIndexProps>().props;
-        const urlParams = new URLSearchParams(window.location.search);
+    const { t } = useTranslation();
+    const urlParams = new URLSearchParams(window.location.search);
 
     const [searchName, setSearchName] = useState(urlParams.get('name') || '');
 
@@ -41,7 +43,7 @@ export default function Index() {
 
     const { deleteState, openDeleteDialog, closeDeleteDialog, confirmDelete } = useDeleteHandler({
         routeName: 'helpdesk-categories.destroy',
-        defaultMessage: 'Are you sure you want to delete this Helpdesk category?'
+        defaultMessage: t('Are you sure you want to delete this Helpdesk category?')
     });
 
     const handleFilter = () => {
@@ -87,16 +89,16 @@ export default function Index() {
     const tableColumns = [
         {
             key: 'name',
-            header: 'Name',
+            header: t('Name'),
             sortable: true
         },
         {
             key: 'description',
-            header: 'Description'
+            header: t('Description')
         },
         {
             key: 'color',
-            header: 'Color',
+            header: t('Color'),
             render: (value: string) => (
                 <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded" style={{ backgroundColor: value }}></div>
@@ -105,33 +107,33 @@ export default function Index() {
         },
         {
             key: 'is_active',
-            header: 'Status',
+            header: t('Status'),
             sortable: true,
             render: (value: boolean) => (
                 <span className={`px-2 py-1 rounded-full text-sm ${
                     value ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                 }`}>
-                    {value ? 'Active' : 'Inactive'}
+                    {value ? t('Active') : t('Inactive')}
                 </span>
             )
         },
-        ...(auth.user?.permissions?.some((p: string) => ['edit-helpdesk-categories', 'delete-helpdesk-categories'].includes(p)) ? [{
+        ...(auth.permissions?.some((p: string) => ['edit-helpdesk-categories', 'delete-helpdesk-categories'].includes(p)) ? [{
             key: 'actions',
-            header: 'Actions',
+            header: t('Actions'),
             render: (_: any, category: any) => (
                 <div className="flex gap-1">
                     <TooltipProvider>
-                        {auth.user?.permissions?.includes('edit-helpdesk-categories') && (
+                        {auth.permissions?.includes('edit-helpdesk-categories') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="sm" onClick={() => openModal('edit', category)} className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700">
                                         <EditIcon className="h-4 w-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent><p>Edit</p></TooltipContent>
+                                <TooltipContent><p>{t('Edit')}</p></TooltipContent>
                             </Tooltip>
                         )}
-                        {auth.user?.permissions?.includes('delete-helpdesk-categories') && (
+                        {auth.permissions?.includes('delete-helpdesk-categories') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button
@@ -143,7 +145,7 @@ export default function Index() {
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent><p>Delete</p></TooltipContent>
+                                <TooltipContent><p>{t('Delete')}</p></TooltipContent>
                             </Tooltip>
                         )}
                     </TooltipProvider>
@@ -153,13 +155,13 @@ export default function Index() {
     ];
 
     return (
-        <AppLayout
-            breadcrumbs={[{label: 'Helpdesk'}, {label: 'Helpdesk Categories'}]}
-            pageTitle="Manage Helpdesk Categories"
+        <PageTemplate
+            breadcrumbs={[{title: t('Helpdesk')}, {title: t('Helpdesk Categories')}]}
+            pageTitle={t('Manage Helpdesk Categories')}
             pageActions={
                 <div className="flex gap-2">
                     <TooltipProvider>
-                        {auth.user?.permissions?.includes('create-helpdesk-categories') && (
+                        {auth.permissions?.includes('create-helpdesk-categories') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button size="sm" onClick={() => openModal('add')}>
@@ -167,7 +169,7 @@ export default function Index() {
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Create</p>
+                                    <p>{t('Create')}</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}
@@ -178,7 +180,7 @@ export default function Index() {
                 </div>
             }
         >
-            <Head title="Helpdesk Categories" />
+            <Head title={t('Helpdesk Categories')} />
 
             <Card className="shadow-sm">
                 <CardContent className="p-6 border-b bg-gray-50/50">
@@ -188,7 +190,7 @@ export default function Index() {
                                 value={searchName}
                                 onChange={(value) => setSearchName(value)}
                                 onSearch={handleFilter}
-                                placeholder="Search categories..."
+                                placeholder={t('Search categories...')}
                             />
                         </div>
                         <div className="flex items-center gap-3">
@@ -215,13 +217,13 @@ export default function Index() {
                                 emptyState={
                                     <NoRecordsFound
                                         icon={Tag}
-                                        title="No categories found"
-                                        description="Get started by creating your first category."
+                                        title={t('No categories found')}
+                                        description={t('Get started by creating your first category.')}
                                         hasFilters={!!searchName}
                                         onClearFilters={clearFilters}
                                         createPermission="create-helpdesk-categories"
                                         onCreateClick={() => openModal('add')}
-                                        createButtonText="Create Category"
+                                        createButtonText={t('Create Category')}
                                         className="h-auto"
                                     />
                                 }
@@ -254,12 +256,12 @@ export default function Index() {
             <ConfirmationDialog
                 open={deleteState.isOpen}
                 onOpenChange={closeDeleteDialog}
-                title="Delete Category"
+                title={t('Delete Category')}
                 message={deleteState.message}
-                confirmText="Delete"
+                confirmText={t('Delete')}
                 onConfirm={confirmDelete}
                 variant="destructive"
             />
-        </AppLayout>
+        </PageTemplate>
     );
 }

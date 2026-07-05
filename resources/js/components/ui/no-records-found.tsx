@@ -31,7 +31,7 @@ export function NoRecordsFound({
     const { auth } = usePage().props as any;
     
     const hasCreatePermission = createPermission ? 
-        auth.user?.permissions?.includes(createPermission) : true;
+        auth.permissions?.includes(createPermission) : true;
 
     const displayDescription = hasFilters ? 
         (filteredDescription || 'No records match your current filters or search criteria.') :

@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useFlashMessages } from '@/hooks/useFlashMessages';
-import AppLayout from "@/layouts/app-layout";
+import { PageTemplate } from '@/components/page-template';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmationDialog } from "@/components/ui/confirmation-dialog";
@@ -12,7 +13,8 @@ import { ShowHelpdeskTicketProps, HelpdeskReply } from './types';
 
 export default function Show() {
     const { ticket, auth } = usePage<ShowHelpdeskTicketProps>().props;
-        const [replies, setReplies] = useState<HelpdeskReply[]>(ticket.replies || []);
+    const { t } = useTranslation();
+    const [replies, setReplies] = useState<HelpdeskReply[]>(ticket.replies || []);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, replyId: null as number | null });
 
@@ -89,10 +91,10 @@ export default function Show() {
     };
 
     return (
-        <AppLayout
+        <PageTemplate
             breadcrumbs={[
-                {label: 'Support Tickets', url: route('helpdesk-tickets.index')},
-                {label: `${ticket.title}`}
+                {title: 'Support Tickets', href: route('helpdesk-tickets.index')},
+                {title: `${ticket.title}`}
             ]}
             pageTitle={`Ticket #${ticket.ticket_id}`}
         >
@@ -116,21 +118,21 @@ export default function Show() {
                         <div className="lg:w-80 space-y-4">
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Category</label>
+                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('Category')}</label>
                                     <p className="text-sm font-medium text-gray-900 mt-1">{ticket.category?.name || '-'}</p>
                                 </div>
                                 <div>
-                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Created By</label>
+                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('Created By')}</label>
                                     <p className="text-sm font-medium text-gray-900 mt-1">{ticket.creator?.name}</p>
                                 </div>
                             </div>
                             <div>
-                                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Created At</label>
+                                <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('Created At')}</label>
                                 <p className="text-sm font-medium text-gray-900 mt-1">{formatDate(ticket.created_at)}</p>
                             </div>
                             {ticket.assignedTo && (
                                 <div>
-                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">Assigned To</label>
+                                    <label className="text-xs font-medium text-gray-500 uppercase tracking-wide">{t('Assigned To')}</label>
                                     <p className="text-sm font-medium text-gray-900 mt-1">{ticket.assignedTo.name}</p>
                                 </div>
                             )}
@@ -143,9 +145,9 @@ export default function Show() {
             <Card className="flex flex-col" style={{ height: 'calc(100vh - 50px)' }}>
                 <CardHeader className="border-b bg-gray-50/50 py-4">
                     <div className="flex items-center justify-between">
-                        <CardTitle className="text-lg font-semibold">Conversation</CardTitle>
+                        <CardTitle className="text-lg font-semibold">{t('Conversation')}</CardTitle>
                         <div className="text-sm text-gray-500">
-                            {replies.length} {replies.length === 1 ? 'message' : 'messages'}
+                            {replies.length} {replies.length === 1 ? t('message') : t('messages')}
                         </div>
                     </div>
                 </CardHeader>
@@ -162,8 +164,8 @@ export default function Show() {
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                                             </svg>
                                         </div>
-                                        <h3 className="text-lg font-medium text-gray-900 mb-2">No messages yet</h3>
-                                        <p className="text-gray-500">Start the conversation by sending a message below.</p>
+                                        <h3 className="text-lg font-medium text-gray-900 mb-2">{t('No messages yet')}</h3>
+                                        <p className="text-gray-500">{t('Start the conversation by sending a message below.')}</p>
                                     </div>
                                 </div>
                             ) : (
@@ -176,7 +178,7 @@ export default function Show() {
                                             reply={reply}
                                             isOwnMessage={reply.created_by === auth.user?.id}
                                             onDelete={handleDeleteReply}
-                                            canDelete={auth.user?.permissions?.includes('delete-helpdesk-replies')}
+                                            canDelete={auth.permissions?.includes('delete-helpdesk-replies')}
                                         />
                                     ))}
                                     <div ref={messagesEndRef} />
@@ -185,7 +187,7 @@ export default function Show() {
                         </div>
 
                         {/* Reply Form - Fixed at Bottom */}
-                        {auth.user?.permissions?.includes('create-helpdesk-replies') && ticket.status !== 'closed' && (
+                        {auth.permissions?.includes('create-helpdesk-replies') && ticket.status !== 'closed' && (
                             <div className="border-t bg-white">
                                 <ReplyForm
                                     ticketId={ticket.id}
@@ -200,12 +202,12 @@ export default function Show() {
             <ConfirmationDialog
                 open={deleteDialog.isOpen}
                 onOpenChange={(open) => setDeleteDialog({ isOpen: open, replyId: null })}
-                title="Delete Reply"
-                message="Are you sure you want to delete this reply?"
-                confirmText="Delete"
+                title={t('Delete Reply')}
+                message={t('Are you sure you want to delete this reply?')}
+                confirmText={t('Delete')}
                 onConfirm={confirmDeleteReply}
                 variant="destructive"
             />
-        </AppLayout>
+        </PageTemplate>
     );
 }

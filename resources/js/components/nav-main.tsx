@@ -45,7 +45,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
         const processMenuItems = (menuItems: NavItem[], parentKey?: string) => {
             menuItems.forEach(item => {
                 // If this is the active item or contains the active item
-                const isItemActive = isActive(item.href);
+                const isItemActive = isActive(item.href, item.exact);
                 const hasActiveChild = item.children && isChildActive(item.children);
                 
                 // If this item or its children are active, expand it
@@ -87,7 +87,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     ) => {
         children.forEach(child => {
             const childKey = `${level}-${child.title}`;
-            const isChildItemActive = isActive(child.href);
+            const isChildItemActive = isActive(child.href, child.exact);
             const hasActiveChild = child.children && isChildActive(child.children);
             
             if (child.children && (isChildItemActive || hasActiveChild)) {
@@ -113,20 +113,26 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
         }
     };
     
-    const isActive = (href?: string) => {
+    const isActive = (href?: string, exact?: boolean) => {
         if (!href) return false;
         
         // Extract pathname from href if it's a full URL and ignore query params
         const hrefPath = href.startsWith('http') ? new URL(href).pathname : href.split('?')[0];
         const currentPath = page.url.split('?')[0];
         
-        const active = currentPath === hrefPath || currentPath.startsWith(hrefPath + '/');
+        let active = false;
+        if (exact) {
+            active = currentPath === hrefPath || currentPath === hrefPath + '/';
+        } else {
+            active = currentPath === hrefPath || currentPath.startsWith(hrefPath + '/');
+        }
+        
         return active;
     };
     
     const isChildActive = (children?: NavItem[]) => {
         if (!children) return false;
-        return children.some(child => isActive(child.href) || isChildActive(child.children));
+        return children.some(child => isActive(child.href, child.exact) || isChildActive(child.children));
     };
     
     const renderSubMenu = (children: NavItem[], level: number = 1) => {
@@ -159,7 +165,7 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                         ) : (
                             // Regular submenu item
                             <SidebarMenuSubItem>
-                                <SidebarMenuSubButton asChild isActive={isActive(child.href)}>
+                                <SidebarMenuSubButton asChild isActive={isActive(child.href, child.exact)}>
                                     {child.target === '_blank' ? (
                                         <a
                                             href={child.href || '#'}
@@ -168,12 +174,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             className={cn(
                                                 "flex items-center gap-2 group/sub transition-all duration-300",
                                                 effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
-                                                isActive(child.href) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                                isActive(child.href, child.exact) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
                                             )}
                                         >
                                             <div className={cn(
                                                 "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                                                isActive(child.href) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                                isActive(child.href, child.exact) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
                                             )} />
                                             <span>{child.title}</span>
                                         </a>
@@ -185,12 +191,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                             className={cn(
                                                 "flex items-center gap-2 group/sub transition-all duration-300",
                                                 effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left',
-                                                isActive(child.href) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
+                                                isActive(child.href, child.exact) ? "text-blue-500 font-bold" : "text-muted-foreground/70 hover:text-foreground"
                                             )}
                                         >
                                             <div className={cn(
                                                 "w-1.5 h-1.5 rounded-full transition-all duration-300",
-                                                isActive(child.href) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
+                                                isActive(child.href, child.exact) ? "bg-blue-500 scale-110 shadow-[0_0_8px_rgba(59,130,246,0.5)]" : "bg-muted-foreground/20 group-hover/sub:bg-muted-foreground/40"
                                             )} />
                                             <span>{child.title}</span>
                                         </Link>
@@ -271,11 +277,11 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                 <SidebarMenuItem>
                     <SidebarMenuButton
                         asChild
-                        isActive={isActive(item.href)}
+                        isActive={isActive(item.href, item.exact)}
                         tooltip={{ children: item.title }}
                         className={cn(
                             "transition-all duration-300 h-10 group/item relative overflow-hidden",
-                            isActive(item.href)
+                            isActive(item.href, item.exact)
                                 ? "bg-blue-500/10 text-blue-500 font-bold shadow-[inset_4px_0_12px_rgba(59,130,246,0.05)]"
                                 : "hover:bg-accent/50"
                         )}
@@ -290,12 +296,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                 {effectivePosition === 'right' ? (
                                     <>
                                         {state !== "collapsed" && <span>{item.title}</span>}
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
                                     </>
                                 ) : (
                                     <>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500 shadow-blue-500/20")} />}
-                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500 shadow-blue-500/20")} />}
+                                        {state !== "collapsed" && <span className="font-medium">{item.title}</span>}
                                     </>
                                 )}
                             </a>
@@ -309,12 +315,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                 {effectivePosition === 'right' ? (
                                     <>
                                         {state !== "collapsed" && <span>{item.title}</span>}
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
                                     </>
                                 ) : (
                                     <>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href) && "text-blue-500")} />}
-                                        {state !== "collapsed" && <span>{item.title}</span>}
+                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
+                                        {state !== "collapsed" && <span className="font-medium">{item.title}</span>}
                                     </>
                                 )}
                             </Link>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\AddOn;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
@@ -64,6 +65,7 @@ class CompanyController extends Controller
         return Inertia::render('companies/index', [
             'companies' => $companies,
             'filters' => $request->only(['search', 'status', 'start_date', 'end_date', 'sort_field', 'sort_direction', 'per_page']),
+            'availableModules' => AddOn::where('is_enable', true)->get(),
         ]);
     }
 

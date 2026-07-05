@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePage } from '@inertiajs/react';
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -8,7 +9,8 @@ import MediaPicker from "@/components/MediaPicker";
 import { ReplyFormProps } from './types';
 
 export default function ReplyForm({ ticketId, onReplyAdded, disabled }: ReplyFormProps) {
-        const [message, setMessage] = useState('');
+    const { t } = useTranslation();
+    const [message, setMessage] = useState('');
     const [attachments, setAttachments] = useState<string[]>([]);
     const [isInternal, setIsInternal] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,7 +67,7 @@ export default function ReplyForm({ ticketId, onReplyAdded, disabled }: ReplyFor
                         key={editorKey}
                         content={message}
                         onChange={(content) => setMessage(content)}
-                        placeholder="Type your message..."
+                        placeholder={t('Type your message...')}
                         disabled={disabled || isSubmitting}
                         className="min-h-[80px]"
                         onKeyDown={(e: React.KeyboardEvent) => {
@@ -82,7 +84,7 @@ export default function ReplyForm({ ticketId, onReplyAdded, disabled }: ReplyFor
                                 value={attachments}
                                 onChange={(value) => setAttachments(Array.isArray(value) ? value : [value].filter(Boolean))}
                                 multiple={true}
-                                placeholder="Attach"
+                                placeholder={t('Attach')}
                                 showPreview={false}
                                 disabled={disabled || isSubmitting}
                             />
@@ -98,7 +100,7 @@ export default function ReplyForm({ ticketId, onReplyAdded, disabled }: ReplyFor
                                     className="h-4 w-4"
                                 />
                                 <label htmlFor="is_internal" className="text-xs text-gray-600 cursor-pointer whitespace-nowrap">
-                                    Internal
+                                    {t('Internal')}
                                 </label>
                             </div>
                         )}
@@ -113,7 +115,7 @@ export default function ReplyForm({ ticketId, onReplyAdded, disabled }: ReplyFor
                     >
                         <Send className="h-3.5 w-3.5" />
                         <span className="text-xs font-medium">
-                            {isSubmitting ? 'Sending...' : 'Send'}
+                            {isSubmitting ? t('Sending...') : t('Send')}
                         </span>
                     </Button>
                 </div>

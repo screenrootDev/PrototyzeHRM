@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Head, usePage, router } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 import { useFlashMessages } from '@/hooks/useFlashMessages';
 import { useDeleteHandler } from '@/hooks/useDeleteHandler';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PerPageSelector } from '@/components/ui/per-page-selector';
-import AppLayout from "@/layouts/app-layout";
+import { PageTemplate } from '@/components/page-template';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
@@ -23,7 +24,8 @@ import NoRecordsFound from '@/components/no-records-found';
 import { HelpdeskTicketsIndexProps, HelpdeskTicketFilters, HelpdeskTicketModalState } from './types';
 
 export default function Index() {
-        const { tickets, categories, companies, auth } = usePage<HelpdeskTicketsIndexProps>().props;
+    const { t } = useTranslation();
+    const { tickets, categories, companies, auth } = usePage<HelpdeskTicketsIndexProps>().props;
     const urlParams = new URLSearchParams(window.location.search);
 
     const [filters, setFilters] = useState<HelpdeskTicketFilters>({
@@ -49,7 +51,7 @@ export default function Index() {
 
     const { deleteState, openDeleteDialog, closeDeleteDialog, confirmDelete } = useDeleteHandler({
         routeName: 'helpdesk-tickets.destroy',
-        defaultMessage: 'Are you sure you want to delete this ticket?'
+        defaultMessage: t('Are you sure you want to delete this ticket?')
     });
 
     const handleFilter = () => {
@@ -121,10 +123,10 @@ export default function Index() {
     const tableColumns = [
         {
             key: 'ticket_id',
-            header: 'Ticket ID',
+            header: t('Ticket ID'),
             sortable: true,
             render: (value: string, ticket: any) =>
-                auth.user?.permissions?.includes('view-helpdesk-tickets') ? (
+                auth.permissions?.includes('view-helpdesk-tickets') ? (
                     <span className="text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => router.get(route('helpdesk-tickets.show', ticket.id))}>#{value}</span>
                 ) : (
                     `#${value}`
@@ -132,12 +134,12 @@ export default function Index() {
         },
         {
             key: 'title',
-            header: 'Title',
+            header: t('Title'),
             sortable: true
         },
         {
             key: 'category',
-            header: 'Category',
+            header: t('Category'),
             render: (_: any, ticket: any) => (
                 ticket.category ? (
                     <div className="flex items-center gap-1.5">
@@ -154,48 +156,48 @@ export default function Index() {
         },
         {
             key: 'priority',
-            header: 'Priority',
+            header: t('Priority'),
             sortable: true,
             render: (value: string) => getPriorityBadge(value)
         },
         {
             key: 'status',
-            header: 'Status',
+            header: t('Status'),
             sortable: true,
             render: (value: string) => getStatusBadge(value)
         },
         {
             key: 'creator',
-            header: 'Created By',
+            header: t('Created By'),
             render: (_: any, ticket: any) => ticket.creator?.name || '-'
         },
-        ...(auth.user?.permissions?.some((p: string) => ['view-helpdesk-tickets', 'edit-helpdesk-tickets', 'delete-helpdesk-tickets'].includes(p)) ? [{
+        ...(auth.permissions?.some((p: string) => ['view-helpdesk-tickets', 'edit-helpdesk-tickets', 'delete-helpdesk-tickets'].includes(p)) ? [{
             key: 'actions',
-            header: 'Actions',
+            header: t('Actions'),
             render: (_: any, ticket: any) => (
                 <div className="flex gap-1">
                     <TooltipProvider>
-                        {auth.user?.permissions?.includes('view-helpdesk-tickets') && (
+                        {auth.permissions?.includes('view-helpdesk-tickets') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="sm" onClick={() => router.get(route('helpdesk-tickets.show', ticket.id))} className="h-8 w-8 p-0 text-green-600 hover:text-green-700">
                                         <Eye className="h-4 w-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent><p>View</p></TooltipContent>
+                                <TooltipContent><p>{t('View')}</p></TooltipContent>
                             </Tooltip>
                         )}
-                        {auth.user?.permissions?.includes('edit-helpdesk-tickets') && (
+                        {auth.permissions?.includes('edit-helpdesk-tickets') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button variant="ghost" size="sm" onClick={() => openModal('edit', ticket)} className="h-8 w-8 p-0 text-blue-600 hover:text-blue-700">
                                         <EditIcon className="h-4 w-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent><p>Edit</p></TooltipContent>
+                                <TooltipContent><p>{t('Edit')}</p></TooltipContent>
                             </Tooltip>
                         )}
-                        {auth.user?.permissions?.includes('delete-helpdesk-tickets') && (
+                        {auth.permissions?.includes('delete-helpdesk-tickets') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button
@@ -207,7 +209,7 @@ export default function Index() {
                                         <Trash2 className="h-4 w-4" />
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent><p>Delete</p></TooltipContent>
+                                <TooltipContent><p>{t('Delete')}</p></TooltipContent>
                             </Tooltip>
                         )}
                     </TooltipProvider>
@@ -217,13 +219,13 @@ export default function Index() {
     ];
 
     return (
-        <AppLayout
-            breadcrumbs={[{label: 'Helpdesk'}, {label: 'All Tickets'}]}
-            pageTitle="Manage Tickets"
+        <PageTemplate
+            breadcrumbs={[{title: t('Helpdesk')}, {title: t('All Tickets')}]}
+            pageTitle={t('Manage Tickets')}
             pageActions={
                 <div className="flex gap-2">
                     <TooltipProvider>
-                        {auth.user?.permissions?.includes('create-helpdesk-tickets') && (
+                        {auth.permissions?.includes('create-helpdesk-tickets') && (
                             <Tooltip delayDuration={0}>
                                 <TooltipTrigger asChild>
                                     <Button size="sm" onClick={() => openModal('add')}>
@@ -231,7 +233,7 @@ export default function Index() {
                                     </Button>
                                 </TooltipTrigger>
                                 <TooltipContent>
-                                    <p>Create</p>
+                                    <p>{t('Create')}</p>
                                 </TooltipContent>
                             </Tooltip>
                         )}
@@ -239,7 +241,7 @@ export default function Index() {
                 </div>
             }
         >
-            <Head title="Support Tickets" />
+            <Head title={t('Support Tickets')} />
 
             {/* Main Content Card */}
             <Card className="shadow-sm">
@@ -251,7 +253,7 @@ export default function Index() {
                                 value={filters.title}
                                 onChange={(value) => setFilters({...filters, title: value})}
                                 onSearch={handleFilter}
-                                placeholder="Search tickets..."
+                                placeholder={t('Search tickets...')}
                             />
                         </div>
                         <div className="flex items-center gap-3">
@@ -287,38 +289,38 @@ export default function Index() {
                     <CardContent className="p-6 bg-blue-50/30 border-b">
                         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('Status')}</label>
                                 <Select value={filters.status || undefined} onValueChange={(value) => setFilters({...filters, status: value || ''})}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Filter by status" />
+                                        <SelectValue placeholder={t('Filter by status')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="open">Open</SelectItem>
-                                        <SelectItem value="in_progress">In Progress</SelectItem>
-                                        <SelectItem value="resolved">Resolved</SelectItem>
-                                        <SelectItem value="closed">Closed</SelectItem>
+                                        <SelectItem value="open">{t('Open')}</SelectItem>
+                                        <SelectItem value="in_progress">{t('In Progress')}</SelectItem>
+                                        <SelectItem value="resolved">{t('Resolved')}</SelectItem>
+                                        <SelectItem value="closed">{t('Closed')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('Priority')}</label>
                                 <Select value={filters.priority || undefined} onValueChange={(value) => setFilters({...filters, priority: value || ''})}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Filter by priority" />
+                                        <SelectValue placeholder={t('Filter by priority')} />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="low">Low</SelectItem>
-                                        <SelectItem value="medium">Medium</SelectItem>
-                                        <SelectItem value="high">High</SelectItem>
-                                        <SelectItem value="urgent">Urgent</SelectItem>
+                                        <SelectItem value="low">{t('Low')}</SelectItem>
+                                        <SelectItem value="medium">{t('Medium')}</SelectItem>
+                                        <SelectItem value="high">{t('High')}</SelectItem>
+                                        <SelectItem value="urgent">{t('Urgent')}</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">{t('Category')}</label>
                                 <Select value={filters.category_id || undefined} onValueChange={(value) => setFilters({...filters, category_id: value || ''})}>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Filter by category" />
+                                        <SelectValue placeholder={t('Filter by category')} />
                                     </SelectTrigger>
                                     <SelectContent>
                                         {categories?.map((category: any) => (
@@ -339,10 +341,10 @@ export default function Index() {
                             </div>
                             {auth.user?.type === 'superadmin' && (
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">User</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-2">{t('User')}</label>
                                     <Select value={filters.company_id || undefined} onValueChange={(value) => setFilters({...filters, company_id: value || ''})}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Filter by User" />
+                                            <SelectValue placeholder={t('Filter by User')} />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {companies?.map((company: any) => (
@@ -355,8 +357,8 @@ export default function Index() {
                                 </div>
                             )}
                             <div className="flex items-end gap-2">
-                                <Button onClick={handleFilter} size="sm">Apply</Button>
-                                <Button variant="outline" onClick={clearFilters} size="sm">Clear</Button>
+                                <Button onClick={handleFilter} size="sm">{t('Apply')}</Button>
+                                <Button variant="outline" onClick={clearFilters} size="sm">{t('Clear')}</Button>
                             </div>
                         </div>
                     </CardContent>
@@ -377,13 +379,13 @@ export default function Index() {
                                 emptyState={
                                     <NoRecordsFound
                                         icon={Ticket}
-                                        title="No tickets found"
-                                        description="Get started by creating your first support ticket."
+                                        title={t('No tickets found')}
+                                        description={t('Get started by creating your first support ticket.')}
                                         hasFilters={!!(filters.title || filters.status || filters.priority || filters.category_id || filters.company_id)}
                                         onClearFilters={clearFilters}
                                         createPermission="create-helpdesk-tickets"
                                         onCreateClick={() => openModal('add')}
-                                        createButtonText="Create Ticket"
+                                        createButtonText={t('Create Ticket')}
                                         className="h-auto"
                                     />
                                 }
@@ -402,7 +404,7 @@ export default function Index() {
                                                         <Ticket className="h-5 w-5 text-primary" />
                                                     </div>
                                                     <div className="flex-1">
-                                                        {auth.user?.permissions?.includes('view-helpdesk-tickets') ? (
+                                                        {auth.permissions?.includes('view-helpdesk-tickets') ? (
                                                             <h3 className="text-base text-blue-600 hover:text-blue-700 cursor-pointer" onClick={() => router.get(route('helpdesk-tickets.show', ticket.id))}>#{ticket.ticket_id}</h3>
                                                         ) : (
                                                             <h3 className="text-base text-gray-900">#{ticket.ticket_id}</h3>
@@ -412,24 +414,24 @@ export default function Index() {
 
                                                 <div className="space-y-3 mb-3">
                                                     <div>
-                                                        <p className="text-xs font-medium text-gray-600 mb-2">Title</p>
+                                                        <p className="text-xs font-medium text-gray-600 mb-2">{t('Title')}</p>
                                                         <p className="text-xs text-gray-900 truncate" title={ticket.title}>{ticket.title}</p>
                                                     </div>
 
                                                     <div className="grid grid-cols-2 gap-2">
                                                         <div>
-                                                            <p className="text-xs font-medium text-gray-600 mb-1">Status</p>
+                                                            <p className="text-xs font-medium text-gray-600 mb-1">{t('Status')}</p>
                                                             <div className="text-xs">{getStatusBadge(ticket.status)}</div>
                                                         </div>
                                                         <div>
-                                                            <p className="text-xs font-medium text-gray-600 mb-1">Priority</p>
+                                                            <p className="text-xs font-medium text-gray-600 mb-1">{t('Priority')}</p>
                                                             <div className="text-xs">{getPriorityBadge(ticket.priority)}</div>
                                                         </div>
                                                     </div>
 
                                                     <div className="grid grid-cols-2 gap-2">
                                                         <div>
-                                                            <p className="text-xs font-medium text-gray-600 mb-1">Category</p>
+                                                            <p className="text-xs font-medium text-gray-600 mb-1">{t('Category')}</p>
                                                             {ticket.category ? (
                                                                 <div className="flex items-center gap-1.5">
                                                                     {ticket.category.color && (
@@ -445,7 +447,7 @@ export default function Index() {
                                                             )}
                                                         </div>
                                                         <div>
-                                                            <p className="text-xs font-medium text-gray-600 mb-1">Created By</p>
+                                                            <p className="text-xs font-medium text-gray-600 mb-1">{t('Created By')}</p>
                                                             <p className="text-xs text-gray-900 truncate">{ticket.creator?.name || '-'}</p>
                                                         </div>
                                                     </div>
@@ -454,7 +456,7 @@ export default function Index() {
                                                 <div className="flex items-center justify-end pt-3 border-t">
                                                     <div className="flex gap-1">
                                                         <TooltipProvider>
-                                                            {auth.user?.permissions?.includes('view-helpdesk-tickets') && (
+                                                            {auth.permissions?.includes('view-helpdesk-tickets') && (
                                                                 <Tooltip delayDuration={300}>
                                                                     <TooltipTrigger asChild>
                                                                         <Button variant="ghost" size="sm" onClick={() => router.get(route('helpdesk-tickets.show', ticket.id))} className="h-8 w-8 p-0 text-green-600">
@@ -462,11 +464,11 @@ export default function Index() {
                                                                         </Button>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        <p>View</p>
+                                                                        <p>{t('View')}</p>
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             )}
-                                                            {auth.user?.permissions?.includes('edit-helpdesk-tickets') && (
+                                                            {auth.permissions?.includes('edit-helpdesk-tickets') && (
                                                                 <Tooltip delayDuration={300}>
                                                                     <TooltipTrigger asChild>
                                                                         <Button variant="ghost" size="sm" onClick={() => openModal('edit', ticket)} className="h-8 w-8 p-0 text-blue-600">
@@ -474,11 +476,11 @@ export default function Index() {
                                                                         </Button>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        <p>Edit</p>
+                                                                        <p>{t('Edit')}</p>
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             )}
-                                                            {auth.user?.permissions?.includes('delete-helpdesk-tickets') && (
+                                                            {auth.permissions?.includes('delete-helpdesk-tickets') && (
                                                                 <Tooltip delayDuration={300}>
                                                                     <TooltipTrigger asChild>
                                                                         <Button
@@ -491,7 +493,7 @@ export default function Index() {
                                                                         </Button>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent>
-                                                                        <p>Delete</p>
+                                                                        <p>{t('Delete')}</p>
                                                                     </TooltipContent>
                                                                 </Tooltip>
                                                             )}
@@ -505,13 +507,13 @@ export default function Index() {
                             ) : (
                                 <NoRecordsFound
                                     icon={Ticket}
-                                    title="No tickets found"
-                                    description="Get started by creating your first support ticket."
+                                    title={t('No tickets found')}
+                                    description={t('Get started by creating your first support ticket.')}
                                     hasFilters={!!(filters.title || filters.status || filters.priority || filters.category_id || filters.company_id)}
                                     onClearFilters={clearFilters}
                                     createPermission="create-helpdesk-tickets"
                                     onCreateClick={() => openModal('add')}
-                                    createButtonText="Create Ticket"
+                                    createButtonText={t('Create Ticket')}
                                 />
                             )}
                         </div>
@@ -543,12 +545,12 @@ export default function Index() {
             <ConfirmationDialog
                 open={deleteState.isOpen}
                 onOpenChange={closeDeleteDialog}
-                title="Delete Ticket"
+                title={t('Delete Ticket')}
                 message={deleteState.message}
-                confirmText="Delete"
+                confirmText={t('Delete')}
                 onConfirm={confirmDelete}
                 variant="destructive"
             />
-        </AppLayout>
+        </PageTemplate>
     );
 }

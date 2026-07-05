@@ -13,6 +13,25 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            // Helpdesk Tickets
+            ['name' => 'manage-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Manage Helpdesk Tickets', 'description' => 'Can manage helpdesk tickets'],
+            ['name' => 'manage-any-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Manage Any Helpdesk Tickets', 'description' => 'Can manage any helpdesk tickets'],
+            ['name' => 'manage-own-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Manage Own Helpdesk Tickets', 'description' => 'Can manage own helpdesk tickets'],
+            ['name' => 'view-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'View Helpdesk Tickets', 'description' => 'Can view helpdesk tickets'],
+            ['name' => 'create-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Create Helpdesk Tickets', 'description' => 'Can create helpdesk tickets'],
+            ['name' => 'edit-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Edit Helpdesk Tickets', 'description' => 'Can edit helpdesk tickets'],
+            ['name' => 'delete-helpdesk-tickets', 'module' => 'helpdesk-tickets', 'label' => 'Delete Helpdesk Tickets', 'description' => 'Can delete helpdesk tickets'],
+
+            // Helpdesk Categories
+            ['name' => 'manage-helpdesk-categories', 'module' => 'helpdesk-categories', 'label' => 'Manage Helpdesk Categories', 'description' => 'Can manage helpdesk categories'],
+            ['name' => 'create-helpdesk-categories', 'module' => 'helpdesk-categories', 'label' => 'Create Helpdesk Categories', 'description' => 'Can create helpdesk categories'],
+            ['name' => 'edit-helpdesk-categories', 'module' => 'helpdesk-categories', 'label' => 'Edit Helpdesk Categories', 'description' => 'Can edit helpdesk categories'],
+            ['name' => 'delete-helpdesk-categories', 'module' => 'helpdesk-categories', 'label' => 'Delete Helpdesk Categories', 'description' => 'Can delete helpdesk categories'],
+
+            // Helpdesk Replies
+            ['name' => 'create-helpdesk-replies', 'module' => 'helpdesk-replies', 'label' => 'Create Helpdesk Replies', 'description' => 'Can create helpdesk replies'],
+            ['name' => 'delete-helpdesk-replies', 'module' => 'helpdesk-replies', 'label' => 'Delete Helpdesk Replies', 'description' => 'Can delete helpdesk replies'],
+
             // Dashboard permissions
             ['name' => 'manage-dashboard', 'module' => 'dashboard', 'label' => 'Manage Dashboard', 'description' => 'Can view dashboard'],
 
@@ -56,7 +75,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'reset-password-companies', 'module' => 'companies', 'label' => 'Reset Password Companies', 'description' => 'Can reset password Companies'],
             ['name' => 'toggle-status-companies', 'module' => 'companies', 'label' => 'Change Status Companies', 'description' => 'Can change status companies'],
 
-
+            // Add-ons
+            ['name' => 'manage-add-on', 'module' => 'add-ons', 'label' => 'Manage Add-ons', 'description' => 'Can manage Add-ons'],
 
 
 

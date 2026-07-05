@@ -1,16 +1,18 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from "@/components/ui/button";
 import { Trash2, Paperclip, Download } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ChatMessageProps } from './types';
-import { formatDate, getImagePath, downloadFile } from '@/utils/helpers';
+import { formatDateTime, getImagePath, downloadFile } from '@/utils/helpers';
 import { isImageFile } from '@/utils/fileHelpers';
 import { usePage } from '@inertiajs/react';
 
 export default function ChatMessage({ reply, isOwnMessage, onDelete, canDelete }: ChatMessageProps) {
     const pageProps = usePage().props as any;
     const { imageUrlPrefix } = pageProps;
-        const [showActions, setShowActions] = useState(false);
+    const { t } = useTranslation();
+    const [showActions, setShowActions] = useState(false);
 
 
 
@@ -39,7 +41,7 @@ export default function ChatMessage({ reply, isOwnMessage, onDelete, canDelete }
                             </span>
                             {reply.is_internal && (
                                 <span className="text-xs bg-orange-200 text-orange-800 px-2 py-0.5 rounded-full font-medium">
-                                    Internal Note
+                                    {t('Internal Note')}
                                 </span>
                             )}
                         </div>
@@ -63,7 +65,7 @@ export default function ChatMessage({ reply, isOwnMessage, onDelete, canDelete }
                                         </Button>
                                     </TooltipTrigger>
                                     <TooltipContent>
-                                        <p>Delete</p>
+                                        <p>{t('Delete')}</p>
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>
@@ -127,7 +129,7 @@ export default function ChatMessage({ reply, isOwnMessage, onDelete, canDelete }
                 <div className={`text-xs text-gray-500 mt-1 ${
                     isOwnMessage ? 'text-right' : 'text-left'
                 }`}>
-                    {formatDate(reply.created_at)}
+                    {formatDateTime(reply.created_at)}
                 </div>
             </div>
         </div>

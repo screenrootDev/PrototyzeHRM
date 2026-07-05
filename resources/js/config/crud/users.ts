@@ -24,7 +24,7 @@ export const usersConfig: CrudConfig = {
           return (
             `<div class="flex items-center gap-3">
               <div class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white">
-                ${row.name.split(' ').map(n => n[0]).join(''.substring(0, 2).toUpperCase()}
+                ${row.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
               </div>
               <div>
                 <div class="font-medium">${row.name}</div>
