@@ -77,7 +77,7 @@ class HandleInertiaRequests extends Middleware
         $companySlug = '';
         $activeModule = [];
         $checkUser = Auth::user();
-        if ($checkUser && $checkUser->hasRole('company')) {
+        if ($checkUser && $checkUser->type === 'company') {
             $companySlug = Auth::user()->slug ?? '';
             $activeModule = Auth::user()->active_module ?? [];
         } else {

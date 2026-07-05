@@ -1262,7 +1262,7 @@ export default function Companies() {
               label: "Assigned Modules",
               type: "custom",
               colSpan: 2,
-              conditional: (mode) => mode === "edit" || mode === "view",
+              defaultValue: availableModules.map((m: any) => m.module),
               render: (field, formData, onChange) => {
                 const isView = formMode === "view";
                 return (
