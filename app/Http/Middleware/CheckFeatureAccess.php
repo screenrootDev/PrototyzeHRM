@@ -43,7 +43,7 @@ class CheckFeatureAccess
 
         // Filter against globally enabled add-ons
         if (!empty($activeModules)) {
-            $globalEnabledAddOns = \App\Models\AddOn::where('is_enable', true)->pluck('id')->toArray();
+            $globalEnabledAddOns = \App\Models\AddOn::where('is_enable', true)->pluck('module')->toArray();
             $activeModules = array_intersect($activeModules, $globalEnabledAddOns);
         }
 
