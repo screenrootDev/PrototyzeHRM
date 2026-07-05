@@ -516,9 +516,9 @@ export default function SuperAdminDashboard({
                                 data={ticketChartData}
                                 margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                             >
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                                <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
-                                <YAxis stroke="hsl(var(--muted-foreground))" tick={{ fill: 'hsl(var(--muted-foreground))' }} />
+                                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                                <XAxis dataKey="month" stroke="#888888" tick={{ fill: '#888888' }} />
+                                <YAxis stroke="#888888" tick={{ fill: '#888888' }} />
                                 <Tooltip 
                                     contentStyle={{ 
                                         backgroundColor: 'hsl(var(--background))', 
