@@ -461,8 +461,9 @@ export default function Employees() {
       noPadding
     >
       {/* Search and filters section */}
-      <div className="rounded-t-xl border border-b-0 bg-white p-6 dark:bg-gray-900">
-        <SearchAndFilterBar
+      <div className="mb-6 overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-gray-900">
+        <div className="p-6">
+          <SearchAndFilterBar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           onSearch={handleSearch}
@@ -528,11 +529,11 @@ export default function Employees() {
           showViewToggle={true}
           activeView={activeView}
           onViewChange={setActiveView}
-        />
-      </div>
+          />
+        </div>
 
-      <div className="overflow-x-auto border-x border-t bg-white px-5 dark:bg-gray-900">
-        <div className="flex min-w-max items-center gap-1">
+        <div className="overflow-x-auto border-t bg-white px-5 dark:bg-gray-900">
+          <div className="flex min-w-max items-center gap-1">
           {[
             { key: 'all', label: 'All', icon: LayoutGrid, count: stats.total ?? 0 },
             { key: 'Full-time', label: 'Full Time', icon: Briefcase, count: stats.full_time ?? 0 },
@@ -557,12 +558,13 @@ export default function Employees() {
               </button>
             );
           })}
+          </div>
         </div>
       </div>
 
       {/* Content section */}
       {activeView === 'list' ? (
-        <div className="min-w-0 max-w-full overflow-hidden rounded-b-xl border bg-white shadow-sm dark:bg-gray-900">
+        <div className="min-w-0 max-w-full overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-gray-900">
           <div className="max-h-[70vh] w-full max-w-full overflow-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400">
             <div className="min-w-[1100px]">
               <CrudTable
