@@ -10,6 +10,7 @@ export interface PageAction {
   icon?: ReactNode;
   variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 export interface PageTemplateProps {
@@ -45,11 +46,16 @@ export function PageTemplate({
     <AppLayout breadcrumbs={pageBreadcrumbs}>
       <Head title={`${title} - ${(usePage().props as any).globalSettings?.titleText || 'HRM'}`} />
       
-      <div className="flex h-full flex-1 flex-col gap-4 p-6 bg-zinc-50 dark:bg-zinc-950">
+      <div className="flex h-full min-w-0 max-w-full flex-1 flex-col gap-4 bg-zinc-50 p-6 dark:bg-zinc-950">
         {/* Header with action buttons */}
         {(!hideTitle || (actions && actions.length > 0)) && (
           <div className="flex items-center justify-between">
-            {hideTitle ? <div></div> : <h1 className="text-xl font-semibold">{title}</h1>}
+            {hideTitle ? <div></div> : (
+              <div>
+                <h1 className="text-xl font-semibold text-balance">{title}</h1>
+                {description && <p className="mt-1 text-sm text-muted-foreground text-pretty">{description}</p>}
+              </div>
+            )}
             {actions && actions.length > 0 && (
               <div className="flex items-center gap-2">
                 {actions.map((action, index) => (
@@ -58,6 +64,7 @@ export function PageTemplate({
                     variant={action.variant || 'outline'} 
                     size="sm"
                     onClick={action.onClick}
+                    disabled={action.disabled}
                     className="cursor-pointer"
                   >
                     {action.icon && <span className="mr-1">{action.icon}</span>}
@@ -70,7 +77,7 @@ export function PageTemplate({
         )}
         
         {/* Content */}
-        <div className={noPadding ? "" : ""}>
+        <div className="min-w-0 max-w-full">
           {children}
         </div>
       </div>

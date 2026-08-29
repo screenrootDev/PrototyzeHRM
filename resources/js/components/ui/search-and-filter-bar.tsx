@@ -16,6 +16,7 @@ interface FilterOption {
   value: string | Date | undefined;
   onChange: (value: any) => void;
   searchable?: boolean;
+  inline?: boolean;
 }
 
 interface SearchAndFilterBarProps {
@@ -63,7 +64,7 @@ export function SearchAndFilterBar({
 
   return (
     <div className="w-full">
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex-1 max-w-md">
           <form onSubmit={onSearch} className="flex items-center gap-2">
             <div className="relative w-full">
@@ -89,6 +90,7 @@ export function SearchAndFilterBar({
                     }, 0);
                   }}
                   className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                  aria-label="Clear search"
                 >
                   <X className="h-4 w-4" />
                 </Button>
@@ -97,6 +99,25 @@ export function SearchAndFilterBar({
             <Button type="submit">Search</Button>
           </form>
         </div>
+
+        {filters.filter((filter) => filter.inline).map((filter) => (
+          <div key={filter.name} className="w-[180px] shrink-0">
+            {filter.type === 'select' && filter.options && (
+              <Select value={filter.value as string} onValueChange={filter.onChange}>
+                <SelectTrigger className="h-10 w-full bg-white" aria-label={filter.label}>
+                  <SelectValue placeholder={`All ${filter.label}s`} />
+                </SelectTrigger>
+                <SelectContent searchable={filter.searchable}>
+                  {filter.options.map((option) => (
+                    <SelectItem key={option.value || 'empty'} value={option.value || '_empty_'} disabled={option.disabled}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        ))}
 
         <div className="flex items-center gap-3">
           {showViewToggle && onViewChange && (
@@ -112,6 +133,7 @@ export function SearchAndFilterBar({
                     : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => onViewChange('list')}
+                aria-label="List view"
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -126,6 +148,7 @@ export function SearchAndFilterBar({
                     : "text-muted-foreground hover:text-foreground"
                 )}
                 onClick={() => onViewChange('grid')}
+                aria-label="Grid view"
               >
                 <LayoutGrid className="h-4 w-4" />
               </Button>
@@ -175,7 +198,7 @@ export function SearchAndFilterBar({
       {showFilters && filters.length > 0 && (
         <div className="p-6 bg-blue-50/30 border-t mt-4 -mx-4 -mb-4 sm:-mx-6 sm:-mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filters.map((filter) => (
+            {filters.filter((filter) => !filter.inline).map((filter) => (
               <div key={filter.name}>
                 <Label className="block text-sm font-medium text-gray-700 mb-2">{filter.label}</Label>
                 {filter.type === 'select' && filter.options && (

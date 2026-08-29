@@ -5,7 +5,7 @@ import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus, Users, Edit, MoreHorizontal, Unlock } from 'lucide-react';
+import { Plus, Users, Edit, MoreHorizontal, Unlock, Briefcase, Clock, Calendar, FileText, LayoutGrid } from 'lucide-react';
 import { 
   EyeIcon, 
   Trash2Icon, 
@@ -62,17 +62,18 @@ const AnimatedActionMenuItem = ({ icon: Icon, onClick, className, children, size
 
 export default function Employees() {
   
-  const { auth, employees, branches, planLimits,departments, designations, filters: pageFilters = {} } = usePage().props as any;
+  const { auth, employees, branches, planLimits, departments, designations, stats = {}, filters: pageFilters = {} } = usePage().props as any;
   const permissions = auth?.permissions || [];
   const getInitials = useInitials();
   
   // State
-  const [activeView, setActiveView] = useState('list');
+  const [activeView, setActiveView] = useState<'list' | 'grid'>('list');
   const [searchTerm, setSearchTerm] = useState(pageFilters.search || '');
   const [selectedDepartment, setSelectedDepartment] = useState(pageFilters.department || 'all');
   const [selectedBranch, setSelectedBranch] = useState(pageFilters.branch || 'all');
   const [selectedDesignation, setSelectedDesignation] = useState(pageFilters.designation || 'all');
   const [selectedStatus, setSelectedStatus] = useState(pageFilters.status || 'all');
+  const [selectedEmploymentType, setSelectedEmploymentType] = useState(pageFilters.employment_type || 'all');
   const [showFilters, setShowFilters] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
@@ -80,7 +81,7 @@ export default function Employees() {
   
   // Check if any filters are active
   const hasActiveFilters = () => {
-    return selectedDepartment !== 'all' || selectedBranch !== 'all' || selectedDesignation !== 'all' || selectedStatus !== 'all' || searchTerm !== '';
+    return selectedDepartment !== 'all' || selectedBranch !== 'all' || selectedDesignation !== 'all' || selectedStatus !== 'all' || selectedEmploymentType !== 'all' || searchTerm !== '';
   };
   
   // Count active filters
@@ -89,6 +90,7 @@ export default function Employees() {
            (selectedBranch !== 'all' ? 1 : 0) + 
            (selectedDesignation !== 'all' ? 1 : 0) + 
            (selectedStatus !== 'all' ? 1 : 0) + 
+           (selectedEmploymentType !== 'all' ? 1 : 0) +
            (searchTerm ? 1 : 0);
   };
   
@@ -105,6 +107,7 @@ export default function Employees() {
       branch: selectedBranch !== 'all' ? selectedBranch : undefined,
       designation: selectedDesignation !== 'all' ? selectedDesignation : undefined,
       status: selectedStatus !== 'all' ? selectedStatus : undefined,
+      employment_type: selectedEmploymentType !== 'all' ? selectedEmploymentType : undefined,
       per_page: pageFilters.per_page
     }, { preserveState: true, preserveScroll: true });
   };
@@ -121,6 +124,7 @@ export default function Employees() {
       branch: selectedBranch !== 'all' ? selectedBranch : undefined,
       designation: selectedDesignation !== 'all' ? selectedDesignation : undefined,
       status: selectedStatus !== 'all' ? selectedStatus : undefined,
+      employment_type: selectedEmploymentType !== 'all' ? selectedEmploymentType : undefined,
       per_page: pageFilters.per_page
     }, { preserveState: true, preserveScroll: true });
   };
@@ -218,6 +222,7 @@ export default function Employees() {
     setSelectedBranch('all');
     setSelectedDesignation('all');
     setSelectedStatus('all');
+    setSelectedEmploymentType('all');
     setShowFilters(false);
     
     router.get(route('hr.employees.index'), {
@@ -226,8 +231,39 @@ export default function Employees() {
     }, { preserveState: true, preserveScroll: true });
   };
 
+  const handleEmploymentTypeChange = (employmentType: string) => {
+    setSelectedEmploymentType(employmentType);
+    router.get(route('hr.employees.index'), {
+      page: 1,
+      search: searchTerm || undefined,
+      department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
+      branch: selectedBranch !== 'all' ? selectedBranch : undefined,
+      designation: selectedDesignation !== 'all' ? selectedDesignation : undefined,
+      status: selectedStatus !== 'all' ? selectedStatus : undefined,
+      employment_type: employmentType !== 'all' ? employmentType : undefined,
+      per_page: pageFilters.per_page,
+    }, { preserveState: true, preserveScroll: true });
+  };
+
+  const handleQuickFilterChange = (filter: 'branch' | 'department' | 'designation', value: string) => {
+    if (filter === 'branch') setSelectedBranch(value);
+    if (filter === 'department') setSelectedDepartment(value);
+    if (filter === 'designation') setSelectedDesignation(value);
+
+    router.get(route('hr.employees.index'), {
+      page: 1,
+      search: searchTerm || undefined,
+      branch: (filter === 'branch' ? value : selectedBranch) !== 'all' ? (filter === 'branch' ? value : selectedBranch) : undefined,
+      department: (filter === 'department' ? value : selectedDepartment) !== 'all' ? (filter === 'department' ? value : selectedDepartment) : undefined,
+      designation: (filter === 'designation' ? value : selectedDesignation) !== 'all' ? (filter === 'designation' ? value : selectedDesignation) : undefined,
+      status: selectedStatus !== 'all' ? selectedStatus : undefined,
+      employment_type: selectedEmploymentType !== 'all' ? selectedEmploymentType : undefined,
+      per_page: pageFilters.per_page,
+    }, { preserveState: true, preserveScroll: true });
+  };
+
   // Define page actions
-  const pageActions = [];
+  const pageActions: import('@/components/page-template').PageAction[] = [];
   
   // Add the "Add New Employee" button if user has permission
   if (hasPermission(permissions, 'create-employees')) {
@@ -235,7 +271,7 @@ export default function Employees() {
     pageActions.push({
       label: planLimits && !canCreate ? `Employee Create Limit Reached (${planLimits.current_users}/${planLimits.max_users})` : 'Add Employee',
       icon: <Plus className="h-4 w-4 mr-2" />,
-      variant: canCreate ? 'default' : 'outline',
+      variant: canCreate ? 'default' as const : 'outline' as const,
       onClick: canCreate ? () => handleAddNew() : () => toast.error(`Employee limit exceeded. Your plan allows maximum ${planLimits.max_users} users. Please upgrade your plan.`),
       disabled: !canCreate
     });
@@ -250,90 +286,91 @@ export default function Employees() {
   // Define table columns
   const columns = [
     { 
-      key: 'employee_id', 
-      label: 'Employee ID',
-      sortable: false,
-      render: (value: any, row: any) => {
-        const empId = row.employee?.employee_id || '-';
-        if (empId === '-') return empId;
-        return (
-          <span 
-            className="cursor-pointer font-medium text-primary hover:underline"
-            onClick={() => handleAction('view', row)}
-          >
-            {empId}
-          </span>
-        );
-      }
-    },
-    { 
       key: 'name', 
-      label: 'Name', 
+      label: 'Employee Name',
       sortable: true,
+      className: 'min-w-[300px]',
       render: (value: any, row: any) => {
         return (
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white overflow-hidden">
+            <div className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-primary/10 text-primary">
               {row.avatar ? (
                 <img src={getImagePath(row.avatar)} alt={row.name} className="h-full w-full object-cover" />
               ) : (
                 getInitials(row.name)
               )}
             </div>
-            <div>
-              <div className="font-medium">{row.name}</div>
-              <div className="text-sm text-muted-foreground">{row.email}</div>
+            <div className="min-w-0">
+              <div className="truncate text-sm font-semibold text-foreground">{row.name}</div>
+              <div className="text-xs text-muted-foreground">{row.email}</div>
             </div>
           </div>
         );
       }
     },
+    {
+      key: 'employee_id',
+      label: 'Employee ID',
+      sortable: true,
+      className: 'min-w-[150px]',
+      render: (_value: any, row: any) => (
+        <button className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-600 hover:bg-blue-100 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-400" onClick={() => handleAction('view', row)}>
+          {row.employee?.employee_id || '-'}
+        </button>
+      )
+    },
+    {
+      key: 'branch',
+      label: 'Branch',
+      className: 'min-w-[150px]',
+      render: (_value: any, row: any) => row.employee?.branch?.name ? (
+        <span className="inline-flex rounded-md border bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-700 dark:bg-slate-900 dark:text-slate-300">{row.employee.branch.name}</span>
+      ) : '-'
+    },
     { 
       key: 'department', 
       label: 'Department',
+      className: 'min-w-[170px]',
       render: (value: any, row: any) => {
-        return row.employee?.department?.name || '-';
+        return row.employee?.department?.name ? <span className="inline-flex rounded-md border border-indigo-200 bg-indigo-50 px-2.5 py-1 text-xs font-medium text-indigo-700 dark:border-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300">{row.employee.department.name}</span> : '-';
       }
     },
     { 
       key: 'designation', 
       label: 'Designation',
+      className: 'min-w-[150px]',
       render: (value: any, row: any) => {
-        return row.employee?.designation?.name || '-';
+        return row.employee?.designation?.name ? <span className="inline-flex rounded-md border border-sky-200 bg-sky-50 px-2.5 py-1 text-xs font-medium text-sky-700 dark:border-sky-800 dark:bg-sky-950/40 dark:text-sky-300">{row.employee.designation.name}</span> : '-';
       }
     },
-    { 
-      key: 'employee_status', 
-      label: 'Employee Status',
-      render: (value: any, row: any) => {
-        const status = row.employee?.employee_status || 'active';
-        return (
-          <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ${
-            status === 'active' 
-              ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20' 
-              : status === 'inactive'
-                ? 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20'
-                : status === 'probation'
-                  ? 'bg-yellow-50 text-yellow-700 ring-1 ring-inset ring-yellow-600/20'
-                  : status === 'terminated'
-                    ? 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
-                    : 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-600/20'
-          }`}>
-            {status === 'active' && 'Active'}
-            {status === 'inactive' && 'Inactive'}
-            {status === 'probation' && 'Probation'}
-            {status === 'terminated' && 'Terminated'}
-          </span>
-        );
+    {
+      key: 'employment_type',
+      label: 'Employment Type',
+      className: 'min-w-[150px]',
+      render: (_value: any, row: any) => {
+        const type = row.employee?.employment_type;
+        if (!type) return '-';
+        const style = type === 'Full-time'
+          ? 'border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300'
+          : type === 'Part-time'
+            ? 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300'
+            : 'border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300';
+        return <span className={`inline-flex rounded-md border px-2.5 py-1 text-xs font-medium ${style}`}>{type.replace('-', ' ')}</span>;
       }
     },
     { 
       key: 'date_of_joining', 
-      label: 'Joined', 
+      label: 'Date Of Joining',
       sortable: false,
+      className: 'min-w-[150px]',
       render: (value: any, row: any) => {
         const joinDate = row.employee?.date_of_joining;
-        return joinDate ? (window.appSettings?.formatDateTimeSimple(joinDate, false) || new Date(joinDate).toLocaleDateString()) : '-';
+        return joinDate ? (
+          <span className="flex items-center gap-2 whitespace-nowrap text-sm text-muted-foreground">
+            <Calendar className="size-4" aria-hidden="true" />
+            {window.appSettings?.formatDateTimeSimple(joinDate, false) || new Date(joinDate).toLocaleDateString()}
+          </span>
+        ) : '-';
       }
     }
   ];
@@ -417,13 +454,14 @@ export default function Employees() {
   return (
     <PageTemplate 
       title={"Employees"} 
+      description="View and manage employee profiles, branches, departments, and designations."
       url="/hr/employees"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
       noPadding
     >
       {/* Search and filters section */}
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow mb-4 p-4">
+      <div className="rounded-t-xl border border-b-0 bg-white p-6 dark:bg-gray-900">
         <SearchAndFilterBar
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
@@ -434,27 +472,30 @@ export default function Employees() {
               label: 'Branch',
               type: 'select',
               value: selectedBranch,
-              onChange: setSelectedBranch,
+              onChange: (value) => handleQuickFilterChange('branch', value),
               options: branchOptions,
               searchable: true,
+              inline: true,
             },
             {
               name: 'department',
               label: 'Department',
               type: 'select',
               value: selectedDepartment,
-              onChange: setSelectedDepartment,
+              onChange: (value) => handleQuickFilterChange('department', value),
               options: departmentOptions,
               searchable: true,
+              inline: true,
             },
             {
               name: 'designation',
               label: 'Designation',
               type: 'select',
               value: selectedDesignation,
-              onChange: setSelectedDesignation,
+              onChange: (value) => handleQuickFilterChange('designation', value),
               options: designationOptions,
               searchable: true,
+              inline: true,
             },
             {
               name: 'status',
@@ -480,7 +521,8 @@ export default function Employees() {
               department: selectedDepartment !== 'all' ? selectedDepartment : undefined,
               branch: selectedBranch !== 'all' ? selectedBranch : undefined,
               designation: selectedDesignation !== 'all' ? selectedDesignation : undefined,
-              status: selectedStatus !== 'all' ? selectedStatus : undefined
+              status: selectedStatus !== 'all' ? selectedStatus : undefined,
+              employment_type: selectedEmploymentType !== 'all' ? selectedEmploymentType : undefined
             }, { preserveState: true, preserveScroll: true });
           }}
           showViewToggle={true}
@@ -489,10 +531,41 @@ export default function Employees() {
         />
       </div>
 
+      <div className="overflow-x-auto border-x border-t bg-white px-5 dark:bg-gray-900">
+        <div className="flex min-w-max items-center gap-1">
+          {[
+            { key: 'all', label: 'All', icon: LayoutGrid, count: stats.total ?? 0 },
+            { key: 'Full-time', label: 'Full Time', icon: Briefcase, count: stats.full_time ?? 0 },
+            { key: 'Part-time', label: 'Part Time', icon: Clock, count: stats.part_time ?? 0 },
+            { key: 'Temporary', label: 'Temporary', icon: Calendar, count: stats.temporary ?? 0 },
+            { key: 'Contract', label: 'Contract', icon: FileText, count: stats.contract ?? 0 },
+          ].map((tab) => {
+            const Icon = tab.icon;
+            const active = selectedEmploymentType === tab.key;
+            return (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => handleEmploymentTypeChange(tab.key)}
+                className={`flex items-center gap-2 border-b-2 px-4 py-4 text-sm font-medium ${active ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-foreground'}`}
+              >
+                <Icon className="size-4" aria-hidden="true" />
+                {tab.label}
+                <span className={`inline-flex min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-xs tabular-nums ${active ? 'bg-primary/10 text-primary' : 'bg-muted'}`}>
+                  {tab.count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Content section */}
       {activeView === 'list' ? (
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
-          <CrudTable
+        <div className="min-w-0 max-w-full overflow-hidden rounded-b-xl border bg-white shadow-sm dark:bg-gray-900">
+          <div className="max-h-[70vh] w-full max-w-full overflow-auto scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-400">
+            <div className="min-w-[1100px]">
+              <CrudTable
             columns={columns}
             actions={actions}
             data={employees?.data || []}
@@ -502,9 +575,9 @@ export default function Employees() {
             sortDirection={pageFilters.sort_direction}
             onSort={handleSort}
             permissions={permissions}
+            showRowNumber={false}
             entityPermissions={{
               view: 'view-employees',
-              create: 'create-employees',
               edit: 'edit-employees',
               delete: 'delete-employees'
             }}
@@ -521,7 +594,9 @@ export default function Employees() {
                 className="h-auto py-12"
               />
             }
-          />
+              />
+            </div>
+          </div>
 
           {/* Pagination section */}
           <Pagination

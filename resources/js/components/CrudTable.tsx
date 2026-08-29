@@ -82,6 +82,7 @@ interface CrudTableProps {
   };
   showActionsAsIcons?: boolean;
   showActions?: boolean;
+  showRowNumber?: boolean;
   emptyState?: React.ReactNode;
 }
 
@@ -98,6 +99,7 @@ export function CrudTable({
   permissions,
   entityPermissions,
   showActions = true,
+  showRowNumber = true,
   emptyState,
 }: CrudTableProps) {
   
@@ -320,16 +322,16 @@ export function CrudTable({
   return (
     <div className="border-collapse dark:bg-gray-900">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-30">
           <TableRow className="bg-gray-50 dark:bg-gray-800 border-b">
-            <TableHead className="w-[48px] min-w-[48px] max-w-[48px] py-2.5 font-semibold sticky left-0 z-20 bg-gray-50 dark:bg-gray-800">#</TableHead>
+            {showRowNumber && <TableHead className="sticky left-0 z-20 w-[48px] min-w-[48px] max-w-[48px] bg-gray-50 py-2.5 font-semibold dark:bg-gray-800">#</TableHead>}
             {columns.map((column, i) => (
               <TableHead
                 key={column.key}
                 className={cn(
-                  "py-2.5 font-semibold",
+                  "py-2.5 text-sm font-semibold",
                   column.sortable && "cursor-pointer select-none",
-                  i === 0 && "sticky left-[48px] z-20 bg-gray-50 dark:bg-gray-800 border-r-2 border-gray-200 dark:border-gray-700",
+                  i === 0 && showRowNumber && "sticky left-[48px] z-20 bg-gray-50 dark:bg-gray-800 border-r-2 border-gray-200 dark:border-gray-700",
                   column.className
                 )}
                 onClick={() => handleSort(column)}
@@ -347,13 +349,13 @@ export function CrudTable({
           {data.length > 0 ? (
             data.map((row, index) => (
               <TableRow key={row.id || index} className="group hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
-                <TableCell className="font-medium py-2.5 sticky left-0 z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors">{from + index}</TableCell>
+                {showRowNumber && <TableCell className="sticky left-0 z-10 bg-white py-2.5 font-medium transition-colors group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-700">{from + index}</TableCell>}
                 {columns.map((col, i) => (
                   <TableCell
                     key={col.key}
                     className={cn(
                       "py-2.5",
-                      i === 0 && "sticky left-[48px] z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors border-r-2 border-gray-200 dark:border-gray-700",
+                      i === 0 && showRowNumber && "sticky left-[48px] z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors border-r-2 border-gray-200 dark:border-gray-700",
                       col.className
                     )}
                   >
@@ -372,7 +374,7 @@ export function CrudTable({
                 {"No results found."}
               </TableCell> */}
               <TableCell
-                colSpan={columns.length + (showActions && hasAnyActionPermission ? 2 : 1)}
+                colSpan={columns.length + (showActions && hasAnyActionPermission ? 1 : 0) + (showRowNumber ? 1 : 0)}
                 className="text-muted-foreground h-24 text-center dark:text-gray-400 p-0"
               >
                 {emptyState ? emptyState : 'No results found.'}

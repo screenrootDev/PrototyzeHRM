@@ -39,6 +39,16 @@ class EmployeeController extends Controller
                 })
                 ->where('type', 'employee');
 
+            // Keep the overview counts independent from the active table filters.
+            $statsQuery = clone $query;
+            $stats = [
+                'total' => (clone $statsQuery)->count(),
+                'full_time' => (clone $statsQuery)->whereHas('employee', fn ($q) => $q->where('employment_type', 'Full-time'))->count(),
+                'part_time' => (clone $statsQuery)->whereHas('employee', fn ($q) => $q->where('employment_type', 'Part-time'))->count(),
+                'temporary' => (clone $statsQuery)->whereHas('employee', fn ($q) => $q->where('employment_type', 'Temporary'))->count(),
+                'contract' => (clone $statsQuery)->whereHas('employee', fn ($q) => $q->where('employment_type', 'Contract'))->count(),
+            ];
+
             // Handle search
             if ($request->has('search') && !empty($request->search)) {
                 $query->where(function ($q) use ($request) {
@@ -79,9 +89,24 @@ class EmployeeController extends Controller
                 });
             }
 
+            // Handle employment type filter (used by the overview tabs).
+            if ($request->filled('employment_type') && $request->employment_type !== 'all') {
+                $query->whereHas('employee', function ($q) use ($request) {
+                    $q->where('employment_type', $request->employment_type);
+                });
+            }
+
             // Handle sorting
             if ($request->has('sort_field') && !empty($request->sort_field)) {
-                $query->orderBy($request->sort_field, $request->sort_direction ?? 'asc');
+                $direction = $request->sort_direction === 'desc' ? 'desc' : 'asc';
+                if ($request->sort_field === 'employee_id') {
+                    $query->orderBy(
+                        Employee::select('employee_id')->whereColumn('employees.user_id', 'users.id'),
+                        $direction
+                    );
+                } else {
+                    $query->orderBy('name', $direction);
+                }
             } else {
                 $query->orderBy('created_at', 'desc');
             }
@@ -118,7 +143,8 @@ class EmployeeController extends Controller
                 'planLimits' => $planLimits,
                 'departments' => $departments,
                 'designations' => $designations,
-                'filters' => $request->all(['search', 'department', 'branch', 'designation', 'status', 'sort_field', 'sort_direction', 'per_page']),
+                'stats' => $stats,
+                'filters' => $request->all(['search', 'department', 'branch', 'designation', 'status', 'employment_type', 'sort_field', 'sort_direction', 'per_page']),
             ]);
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
