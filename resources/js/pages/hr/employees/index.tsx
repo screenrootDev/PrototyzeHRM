@@ -3,9 +3,12 @@ import React, { useState, useRef } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Plus, Users, Edit, MoreHorizontal, Unlock, Briefcase, Clock, Calendar, FileText, LayoutGrid } from 'lucide-react';
+import { Plus, Users, Edit, MoreHorizontal, Unlock, Briefcase, Clock, Calendar, FileText, LayoutGrid, Download, Upload } from 'lucide-react';
 import { 
   EyeIcon, 
   Trash2Icon, 
@@ -78,6 +81,9 @@ export default function Employees() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [isImporting, setIsImporting] = useState(false);
   
   // Check if any filters are active
   const hasActiveFilters = () => {
@@ -262,8 +268,53 @@ export default function Employees() {
     }, { preserveState: true, preserveScroll: true });
   };
 
+  const handleImport = () => {
+    if (!importFile) {
+      toast.error('Select a CSV file to import');
+      return;
+    }
+
+    const data = new FormData();
+    data.append('file', importFile);
+    setIsImporting(true);
+    router.post(route('hr.employees.import'), data, {
+      forceFormData: true,
+      preserveScroll: true,
+      onSuccess: (page) => {
+        setIsImporting(false);
+        setIsImportOpen(false);
+        setImportFile(null);
+        const flash = (page.props as any).flash;
+        if (flash?.success) toast.success(flash.success);
+        if (flash?.error) toast.error(flash.error);
+      },
+      onError: (errors) => {
+        setIsImporting(false);
+        toast.error((errors as any).file || 'Employee import failed');
+      },
+    });
+  };
+
   // Define page actions
   const pageActions: import('@/components/page-template').PageAction[] = [];
+
+  if (hasPermission(permissions, 'view-employees')) {
+    pageActions.push({
+      label: 'Export',
+      icon: <Download className="mr-2 size-4" />,
+      variant: 'outline',
+      onClick: () => window.location.assign(route('hr.employees.export')),
+    });
+  }
+
+  if (hasPermission(permissions, 'create-employees')) {
+    pageActions.push({
+      label: 'Import',
+      icon: <Upload className="mr-2 size-4" />,
+      variant: 'outline',
+      onClick: () => setIsImportOpen(true),
+    });
+  }
   
   // Add the "Add New Employee" button if user has permission
   if (hasPermission(permissions, 'create-employees')) {
@@ -777,6 +828,32 @@ export default function Employees() {
         title={'Change Employee Password'}
         mode='edit'
       />
+
+      <Dialog open={isImportOpen} onOpenChange={setIsImportOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Import Employees</DialogTitle>
+            <DialogDescription>
+              Upload a CSV exported from this page. Enter a password of at least eight characters for every new employee row before importing.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-2">
+            <Label htmlFor="employee-import-file">CSV file</Label>
+            <Input
+              id="employee-import-file"
+              type="file"
+              accept=".csv,text/csv"
+              onChange={(event) => setImportFile(event.target.files?.[0] || null)}
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setIsImportOpen(false)} disabled={isImporting}>Cancel</Button>
+            <Button type="button" onClick={handleImport} disabled={!importFile || isImporting}>
+              {isImporting ? 'Importing...' : 'Import Employees'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </PageTemplate>
   );
 }

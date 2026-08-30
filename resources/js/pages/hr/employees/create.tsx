@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 import { toast } from '@/components/custom-toast';
 
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Check, Plus, Trash2 } from 'lucide-react';
 import MediaPicker from '@/components/MediaPicker';
 import { getImagePath } from '@/utils/helpers';
 
@@ -59,6 +59,51 @@ export default function EmployeeCreate() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [activeStep, setActiveStep] = useState(1);
+
+  const steps = ['Personal', 'Employment', 'Contact', 'Banking', 'Documents'];
+
+  const requiredFieldsByStep: Record<number, string[]> = {
+    1: ['name', 'biometric_emp_id', 'email', 'password', 'phone', 'date_of_birth', 'gender', 'profile_image'],
+    2: ['branch_id', 'department_id', 'designation_id', 'date_of_joining', 'employment_type', 'employee_status'],
+    3: ['address_line_1', 'address_line_2', 'city', 'state', 'country', 'postal_code', 'emergency_contact_name', 'emergency_contact_relationship', 'emergency_contact_number'],
+    4: ['bank_name', 'account_holder_name', 'account_number', 'bank_identifier_code', 'bank_branch', 'salary'],
+  };
+
+  const goToNextStep = () => {
+    const stepErrors: Record<string, string> = {};
+    (requiredFieldsByStep[activeStep] || []).forEach((field) => {
+      if (!String(formData[field] ?? '').trim()) stepErrors[field] = 'This field is required.';
+    });
+
+    if (Object.keys(stepErrors).length > 0) {
+      setErrors((current) => ({ ...current, ...stepErrors }));
+      toast.error('Please complete the required fields');
+      return;
+    }
+
+    setActiveStep((step) => Math.min(step + 1, steps.length));
+  };
+
+  const stepActions = (step: number) => (
+    <div className="mt-8 flex items-center justify-between border-t pt-6">
+      <div>
+        {step > 1 && (
+          <Button type="button" variant="outline" onClick={() => setActiveStep(step - 1)}>
+            Previous
+          </Button>
+        )}
+      </div>
+      {step < steps.length ? (
+        <Button type="button" onClick={goToNextStep}>Next</Button>
+      ) : (
+        <div className="flex gap-2">
+          <Button type="button" variant="outline" onClick={() => router.get(route('hr.employees.index'))}>Cancel</Button>
+          <Button type="submit" disabled={isSubmitting}>{isSubmitting ? 'Saving...' : 'Create Employee'}</Button>
+        </div>
+      )}
+    </div>
+  );
 
   // Filter departments based on selected branch
   // const filteredDepartments = formData.branch_id
@@ -222,6 +267,11 @@ export default function EmployeeCreate() {
         setIsSubmitting(false);
         setErrors(errors);
 
+        const firstError = Object.keys(errors)[0] || '';
+        const errorStep = Object.entries(requiredFieldsByStep).find(([, fields]) => fields.some((field) => firstError === field || firstError.startsWith(`${field}.`)))?.[0];
+        if (errorStep) setActiveStep(Number(errorStep));
+        if (firstError.startsWith('documents.')) setActiveStep(5);
+
         toast.error('Please correct the errors in the form');
       }
     });
@@ -239,26 +289,56 @@ export default function EmployeeCreate() {
   return (
     <PageTemplate
       title={"Create Employee"}
+      description="Add a new employee to the directory with their personal, contact, and employment information."
       url="/hr/employees/create"
       breadcrumbs={breadcrumbs}
       actions={[
         {
-          label: 'Back to Employees',
+          label: 'Back',
           icon: <ArrowLeft className="h-4 w-4 mr-2" />,
           variant: 'outline',
           onClick: () => router.get(route('hr.employees.index'))
         }
       ]}
     >
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit}>
+        <Card className="rounded-xl">
+          <CardContent className="p-6 pt-5">
+            <div className="mb-8 border-b pb-6 dark:border-gray-800">
+              <ol className="flex flex-wrap items-center justify-between gap-4" aria-label="Employee creation progress">
+                {steps.map((step, index) => {
+                  const stepNumber = index + 1;
+                  const isActive = activeStep === stepNumber;
+                  const isComplete = activeStep > stepNumber;
+                  return (
+                    <li key={step} className="flex flex-1 items-center last:flex-initial">
+                      <button
+                        type="button"
+                        onClick={() => isComplete && setActiveStep(stepNumber)}
+                        disabled={!isComplete && !isActive}
+                        className={`flex items-center gap-2 text-left text-sm font-medium ${isActive ? 'text-primary' : isComplete ? 'text-green-600 dark:text-green-400' : 'text-gray-400 dark:text-gray-500'}`}
+                        aria-current={isActive ? 'step' : undefined}
+                      >
+                        <span className={`flex size-8 items-center justify-center rounded-full border-2 text-sm font-semibold tabular-nums ${isActive ? 'border-primary bg-primary text-primary-foreground' : isComplete ? 'border-green-600 bg-green-600 text-white' : 'border-gray-200 bg-gray-50/50 text-gray-400 dark:border-gray-800 dark:bg-gray-900'}`}>
+                          {isComplete ? <Check className="size-4" aria-hidden="true" /> : stepNumber}
+                        </span>
+                        <span>{step}</span>
+                      </button>
+                      {index < steps.length - 1 && <span className="mx-4 hidden h-0.5 min-w-[30px] flex-1 bg-gray-200 dark:bg-gray-800 xl:block" aria-hidden="true" />}
+                    </li>
+                  );
+                })}
+              </ol>
+            </div>
+
         {/* Basic Information Card */}
-        <Card>
-          <CardHeader>
+        {activeStep === 1 && <Card className="border-0 shadow-none">
+          <CardHeader className="sr-only">
             <CardTitle>{'Basic Information'}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
+          <CardContent className="mt-6 space-y-6 p-0">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+              <div className="order-4 space-y-2">
                 <Label htmlFor="name" required>{'Full Name'}</Label>
                 <Input
                   id="name"
@@ -270,7 +350,7 @@ export default function EmployeeCreate() {
                 {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-1 space-y-2">
                 <Label htmlFor="employee_id">{'Employee ID'}</Label>
                 <Input
                   id="employee_id"
@@ -281,7 +361,7 @@ export default function EmployeeCreate() {
                 <p className="text-sm text-muted-foreground">{'Employee ID will be auto-generated'}</p>
               </div>
 
-              <div className="space-y-2">
+              <div className="order-5 space-y-2">
                 <Label htmlFor="biometric_emp_id" required>{'Employee Code'}</Label>
                 <Input
                   id="biometric_emp_id"
@@ -295,7 +375,7 @@ export default function EmployeeCreate() {
                 {errors.biometric_emp_id && <p className="text-red-500 text-xs">{errors.biometric_emp_id}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-6 space-y-2">
                 <Label htmlFor="email" required>{'Email'}</Label>
                 <Input
                   id="email"
@@ -308,7 +388,7 @@ export default function EmployeeCreate() {
                 {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-7 space-y-2">
                 <Label htmlFor="password" required>{'Password'}</Label>
                 <Input
                   id="password"
@@ -321,7 +401,7 @@ export default function EmployeeCreate() {
                 {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-8 space-y-2">
                 <Label htmlFor="phone" required>{'Phone Number'}</Label>
                 <Input
                   id="phone"
@@ -333,7 +413,7 @@ export default function EmployeeCreate() {
                 {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-2 space-y-2">
                 <Label htmlFor="date_of_birth" required>{'Date of Birth'}</Label>
                 <Input
                   id="date_of_birth"
@@ -346,7 +426,7 @@ export default function EmployeeCreate() {
                 {errors.date_of_birth && <p className="text-red-500 text-xs">{errors.date_of_birth}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-3 space-y-2">
                 <Label required>{'Gender'}</Label>
                 <RadioGroup
                   value={formData.gender}
@@ -369,7 +449,7 @@ export default function EmployeeCreate() {
                 {errors.gender && <p className="text-red-500 text-xs">{errors.gender}</p>}
               </div>
 
-              <div className="space-y-2">
+              <div className="order-9 space-y-2">
                 <Label required>{'Profile Image'}</Label>
                 <div className="flex flex-col gap-3">
                   <div className="border rounded-md p-4 flex items-center justify-center bg-muted/30 h-32">
@@ -399,16 +479,17 @@ export default function EmployeeCreate() {
                 {errors.profile_image && <p className="text-red-500 text-xs">{errors.profile_image}</p>}
               </div>
             </div>
+            {stepActions(1)}
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* Employment Details Card */}
-        <Card>
-          <CardHeader>
+        {activeStep === 2 && <Card className="border-0 shadow-none">
+          <CardHeader className="sr-only">
             <CardTitle>{'Employment Details'}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="mt-6 space-y-6 p-0">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="branch_id" required>{'Branch'}</Label>
                 <Select
@@ -568,16 +649,17 @@ export default function EmployeeCreate() {
                 {errors.attendance_policy_id && <p className="text-red-500 text-xs">{errors.attendance_policy_id}</p>}
               </div>
             </div>
+            {stepActions(2)}
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* Contact Information Card */}
-        <Card>
-          <CardHeader>
+        {activeStep === 3 && <Card className="border-0 shadow-none">
+          <CardHeader className="sr-only">
             <CardTitle>{'Contact Information'}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="mt-6 space-y-6 p-0">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="address_line_1" required>{'Address Line 1'}</Label>
                 <Input
@@ -652,7 +734,7 @@ export default function EmployeeCreate() {
 
             <div className="mt-6">
               <h3 className="text-lg font-medium mb-4">{'Emergency Contact'}</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <div className="space-y-2">
                   <Label htmlFor="emergency_contact_name" required>{'Name'}</Label>
                   <Input
@@ -690,16 +772,17 @@ export default function EmployeeCreate() {
                 </div>
               </div>
             </div>
+            {stepActions(3)}
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* Banking Information Card */}
-        <Card>
-          <CardHeader>
+        {activeStep === 4 && <Card className="border-0 shadow-none">
+          <CardHeader className="sr-only">
             <CardTitle>{'Banking Information'}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <CardContent className="mt-6 space-y-6 p-0">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="bank_name" required>{'Bank Name'}</Label>
                 <Input
@@ -774,26 +857,30 @@ export default function EmployeeCreate() {
               <div className="space-y-2">
                 <Label htmlFor="salary" required>{'Base Salary'}</Label>
                 <Input
-                required
+                  required
                   id="salary"
                   type="number"
+                  min="0"
                   step="0.01"
                   value={formData.salary}
                   onChange={(e) => handleChange('salary', e.target.value)}
+                  placeholder="Enter base salary"
                   className={errors.salary ? 'border-red-500' : ''}
                 />
-                {errors.salary && <p className="text-red-500 text-xs">{errors.salary}</p>}
+                {errors.salary && <p className="text-xs text-red-500">{errors.salary}</p>}
               </div>
+
             </div>
+            {stepActions(4)}
           </CardContent>
-        </Card>
+        </Card>}
 
         {/* Documents Card */}
-        <Card>
-          <CardHeader>
+        {activeStep === 5 && <Card className="border-0 shadow-none">
+          <CardHeader className="sr-only">
             <CardTitle>{'Documents'}</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="mt-6 space-y-6 p-0">
             {formData.documents.map((document: any, index: number) => (
               <div key={index} className="border rounded-md p-4 space-y-4">
                 <div className="flex justify-between items-center">
@@ -808,7 +895,7 @@ export default function EmployeeCreate() {
                   </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor={`document_type_${index}`}>{'Document Type'} <span className="text-red-500">*</span></Label>
                     <Select
@@ -889,25 +976,11 @@ export default function EmployeeCreate() {
               <Plus className="h-4 w-4 mr-2" />
               {'Add Document'}
             </Button>
+            {stepActions(5)}
+          </CardContent>
+        </Card>}
           </CardContent>
         </Card>
-
-        {/* Submit Buttons */}
-        <div className="flex justify-end space-x-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.get(route('hr.employees.index'))}
-          >
-            {'Cancel'}
-          </Button>
-          <Button
-            type="submit"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Saving...' : 'Save Employee'}
-          </Button>
-        </div>
       </form>
     </PageTemplate>
   );

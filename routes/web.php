@@ -299,6 +299,8 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         // Employee Routes
         Route::middleware('permission:manage-employees')->group(function () {
             Route::get('hr/employees', [EmployeeController::class, 'index'])->name('hr.employees.index');
+            Route::get('hr/employees-export', [EmployeeController::class, 'export'])->middleware('permission:view-employees')->name('hr.employees.export');
+            Route::post('hr/employees-import', [EmployeeController::class, 'import'])->middleware('permission:create-employees')->name('hr.employees.import');
             Route::get('hr/employees/create', [EmployeeController::class, 'create'])->middleware('permission:create-employees')->name('hr.employees.create');
             Route::post('hr/employees', [EmployeeController::class, 'store'])->middleware('permission:create-employees')->name('hr.employees.store');
             Route::get('hr/employees/{employee}', [EmployeeController::class, 'show'])->middleware('permission:view-employees')->name('hr.employees.show');
@@ -1126,4 +1128,3 @@ require __DIR__.'/auth.php';
 // Cookie consent routes
 Route::post('/cookie-consent/store', [CookieConsentController::class, 'store'])->name('cookie.consent.store');
 Route::get('/cookie-consent/download', [CookieConsentController::class, 'download'])->name('cookie.consent.download');
-

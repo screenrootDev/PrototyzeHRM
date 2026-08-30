@@ -14,8 +14,10 @@ use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class EmployeeController extends Controller
@@ -149,6 +151,158 @@ class EmployeeController extends Controller
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
         }
+    }
+
+    public function export()
+    {
+        $employees = User::with(['employee.branch', 'employee.department', 'employee.designation'])
+            ->where(function ($query) {
+                if (Auth::user()->can('manage-any-employees')) {
+                    $query->whereIn('created_by', getCompanyAndUsersId());
+                } elseif (Auth::user()->can('manage-own-employees')) {
+                    $query->where('created_by', Auth::id())->orWhere('id', Auth::id());
+                } else {
+                    $query->whereRaw('1 = 0');
+                }
+            })
+            ->where('type', 'employee')
+            ->orderBy('name')
+            ->get();
+
+        $headers = [
+            'employee_id', 'name', 'email', 'password', 'phone', 'date_of_birth', 'gender',
+            'branch_id', 'branch', 'department_id', 'department', 'designation_id', 'designation',
+            'date_of_joining', 'employment_type', 'employee_status', 'address_line_1', 'address_line_2',
+            'city', 'state', 'country', 'postal_code', 'emergency_contact_name',
+            'emergency_contact_relationship', 'emergency_contact_number', 'bank_name',
+            'account_holder_name', 'account_number', 'bank_identifier_code', 'bank_branch',
+            'tax_payer_id', 'salary', 'profile_image',
+        ];
+
+        return response()->streamDownload(function () use ($employees, $headers) {
+            $stream = fopen('php://output', 'w');
+            fputcsv($stream, $headers);
+
+            foreach ($employees as $user) {
+                $employee = $user->employee;
+                $values = [
+                    $employee?->employee_id, $user->name, $user->email, '', $employee?->phone,
+                    $employee?->date_of_birth, $employee?->gender, $employee?->branch_id,
+                    $employee?->branch?->name, $employee?->department_id, $employee?->department?->name,
+                    $employee?->designation_id, $employee?->designation?->name, $employee?->date_of_joining,
+                    $employee?->employment_type, $employee?->employee_status, $employee?->address_line_1,
+                    $employee?->address_line_2, $employee?->city, $employee?->state, $employee?->country,
+                    $employee?->postal_code, $employee?->emergency_contact_name,
+                    $employee?->emergency_contact_relationship, $employee?->emergency_contact_number,
+                    $employee?->bank_name, $employee?->account_holder_name, $employee?->account_number,
+                    $employee?->bank_identifier_code, $employee?->bank_branch, $employee?->tax_payer_id,
+                    $employee?->base_salary, $user->avatar,
+                ];
+                fputcsv($stream, array_map(fn ($value) => is_string($value) && preg_match('/^[=+\-@]/', $value) ? "'" . $value : $value, $values));
+            }
+
+            fclose($stream);
+        }, 'employees-' . now()->format('Y-m-d') . '.csv', ['Content-Type' => 'text/csv']);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate(['file' => ['required', 'file', 'mimes:csv,txt', 'max:5120']]);
+
+        $stream = fopen($request->file('file')->getRealPath(), 'r');
+        $headers = array_map(fn ($header) => ltrim(trim((string) $header), "\xEF\xBB\xBF"), fgetcsv($stream) ?: []);
+        $requiredHeaders = ['name', 'email', 'password', 'phone', 'date_of_birth', 'gender', 'branch_id', 'department_id', 'designation_id', 'date_of_joining', 'employment_type'];
+
+        if (array_diff($requiredHeaders, $headers)) {
+            fclose($stream);
+            return back()->with('error', 'The CSV is missing required columns: ' . implode(', ', array_diff($requiredHeaders, $headers)));
+        }
+
+        $companyIds = getCompanyAndUsersId();
+        $branchIds = Branch::whereIn('created_by', $companyIds)->pluck('id')->all();
+        $departmentIds = Department::whereIn('created_by', $companyIds)->pluck('id')->all();
+        $designationIds = Designation::whereIn('created_by', $companyIds)->pluck('id')->all();
+        $created = 0;
+        $rowNumber = 1;
+        $rowErrors = [];
+
+        while (($values = fgetcsv($stream)) !== false) {
+            $rowNumber++;
+            if (count(array_filter($values, fn ($value) => trim((string) $value) !== '')) === 0) continue;
+            if ($rowNumber > 501) {
+                $rowErrors[] = 'Only the first 500 data rows were processed.';
+                break;
+            }
+
+            $values = array_pad($values, count($headers), null);
+            $row = array_combine($headers, array_slice($values, 0, count($headers)));
+            $validator = Validator::make($row, [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+                'password' => ['required', 'string', 'min:8'],
+                'phone' => ['required', 'string', 'max:20'],
+                'date_of_birth' => ['required', 'date'],
+                'gender' => ['required', Rule::in(['male', 'female', 'other'])],
+                'branch_id' => ['required', Rule::in($branchIds)],
+                'department_id' => ['required', Rule::in($departmentIds)],
+                'designation_id' => ['required', Rule::in($designationIds)],
+                'date_of_joining' => ['required', 'date'],
+                'employment_type' => ['required', Rule::in(['Full-time', 'Part-time', 'Contract', 'Internship', 'Temporary'])],
+                'employee_status' => ['nullable', Rule::in(['active', 'inactive', 'probation', 'terminated'])],
+                'salary' => ['nullable', 'numeric', 'min:0'],
+            ]);
+
+            if ($validator->fails()) {
+                $rowErrors[] = 'Row ' . $rowNumber . ': ' . implode(' ', $validator->errors()->all());
+                continue;
+            }
+
+            $departmentMatchesBranch = Department::where('id', $row['department_id'])->where('branch_id', $row['branch_id'])->exists();
+            $designationMatchesDepartment = Designation::where('id', $row['designation_id'])->where('department_id', $row['department_id'])->exists();
+            if (!$departmentMatchesBranch || !$designationMatchesDepartment) {
+                $rowErrors[] = 'Row ' . $rowNumber . ': Department, branch, and designation do not belong to the same hierarchy.';
+                continue;
+            }
+
+            DB::transaction(function () use ($row, &$created) {
+                $user = User::create([
+                    'name' => $row['name'],
+                    'email' => $row['email'],
+                    'password' => Hash::make($row['password']),
+                    'type' => 'employee',
+                    'avatar' => $row['profile_image'] ?? null,
+                    'created_by' => creatorId(),
+                ]);
+
+                $employeeRole = isSaaS()
+                    ? Role::where('created_by', createdBy())->where('name', 'employee')->first()
+                    : Role::where('name', 'employee')->first();
+                if ($employeeRole) $user->assignRole($employeeRole);
+
+                Employee::create([
+                    'user_id' => $user->id,
+                    'employee_id' => Employee::generateEmployeeId(),
+                    'phone' => $row['phone'], 'date_of_birth' => $row['date_of_birth'], 'gender' => $row['gender'],
+                    'branch_id' => $row['branch_id'], 'department_id' => $row['department_id'], 'designation_id' => $row['designation_id'],
+                    'date_of_joining' => $row['date_of_joining'], 'employment_type' => $row['employment_type'],
+                    'employee_status' => ($row['employee_status'] ?? '') ?: 'active', 'address_line_1' => $row['address_line_1'] ?? null,
+                    'address_line_2' => $row['address_line_2'] ?? null, 'city' => $row['city'] ?? null,
+                    'state' => $row['state'] ?? null, 'country' => $row['country'] ?? null, 'postal_code' => $row['postal_code'] ?? null,
+                    'emergency_contact_name' => $row['emergency_contact_name'] ?? null,
+                    'emergency_contact_relationship' => $row['emergency_contact_relationship'] ?? null,
+                    'emergency_contact_number' => $row['emergency_contact_number'] ?? null, 'bank_name' => $row['bank_name'] ?? null,
+                    'account_holder_name' => $row['account_holder_name'] ?? null, 'account_number' => $row['account_number'] ?? null,
+                    'bank_identifier_code' => $row['bank_identifier_code'] ?? null, 'bank_branch' => $row['bank_branch'] ?? null,
+                    'tax_payer_id' => $row['tax_payer_id'] ?? null, 'base_salary' => ($row['salary'] ?? '') ?: null, 'created_by' => creatorId(),
+                ]);
+                $created++;
+            });
+        }
+
+        fclose($stream);
+        $message = $created . ' employee(s) imported successfully.';
+        if ($rowErrors) $message .= ' ' . count($rowErrors) . ' row(s) skipped: ' . implode(' | ', array_slice($rowErrors, 0, 5));
+        return back()->with($created > 0 ? 'success' : 'error', $message);
     }
 
     /**

@@ -23,6 +23,7 @@ class Employee extends Model
         'shift_id',
         'attendance_policy_id',
         'date_of_joining',
+        'base_salary',
         'employment_type',
         'address_line_1',
         'address_line_2',
