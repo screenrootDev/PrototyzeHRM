@@ -420,3 +420,38 @@ a:hover,
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+@keyframes dashboard-wave-drift {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.dashboard-wave {
+    animation-name: dashboard-wave-drift;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+.dashboard-wave-slow {
+    animation-duration: 18s;
+}
+
+.dashboard-wave-medium {
+    animation-duration: 13s;
+    animation-direction: reverse;
+}
+
+.dashboard-wave-fast {
+    animation-duration: 9s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-wave {
+        animation-play-state: paused;
+    }
+}

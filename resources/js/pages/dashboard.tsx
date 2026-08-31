@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers } from 'lucide-react';
+import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -147,6 +147,9 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
 
   const userType = dashboardData?.userType || 'employee';
   const isCompanyUser = userType === 'company';
+  const currentHour = new Date().getHours();
+  const greeting = currentHour < 12 ? 'Good morning' : currentHour < 17 ? 'Good afternoon' : 'Good evening';
+  const displayName = isCompanyUser ? 'Company' : (auth?.user?.first_name || auth?.user?.name || 'Team');
   
   const getStatusColor = (status: string) => {
     const colors = {
@@ -175,21 +178,78 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
     >
       <div className="space-y-5">
         
-        {/* Top Welcome Banner */}
-        <div className="mb-5 flex flex-col md:flex-row md:items-start justify-between gap-4">
-          <div className="lg:w-[800px] max-w-full">
-            <h5 className="mb-2 text-xl text-zinc-800 dark:text-zinc-200 font-semibold">Welcome {auth?.user?.first_name || auth?.user?.name || 'User'} 🎉</h5>
-            <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-              Here is a quick overview of your company's core metrics today. Keep track of your workforce headcount, monitor daily attendance across all departments, and manage structural growth smoothly.
-            </p>
+        {/* Company overview hero */}
+        <section className="relative isolate overflow-hidden rounded-3xl bg-slate-900 px-6 py-7 text-white shadow-sm sm:px-8 lg:px-10">
+          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-cyan-950/50 via-slate-900 to-blue-950/40" />
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-10 overflow-hidden">
+            <div className="dashboard-wave dashboard-wave-slow absolute bottom-0 left-0 w-[200%]">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
+                <path fill="rgba(45,212,191,0.12)" d="M0,25 C200,8 400,38 600,22 C800,8 1000,36 1200,24 C1400,10 1600,38 1800,22 C2000,8 2200,36 2400,24 L2400,40 L0,40 Z" />
+              </svg>
+            </div>
+            <div className="dashboard-wave dashboard-wave-medium absolute bottom-0 left-0 w-[200%]">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
+                <path fill="rgba(56,189,248,0.09)" d="M0,31 C260,12 480,38 720,27 C940,15 1120,37 1340,25 C1580,10 1780,36 2020,24 C2200,14 2320,30 2400,27 L2400,40 L0,40 Z" />
+              </svg>
+            </div>
+            <div className="dashboard-wave dashboard-wave-fast absolute bottom-0 left-0 w-[200%]">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
+                <path fill="rgba(167,139,250,0.07)" d="M0,30 C300,14 500,38 700,28 C900,16 1100,38 1200,28 C1400,14 1600,38 1900,28 C2100,16 2300,38 2400,28 L2400,40 L0,40 Z" />
+              </svg>
+            </div>
           </div>
-          <div className="flex-shrink-0">
-             <Button variant="outline" size="sm" onClick={() => window.location.reload()} className="cursor-pointer">
-                <RefreshCw size={16} className="mr-1 inline-block" />
-                Refresh
-             </Button>
+
+          <div className="flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
+            <div className="min-w-0 xl:max-w-xl">
+              <p className="mb-0.5 text-pretty text-sm text-slate-400">{greeting},</p>
+              <div className="flex items-center gap-2">
+                <h1 className="truncate text-balance text-xl font-bold sm:text-2xl">{displayName}</h1>
+                <span aria-hidden="true" className="select-none text-2xl sm:text-3xl">👋</span>
+              </div>
+              <p className="mt-1 hidden text-pretty text-xs text-slate-400 sm:block">Here's what's happening across your company today.</p>
+              <div className="mt-3 flex items-center gap-3 text-emerald-400">
+                <span aria-hidden="true" className="flex items-center gap-2">
+                  <span className="size-2.5 rounded-full bg-emerald-500" />
+                  <span className="size-2.5 rounded-full bg-teal-300/60" />
+                  <span className="size-2.5 rounded-full bg-emerald-400" />
+                </span>
+                <span className="text-sm font-semibold tabular-nums">{stats.presentToday || 0} present today</span>
+              </div>
+            </div>
+
+            <nav aria-label="Dashboard shortcuts" className="flex flex-wrap items-stretch gap-3 sm:gap-5">
+              <div className="flex min-w-64 items-center gap-3 rounded-2xl bg-white/10 p-3">
+                <div className="relative flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white">
+                  <Briefcase className="size-3.5" aria-hidden="true" />
+                  <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border border-slate-700 bg-emerald-400" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-[11px] font-semibold leading-tight">Career Page</p>
+                  <p className="text-[10px] font-medium text-emerald-400 tabular-nums">{stats.activeJobPostings || 0} open</p>
+                </div>
+                <Button variant="ghost" size="icon" onClick={handleCopyCareerLink} aria-label={copied ? 'Career page link copied' : 'Copy career page link'} className="size-7 rounded-md bg-white/10 text-slate-200 hover:bg-white/20 hover:text-white">
+                  {copied ? <CheckCircle className="size-3" /> : <Copy className="size-3" />}
+                </Button>
+                <Button variant="ghost" size="icon" onClick={openCareerPage} aria-label="Open career page" className="size-7 rounded-md bg-emerald-500/80 text-white hover:bg-emerald-500 hover:text-white">
+                  <ExternalLink className="size-3" />
+                </Button>
+              </div>
+
+              <Link href={route('hr.recruitment.job-postings.index')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
+                <Briefcase className="size-5 text-amber-300" aria-hidden="true" />
+                <span className="text-[10px]">Jobs</span>
+              </Link>
+              <Link href={route('hr.recruitment.candidates.index')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
+                <UserPlus className="size-5 text-violet-300" aria-hidden="true" />
+                <span className="text-[10px]">Candidates</span>
+              </Link>
+              <Link href={route('settings')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
+                <Settings className="size-5 text-slate-300" aria-hidden="true" />
+                <span className="text-[10px]">Settings</span>
+              </Link>
+            </nav>
           </div>
-        </div>
+        </section>
 
         {/* 8-Card Stats Layout */}
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
@@ -338,7 +398,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex flex-col gap-3">
                   {charts.designationStats.length > 0 ? (() => {
                     const maxVal = Math.max(...charts.designationStats.map(d => d.value), 1);
@@ -382,7 +442,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex flex-col gap-3">
                   {[
                     { label: 'Add New Employee', icon: UserPlus },
@@ -419,7 +479,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex flex-col gap-3">
                   {recentActivities.todayLeaves && recentActivities.todayLeaves.length > 0 ? (
                     recentActivities.todayLeaves.map((leave, index) => (
@@ -457,7 +517,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 custom-scrollbar">
+              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                 <div className="flex flex-col gap-3">
                   {recentActivities.missingAttendance && recentActivities.missingAttendance.length > 0 ? (
                     recentActivities.missingAttendance.map((record, index) => (
@@ -537,7 +597,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="max-h-[300px] overflow-y-auto px-5 pb-5 pt-4 custom-scrollbar">
+                <div className="max-h-[300px] overflow-y-auto px-5 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   <div className="flex flex-col gap-3">
                     {dashboardData.recentLeaveApplications && dashboardData.recentLeaveApplications.length > 0 ? (
                       dashboardData.recentLeaveApplications.map((leave, index) => (
@@ -589,7 +649,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="max-h-[230px] overflow-y-auto px-5 pb-5 pt-4 custom-scrollbar">
+                <div className="max-h-[230px] overflow-y-auto px-5 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   <div className="flex flex-col gap-4">
                     {recentActivities.announcements && recentActivities.announcements.length > 0 ? (
                       recentActivities.announcements.slice(0,3).map((announcement, index) => (
