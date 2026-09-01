@@ -37,7 +37,8 @@ class ProfileController extends Controller
         
         // Handle avatar upload
         if ($request->hasFile('avatar')) {
-            \Log::info('Avatar file detected', ['file' => $request->file('avatar')->getClientOriginalName()]);
+            $originalAvatarName = $request->file('avatar')->getClientOriginalName();
+            \Log::info('Avatar file detected', ['file' => $originalAvatarName]);
             
             // Delete old avatar if exists
             if ($request->user()->avatar && Storage::disk('public')->exists($request->user()->avatar)) {
@@ -48,6 +49,7 @@ class ProfileController extends Controller
             // Store new avatar
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             $validated['avatar'] = $avatarPath;
+            $validated['avatar_original_name'] = $originalAvatarName;
             \Log::info('New avatar stored', ['path' => $avatarPath]);
         }
         

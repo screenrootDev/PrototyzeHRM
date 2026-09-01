@@ -176,8 +176,8 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
       title={"Profile Settings"} 
       url="/profile"
     >
-      <div className="flex flex-col space-y-8">
-        <div className="flex flex-col space-y-1 space-x-0 md:flex-row md:space-y-0 md:space-x-4">
+      <div className="rounded-xl border bg-white p-5 shadow-sm dark:bg-zinc-950 md:p-6">
+        <div className="hidden">
           {sidebarNavItems.map((item) => (
             <Button
               key={item.href}
@@ -194,33 +194,39 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
           ))}
         </div>
 
-        <div className="flex-1">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {/* Profile Section */}
-          <section id="profile" ref={profileRef} className="mb-16">
-            <div className="space-y-6">
-              <div className="rounded-lg border p-6">
-                <h3 className="text-lg font-medium mb-4">{"Profile Information"}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                  {"Update your account's profile information and email address"}
-                </p>
+          <section id="profile" ref={profileRef} className="h-full">
+            <div className="h-full">
+              <div className="h-full min-h-[540px] overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-zinc-950">
+                <div className="border-b bg-zinc-50/70 px-6 py-5 dark:bg-zinc-900/40">
+                  <h3 className="text-base font-semibold">{"Profile Information"}</h3>
+                  <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Details about your personal information</p>
+                </div>
 
-                <form id="profile-form" onSubmit={submitProfile} className="space-y-6">
+                <form id="profile-form" onSubmit={submitProfile} className="space-y-6 p-6">
                   {/* Avatar Upload Section */}
-                  <div className="flex items-center space-x-6">
-                    <Avatar className="h-20 w-20">
+                  <div>
+                    <Label htmlFor="avatar">Avatar</Label>
+                    <div className="mt-3 flex items-center gap-5">
+                    <Avatar className="h-24 w-24 rounded-lg border-2 border-zinc-200 bg-zinc-50">
                       <AvatarImage 
                         src={getAvatarUrl()} 
                         alt={auth?.user?.name || 'Avatar'}
+                        className="object-cover"
                       />
-                      <AvatarFallback className="text-lg">
+                      <AvatarFallback className="rounded-lg text-lg">
                         {auth?.user?.name?.charAt(0)?.toUpperCase() || 'U'}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col space-y-2">
-                      <Label htmlFor="avatar" className="cursor-pointer inline-flex items-center px-4 py-2 border border-input bg-background hover:bg-accent hover:text-accent-foreground rounded-md font-medium text-sm transition-colors">
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <div className="flex gap-2">
+                        <Input value={profileData.avatar?.name || (auth?.user as any)?.avatar_original_name || (auth?.user?.avatar ? 'avatar.png' : '')} readOnly placeholder="Select avatar image..." className="min-w-0 flex-1" />
+                      <Label htmlFor="avatar" className="inline-flex h-10 shrink-0 cursor-pointer items-center rounded-md border border-input bg-background px-4 text-sm font-medium hover:bg-accent">
                         <Camera className="h-4 w-4 mr-2" />
-                        {"Change Avatar"}
+                        Browse
                       </Label>
+                      </div>
                       <Input
                         id="avatar"
                         type="file"
@@ -228,15 +234,14 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                         onChange={handleAvatarChange}
                         className="hidden"
                       />
-                      <p className="text-xs text-muted-foreground">
-                        {"JPG, PNG, GIF up to 2MB"}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Upload a profile picture. Recommended size: 200x200px</p>
+                    </div>
                     </div>
                   </div>
                   <InputError className="mt-2" message={profileErrors.avatar} />
 
                   <div className="grid gap-2">
-                    <Label htmlFor="name">{"Name"}</Label>
+                    <Label htmlFor="name">Name <span className="text-red-500">*</span></Label>
                     <Input
                       id="name"
                       className="mt-1 block w-full"
@@ -250,7 +255,7 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="email">{"Email address"}</Label>
+                    <Label htmlFor="email">Email <span className="text-red-500">*</span></Label>
                     <Input
                       id="email"
                       type="email"
@@ -285,8 +290,8 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                     </div>
                   )}
 
-                  <div className="flex items-center gap-4">
-                    <Button disabled={profileProcessing}>{"Save"}</Button>
+                  <div className="flex items-center justify-end gap-4">
+                    <Button disabled={profileProcessing}>{"Save Changes"}</Button>
                     <Transition
                       show={profileRecentlySuccessful}
                       enter="transition ease-in-out"
@@ -305,17 +310,17 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
           </section>
 
           {/* Password Section */}
-          <section id="password" ref={passwordRef} className="mb-16">
-            <div className="space-y-6">
-              <div className="rounded-lg border p-6">
-                <h3 className="text-lg font-medium mb-4">{"Update Password"}</h3>
-                <p className="text-sm text-neutral-500 dark:text-neutral-400 mb-6">
-                  {"Ensure your account is using a long, random password to stay secure"}
-                </p>
+          <section id="password" ref={passwordRef} className="h-full">
+            <div className="h-full">
+              <div className="h-full min-h-[540px] overflow-hidden rounded-xl border bg-white shadow-sm dark:bg-zinc-950">
+                <div className="border-b bg-zinc-50/70 px-6 py-5 dark:bg-zinc-900/40">
+                  <h3 className="text-base font-semibold">Change Password</h3>
+                  <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Details about your account password change</p>
+                </div>
 
-                <form id="password-form" onSubmit={updatePassword} className="space-y-6">
+                <form id="password-form" onSubmit={updatePassword} className="space-y-6 p-6 pt-12">
                   <div className="grid gap-2">
-                    <Label htmlFor="current_password">{"Current password"}</Label>
+                    <Label htmlFor="current_password">Current Password</Label>
                     <Input
                       id="current_password"
                       ref={currentPasswordInput}
@@ -324,14 +329,14 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       type="password"
                       className="mt-1 block w-full"
                       autoComplete="current-password"
-                      placeholder="Current password"
+                      placeholder="Enter current password"
                     />
                     <InputError message={passwordErrors.current_password} />
                   </div>
 
                   <div className="grid gap-2">
                     <div className="flex items-center justify-between">
-                      <Label htmlFor="password">{"New password"}</Label>
+                      <Label htmlFor="password">New Password</Label>
                       <Button type="button" variant="outline" size="sm" onClick={generatePassword} className="h-7 px-2 text-xs">
                         Generate Password
                       </Button>
@@ -344,13 +349,13 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       type={showPassword ? "text" : "password"}
                       className="mt-1 block w-full"
                       autoComplete="new-password"
-                      placeholder="New password"
+                      placeholder="Enter new password"
                     />
                     <InputError message={passwordErrors.password} />
                   </div>
 
                   <div className="grid gap-2">
-                    <Label htmlFor="password_confirmation">{"Confirm password"}</Label>
+                    <Label htmlFor="password_confirmation">Confirm Password</Label>
                     <Input
                       id="password_confirmation"
                       value={passwordData.password_confirmation}
@@ -358,13 +363,13 @@ export default function ProfileSettings({ mustVerifyEmail, status }: { mustVerif
                       type={showPassword ? "text" : "password"}
                       className="mt-1 block w-full"
                       autoComplete="new-password"
-                      placeholder="Confirm password"
+                      placeholder="Confirm new password"
                     />
                     <InputError message={passwordErrors.password_confirmation} />
                   </div>
 
-                  <div className="flex items-center gap-4">
-                    <Button disabled={passwordProcessing}>{"Save password"}</Button>
+                  <div className="flex items-center justify-end gap-4">
+                    <Button disabled={passwordProcessing}>{"Save Changes"}</Button>
                     <Transition
                       show={passwordRecentlySuccessful}
                       enter="transition ease-in-out"
