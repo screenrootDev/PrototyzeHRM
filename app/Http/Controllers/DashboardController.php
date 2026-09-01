@@ -560,7 +560,7 @@ class DashboardController extends Controller
 
         // Recent Leave Applications (All statuses)
         $recentLeaveApplications = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with(['employee.employee', 'leaveType'])
+            ->with(['employee.employee.designation', 'leaveType'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
@@ -596,19 +596,37 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Recent Meetings
+        // Upcoming Meetings
         $recentMeetings = Meeting::whereIn('created_by', $companyUserIds)
-            ->orderBy('created_at', 'desc')
+            ->whereDate('meeting_date', '>=', today())
+            ->orderBy('meeting_date')
+            ->orderBy('start_time')
             ->take(5)
             ->get();
 
         // Today's Leaves
         $todayLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with(['employee.employee', 'leaveType'])
+            ->with(['employee.employee.designation', 'leaveType'])
             ->where('status', 'approved')
             ->whereDate('start_date', '<=', today())
             ->whereDate('end_date', '>=', today())
             ->get();
+
+        // Employees celebrating their birthday today
+        $todayBirthdays = Employee::whereIn('created_by', $companyUserIds)
+            ->with(['user', 'designation'])
+            ->whereMonth('date_of_birth', today()->month)
+            ->whereDay('date_of_birth', today()->day)
+            ->get()
+            ->map(function ($employee) {
+                return [
+                    'id' => $employee->id,
+                    'name' => $employee->user?->name ?? 'Employee',
+                    'avatar' => $employee->user?->avatar,
+                    'designation' => $employee->designation?->name ?? 'Team Member',
+                ];
+            })
+            ->values();
 
         // Missing Attendance Today
         $missingAttendance = AttendanceRecord::whereIn('created_by', $companyUserIds)
@@ -648,6 +666,7 @@ class DashboardController extends Controller
                 'meetings' => $recentMeetings,
                 'pendingLeavesList' => $pendingLeavesList,
                 'todayLeaves' => $todayLeaves,
+                'todayBirthdays' => $todayBirthdays,
                 'missingAttendance' => $missingAttendance
             ],
             'upcomingEvents' => $this->getUpcomingEvents($companyUserIds),

@@ -11,14 +11,17 @@ export function UserInfo({
     user: User;
     showEmail?: boolean;
     className?: string;
-    position: 'left' | 'right';
+    position?: 'left' | 'right';
 }) {
     const getInitials = useInitials();
+    const avatarUrl = user.avatar
+        ? ((window as any).storage ? (window as any).storage(user.avatar) : `/storage/${user.avatar}`)
+        : undefined;
 
     return (
         <div className={`flex items-center gap-2 w-full ${position === 'right' ? 'flex-row-reverse text-right' : ''}`}>
             <Avatar className="h-8 w-8 overflow-hidden rounded-full">
-                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarImage src={avatarUrl} alt={user.name} className="object-cover" />
                 <AvatarFallback className="rounded-lg bg-neutral-200 text-black dark:bg-neutral-700 dark:text-white">
                     {getInitials(user.name)}
                 </AvatarFallback>

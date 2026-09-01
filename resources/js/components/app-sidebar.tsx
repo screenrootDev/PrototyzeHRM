@@ -1087,15 +1087,14 @@ export function AppSidebar() {
       <SidebarContent>
         <div
           style={sidebarStyle}
-          className={`h-full ${style !== "plain" ? "sidebar-styled" : ""}`}
+          className={`min-h-full ${style !== "plain" ? "sidebar-styled" : ""}`}
         >
           <NavMain items={filteredNavItems} position={effectivePosition} />
         </div>
       </SidebarContent>
 
-      <SidebarFooter>
-        {/* <NavFooter items={footerNavItems} className="mt-auto" position={position} /> */}
-        {/* Profile menu moved to header */}
+      <SidebarFooter className="relative z-30 mt-auto shrink-0 border-t border-sidebar-border bg-white p-3 dark:bg-gray-950 group-data-[collapsible=icon]:p-2">
+        <NavUser position={effectivePosition} />
       </SidebarFooter>
     </Sidebar>
   );

@@ -3,7 +3,7 @@ import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
 import { type User } from '@/types';
 import { Link } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LogOut, Settings, UserRound } from 'lucide-react';
 
 
 interface UserMenuContentProps {
@@ -25,8 +25,14 @@ export function UserMenuContent({ user }: UserMenuContentProps) {
             <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
                     <Link className="block w-full" href={route('profile')} as="button" prefetch onClick={cleanup}>
-                        <Settings className="mr-2" />
+                        <UserRound className="mr-2" />
                         {"Profile"}
+                    </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Link className="block w-full" href={route('settings')} as="button" prefetch onClick={cleanup}>
+                        <Settings className="mr-2" />
+                        {"Settings"}
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>

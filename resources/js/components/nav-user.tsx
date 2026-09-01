@@ -19,19 +19,10 @@ export function NavUser({ position }: { position: 'left' | 'right' }) {
                     <DropdownMenuTrigger asChild>
                         <SidebarMenuButton
                             size="lg"
-                            className="text-sidebar-accent-foreground data-[state=open]:bg-sidebar-accent group flex items-center gap-2"
+                            className="h-auto min-h-16 rounded-xl border border-sidebar-border/70 bg-sidebar-accent/50 px-3 py-2.5 text-sidebar-accent-foreground shadow-sm data-[state=open]:bg-sidebar-accent group flex items-center gap-2"
                         >
-                            {position === 'right' ? (
-                                <>
-                                    <UserInfo user={auth.user} className="text-right" position={position} />
-                                    <ChevronsUpDown className="size-4" />
-                                </>
-                            ) : (
-                                <>
-                                    <ChevronsUpDown className="size-4" />
-                                    <UserInfo user={auth.user} className="text-left" position={position} />
-                                </>
-                            )}
+                            <UserInfo user={auth.user} showEmail className="text-left" position="left" />
+                            <ChevronsUpDown className="ml-auto size-4 shrink-0" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

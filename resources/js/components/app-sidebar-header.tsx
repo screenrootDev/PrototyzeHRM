@@ -2,7 +2,6 @@ import { Breadcrumbs } from '@/components/breadcrumbs';
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import { useLayout } from '@/contexts/LayoutContext';
 import { type BreadcrumbItem as BreadcrumbItemType } from '@/types';
-import { ProfileMenu } from '@/components/profile-menu';
 import { usePage, router } from '@inertiajs/react';
 import { Search, Bell, Maximize, Moon, Sun, Languages, Clock } from 'lucide-react';
 import {
@@ -174,9 +173,6 @@ export function AppSidebarHeader({ breadcrumbs = [] }: { breadcrumbs?: Breadcrum
                         </DropdownMenu>
                     </div>
 
-                    <div className="h-8 w-[1px] bg-border/40 mx-1 hidden sm:block" />
-
-                    <ProfileMenu />
                     {position === 'right' && <SidebarTrigger className="-mr-1" />}
                 </div>
             </div>

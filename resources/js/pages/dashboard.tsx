@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { RefreshCw, Users, Building2, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers, Settings } from 'lucide-react';
+import { RefreshCw, Users, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers, Settings, PartyPopper, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,6 +45,12 @@ interface CompanyDashboardData {
     meetings: Array<any>;
     pendingLeavesList?: Array<any>;
     todayLeaves?: Array<any>;
+    todayBirthdays?: Array<{
+      id: number;
+      name: string;
+      avatar?: string | null;
+      designation: string;
+    }>;
     missingAttendance?: Array<any>;
   };
   upcomingEvents?: Array<{
@@ -72,6 +78,30 @@ interface PageAction {
   icon: React.ReactNode;
   variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
   onClick: () => void;
+}
+
+function ActivityCard({ title, subtitle, href, children }: {
+  title: string;
+  subtitle: string;
+  href: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card className="min-h-[390px] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+      <CardHeader className="border-b border-zinc-200 px-6 py-5 dark:border-zinc-800">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <CardTitle className="text-base font-semibold leading-5 text-zinc-950 dark:text-zinc-50">{title}</CardTitle>
+            <p className="mt-1 text-xs leading-4 text-zinc-500">{subtitle}</p>
+          </div>
+          <Link href={href} className="flex shrink-0 items-center gap-1 text-xs font-medium text-emerald-600 hover:text-emerald-700">
+            View all <ChevronRight className="size-3.5" />
+          </Link>
+        </div>
+      </CardHeader>
+      <CardContent className="p-0">{children}</CardContent>
+    </Card>
+  );
 }
 
 export default function Dashboard({ dashboardData }: { dashboardData: CompanyDashboardData }) {
@@ -138,6 +168,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
     meetings: [],
     pendingLeavesList: [],
     todayLeaves: [],
+    todayBirthdays: [],
     missingAttendance: []
   };
   
@@ -149,7 +180,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
   const isCompanyUser = userType === 'company';
   const currentHour = new Date().getHours();
   const greeting = currentHour < 12 ? 'Good morning' : currentHour < 17 ? 'Good afternoon' : 'Good evening';
-  const displayName = isCompanyUser ? 'Company' : (auth?.user?.first_name || auth?.user?.name || 'Team');
+  const displayName = auth?.user?.name || auth?.user?.first_name || (isCompanyUser ? 'Company' : 'Team');
   
   const getStatusColor = (status: string) => {
     const colors = {
@@ -251,7 +282,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
           </div>
         </section>
 
-        {/* 8-Card Stats Layout */}
+        {/* Daily workforce overview */}
         <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
           {/* Row 1 */}
           {/* Total Employees */}
@@ -314,71 +345,6 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
                 <div className="text-3xl font-bold text-purple-900">{stats.onLeaveToday || 0}</div>
                 <div className="flex items-center text-xs text-purple-600 mt-1">
                   <span>{stats.pendingLeaves || 0} pending approvals</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Row 2 */}
-          {/* Total Branch */}
-          <Link href={route('hr.branches.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-teal-50 to-teal-100 border-teal-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-teal-700">Total Branch</CardTitle>
-                <Building2 className="h-5 w-5 text-teal-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-teal-900">{stats.totalBranches || 0}</div>
-                <div className="flex items-center text-xs text-teal-600 mt-1">
-                  <span>Active branches</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Total Department */}
-          <Link href={route('hr.departments.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-indigo-50 to-indigo-100 border-indigo-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-indigo-700">Total Department</CardTitle>
-                <Briefcase className="h-5 w-5 text-indigo-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-indigo-900">{stats.totalDepartments || 0}</div>
-                <div className="flex items-center text-xs text-indigo-600 mt-1">
-                  <span>Across all branches</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Total Promotions */}
-          <Link href={route('hr.promotions.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-emerald-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-emerald-700">Total Promotions</CardTitle>
-                <TrendingUp className="h-5 w-5 text-emerald-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-emerald-900">{stats.totalPromotions || 0}</div>
-                <div className="flex items-center text-xs text-emerald-600 mt-1">
-                  <span>This year</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Terminations */}
-          <Link href={route('hr.terminations.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-rose-50 to-rose-100 border-rose-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-rose-700">Terminations</CardTitle>
-                <TrendingDown className="h-5 w-5 text-rose-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-rose-900">{stats.terminations || 0}</div>
-                <div className="flex items-center text-xs text-rose-600 mt-1">
-                  <span>This month</span>
                 </div>
               </CardContent>
             </Card>
@@ -468,75 +434,94 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
           </Card>
         </div>
 
-        {/* Custom Row: Leave & Attendance Status */}
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
-          {/* Employees on Leave */}
-          <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg">
-            <CardHeader className="border-b-0 pb-4">
-              <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
-                Employees on Leave
-              </CardTitle>
+        {/* Today's celebrations and leave */}
+        <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <Card className="relative flex h-full min-h-[310px] flex-col overflow-hidden rounded-xl border border-pink-200 bg-white shadow-sm dark:border-pink-900/60 dark:bg-zinc-950">
+            <span aria-hidden="true" className="absolute left-[14%] top-4 size-1.5 rounded-full bg-pink-200" />
+            <span aria-hidden="true" className="absolute right-[18%] top-8 size-2 rounded-full bg-fuchsia-100" />
+            <span aria-hidden="true" className="absolute bottom-12 left-[54%] size-2 rotate-45 bg-pink-100" />
+            <CardHeader className="relative border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Today's Birthdays</CardTitle>
+                  <p className="mt-1 text-xs text-zinc-500">Celebrate with your team</p>
+                </div>
+                <div className="rounded-xl bg-pink-100 p-2.5 text-pink-600 dark:bg-pink-950/60 dark:text-pink-300">
+                  <PartyPopper className="size-5" />
+                </div>
+              </div>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex flex-col gap-3">
-                  {recentActivities.todayLeaves && recentActivities.todayLeaves.length > 0 ? (
-                    recentActivities.todayLeaves.map((leave, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border border-zinc-200 rounded-md">
-                        <div className="flex items-center gap-3">
-                          <img 
-                            src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(leave.employee?.name || 'Unknown') + '&background=random'} 
-                            alt="Avatar" 
-                            className="w-10 h-10 rounded-md object-cover bg-zinc-100"
-                          />
-                          <div>
-                            <h6 className="font-semibold text-zinc-800 text-sm">{leave.employee?.name}</h6>
-                            <p className="text-zinc-500 text-xs">{leave.leave_type?.name || 'Leave'}</p>
-                          </div>
-                        </div>
-                        <div className="text-xs text-gray-600">
-                          {leave.total_days} {leave.total_days === 1 ? 'day' : 'days'}
+            <CardContent className="relative flex-1 p-0">
+              <div className="max-h-[330px] overflow-y-auto px-6 py-4">
+                {recentActivities.todayBirthdays?.length ? (
+                  <div className="space-y-2">
+                    {recentActivities.todayBirthdays.map((employee) => (
+                      <div key={employee.id} className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-pink-50 dark:hover:bg-pink-950/20">
+                        <img
+                          src={employee.avatar ? `/storage/media/${employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=fce7f3&color=be185d`}
+                          alt={employee.name}
+                          className="size-11 rounded-full border-2 border-white object-cover shadow-sm dark:border-zinc-800"
+                        />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{employee.name}</p>
+                          <p className="truncate text-xs text-zinc-500">{employee.designation}</p>
                         </div>
                       </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-zinc-500 text-sm border border-zinc-200 rounded-md">No employees on leave today</div>
-                  )}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
+                    <PartyPopper className="mb-3 size-8 text-pink-300" />
+                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No birthdays today</p>
+                    <p className="mt-1 text-xs text-zinc-500">The next celebration is just around the corner.</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
 
-          {/* Missing Attendance Today */}
-          <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg">
-            <CardHeader className="border-b-0 pb-4">
-              <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                <UserX className="w-5 h-5 text-zinc-800" strokeWidth={2} />
-                Missing Attendance Today
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex flex-col gap-3">
-                  {recentActivities.missingAttendance && recentActivities.missingAttendance.length > 0 ? (
-                    recentActivities.missingAttendance.map((record, index) => (
-                      <div key={index} className="flex items-center gap-3 p-3 border border-zinc-200 rounded-md">
-                        <img 
-                          src={record.employee?.avatar ? `/storage/media/${record.employee.avatar}` : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(record.employee?.name || 'Unknown') + '&background=random'} 
-                          alt="Avatar" 
-                          className="w-10 h-10 rounded-md object-cover bg-zinc-100"
-                        />
-                        <div>
-                          <h6 className="font-semibold text-zinc-800 text-sm">{record.employee?.name}</h6>
-                          <p className="text-zinc-500 text-xs">{record.employee?.employee?.employee_id || 'ID N/A'}</p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-8 text-zinc-500 text-sm border border-zinc-200 rounded-md">All attendance marked for today</div>
-                  )}
+          <Card className="flex h-full min-h-[310px] flex-col overflow-hidden rounded-xl border border-amber-200 bg-white shadow-sm dark:border-amber-900/60 dark:bg-zinc-950">
+            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Today's Leave</CardTitle>
+                  <p className="mt-1 text-xs text-zinc-500">Employees on leave today</p>
                 </div>
+                <div className="rounded-xl bg-amber-100 p-2.5 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300">
+                  <Calendar className="size-5" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0">
+              <div className="max-h-[330px] overflow-y-auto px-6 py-4">
+                {recentActivities.todayLeaves?.length ? (
+                  <div className="space-y-2">
+                    {recentActivities.todayLeaves.map((leave) => (
+                      <div key={leave.id} className="flex items-center justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-amber-50 dark:hover:bg-amber-950/20">
+                        <div className="flex min-w-0 items-center gap-3">
+                          <img
+                            src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(leave.employee?.name || 'Employee')}&background=ffedd5&color=c2410c`}
+                            alt={leave.employee?.name || 'Employee'}
+                            className="size-11 rounded-full border-2 border-white object-cover shadow-sm dark:border-zinc-800"
+                          />
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{leave.employee?.name || 'Employee'}</p>
+                            <p className="truncate text-xs text-zinc-500">{leave.employee?.employee?.designation?.name || 'Team Member'}</p>
+                          </div>
+                        </div>
+                        <Badge variant="outline" className="shrink-0 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
+                          {leave.leave_type?.name || 'Leave'}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
+                    <Calendar className="mb-3 size-8 text-amber-300" />
+                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No employees on leave today</p>
+                    <p className="mt-1 text-xs text-zinc-500">Everyone is available today.</p>
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -544,10 +529,170 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
 
 
 
+        {/* Activity overview matching the reference dashboard */}
+        <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
+          <ActivityCard title="Recent Leave Applications" subtitle="Latest leave requests from employees" href={route('hr.leave-applications.index')}>
+            <div className="max-h-[390px] overflow-y-auto">
+              {dashboardData.recentLeaveApplications?.length ? dashboardData.recentLeaveApplications.map((leave) => (
+                <div key={leave.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <img src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(leave.employee?.name || 'Employee')}&background=e5e7eb&color=374151`} alt={leave.employee?.name || 'Employee'} className="size-11 rounded-full object-cover" />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{leave.employee?.name || 'Employee'}</p>
+                      <p className="truncate text-xs text-zinc-500">{leave.leave_type?.name || 'Leave'} • {format(new Date(leave.start_date), 'yyyy-MM-dd')}</p>
+                    </div>
+                  </div>
+                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium capitalize ${leave.status === 'approved' ? 'border-green-200 bg-green-50 text-green-700' : leave.status === 'rejected' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>{leave.status}</span>
+                </div>
+              )) : <div className="py-16 text-center text-sm text-zinc-500">No recent leave applications</div>}
+            </div>
+          </ActivityCard>
+
+          <ActivityCard title="Recent Candidates" subtitle="Latest applicants in the pipeline" href={route('hr.recruitment.candidates.index')}>
+            <div className="max-h-[390px] overflow-y-auto">
+              {recentActivities.candidates?.length ? recentActivities.candidates.map((candidate, index) => {
+                const name = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
+                const colors = ['border-amber-300 bg-amber-50 text-amber-700', 'border-lime-300 bg-lime-50 text-lime-700', 'border-blue-300 bg-blue-50 text-blue-700'];
+                return <div key={candidate.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-full border text-sm font-semibold ${colors[index % colors.length]}`}>{name.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</div>
+                    <div className="min-w-0"><p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{name}</p><p className="truncate text-xs text-zinc-500">{candidate.job?.title || candidate.current_position || 'Applicant'} • {candidate.application_date ? format(new Date(candidate.application_date), 'yyyy-MM-dd') : 'Recently applied'}</p></div>
+                  </div>
+                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium ${candidate.status === 'New' ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-orange-200 bg-orange-50 text-orange-700'}`}>{candidate.status || 'New'}</span>
+                </div>;
+              }) : <div className="py-16 text-center text-sm text-zinc-500">No recent candidates</div>}
+            </div>
+          </ActivityCard>
+
+          <ActivityCard title="Recent Announcements" subtitle="Latest company announcements" href={route('hr.announcements.index')}>
+            <div className="max-h-[390px] overflow-y-auto">
+              {recentActivities.announcements?.length ? recentActivities.announcements.map((announcement) => (
+                <div key={announcement.id} className="flex items-center gap-3 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Bell className="size-5" /></div>
+                  <div className="min-w-0">
+                    <div className="flex min-w-0 items-center gap-2">
+                      <p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{announcement.title}</p>
+                      {announcement.is_high_priority && (
+                        <span className="shrink-0 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">Urgent</span>
+                      )}
+                    </div>
+                    <p className="truncate text-xs text-zinc-500">{announcement.category || 'Company News'} • {format(new Date(announcement.created_at), 'yyyy-MM-dd')}</p>
+                  </div>
+                </div>
+              )) : <div className="py-16 text-center text-sm text-zinc-500">No recent announcements</div>}
+            </div>
+          </ActivityCard>
+
+          <ActivityCard title="Upcoming Meetings" subtitle="Scheduled meetings from today onwards" href={route('meetings.meetings.index')}>
+            <div className="max-h-[390px] overflow-y-auto">
+              {recentActivities.meetings?.length ? recentActivities.meetings.map((meeting) => (
+                <div key={meeting.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
+                  <div className="flex min-w-0 items-center gap-3"><div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><Users className="size-5" /></div><div className="min-w-0"><p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{meeting.title}</p><p className="truncate text-xs text-zinc-500">{format(new Date(meeting.meeting_date), 'yyyy-MM-dd')} • {meeting.start_time || 'Time pending'}{meeting.end_time ? ` - ${meeting.end_time}` : ''}</p></div></div>
+                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium capitalize ${meeting.status === 'completed' ? 'border-green-200 bg-green-50 text-green-700' : 'border-blue-200 bg-blue-50 text-blue-700'}`}>{meeting.status || 'Scheduled'}</span>
+                </div>
+              )) : <div className="py-16 text-center text-sm text-zinc-500">No upcoming meetings</div>}
+            </div>
+          </ActivityCard>
+        </div>
+
+        {/* Superseded activity layout retained only as source history */}
+        <div className="hidden">
+          <Card className="flex min-h-[300px] flex-col overflow-hidden rounded-xl border border-blue-200 bg-white shadow-sm dark:border-blue-900/60 dark:bg-zinc-950">
+            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Recent Candidates</CardTitle>
+                  <p className="mt-1 text-xs text-zinc-500">Latest recruitment applications</p>
+                </div>
+                <div className="rounded-xl bg-blue-100 p-2.5 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300">
+                  <UserPlus className="size-5" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0">
+              <div className="max-h-[320px] overflow-y-auto px-6 py-4">
+                {recentActivities.candidates?.length ? (
+                  <div className="space-y-2">
+                    {recentActivities.candidates.map((candidate) => {
+                      const candidateName = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
+                      return (
+                        <div key={candidate.id} className="flex items-center justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/20">
+                          <div className="flex min-w-0 items-center gap-3">
+                            <img
+                              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(candidateName)}&background=dbeafe&color=1d4ed8`}
+                              alt={candidateName}
+                              className="size-11 rounded-full object-cover"
+                            />
+                            <div className="min-w-0">
+                              <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{candidateName}</p>
+                              <p className="truncate text-xs text-zinc-500">{candidate.job?.title || candidate.current_position || 'General application'}</p>
+                            </div>
+                          </div>
+                          <Badge variant="outline" className="shrink-0 border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
+                            {candidate.status || 'New'}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
+                    <UserPlus className="mb-3 size-8 text-blue-300" />
+                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No recent candidates</p>
+                    <p className="mt-1 text-xs text-zinc-500">New applications will appear here.</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="flex min-h-[300px] flex-col overflow-hidden rounded-xl border border-violet-200 bg-white shadow-sm dark:border-violet-900/60 dark:bg-zinc-950">
+            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Upcoming Meetings</CardTitle>
+                  <p className="mt-1 text-xs text-zinc-500">Your team's upcoming schedule</p>
+                </div>
+                <div className="rounded-xl bg-violet-100 p-2.5 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300">
+                  <Clock className="size-5" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0">
+              <div className="max-h-[320px] overflow-y-auto px-6 py-4">
+                {recentActivities.meetings?.length ? (
+                  <div className="space-y-2">
+                    {recentActivities.meetings.map((meeting) => (
+                      <div key={meeting.id} className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-violet-50 dark:hover:bg-violet-950/20">
+                        <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300">
+                          <span className="text-[10px] font-medium uppercase">{format(new Date(meeting.meeting_date), 'MMM')}</span>
+                          <span className="text-sm font-bold leading-none">{format(new Date(meeting.meeting_date), 'dd')}</span>
+                        </div>
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{meeting.title}</p>
+                          <p className="truncate text-xs text-zinc-500">
+                            {meeting.start_time && meeting.end_time ? `${meeting.start_time} – ${meeting.end_time}` : meeting.start_time || 'Time to be confirmed'}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
+                    <Clock className="mb-3 size-8 text-violet-300" />
+                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No upcoming meetings</p>
+                    <p className="mt-1 text-xs text-zinc-500">Scheduled meetings will appear here.</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Calendar and Leaves Row */}
-        <div className="grid lg:grid-cols-3 grid-cols-1 gap-5 mt-5">
+        <div className="mt-5 grid grid-cols-1 gap-5">
           {/* Calendar */}
-          <div className="lg:col-span-2">
+          <div>
             <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg overflow-hidden">
               <CardHeader className="border-b-0 pb-2 pt-4">
                 <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
@@ -587,7 +732,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
           </div>
 
           {/* Leaves and Announcements */}
-          <div className="flex flex-col gap-5">
+          <div className="hidden">
             {/* Recent Leave Applications */}
             <Card className="border border-zinc-100 shadow-sm bg-white rounded-lg flex-1">
               <CardHeader className="border-b border-zinc-100 pb-3">
@@ -645,7 +790,7 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
               <CardHeader className="border-b border-zinc-100 pb-3">
                 <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-800"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>
-                  Announcements
+                  Recent Announcements
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
