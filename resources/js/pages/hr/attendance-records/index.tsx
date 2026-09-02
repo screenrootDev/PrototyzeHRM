@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
-import { Plus, Download, Upload, Check, X, Flag, Star, Ban, Minus, Clock, ArrowLeftToLine, Timer, Search, Filter, CircleDashed } from 'lucide-react';
+import { Plus, AlarmClock, ArrowLeftFromLine, Timer, CircleDashed, Filter, FileDown, FileUp, RefreshCcw, X } from 'lucide-react';
 import { hasPermission } from '@/utils/authorization';
 import { toast } from '@/components/custom-toast';
 import { Pagination } from '@/components/ui/pagination';
@@ -24,11 +24,11 @@ export default function AttendanceRecords() {
   const [selectedMonth, setSelectedMonth] = useState(pageFilters.month || (currentMonth || new Date().getMonth() + 1).toString());
   const [selectedYear, setSelectedYear] = useState(pageFilters.year || (currentYear || new Date().getFullYear()).toString());
   
-  const [showFilters, setShowFilters] = useState(true);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
   const [perPage, setPerPage] = useState(pageFilters.per_page || "10");
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const months = [
     { value: '1', label: 'January' },
@@ -62,6 +62,59 @@ export default function AttendanceRecords() {
     }, { preserveState: true, preserveScroll: true });
   };
 
+  const updateFilters = (employee = selectedEmployee, month = selectedMonth, year = selectedYear) => {
+    router.get(route('hr.attendance-records.index'), {
+      page: 1,
+      employee_id: employee !== 'all' ? employee : undefined,
+      month,
+      year,
+      per_page: perPage
+    }, { preserveState: true, preserveScroll: true, replace: true });
+  };
+
+  const clearEmployeeFilter = () => {
+    setSelectedEmployee('all');
+    updateFilters('all', selectedMonth, selectedYear);
+  };
+
+  const exportCurrentPage = () => {
+    const headers = ['Employee', 'Employee ID', 'Date', 'Status', 'Clock In', 'Clock Out', 'Total Hours', 'Notes'];
+    const rows = (attendanceData?.data || []).flatMap((row: any) => gridDates.map(({ day }) => {
+      const record = row.days?.[day];
+      const date = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      return record?.record_id ? [row.employee.name, row.employee.employee_id, date, record.status || '', record.clock_in || '', record.clock_out || '', record.total_hours ?? '', record.notes || ''] : null;
+    }).filter(Boolean));
+    const csv = [headers, ...rows].map((row) => row.map((value: any) => `"${String(value).replaceAll('"', '""')}"`).join(',')).join('\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `attendance-${selectedYear}-${String(selectedMonth).padStart(2, '0')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const importAttendance = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('file', file);
+    toast.loading('Importing attendance records...');
+    router.post(route('hr.attendance-records.import'), formData, {
+      forceFormData: true,
+      preserveScroll: true,
+      onSuccess: (page: any) => {
+        toast.dismiss();
+        if (page.props.flash?.success) toast.success(page.props.flash.success);
+        if (page.props.flash?.error) toast.error(page.props.flash.error);
+      },
+      onError: (errors) => {
+        toast.dismiss();
+        toast.error(Object.values(errors).join(', '));
+      },
+      onFinish: () => { event.target.value = ''; }
+    });
+  };
+
   const handleResetFilters = () => {
     setSearchTerm('');
     setSelectedEmployee('all');
@@ -81,8 +134,7 @@ export default function AttendanceRecords() {
       return;
     }
     
-    // Disable clicking on future dates if we want (optional, but standard practice)
-    // if (isFuture) return;
+    if (isFuture || dayData?.status === 'future') return;
 
     const dateStr = `${selectedYear}-${String(selectedMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     
@@ -94,7 +146,9 @@ export default function AttendanceRecords() {
         date: dateStr,
         status: dayData.status,
         clock_in: dayData.clock_in,
-        clock_out: dayData.clock_out
+        clock_out: dayData.clock_out,
+        break_hours: dayData.break_hours ?? 0,
+        notes: dayData.notes ?? ''
       });
     } else {
       if (!hasPermission(permissions, 'create-attendance-records')) return;
@@ -159,54 +213,45 @@ export default function AttendanceRecords() {
     return dates;
   }, [daysInMonth, selectedMonth, selectedYear]);
 
-  const renderStatusCell = (dayData: any, isFuture: boolean, isWeekend: boolean) => {
-    if (isFuture && !dayData?.status) {
-      return <Minus className="h-4 w-4 text-gray-300 mx-auto" />;
-    }
-    
-    if (isWeekend && !dayData?.status) {
-      return <Ban className="h-4 w-4 text-gray-300 mx-auto" />;
-    }
+  const renderStatusCell = (dayData: any) => {
+    const status = dayData?.status || 'not_added';
+    const statusMap: Record<string, { icon: React.ReactNode; className: string; title: string }> = {
+      present: { icon: '✓', className: 'text-green-600 dark:text-green-400 font-bold text-base', title: 'Present' },
+      absent: { icon: '✕', className: 'text-red-500 dark:text-red-400 font-bold text-base', title: 'Absent' },
+      half_day: { icon: '½', className: 'text-yellow-500 dark:text-yellow-400 font-bold text-base', title: 'Half Day' },
+      on_leave: { icon: '🚩', className: 'text-blue-500 dark:text-blue-400 text-base', title: dayData?.leave_type ? `On Leave - ${dayData.leave_type}` : 'On Leave' },
+      holiday: { icon: '⭐', className: 'text-purple-500 dark:text-purple-400 text-base', title: 'Holiday' },
+      day_off: { icon: '⊘', className: 'text-gray-400 dark:text-gray-500 text-base', title: 'Day Off' },
+      future: { icon: '-', className: 'text-gray-400 dark:text-gray-600 font-bold text-sm', title: 'Future' },
+      not_added: { icon: <CircleDashed className="h-3.5 w-3.5 text-gray-400 dark:text-gray-500" />, className: '', title: 'Attendance Not Added' },
+    };
+    const cfg = statusMap[status] || statusMap.not_added;
+    const details = [cfg.title];
+    if (dayData?.is_late) details.push('Late Arrival');
+    if (dayData?.is_early_departure) details.push('Early Departure');
+    if (dayData?.clock_in) details.push(`In: ${dayData.clock_in}`);
+    if (dayData?.clock_out) details.push(`Out: ${dayData.clock_out}`);
+    if (dayData?.overtime_hours > 0) details.push(`OT: ${Number(dayData.overtime_hours).toFixed(1)}h`);
 
-    if (!dayData || !dayData.status) {
-      return <CircleDashed className="h-4 w-4 text-gray-300 mx-auto" title="Attendance Not Added" />;
-    }
-    
-    switch (dayData.status) {
-      case 'present':
-        return <Check className="h-4 w-4 text-[#20c997] font-bold mx-auto stroke-[3]" title={`In: ${dayData.clock_in || '--'} Out: ${dayData.clock_out || '--'}`} />;
-      case 'absent':
-        return <X className="h-4 w-4 text-red-500 font-bold mx-auto stroke-[3]" />;
-      case 'half_day':
-        return <span className="font-bold text-yellow-500 flex justify-center text-sm">½</span>;
-      case 'on_leave':
-        return <Flag className="h-4 w-4 text-red-600 fill-current mx-auto" title={dayData.leave_type} />;
-      case 'holiday':
-        return <Star className="h-4 w-4 text-yellow-400 fill-current mx-auto" />;
-      default:
-        return <CircleDashed className="h-4 w-4 text-gray-300 mx-auto" />;
-    }
+    return <div className="flex h-8 w-full flex-col items-center justify-center gap-0.5" title={details.join(' | ')}>
+      <span className={`leading-none ${cfg.className}`}>{cfg.icon}</span>
+      {(dayData?.is_late || dayData?.is_early_departure || dayData?.overtime_hours > 0) && <div className="flex items-center gap-0.5">
+        {dayData?.is_late && <AlarmClock className="h-2.5 w-2.5 text-orange-500" />}
+        {dayData?.is_early_departure && <ArrowLeftFromLine className="h-2.5 w-2.5 text-red-400" />}
+        {dayData?.overtime_hours > 0 && <Timer className="h-2.5 w-2.5 text-blue-500" />}
+      </div>}
+    </div>;
   };
 
-  const pageActions = [
-    {
-      label: 'Export',
-      icon: <Download className="h-4 w-4 mr-2" />,
-      variant: 'outline' as const,
-      onClick: () => {}
-    },
-    {
-      label: 'Import',
-      icon: <Upload className="h-4 w-4 mr-2" />,
-      variant: 'outline' as const,
-      onClick: () => {}
-    }
+  const pageActions: any[] = [
+    { label: 'Export', icon: <FileDown className="h-4 w-4" />, variant: 'outline', onClick: exportCurrentPage },
+    { label: 'Import', icon: <FileUp className="h-4 w-4" />, variant: 'outline', onClick: () => importInputRef.current?.click() },
   ];
   
   if (hasPermission(permissions, 'create-attendance-records')) {
     pageActions.push({
       label: 'Add Record',
-      icon: <Plus className="h-4 w-4 mr-2" />,
+      icon: <Plus className="h-4 w-4" />,
       variant: 'default',
       className: 'bg-[#20c997] hover:bg-[#1ba87e] border-none text-white',
       onClick: () => {
@@ -226,90 +271,30 @@ export default function AttendanceRecords() {
   return (
     <PageTemplate
       title={"Attendance Records"}
+      description="View and manage monthly attendance records."
       url="/hr/attendance-records"
       actions={pageActions}
       breadcrumbs={breadcrumbs}
       noPadding
     >
+      <input ref={importInputRef} type="file" accept=".csv,text/csv" className="hidden" onChange={importAttendance} />
       <div className="flex flex-col gap-4">
-        {/* Filter Section matching ERPGo */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 dark:border-gray-800 p-5">
-          <div className="flex flex-col gap-4">
-            {/* Top row of filters */}
-            <div className="flex justify-between items-center">
-              <div className="flex items-center gap-2 max-w-sm w-full">
-                <div className="relative w-full">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input 
-                    type="text" 
-                    placeholder="Search..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9 h-10 border-gray-200"
-                  />
-                </div>
-                <Button 
-                  onClick={applyFilters} 
-                  className="bg-[#20c997] hover:bg-[#1ba87e] text-white h-10 px-4 whitespace-nowrap"
-                >
-                  <Search className="h-4 w-4 mr-2" /> Search
-                </Button>
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowFilters(!showFilters)}
-                  className="h-10 px-4 whitespace-nowrap text-gray-600 border-gray-200 bg-gray-50 hover:bg-gray-100"
-                >
-                  <Filter className="h-4 w-4 mr-2" /> {showFilters ? 'Hide Filters' : 'Show Filters'}
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500 font-medium">Per Page:</span>
-                <Select value={perPage} onValueChange={(val) => {
-                  setPerPage(val);
-                  router.get(route('hr.attendance-records.index'), {
-                    page: 1,
-                    per_page: parseInt(val),
-                    search: searchTerm || undefined,
-                    employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
-                    month: selectedMonth,
-                    year: selectedYear
-                  }, { preserveState: true, preserveScroll: true });
-                }}>
-                  <SelectTrigger className="w-[80px] h-9 border-gray-200">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {/* Bottom row of filters */}
-            {showFilters && (
-              <div className="flex items-end gap-4 mt-2">
-                <div className="space-y-1.5 w-64">
-                  <Label className="text-sm font-semibold text-gray-700">Employee</Label>
-                  <Select value={selectedEmployee} onValueChange={setSelectedEmployee}>
-                    <SelectTrigger className="w-full border-gray-200">
+        <div className="rounded-lg border bg-white p-3 shadow dark:bg-gray-900">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div className="flex flex-wrap items-center gap-2">
+                <Select value={selectedEmployee} onValueChange={(value) => { setSelectedEmployee(value); updateFilters(value); }}>
+                    <SelectTrigger className="h-9 w-40 gap-2">
                       <SelectValue placeholder="All Employees" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent searchable={true}>
                       <SelectItem value="all">All Employees</SelectItem>
                       {employees?.map((emp: any) => (
                         <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5 w-48">
-                  <Label className="text-sm font-semibold text-gray-700">Month</Label>
-                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-                    <SelectTrigger className="w-full border-gray-200">
+                </Select>
+                <Select value={selectedMonth} onValueChange={(value) => { setSelectedMonth(value); updateFilters(selectedEmployee, value); }}>
+                    <SelectTrigger className="h-9 w-40 gap-2">
                       <SelectValue placeholder="Select Month" />
                     </SelectTrigger>
                     <SelectContent>
@@ -317,13 +302,9 @@ export default function AttendanceRecords() {
                         <SelectItem key={m.value} value={m.value}>{m.label}</SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5 w-48">
-                  <Label className="text-sm font-semibold text-gray-700">Year</Label>
-                  <Select value={selectedYear} onValueChange={setSelectedYear}>
-                    <SelectTrigger className="w-full border-gray-200">
+                </Select>
+                <Select value={selectedYear} onValueChange={(value) => { setSelectedYear(value); updateFilters(selectedEmployee, selectedMonth, value); }}>
+                    <SelectTrigger className="h-9 w-40 gap-2">
                       <SelectValue placeholder="Select Year" />
                     </SelectTrigger>
                     <SelectContent>
@@ -331,51 +312,46 @@ export default function AttendanceRecords() {
                         <SelectItem key={y.value} value={y.value}>{y.label}</SelectItem>
                       ))}
                     </SelectContent>
-                  </Select>
-                </div>
-
-                <Button 
-                  onClick={applyFilters} 
-                  className="bg-[#20c997] hover:bg-[#1ba87e] text-white"
-                >
-                  Apply Filters
+                </Select>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedEmployee !== 'all' && (
+                <Button variant="ghost" size="sm" onClick={clearEmployeeFilter} className="h-9 text-gray-500 hover:bg-transparent hover:text-gray-700">
+                  <RefreshCcw className="h-4 w-4" /> Clear Filters
                 </Button>
-                
-                <Button 
-                  variant="ghost" 
-                  onClick={handleResetFilters} 
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  Reset Filters
-                </Button>
-              </div>
-            )}
+              )}
+              <Button variant={selectedEmployee !== 'all' ? 'default' : 'outline'} size="sm" onClick={applyFilters} className="relative h-9 px-3">
+                <Filter className="mr-1.5 h-4 w-4" /> Filters
+                {selectedEmployee !== 'all' && <span className="ml-1.5 flex h-5 min-w-5 items-center justify-center rounded-full bg-white px-1 text-xs font-semibold text-primary">1</span>}
+              </Button>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-1.5 pt-3">
+            {selectedEmployee !== 'all' && <span className="inline-flex items-center gap-1 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">Employee: {employees?.find((employee: any) => employee.id.toString() === selectedEmployee)?.name}<button type="button" onClick={clearEmployeeFilter} aria-label="Clear employee filter" className="rounded-sm hover:text-gray-950"><X className="h-3 w-3" /></button></span>}
+            <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">Month: {months.find(month => month.value === selectedMonth)?.label}</span>
+            <span className="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-700 ring-1 ring-inset ring-gray-600/20">Year: {selectedYear}</span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-medium text-gray-600">
-          <div className="flex items-center gap-1.5"><Check className="h-4 w-4 text-[#20c997] stroke-[3]" /> Present</div>
-          <div className="flex items-center gap-1.5"><X className="h-4 w-4 text-red-500 stroke-[3]" /> Absent</div>
+        <div className="rounded-lg border border-gray-100 bg-white px-4 py-3 shadow dark:border-gray-800 dark:bg-gray-900">
+          <div className="flex flex-wrap items-center gap-4 text-xs text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-1.5"><span className="text-sm font-bold text-green-600">✓</span> Present</div>
+          <div className="flex items-center gap-1.5"><span className="text-sm font-bold text-red-500">✕</span> Absent</div>
           <div className="flex items-center gap-1.5"><span className="text-yellow-500 font-bold text-sm leading-none">½</span> Half Day</div>
-          <div className="flex items-center gap-1.5"><Flag className="h-4 w-4 text-red-600 fill-current" /> On Leave</div>
-          <div className="flex items-center gap-1.5"><Star className="h-4 w-4 text-yellow-400 fill-current" /> Holiday</div>
-          <div className="flex items-center gap-1.5"><Ban className="h-4 w-4 text-gray-400" /> Day Off</div>
-          <div className="flex items-center gap-1.5"><Minus className="h-4 w-4 text-gray-400" /> Future</div>
-          <div className="flex items-center gap-1.5"><CircleDashed className="h-4 w-4 text-gray-400" /> Attendance Not Added</div>
-          <div className="flex items-center gap-1.5"><Clock className="h-4 w-4 text-orange-500" /> Late</div>
-          <div className="flex items-center gap-1.5"><ArrowLeftToLine className="h-4 w-4 text-red-400" /> Early Departure</div>
-          <div className="flex items-center gap-1.5"><Timer className="h-4 w-4 text-blue-500" /> Overtime</div>
+          <div className="flex items-center gap-1.5">🚩 On Leave</div>
+          <div className="flex items-center gap-1.5">⭐ Holiday</div>
+          <div className="flex items-center gap-1.5"><span className="text-sm text-gray-600">⊘</span> Day Off</div>
+          <div className="flex items-center gap-1.5"><span className="text-sm font-bold text-gray-600">-</span> Future</div>
+          <div className="flex items-center gap-1.5"><CircleDashed className="h-3 w-3 text-gray-400" /> Attendance Not Added</div>
+          <div className="flex items-center gap-1.5"><AlarmClock className="h-3.5 w-3.5 text-orange-500" /> Late</div>
+          <div className="flex items-center gap-1.5"><ArrowLeftFromLine className="h-3.5 w-3.5 text-red-500" /> Early</div>
+          <div className="flex items-center gap-1.5"><Timer className="h-3.5 w-3.5 text-blue-600" /> Overtime</div>
+        </div>
         </div>
 
         {/* Main Grid */}
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-100 overflow-hidden w-full">
-          <div className="p-4 border-b border-gray-100 text-center relative bg-gray-50/50">
-            <h3 className="text-sm font-bold text-gray-800">
-              {months.find(m => m.value === selectedMonth)?.label} {selectedYear}
-            </h3>
-          </div>
-
           <div className="w-full grid bg-white text-sm" style={{ gridTemplateColumns: '220px minmax(0, 1fr) 70px' }}>
             {/* LEFT PANE: Fixed Width */}
             <div className="flex flex-col border-r border-gray-100 z-10 shadow-[2px_0_8px_rgba(0,0,0,0.02)]">
@@ -431,7 +407,7 @@ export default function AttendanceRecords() {
                             className="w-[44px] shrink-0 flex justify-center items-center cursor-pointer hover:bg-gray-100 transition-colors border-r border-gray-50/50 last:border-r-0"
                             onClick={() => handleCellClick(row.employee.id, date.day, dayData, date.isFuture)}
                           >
-                            {renderStatusCell(dayData, date.isFuture, date.isWeekend)}
+                            {renderStatusCell(dayData)}
                           </div>
                         );
                       })}
@@ -451,9 +427,10 @@ export default function AttendanceRecords() {
               ) : (
                 attendanceData?.data?.map((row: any) => {
                   const workingDays = workingDaysInMonth || 22;
+                  const attendedDays = Number(row.summary.present || 0) + (Number(row.summary.half_day || 0) * 0.5);
                   return (
                     <div key={`total-${row.employee.id}`} className="h-[52px] flex items-center justify-center text-xs font-bold text-gray-800 border-b border-gray-100 bg-gray-50/30 hover:bg-gray-100/90 transition-colors">
-                      {row.summary.present}/{workingDays}
+                      {Number.isInteger(attendedDays) ? attendedDays : attendedDays.toFixed(1)}/{workingDays}
                     </div>
                   );
                 })
@@ -469,6 +446,17 @@ export default function AttendanceRecords() {
               links={attendanceData?.links}
               entityName={"employees"}
               onPageChange={(url) => router.get(url)}
+              perPage={perPage}
+              onPerPageChange={(value) => {
+                setPerPage(value);
+                router.get(route('hr.attendance-records.index'), {
+                  page: 1,
+                  per_page: value,
+                  employee_id: selectedEmployee !== 'all' ? selectedEmployee : undefined,
+                  month: selectedMonth,
+                  year: selectedYear,
+                }, { preserveState: true, preserveScroll: true, replace: true });
+              }}
             />
           </div>
         </div>
@@ -495,7 +483,7 @@ export default function AttendanceRecords() {
                       <SelectTrigger className="w-full h-11 border-gray-200">
                         <SelectValue placeholder="Select Employee" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent searchable={true}>
                         {employees?.map((emp: any) => (
                           <SelectItem key={emp.id} value={emp.id.toString()}>{emp.name}</SelectItem>
                         ))}

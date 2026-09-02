@@ -3,6 +3,7 @@
  */
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 
 interface PaginationProps {
@@ -15,6 +16,9 @@ interface PaginationProps {
   entityName?: string;
   onPageChange?: (url: string) => void;
   className?: string;
+  perPage?: string | number;
+  perPageOptions?: Array<string | number>;
+  onPerPageChange?: (value: string) => void;
 }
 
 export function Pagination({
@@ -27,6 +31,9 @@ export function Pagination({
   entityName = 'items',
   onPageChange,
   className = '',
+  perPage,
+  perPageOptions = [10, 25, 50],
+  onPerPageChange,
 }: PaginationProps) {
   
 
@@ -49,7 +56,23 @@ export function Pagination({
         <span className="font-medium dark:text-white">{total}</span> {entityName}
       </div>
 
-      <div className="flex gap-1">
+      <div className="flex flex-wrap items-center gap-3">
+        {perPage !== undefined && onPerPageChange && (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground dark:text-gray-300">Rows per page:</span>
+            <Select value={String(perPage)} onValueChange={onPerPageChange}>
+              <SelectTrigger className="h-8 w-16">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {perPageOptions.map((option) => (
+                  <SelectItem key={String(option)} value={String(option)}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        )}
+        <div className="flex gap-1">
         {links && links.length > 0 ? (
           links.map((link: any, i: number) => {
             // Check if the link is "Next" or "Previous" to use text instead of icon
@@ -95,6 +118,7 @@ export function Pagination({
             </>
           )
         )}
+        </div>
       </div>
     </div>
   );

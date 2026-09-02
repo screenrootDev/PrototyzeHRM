@@ -956,6 +956,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         Route::middleware('permission:manage-attendance-records')->group(function () {
             Route::get('hr/attendance-records', [\App\Http\Controllers\AttendanceRecordController::class, 'index'])->name('hr.attendance-records.index');
             Route::post('hr/attendance-records', [\App\Http\Controllers\AttendanceRecordController::class, 'store'])->middleware('permission:create-attendance-records')->name('hr.attendance-records.store');
+            Route::post('hr/attendance-records/import', [\App\Http\Controllers\AttendanceRecordController::class, 'import'])->middleware('permission:create-attendance-records')->name('hr.attendance-records.import');
             Route::put('hr/attendance-records/{attendanceRecord}', [\App\Http\Controllers\AttendanceRecordController::class, 'update'])->middleware('permission:edit-attendance-records')->name('hr.attendance-records.update');
             Route::delete('hr/attendance-records/{attendanceRecord}', [\App\Http\Controllers\AttendanceRecordController::class, 'destroy'])->middleware('permission:delete-attendance-records')->name('hr.attendance-records.destroy');
         });

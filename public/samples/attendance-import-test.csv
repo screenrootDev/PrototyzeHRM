@@ -1,0 +1,6 @@
+Employee ID,Date,Status,Clock In,Clock Out,Notes
+EMP2745,2026-09-01,present,09:00,18:00,CSV import test - present
+EMP8802,2026-09-01,half_day,09:15,13:15,CSV import test - half day
+EMP9377,2026-09-01,absent,,,CSV import test - absent
+EMP6067,2026-09-01,on_leave,,,CSV import test - on leave
+EMP5156,2026-09-01,holiday,,,CSV import test - holiday

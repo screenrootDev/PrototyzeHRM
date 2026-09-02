@@ -30,6 +30,7 @@ class AttendanceRecordController extends Controller
             // 1. Get employees query
             $employeeQuery = User::emp()
                 ->with('employee')
+                ->whereHas('employee')
                 ->whereIn('created_by', getCompanyAndUsersId())
                 ->where('status', 'active');
 
@@ -81,11 +82,19 @@ class AttendanceRecordController extends Controller
                 }
             }
 
+            $settings = settings();
+            $workingDaysSetting = isset($settings['working_days'])
+                ? json_decode($settings['working_days'], true)
+                : [1, 2, 3, 4, 5];
+            $workingDaysSetting = $workingDaysSetting ?: [1, 2, 3, 4, 5];
+
             // 4. Format Grid Data
             $attendanceData = [];
             foreach ($employeesList as $emp) {
                 $empId = $emp->id;
-                $empRecords = $attendanceRecords->get($empId, collect())->keyBy('date');
+                $empRecords = $attendanceRecords->get($empId, collect())->keyBy(
+                    fn (AttendanceRecord $record) => $record->date->format('Y-m-d')
+                );
                 
                 $days = [];
                 $summary = [
@@ -107,7 +116,13 @@ class AttendanceRecordController extends Controller
                             'status' => $status,
                             'record_id' => $record->id,
                             'clock_in' => $record->clock_in,
-                            'clock_out' => $record->clock_out
+                            'clock_out' => $record->clock_out,
+                            'is_late' => (bool) $record->is_late,
+                            'is_early_departure' => (bool) $record->is_early_departure,
+                            'overtime_hours' => (float) ($record->overtime_hours ?? 0),
+                            'total_hours' => (float) ($record->total_hours ?? 0),
+                            'break_hours' => (float) ($record->break_hours ?? 0),
+                            'notes' => $record->notes,
                         ];
                         
                         if ($status === 'present') $summary['present']++;
@@ -125,11 +140,20 @@ class AttendanceRecordController extends Controller
                             ];
                             $summary['leave']++;
                         } else {
-                            // Empty day
+                            $day = $dateObj->copy()->day($i);
+                            $isWorkingDay = in_array($day->dayOfWeekIso, $workingDaysSetting);
+
                             $days[$i] = [
-                                'status' => null,
-                                'record_id' => null
+                                'status' => !$isWorkingDay ? 'day_off' : ($day->isFuture() ? 'future' : ($day->isToday() ? 'not_added' : 'absent')),
+                                'record_id' => null,
+                                'is_late' => false,
+                                'is_early_departure' => false,
+                                'overtime_hours' => 0,
                             ];
+
+                            if ($isWorkingDay && $day->isPast()) {
+                                $summary['absent']++;
+                            }
                         }
                     }
                 }
@@ -138,7 +162,11 @@ class AttendanceRecordController extends Controller
                     'employee' => [
                         'id' => $empId,
                         'name' => $emp->name,
-                        'employee_id' => $emp->employee->employee_id ?? ''
+                        'employee_id' => $emp->employee->employee_id ?? '',
+                        'designation' => $emp->employee?->designation?->name
+                            ?? $emp->employee?->designation?->designation_name
+                            ?? null,
+                        'avatar' => $emp->avatar ?? null,
                     ],
                     'days' => $days,
                     'summary' => $summary
@@ -146,9 +174,6 @@ class AttendanceRecordController extends Controller
             }
 
             // Calculate total working days in the month
-            $settings = settings();
-            $workingDaysSetting = isset($settings['working_days']) ? json_decode($settings['working_days'], true) : [1, 2, 3, 4, 5];
-            
             $workingDaysInMonth = 0;
             for ($i = 1; $i <= $daysInMonth; $i++) {
                 $dayOfWeek = $dateObj->copy()->day($i)->dayOfWeekIso;
@@ -180,21 +205,19 @@ class AttendanceRecordController extends Controller
 
     private function getFilteredEmployees()
     {
-        // Get employees for filter dropdown (compatible with getFilteredEmployees logic)
-        $employeeQuery = Employee::whereIn('created_by', getCompanyAndUsersId());
-
-        if (Auth::user()->can('manage-own-attendance-records') && ! Auth::user()->can('manage-any-attendance-records')) {
-            $employeeQuery->where(function ($q) {
-                $q->where('created_by', Auth::id())->orWhere('user_id', Auth::id());
-            });
-        }
-
         $employees = User::emp()
             ->with('employee')
+            ->whereHas('employee')
             ->whereIn('created_by', getCompanyAndUsersId())
             ->where('status', 'active')
-            ->whereIn('id', $employeeQuery->pluck('user_id'))
-            ->select('id', 'name')
+            ->when(
+                Auth::user()->can('manage-own-attendance-records') && ! Auth::user()->can('manage-any-attendance-records'),
+                fn ($query) => $query->where(fn ($scope) => $scope
+                    ->where('created_by', Auth::id())
+                    ->orWhere('id', Auth::id()))
+            )
+            ->select('id', 'name', 'avatar')
+            ->orderBy('name')
             ->get()
             ->map(function ($user) {
                 return [
@@ -280,8 +303,78 @@ class AttendanceRecordController extends Controller
         // Process complete attendance calculation
         $record->fresh(); // Reload to get relationships
         $record->processAttendance();
+        $record->forceFill([
+            'status' => $validated['status'],
+            'is_absent' => $validated['status'] === 'absent',
+            'is_holiday' => $validated['status'] === 'holiday' || $validated['is_holiday'],
+        ])->save();
 
         return redirect()->back()->with('success', __('Attendance record created successfully.'));
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate(['file' => 'required|file|mimes:csv,txt|max:5120']);
+
+        $handle = fopen($request->file('file')->getRealPath(), 'r');
+        $headers = array_map(fn ($header) => strtolower(trim($header)), fgetcsv($handle) ?: []);
+        $required = ['employee id', 'date', 'status'];
+
+        if (array_diff($required, $headers)) {
+            fclose($handle);
+            return redirect()->back()->with('error', __('CSV must contain Employee ID, Date, and Status columns.'));
+        }
+
+        $allowedStatuses = ['present', 'absent', 'half_day', 'on_leave', 'holiday'];
+        $companyIds = getCompanyAndUsersId();
+        $imported = 0;
+        $skipped = 0;
+
+        while (($values = fgetcsv($handle)) !== false) {
+            $row = array_combine($headers, array_pad($values, count($headers), ''));
+            $employee = User::emp()
+                ->whereIn('created_by', $companyIds)
+                ->whereHas('employee', fn ($query) => $query->where('employee_id', trim($row['employee id'] ?? '')))
+                ->with('employee')
+                ->first();
+            $status = strtolower(trim($row['status'] ?? ''));
+
+            if (! $employee || ! in_array($status, $allowedStatuses, true)) {
+                $skipped++;
+                continue;
+            }
+
+            try {
+                $date = Carbon::parse($row['date'])->format('Y-m-d');
+            } catch (\Throwable $exception) {
+                $skipped++;
+                continue;
+            }
+
+            $details = $employee->employee;
+            $record = AttendanceRecord::updateOrCreate(
+                ['employee_id' => $employee->id, 'date' => $date],
+                [
+                    'shift_id' => $details?->shift_id,
+                    'attendance_policy_id' => $details?->attendance_policy_id,
+                    'clock_in' => trim($row['clock in'] ?? '') ?: null,
+                    'clock_out' => trim($row['clock out'] ?? '') ?: null,
+                    'status' => $status,
+                    'notes' => trim($row['notes'] ?? '') ?: null,
+                    'created_by' => creatorId(),
+                    'is_absent' => $status === 'absent',
+                    'is_holiday' => $status === 'holiday',
+                    'is_weekend' => Carbon::parse($date)->isWeekend(),
+                ]
+            );
+            $record->processAttendance();
+            $record->forceFill(['status' => $status, 'is_absent' => $status === 'absent', 'is_holiday' => $status === 'holiday'])->save();
+            $imported++;
+        }
+
+        fclose($handle);
+
+        return redirect()->back()->with('success', __(":imported attendance records imported; :skipped skipped.", compact('imported', 'skipped')));
     }
 
     public function update(Request $request, $attendanceRecordId)
@@ -363,6 +456,11 @@ class AttendanceRecordController extends Controller
                 // Process complete attendance calculation
                 $attendanceRecord->fresh(); // Reload to get relationships
                 $attendanceRecord->processAttendance();
+                $attendanceRecord->forceFill([
+                    'status' => $validated['status'],
+                    'is_absent' => $validated['status'] === 'absent',
+                    'is_holiday' => $validated['status'] === 'holiday' || ($validated['is_holiday'] ?? false),
+                ])->save();
 
                 return redirect()->back()->with('success', __('Attendance record updated successfully'));
             } catch (\Exception $e) {
