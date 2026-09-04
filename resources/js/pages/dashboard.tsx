@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PageTemplate } from '@/components/page-template';
-import { RefreshCw, Users, Briefcase, UserPlus, Calendar, Clock, TrendingUp, TrendingDown, BarChart3, Bell, ExternalLink, Copy, CheckCircle, UserCheck, UserX, CreditCard, AlertTriangle, Layers, Settings, PartyPopper, ChevronRight } from 'lucide-react';
+import {
+  RefreshCw, Users, Briefcase, UserPlus, Calendar,
+  Clock, TrendingUp, Bell, ExternalLink, Copy, CheckCircle,
+  ArrowUpRight, ChevronRight, Settings, BarChart3,
+  DollarSign, Package, AlertTriangle, PartyPopper, FileText, GraduationCap,
+} from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-
-import { usePage, Link } from '@inertiajs/react';
-import ReactApexChart from 'react-apexcharts';
+import { useTranslation } from 'react-i18next';
+import { router, Link, usePage } from '@inertiajs/react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  PieChart, Pie, Cell, BarChart, Bar, LabelList,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid,
+  Tooltip, ResponsiveContainer,
+} from 'recharts';
 import { hasPermission } from '@/utils/authorization';
-import { format } from 'date-fns';
-import FullCalendar from '@fullcalendar/react';
-import dayGridPlugin from '@fullcalendar/daygrid';
-import timeGridPlugin from '@fullcalendar/timegrid';
-import interactionPlugin from '@fullcalendar/interaction';
+import UserInitials from '@/components/user-initials';
+import { getImagePath } from '@/utils/helpers';
 
 interface CompanyDashboardData {
   stats: {
@@ -28,92 +35,70 @@ interface CompanyDashboardData {
     onLeaveToday: number;
     activeJobPostings: number;
     totalCandidates: number;
-    totalPromotions?: number;
-    terminations?: number;
+    totalPayrollThisMonth: number;
+    payrollRunsThisMonth: number;
+    totalAssets: number;
+    assignedAssets: number;
+    pendingWarnings: number;
+    upcomingHolidays: number;
+    activeContracts: number;
+    expiringContracts: number;
+    activeTrainings: number;
+    completedTrainings: number;
   };
   charts: {
-    designationStats: Array<{name: string; value: number; color: string}>;
-    hiringTrend: Array<{month: string; hires: number}>;
-    candidateStatusStats: Array<{name: string; value: number; color: string}>;
-    leaveTypesStats: Array<{name: string; value: number; color: string}>;
-    employeeGrowthChart: Array<{month: string; employees: number}>;
+    departmentStats: Array<{ name: string; value: number; color: string }>;
+    hiringTrend: Array<{ month: string; short: string; hires: number }>;
+    hiringYear: number;
+    availableYears: number[];
+    growthYear: number;
+    payrollYear: number;
+    candidateStatusStats: Array<{ name: string; value: number; color: string }>;
+    leaveTypesStats: Array<{ name: string; value: number; color: string }>;
+    employeeGrowthChart: Array<{ month: string; employees: number }>;
+    leaveOverview: Array<{ name: string; value: number; color: string }>;
+    attendanceWeekly: Array<{ day: string; present: number; absent: number; leave: number }>;
+    payrollTrend: Array<{ month: string; netPay: number }>;
+    assetStatusStats: Array<{ name: string; value: number; color: string }>;
   };
   recentActivities: {
     leaves: Array<any>;
     candidates: Array<any>;
     announcements: Array<any>;
     meetings: Array<any>;
-    pendingLeavesList?: Array<any>;
-    todayLeaves?: Array<any>;
-    todayBirthdays?: Array<{
-      id: number;
-      name: string;
-      avatar?: string | null;
-      designation: string;
-    }>;
-    missingAttendance?: Array<any>;
   };
-  upcomingEvents?: Array<{
-    id: string;
-    type: string;
-    name: string;
-    date: string;
-    isToday: boolean;
-  }>;
-  onboardingStatus?: Array<{
-    name: string;
-    role: string;
-    progress: number;
-  }>;
-  todoList?: Array<{
-    id: number;
-    task: string;
-    completed: boolean;
-  }>;
+  todayBirthdays: Array<{ id: number; name: string; designation: string; avatar?: string }>;
+  todayOnLeave: Array<{ id: number; name: string; designation: string; leaveType: string; avatar?: string }>;
   userType: string;
 }
 
-interface PageAction {
-  label: string;
-  icon: React.ReactNode;
-  variant: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link';
-  onClick: () => void;
-}
-
-function ActivityCard({ title, subtitle, href, children }: {
-  title: string;
-  subtitle: string;
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <Card className="min-h-[390px] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-      <CardHeader className="border-b border-zinc-200 px-6 py-5 dark:border-zinc-800">
-        <div className="flex items-center justify-between gap-4">
-          <div>
-            <CardTitle className="text-base font-semibold leading-5 text-zinc-950 dark:text-zinc-50">{title}</CardTitle>
-            <p className="mt-1 text-xs leading-4 text-zinc-500">{subtitle}</p>
-          </div>
-          <Link href={href} className="flex shrink-0 items-center gap-1 text-xs font-medium text-emerald-600 hover:text-emerald-700">
-            View all <ChevronRight className="size-3.5" />
-          </Link>
-        </div>
-      </CardHeader>
-      <CardContent className="p-0">{children}</CardContent>
-    </Card>
-  );
-}
-
 export default function Dashboard({ dashboardData }: { dashboardData: CompanyDashboardData }) {
-  
-  const { auth, companySlug, active_modules = [] } = usePage().props as any;
-  const isModuleEnabled = (module: string) => active_modules.includes(module);
+  const { t } = useTranslation();
+  const { auth, companySlug } = usePage().props as any;
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState('#3b82f6');
+  const [selectedHiringYear, setSelectedHiringYear] = useState<number>(() => dashboardData?.charts?.hiringYear ?? new Date().getFullYear());
+  const [selectedGrowthYear, setSelectedGrowthYear] = useState<number>(() => dashboardData?.charts?.growthYear ?? new Date().getFullYear());
+  const [selectedPayrollYear, setSelectedPayrollYear] = useState<number>(() => dashboardData?.charts?.payrollYear ?? new Date().getFullYear());
+
+  useEffect(() => {
+    setMounted(true);
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--theme-color').trim();
+    if (raw) setPrimaryColor(raw);
+  }, []);
+
+  const handleRefresh = () => {
+    setIsRefreshing(true);
+    router.reload({ only: ['dashboardData'] });
+    setTimeout(() => setIsRefreshing(false), 1000);
+  };
 
   const handleCopyCareerLink = () => {
-    const careerUrl = companySlug ? 
-      route('career.index', companySlug) : 
-      route('career.index');
+    const careerUrl = companySlug ? route('career.index', companySlug) : route('career.index');
+    console.log(navigator);
+console.log(navigator.clipboard);
     navigator.clipboard.writeText(careerUrl).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -121,69 +106,72 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
   };
 
   const openCareerPage = () => {
-    const careerUrl = companySlug ? 
-      route('career.index', companySlug) : 
-      route('career.index');
+    const careerUrl = companySlug ? route('career.index', companySlug) : route('career.index');
     window.open(careerUrl, '_blank');
   };
 
-  const pageActions: PageAction[] = [
+  const pageActions = [
     {
-      label: 'Refresh',
-      icon: <RefreshCw className="h-4 w-4" />,
-      variant: 'outline',
-      onClick: () => window.location.reload()
-    }
+      label: t('Refresh'),
+      icon: <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />,
+      variant: 'outline' as const,
+      onClick: handleRefresh,
+    },
   ];
 
   const stats = dashboardData?.stats || {
-    totalEmployees: 0,
-    totalBranches: 0,
-    totalDepartments: 0,
-    newEmployeesThisMonth: 0,
-    jobPostsThisMonth: 0,
-    candidatesThisMonth: 0,
-    attendanceRate: 0,
-    presentToday: 0,
-    pendingLeaves: 0,
-    onLeaveToday: 0,
-    activeJobPostings: 0,
-    totalCandidates: 0
+    totalEmployees: 0, totalBranches: 0, totalDepartments: 0,
+    newEmployeesThisMonth: 0, jobPostsThisMonth: 0, candidatesThisMonth: 0,
+    attendanceRate: 0, presentToday: 0, pendingLeaves: 0,
+    onLeaveToday: 0, activeJobPostings: 0, totalCandidates: 0,
+    totalPayrollThisMonth: 0, payrollRunsThisMonth: 0,
+    totalAssets: 0, assignedAssets: 0, pendingWarnings: 0,
+    upcomingHolidays: 0, activeContracts: 0, expiringContracts: 0,
+    activeTrainings: 0, completedTrainings: 0,
   };
 
   const charts = dashboardData?.charts || {
-    designationStats: [],
-    hiringTrend: [],
-    candidateStatusStats: [],
-    leaveTypesStats: [],
-    employeeGrowthChart: []
+    departmentStats: [], hiringTrend: [], hiringYear: new Date().getFullYear(),
+    availableYears: [new Date().getFullYear()], growthYear: new Date().getFullYear(), payrollYear: new Date().getFullYear(),
+    candidateStatusStats: [], leaveTypesStats: [], employeeGrowthChart: [],
+    leaveOverview: [], attendanceWeekly: [], payrollTrend: [], assetStatusStats: [],
   };
+  const availableYears = dashboardData?.charts?.availableYears || [new Date().getFullYear()];
 
-
+  const handleHiringYearChange = (year: number) => {
+    setSelectedHiringYear(year);
+    router.reload({ data: { hiringYear: year, growthYear: selectedGrowthYear, payrollYear: selectedPayrollYear }, only: ['dashboardData'], preserveState: true });
+  };
+  const handleGrowthYearChange = (year: number) => {
+    setSelectedGrowthYear(year);
+    router.reload({ data: { hiringYear: selectedHiringYear, growthYear: year, payrollYear: selectedPayrollYear }, only: ['dashboardData'], preserveState: true });
+  };
+  const handlePayrollYearChange = (year: number) => {
+    setSelectedPayrollYear(year);
+    router.reload({ data: { hiringYear: selectedHiringYear, growthYear: selectedGrowthYear, payrollYear: year }, only: ['dashboardData'], preserveState: true });
+  };
 
   const recentActivities = dashboardData?.recentActivities || {
-    leaves: [],
-    candidates: [],
-    announcements: [],
-    meetings: [],
-    pendingLeavesList: [],
-    todayLeaves: [],
-    todayBirthdays: [],
-    missingAttendance: []
+    leaves: [], candidates: [], announcements: [], meetings: [],
   };
-  
-  const upcomingEvents = dashboardData?.upcomingEvents || [];
-  const onboardingStatus = dashboardData?.onboardingStatus || [];
-  const todoList = dashboardData?.todoList || [];
 
   const userType = dashboardData?.userType || 'employee';
   const isCompanyUser = userType === 'company';
-  const currentHour = new Date().getHours();
-  const greeting = currentHour < 12 ? 'Good morning' : currentHour < 17 ? 'Good afternoon' : 'Good evening';
-  const displayName = auth?.user?.name || auth?.user?.first_name || (isCompanyUser ? 'Company' : 'Team');
-  
+  const perms = auth?.permissions || [];
+
+  const greeting = () => {
+    const h = new Date().getHours();
+    if (h < 12) return t('Good morning');
+    if (h < 17) return t('Good afternoon');
+    return t('Good evening');
+  };
+
+  const fadeUp = (delay = 0) =>
+    `transition-all duration-700 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`
+    + (delay ? ` delay-${delay}` : '');
+
   const getStatusColor = (status: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       'approved': 'bg-green-50 text-green-700 ring-green-600/20',
       'pending': 'bg-yellow-50 text-yellow-700 ring-yellow-600/20',
       'rejected': 'bg-red-50 text-red-700 ring-red-600/20',
@@ -196,628 +184,875 @@ export default function Dashboard({ dashboardData }: { dashboardData: CompanyDas
       'Scheduled': 'bg-blue-50 text-blue-700 ring-blue-600/20',
       'In Progress': 'bg-yellow-50 text-yellow-800 ring-yellow-600/20',
       'Completed': 'bg-green-50 text-green-700 ring-green-600/20',
-      'Cancelled': 'bg-red-50 text-red-700 ring-red-600/10'
+      'Cancelled': 'bg-red-50 text-red-700 ring-red-600/10',
     };
-    return colors[status] || 'bg-zinc-50 text-zinc-700 ring-zinc-600/20';
+    return colors[status] || 'bg-gray-50 text-gray-700 ring-gray-600/20';
   };
 
+  const formatCurrency = (val: number) =>
+    window.appSettings?.formatCurrency(val) ?? `$${val.toLocaleString()}`;
+
   return (
-    <PageTemplate 
-      title={'Dashboard'}
-      hideTitle={true}
+    <PageTemplate
+      title={t('Dashboard')}
       url="/dashboard"
+      actions={pageActions}
+      description={t('Overview of your company stats, attendance, and recent activity.')}
     >
-      <div className="space-y-5">
-        
-        {/* Company overview hero */}
-        <section className="relative isolate overflow-hidden rounded-3xl bg-slate-900 px-6 py-7 text-white shadow-sm sm:px-8 lg:px-10">
-          <div aria-hidden="true" className="absolute inset-0 -z-10 bg-gradient-to-r from-cyan-950/50 via-slate-900 to-blue-950/40" />
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-10 overflow-hidden">
-            <div className="dashboard-wave dashboard-wave-slow absolute bottom-0 left-0 w-[200%]">
-              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
-                <path fill="rgba(45,212,191,0.12)" d="M0,25 C200,8 400,38 600,22 C800,8 1000,36 1200,24 C1400,10 1600,38 1800,22 C2000,8 2200,36 2400,24 L2400,40 L0,40 Z" />
-              </svg>
+      <div className="space-y-6">
+        <style>{`
+          @keyframes waterWave {
+            0%   { transform: translateX(0); }
+            50%  { transform: translateX(-25%); }
+            100% { transform: translateX(0); }
+          }
+          .animate-water-wave-1 { animation: waterWave 4s ease-in-out infinite; will-change: transform; }
+          .animate-water-wave-2 { animation: waterWave 6s ease-in-out infinite reverse; will-change: transform; }
+          .animate-water-wave-3 { animation: waterWave 8s ease-in-out infinite; will-change: transform; }
+          @keyframes handWave {
+            0%   { transform: rotate(0deg); }
+            10%  { transform: rotate(18deg); }
+            20%  { transform: rotate(-8deg); }
+            30%  { transform: rotate(18deg); }
+            40%  { transform: rotate(-4deg); }
+            50%  { transform: rotate(12deg); }
+            60%  { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
+          }
+          .animate-hand-wave { animation: handWave 2.2s ease-in-out infinite; transform-origin: 70% 70%; display: inline-block; }
+        `}</style>
+        {/* ── Greeting Banner ── */}
+        <div className={`group relative overflow-hidden rounded-2xl bg-slate-800 dark:bg-slate-900 px-6 py-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between ${fadeUp(0)}`}>
+          {/* flowing gradient orbs */}
+          <span className="pointer-events-none absolute -top-10 -left-10 w-48 h-48 rounded-full bg-emerald-500/10 blur-2xl animate-pulse" style={{ animationDuration: '4s' }} />
+          <span className="pointer-events-none absolute -bottom-10 right-0 w-56 h-56 rounded-full bg-blue-500/10 blur-2xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '1.5s' }} />
+          <span className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-violet-500/5 blur-2xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '0.8s' }} />
+          {/* crisp glowing dots */}
+          <span className="pointer-events-none absolute top-4 left-1/3 w-1.5 h-1.5 rounded-full bg-emerald-400/80 shadow-[0_0_6px_2px_rgba(52,211,153,0.6)] animate-ping" style={{ animationDuration: '3s' }} />
+          <span className="pointer-events-none absolute bottom-4 left-1/4 w-1 h-1 rounded-full bg-blue-400/70 shadow-[0_0_4px_2px_rgba(96,165,250,0.5)] animate-ping" style={{ animationDuration: '4s', animationDelay: '1s' }} />
+          <span className="pointer-events-none absolute top-3 right-1/4 w-1.5 h-1.5 rounded-full bg-violet-400/70 shadow-[0_0_6px_2px_rgba(167,139,250,0.5)] animate-ping" style={{ animationDuration: '3.5s', animationDelay: '0.5s' }} />
+          <span className="pointer-events-none absolute bottom-3 right-1/3 w-1 h-1 rounded-full bg-emerald-300/80 shadow-[0_0_4px_2px_rgba(110,231,183,0.5)] animate-ping" style={{ animationDuration: '2.8s', animationDelay: '1.8s' }} />
+          {/* water wave layers at bottom */}
+          <div className="pointer-events-none absolute bottom-0 left-0 w-full overflow-hidden" style={{ height: '40px' }}>
+            <div className="absolute bottom-0 left-0 w-[200%] animate-water-wave-1">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="w-full h-[40px]"><path fill="rgba(52,211,153,0.12)" d="M0,20 C150,38 350,0 600,20 C850,38 1050,0 1200,20 C1350,38 1550,0 1800,20 C2050,38 2250,0 2400,20 L2400,40 L0,40 Z" /></svg>
             </div>
-            <div className="dashboard-wave dashboard-wave-medium absolute bottom-0 left-0 w-[200%]">
-              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
-                <path fill="rgba(56,189,248,0.09)" d="M0,31 C260,12 480,38 720,27 C940,15 1120,37 1340,25 C1580,10 1780,36 2020,24 C2200,14 2320,30 2400,27 L2400,40 L0,40 Z" />
-              </svg>
+            <div className="absolute bottom-0 left-0 w-[200%] animate-water-wave-2">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="w-full h-[40px]"><path fill="rgba(96,165,250,0.09)" d="M0,26 C200,10 400,38 600,22 C800,8 1000,36 1200,24 C1400,10 1600,38 1800,22 C2000,8 2200,36 2400,24 L2400,40 L0,40 Z" /></svg>
             </div>
-            <div className="dashboard-wave dashboard-wave-fast absolute bottom-0 left-0 w-[200%]">
-              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="h-10 w-full">
-                <path fill="rgba(167,139,250,0.07)" d="M0,30 C300,14 500,38 700,28 C900,16 1100,38 1200,28 C1400,14 1600,38 1900,28 C2100,16 2300,38 2400,28 L2400,40 L0,40 Z" />
-              </svg>
+            <div className="absolute bottom-0 left-0 w-[200%] animate-water-wave-3">
+              <svg viewBox="0 0 2400 40" preserveAspectRatio="none" className="w-full h-[40px]"><path fill="rgba(167,139,250,0.07)" d="M0,30 C300,14 500,38 700,28 C900,16 1100,38 1200,28 C1400,14 1600,38 1900,28 C2100,16 2300,38 2400,28 L2400,40 L0,40 Z" /></svg>
             </div>
           </div>
-
-          <div className="flex flex-col gap-8 xl:flex-row xl:items-center xl:justify-between">
-            <div className="min-w-0 xl:max-w-xl">
-              <p className="mb-0.5 text-pretty text-sm text-slate-400">{greeting},</p>
-              <div className="flex items-center gap-2">
-                <h1 className="truncate text-balance text-xl font-bold sm:text-2xl">{displayName}</h1>
-                <span aria-hidden="true" className="select-none text-2xl sm:text-3xl">👋</span>
-              </div>
-              <p className="mt-1 hidden text-pretty text-xs text-slate-400 sm:block">Here's what's happening across your company today.</p>
-              <div className="mt-3 flex items-center gap-3 text-emerald-400">
-                <span aria-hidden="true" className="flex items-center gap-2">
-                  <span className="size-2.5 rounded-full bg-emerald-500" />
-                  <span className="size-2.5 rounded-full bg-teal-300/60" />
-                  <span className="size-2.5 rounded-full bg-emerald-400" />
-                </span>
-                <span className="text-sm font-semibold tabular-nums">{stats.presentToday || 0} present today</span>
-              </div>
+          <div className="group-hover:translate-x-2 transition-transform duration-300 min-w-0">
+            <p className="text-slate-400 text-sm mb-0.5 transition-colors duration-300">{greeting()},</p>
+            <div className="flex items-center gap-2">
+              <h2 className="text-white text-xl sm:text-2xl font-bold truncate group-hover:text-emerald-300 transition-colors duration-300">
+                {auth?.user?.name ?? 'Company Admin'}
+              </h2>
+              <span className="animate-hand-wave text-2xl sm:text-3xl select-none">👋</span>
             </div>
-
-            <nav aria-label="Dashboard shortcuts" className="flex flex-wrap items-stretch gap-3 sm:gap-5">
-              <div className="flex min-w-64 items-center gap-3 rounded-2xl bg-white/10 p-3">
-                <div className="relative flex size-7 shrink-0 items-center justify-center rounded-lg bg-emerald-500 text-white">
-                  <Briefcase className="size-3.5" aria-hidden="true" />
-                  <span className="absolute -right-0.5 -top-0.5 size-2.5 rounded-full border border-slate-700 bg-emerald-400" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-[11px] font-semibold leading-tight">Career Page</p>
-                  <p className="text-[10px] font-medium text-emerald-400 tabular-nums">{stats.activeJobPostings || 0} open</p>
-                </div>
-                <Button variant="ghost" size="icon" onClick={handleCopyCareerLink} aria-label={copied ? 'Career page link copied' : 'Copy career page link'} className="size-7 rounded-md bg-white/10 text-slate-200 hover:bg-white/20 hover:text-white">
-                  {copied ? <CheckCircle className="size-3" /> : <Copy className="size-3" />}
-                </Button>
-                <Button variant="ghost" size="icon" onClick={openCareerPage} aria-label="Open career page" className="size-7 rounded-md bg-emerald-500/80 text-white hover:bg-emerald-500 hover:text-white">
-                  <ExternalLink className="size-3" />
-                </Button>
+            <p className="text-slate-400 text-xs mt-1 hidden sm:block group-hover:text-slate-300 transition-colors duration-300">
+              {t("Here's what's happening across your company today.")}
+            </p>
+            <div className="flex items-center gap-3 mt-3">
+              <div className="flex items-center gap-1.5">
+                <div className="w-2 h-2 bg-emerald-400/70 rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '1.2s' }} />
+                <div className="w-2 h-2 bg-emerald-300/50 rounded-full animate-bounce" style={{ animationDelay: '150ms', animationDuration: '1.2s' }} />
+                <div className="w-2 h-2 bg-emerald-400 rounded-full animate-bounce" style={{ animationDelay: '300ms', animationDuration: '1.2s' }} />
               </div>
-
-              <Link href={route('hr.recruitment.job-postings.index')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
-                <Briefcase className="size-5 text-amber-300" aria-hidden="true" />
-                <span className="text-[10px]">Jobs</span>
-              </Link>
-              <Link href={route('hr.recruitment.candidates.index')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
-                <UserPlus className="size-5 text-violet-300" aria-hidden="true" />
-                <span className="text-[10px]">Candidates</span>
-              </Link>
-              <Link href={route('settings')} className="flex min-w-20 flex-col items-center justify-center gap-1 rounded-xl px-3 py-2 text-slate-400 hover:bg-white/10 hover:text-white">
-                <Settings className="size-5 text-slate-300" aria-hidden="true" />
-                <span className="text-[10px]">Settings</span>
-              </Link>
-            </nav>
+              <span className="text-emerald-400 font-semibold text-sm group-hover:scale-105 transition-transform duration-200">
+                {stats.presentToday} {t('present today')}
+              </span>
+            </div>
           </div>
-        </section>
-
-        {/* Daily workforce overview */}
-        <div className="grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-5 mb-5">
-          {/* Row 1 */}
-          {/* Total Employees */}
-          <Link href={route('hr.employees.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-blue-700">Total Employees</CardTitle>
-                <Users className="h-5 w-5 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-900">{stats.totalEmployees || 0}</div>
-                <div className="flex items-center text-xs text-blue-600 mt-1">
-                  <span>Active employees</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Present Today */}
-          <Link href={route('hr.attendance-records.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-green-700">Present Today</CardTitle>
-                <UserCheck className="h-5 w-5 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-green-900">{stats.presentToday || 0}</div>
-                <div className="flex items-center text-xs text-green-600 mt-1">
-                  <span>{stats.attendanceRate || 0}% attendance rate</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* Absent Today */}
-          <Link href={route('hr.attendance-records.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-red-50 to-red-100 border-red-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-red-700">Absent Today</CardTitle>
-                <UserX className="h-5 w-5 text-red-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-red-900">{Math.max(0, (stats.totalEmployees || 0) - (stats.presentToday || 0) - (stats.onLeaveToday || 0))}</div>
-                <div className="flex items-center text-xs text-red-600 mt-1">
-                  <TrendingUp className="h-3 w-3 mr-1" />
-                  <span>+1 from yesterday</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-
-          {/* On Leave */}
-          <Link href={route('hr.leave-applications.index')} className="block cursor-pointer transition-transform hover:scale-[1.02]">
-            <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-semibold text-purple-700">On Leave</CardTitle>
-                <Calendar className="h-5 w-5 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-purple-900">{stats.onLeaveToday || 0}</div>
-                <div className="flex items-center text-xs text-purple-600 mt-1">
-                  <span>{stats.pendingLeaves || 0} pending approvals</span>
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            {/* <div className="rounded-xl bg-white/10 px-4 py-2.5 text-center min-w-[80px] hover:bg-white/15 hover:scale-105 transition-all duration-300">
+              <p className="text-white text-lg font-bold leading-tight">{stats.totalEmployees}</p>
+              <p className="text-slate-400 text-[11px]">{t('Employees')}</p>
+            </div>
+            <div className="rounded-xl bg-white/10 px-4 py-2.5 text-center min-w-[80px] hover:bg-white/15 hover:scale-105 transition-all duration-300">
+              <p className="text-emerald-400 text-lg font-bold leading-tight">{stats.attendanceRate}%</p>
+              <p className="text-slate-400 text-[11px]">{t('Attendance')}</p>
+            </div> */}
+            {isCompanyUser && (
+              <>
+                {stats.activeJobPostings > 0 && hasPermission(perms, 'manage-career-page') && (
+                  <>
+                    <div className="w-px h-10 bg-white/10 hidden sm:block" />
+                    <div className="flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2 hover:bg-white/15 transition-all duration-200">
+                      <div className="relative shrink-0">
+                        <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
+                          <Briefcase className="h-3.5 w-3.5 text-primary-foreground" />
+                        </div>
+                        <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-primary rounded-full flex items-center justify-center">
+                          <div className="w-1 h-1 bg-white rounded-full animate-ping" style={{ animationDuration: '2s' }} />
+                        </div>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-white text-[11px] font-semibold leading-tight">{t('Career Page')}</p>
+                        <p className="text-primary text-[10px] font-medium">{stats.activeJobPostings} {t('open')}</p>
+                      </div>
+                      <div className="flex gap-1 ml-1">
+                        <button onClick={handleCopyCareerLink} className="rounded-md bg-white/10 hover:bg-white/20 p-1.5 transition-colors duration-150 cursor-pointer">
+                          {copied ? <CheckCircle className="h-3 w-3 text-emerald-400" /> : <Copy className="h-3 w-3 text-slate-300" />}
+                        </button>
+                        <button onClick={openCareerPage} className="rounded-md bg-primary/80 hover:bg-primary p-1.5 transition-colors duration-150 cursor-pointer">
+                          <ExternalLink className="h-3 w-3 text-primary-foreground" />
+                        </button>
+                      </div>
+                    </div>
+                  </>
+                )}
+                <div className="w-px h-10 bg-white/10 hidden sm:block" />
+                {[
+                  ...(hasPermission(perms, 'manage-job-postings') ? [{ icon: Briefcase, label: t('Jobs'), href: route('hr.recruitment.job-postings.index'), color: 'text-amber-300 hover:text-amber-200', bg: 'hover:bg-amber-400/10' }] : []),
+                  ...(hasPermission(perms, 'manage-candidates') ? [{ icon: UserPlus, label: t('Candidates'), href: route('hr.recruitment.candidates.index'), color: 'text-violet-300 hover:text-violet-200', bg: 'hover:bg-violet-400/10' }] : []),
+                  ...(hasPermission(perms, 'manage-settings') ? [{ icon: Settings, label: t('Settings'), href: route('settings'), color: 'text-slate-300 hover:text-slate-200', bg: 'hover:bg-white/10' }] : []),
+                ].map(({ icon: Icon, label, href, color, bg }) => (
+                  <Link key={label} href={href} className={`flex flex-col items-center gap-1 rounded-xl px-3 py-2 transition-all duration-200 ${bg} group/qa`}>
+                    <Icon className={`h-5 w-5 transition-all duration-200 ${color} group-hover/qa:-translate-y-0.5`} />
+                    <span className="text-slate-400 text-[10px] group-hover/qa:text-slate-300 transition-colors duration-200">{label}</span>
+                  </Link>
+                ))}
+              </>
+            )}
+          </div>
         </div>
 
+        {/* ── KPI Row ── */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
 
+          {/* Payroll This Month */}
+          {hasPermission(perms, 'manage-payroll-runs') && (
+            <Link href={route('hr.payroll-runs.index')} className={`group col-span-1 ${fadeUp(270)}`}>
+              <Card className="theme-border-soft h-full border shadow-sm bg-teal-50 dark:bg-teal-950/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+                <CardContent className="relative overflow-hidden p-5">
+                  {/* <span className="pointer-events-none absolute top-3 right-3 w-3 h-3 rounded-full bg-teal-400 shadow-[0_0_12px_4px_rgba(45,212,191,0.8)] animate-ping" style={{ animationDuration: '2.5s' }} /> */}
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="rounded-xl bg-teal-100 dark:bg-teal-900/50 p-2.5">
+                      <DollarSign className="h-5 w-5 text-teal-600 dark:text-teal-400" />
+                    </div>
+                    <ArrowUpRight className="h-4 w-4 text-teal-200 group-hover:text-teal-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all duration-200" />
+                  </div>
+                  <p className="text-teal-700 dark:text-teal-400 text-xs mb-1">{t('Payroll This Month')}</p>
+                  <p className="text-teal-900 dark:text-teal-100 text-2xl font-bold tracking-tight">{formatCurrency(stats.totalPayrollThisMonth)}</p>
+                  <p className="text-teal-600 dark:text-teal-500 text-[11px] mt-1.5">{stats.payrollRunsThisMonth} {t('runs completed')}</p>
+                </CardContent>
+              </Card>
+            </Link>
+          )}
 
-        {/* Custom Row: Designation Distribution & Quick Actions */}
-        <div className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-5">
-          {/* Designation Distribution */}
-          <Card className="border-none shadow-sm h-full flex flex-col">
-            <CardHeader className="border-b-0 pb-4">
-              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
-                Designation Distribution
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex flex-col gap-3">
-                  {charts.designationStats.length > 0 ? (() => {
-                    const maxVal = Math.max(...charts.designationStats.map(d => d.value), 1);
-                    return charts.designationStats.map((desig, index) => {
-                      const nameParts = desig.name.split(' (');
-                      const desigName = nameParts[0];
-                      const branchName = nameParts.length > 1 ? '(' + nameParts[1] : '';
+          {/* Total Employees */}
+          {hasPermission(perms, 'manage-employees') && <Link href={route('hr.employees.index')} className={`group col-span-1 ${fadeUp(100)}`}>
+            <Card className="theme-border-soft h-full border shadow-sm bg-blue-50 dark:bg-blue-950/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer">
+              <CardContent className="relative overflow-hidden p-5">
+                {/* <span className="pointer-events-none absolute top-3 right-3 w-3 h-3 rounded-full bg-blue-400 shadow-[0_0_12px_4px_rgba(96,165,250,0.8)] animate-ping" style={{ animationDuration: '2.8s', animationDelay: '0.4s' }} /> */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="rounded-xl bg-blue-100 dark:bg-blue-900/50 p-2.5">
+                    <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-blue-200 group-hover:text-blue-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all duration-200" />
+                </div>
+                <p className="text-blue-700 dark:text-blue-400 text-xs mb-1">{t('Total Employees')}</p>
+                <p className="text-blue-900 dark:text-blue-100 text-2xl font-bold tracking-tight">{stats.totalEmployees.toLocaleString()}</p>
+                <p className="text-emerald-600 text-[11px] mt-1.5 flex items-center gap-0.5">
+                  <TrendingUp className="h-3 w-3" /> {stats.newEmployeesThisMonth} {t('this month')}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>}
 
-                      return (
-                        <div key={index} className="mb-2 last:mb-0">
-                          <div className="flex justify-between items-center mb-1">
-                            <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                              {desigName}
-                              {branchName && <span className="text-zinc-500 font-normal ml-1">{branchName}</span>}
-                            </span>
-                            <span className="font-bold text-zinc-800 dark:text-zinc-200 text-sm">{desig.value}</span>
+          {/* Attendance Rate */}
+          {hasPermission(perms, 'manage-attendance-records') && <div className={`group col-span-1 ${fadeUp(160)}`}>
+            <Card className="theme-border-soft h-full border shadow-sm bg-violet-50 dark:bg-violet-950/30 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+              <CardContent className="relative overflow-hidden p-5">
+                {/* <span className="pointer-events-none absolute top-3 right-3 w-3 h-3 rounded-full bg-violet-400 shadow-[0_0_12px_4px_rgba(167,139,250,0.8)] animate-ping" style={{ animationDuration: '2.6s', animationDelay: '1.2s' }} /> */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className="rounded-xl bg-violet-100 dark:bg-violet-900/50 p-2.5">
+                    <Clock className="h-5 w-5 text-violet-600 dark:text-violet-400" />
+                  </div>
+                </div>
+                <p className="text-violet-700 dark:text-violet-400 text-xs mb-1">{t('Attendance Rate')}</p>
+                <p className="text-violet-900 dark:text-violet-100 text-2xl font-bold tracking-tight">{stats.attendanceRate}%</p>
+                <div className="mt-2 h-1 w-full rounded-full bg-violet-100 dark:bg-violet-900/40">
+                  <div className="h-1 rounded-full bg-violet-500 transition-all duration-1000 ease-out" style={{ width: mounted ? `${Math.min(stats.attendanceRate, 100)}%` : '0%' }} />
+                </div>
+              </CardContent>
+            </Card>
+          </div>}
+
+          {/* Pending Leaves */}
+          {hasPermission(perms, 'manage-leave-applications') && <Link href={route('hr.leave-applications.index')} className={`group col-span-1 ${fadeUp(190)}`}>
+            <Card className={`theme-border-soft h-full border shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer ${
+              stats.pendingLeaves > 0
+                ? 'bg-amber-50 dark:bg-amber-950/30'
+                : 'bg-slate-50 dark:bg-slate-900'
+            }`}>
+              <CardContent className="relative overflow-hidden p-5">
+                {/* <span className="pointer-events-none absolute top-3 right-3 w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_12px_4px_rgba(251,191,36,0.8)] animate-ping" style={{ animationDuration: '2.4s', animationDelay: '0.6s' }} /> */}
+                <div className="flex items-start justify-between mb-4">
+                  <div className={`rounded-xl p-2.5 ${stats.pendingLeaves > 0 ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-muted'}`}>
+                    <Calendar className={`h-5 w-5 ${stats.pendingLeaves > 0 ? 'text-amber-600 dark:text-amber-400 animate-pulse' : 'text-muted-foreground'}`} />
+                  </div>
+                  <ArrowUpRight className="h-4 w-4 text-amber-200 group-hover:text-amber-500 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all duration-200" />
+                </div>
+                <p className="text-amber-700 dark:text-amber-400 text-xs mb-1">{t('Pending Leaves')}</p>
+                <p className={`text-2xl font-bold tracking-tight ${stats.pendingLeaves > 0 ? 'text-amber-700 dark:text-amber-400' : 'text-slate-700 dark:text-slate-300'}`}>
+                  {stats.pendingLeaves.toLocaleString()}
+                </p>
+                <p className="text-amber-500 text-[11px] mt-1.5">{stats.onLeaveToday} {t('on leave today')}</p>
+              </CardContent>
+            </Card>
+          </Link>}
+
+        </div>
+
+        {/* ── Today's Birthdays + Today's Leave ── */}
+        <div className={`grid gap-4 lg:grid-cols-2 ${fadeUp(285)}`}>
+
+            {/* Today's Birthdays */}
+            <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden relative">
+                {/* Sparkles */}
+                <span className="pointer-events-none absolute top-3 left-8 w-1.5 h-1.5 rounded-sm rotate-45 bg-pink-400/60 animate-ping" style={{ animationDuration: '2.4s' }} />
+                <span className="pointer-events-none absolute top-6 left-1/4 w-1 h-1 rounded-sm rotate-45 bg-fuchsia-400/50 animate-ping" style={{ animationDuration: '3.1s', animationDelay: '0.6s' }} />
+                <span className="pointer-events-none absolute top-2 left-1/2 w-1.5 h-1.5 rounded-sm rotate-45 bg-pink-300/70 animate-ping" style={{ animationDuration: '2.8s', animationDelay: '1.2s' }} />
+                <span className="pointer-events-none absolute top-5 right-1/3 w-1 h-1 rounded-sm rotate-45 bg-rose-400/60 animate-ping" style={{ animationDuration: '3.5s', animationDelay: '0.3s' }} />
+                <span className="pointer-events-none absolute top-3 right-12 w-1.5 h-1.5 rounded-sm rotate-45 bg-fuchsia-300/60 animate-ping" style={{ animationDuration: '2.2s', animationDelay: '0.9s' }} />
+                <span className="pointer-events-none absolute top-7 right-6 w-1 h-1 rounded-sm rotate-45 bg-pink-500/50 animate-ping" style={{ animationDuration: '4s', animationDelay: '1.5s' }} />
+                <span className="pointer-events-none absolute top-1 left-3/4 w-2 h-2 rounded-sm rotate-45 bg-pink-200/80 animate-pulse" style={{ animationDuration: '3s', animationDelay: '0.4s' }} />
+                <span className="pointer-events-none absolute top-4 left-16 w-1 h-1 rounded-sm rotate-45 bg-rose-300/70 animate-pulse" style={{ animationDuration: '2.6s', animationDelay: '1s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '25%', left: '6px', width: '6px', height: '6px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(244 114 182 / 0.4)', animation: 'ping 3.3s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '0.7s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '33%', right: '16px', width: '4px', height: '4px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(232 121 249 / 0.5)', animation: 'ping 2.7s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '1.3s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '42%', left: '33%', width: '6px', height: '6px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(251 113 133 / 0.4)', animation: 'pulse 3.8s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.2s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '50%', right: '25%', width: '4px', height: '4px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(236 72 153 / 0.4)', animation: 'ping 2.5s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '1.8s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '50%', left: '52%', width: '8px', height: '8px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(240 171 252 / 0.3)', animation: 'pulse 4.2s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.5s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '60%', left: '32px', width: '4px', height: '4px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(244 114 182 / 0.5)', animation: 'ping 3s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '2s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '62%', right: '40px', width: '6px', height: '6px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(251 113 133 / 0.4)', animation: 'ping 2.9s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '0.8s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '25%', left: '25%', width: '4px', height: '4px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(232 121 249 / 0.4)', animation: 'ping 3.6s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '1.1s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '25%', right: '33%', width: '6px', height: '6px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(249 168 212 / 0.5)', animation: 'pulse 2.3s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.6s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '32px', left: '52%', width: '4px', height: '4px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(251 113 133 / 0.6)', animation: 'ping 3.2s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '1.4s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '16px', right: '32px', width: '6px', height: '6px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(244 114 182 / 0.4)', animation: 'ping 2.6s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '0.3s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '24px', left: '24px', width: '8px', height: '8px', borderRadius: '2px', transform: 'rotate(45deg)', backgroundColor: 'rgb(240 171 252 / 0.3)', animation: 'pulse 4s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '1.7s' }} />
+                <CardHeader className="pb-3 pt-5 px-5 border-b">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-semibold">{t("Today's Birthdays")}</CardTitle>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t('Celebrate with your team')}</p>
+                    </div>
+                    <div className="rounded-xl bg-pink-100 dark:bg-pink-900/40 p-2">
+                      <PartyPopper className="h-4 w-4 text-pink-600 dark:text-pink-400" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0 max-h-[350px] overflow-auto">
+                  {dashboardData.todayBirthdays?.length > 0 ? (
+                    <div>
+                      {dashboardData.todayBirthdays.map((emp) => (
+                        <div key={emp.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                          <div className="shrink-0">
+                            {emp.avatar ?
+                              <img src={emp.avatar} alt={emp.name} className="h-10 w-10 rounded-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = getImagePath('avatars/avatar.png'); }} />
+                              : <UserInitials name={emp?.name || 'E'} />
+                            }
                           </div>
-                          <div className="w-full bg-zinc-100 dark:bg-zinc-800 rounded-full h-1.5">
-                            <div 
-                              className="h-1.5 rounded-full" 
-                              style={{ width: `${(desig.value / maxVal) * 100}%`, backgroundColor: desig.color || '#3b82f6' }}
-                            ></div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold truncate leading-tight">{emp.name}</p>
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{emp.designation}</p>
                           </div>
                         </div>
-                      );
-                    });
-                  })() : (
-                    <div className="text-center py-10 text-zinc-500 text-sm">No designation data</div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-40 gap-3">
+                      <div className="rounded-full bg-muted p-4 animate-pulse">
+                        <PartyPopper className="h-6 w-6 text-muted-foreground/50" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">{t('No birthdays today')}</p>
+                    </div>
                   )}
+                </CardContent>
+            </Card>
+
+            {/* Today's On Leave */}
+            <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden relative">
+                {/* Leaf animations */}
+                {/* <span className="pointer-events-none absolute top-2 left-6 w-3 h-5 rounded-full rotate-45 bg-amber-300/40 animate-pulse" style={{ animationDuration: '3s' }} />
+                <span className="pointer-events-none absolute top-4 left-1/3 w-2 h-4 rounded-full -rotate-12 bg-green-300/30 animate-pulse" style={{ animationDuration: '4s', animationDelay: '0.8s' }} />
+                <span className="pointer-events-none absolute top-3 left-1/2 w-2.5 h-4 rounded-full rotate-12 bg-orange-300/35 animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.4s' }} />
+                <span className="pointer-events-none absolute top-1 right-1/3 w-2 h-3.5 rounded-full rotate-45 bg-amber-400/35 animate-ping" style={{ animationDuration: '4.5s', animationDelay: '1s' }} />
+                <span className="pointer-events-none absolute top-5 right-10 w-3 h-5 rounded-full -rotate-45 bg-green-400/25 animate-pulse" style={{ animationDuration: '5s', animationDelay: '0.3s' }} />
+                <span className="pointer-events-none absolute top-2 right-4 w-2 h-3 rounded-full rotate-12 bg-orange-400/30 animate-ping" style={{ animationDuration: '3.8s', animationDelay: '1.5s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '28%', left: '12px', width: '10px', height: '16px', borderRadius: '9999px', transform: 'rotate(30deg)', backgroundColor: 'rgb(251 191 36 / 0.3)', animation: 'pulse 4.2s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.6s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '35%', right: '20px', width: '8px', height: '14px', borderRadius: '9999px', transform: 'rotate(-20deg)', backgroundColor: 'rgb(134 239 172 / 0.3)', animation: 'pulse 3.6s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '1.2s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '45%', left: '40%', width: '10px', height: '18px', borderRadius: '9999px', transform: 'rotate(15deg)', backgroundColor: 'rgb(253 186 116 / 0.35)', animation: 'ping 5s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '0.9s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '52%', left: '8px', width: '8px', height: '13px', borderRadius: '9999px', transform: 'rotate(-35deg)', backgroundColor: 'rgb(187 247 208 / 0.4)', animation: 'pulse 4.8s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.2s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '58%', right: '15%', width: '10px', height: '16px', borderRadius: '9999px', transform: 'rotate(40deg)', backgroundColor: 'rgb(251 191 36 / 0.25)', animation: 'pulse 3.2s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '1.6s' }} />
+                <span className="pointer-events-none absolute" style={{ top: '65%', left: '55%', width: '8px', height: '14px', borderRadius: '9999px', transform: 'rotate(-15deg)', backgroundColor: 'rgb(253 186 116 / 0.3)', animation: 'ping 4.3s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '0.5s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '30%', left: '20%', width: '10px', height: '16px', borderRadius: '9999px', transform: 'rotate(25deg)', backgroundColor: 'rgb(134 239 172 / 0.25)', animation: 'pulse 5.2s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '1.1s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '20%', right: '30%', width: '8px', height: '13px', borderRadius: '9999px', transform: 'rotate(-40deg)', backgroundColor: 'rgb(251 191 36 / 0.3)', animation: 'pulse 3.9s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.7s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '12%', left: '10px', width: '10px', height: '17px', borderRadius: '9999px', transform: 'rotate(20deg)', backgroundColor: 'rgb(253 186 116 / 0.35)', animation: 'ping 4.7s cubic-bezier(0,0,0.2,1) infinite', animationDelay: '1.4s' }} />
+                <span className="pointer-events-none absolute" style={{ bottom: '8%', right: '12px', width: '8px', height: '14px', borderRadius: '9999px', transform: 'rotate(-30deg)', backgroundColor: 'rgb(187 247 208 / 0.3)', animation: 'pulse 3.4s cubic-bezier(0.4,0,0.6,1) infinite', animationDelay: '0.4s' }} /> */}
+                <CardHeader className="pb-3 pt-5 px-5 border-b">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-base font-semibold">{t("Today's Leave")}</CardTitle>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t('Employees on leave today')}</p>
+                    </div>
+                    <div className="rounded-xl bg-amber-100 dark:bg-amber-900/40 p-2">
+                      <Calendar className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="p-0 max-h-[350px] overflow-auto">
+                  {dashboardData.todayOnLeave?.length > 0 ? (
+                    <div>
+                      {dashboardData.todayOnLeave.map((emp) => (
+                        <div key={emp.id} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                          <div className="shrink-0">
+                            {emp.avatar ?
+                              <img src={emp.avatar} alt={emp.name} className="h-10 w-10 rounded-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = getImagePath('avatars/avatar.png'); }} />
+                              : <UserInitials name={emp.name} />
+                            }
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm font-semibold truncate leading-tight">{emp.name}</p>
+                            <p className="text-xs text-muted-foreground truncate mt-0.5">{emp.designation}</p>
+                          </div>
+                          <span className="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-900/20 dark:text-amber-400 shrink-0">{emp.leaveType}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-40 gap-3">
+                      <div className="rounded-full bg-muted p-4 animate-pulse">
+                        <Calendar className="h-6 w-6 text-muted-foreground/50" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">{t('No one on leave today')}</p>
+                    </div>
+                  )}
+                </CardContent>
+            </Card>
+
+        </div>
+
+        {/* ── Charts Row 3: Attendance Weekly + Leave Overview ── */}
+        <div className={`grid gap-4 lg:grid-cols-2 ${fadeUp(450)}`}>
+
+          {/* Attendance Weekly */}
+          {hasPermission(perms, 'manage-attendance-records') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div>
+                <CardTitle className="text-base font-semibold">{t('Attendance - Last 7 Days')}</CardTitle>
+                <p className="text-xs text-muted-foreground mt-0.5">{t('Daily present / absent / on leave')}</p>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-5">
+              {charts.attendanceWeekly.length > 0 ? (
+                <ResponsiveContainer width="100%" height={240}>
+                  <BarChart data={charts.attendanceWeekly} margin={{ top: 8, right: 8, left: 0, bottom: 0 }} accessibilityLayer={false}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={primaryColor} strokeOpacity={0.12} vertical={false} />
+                    <XAxis dataKey="day" tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={{ stroke: primaryColor, strokeOpacity: 0.3 }} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={false} tickLine={false} allowDecimals={false} width={28} />
+                    <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }} />
+                    <Bar dataKey="present" name={t('Present')} stackId="a" fill="#10B981" radius={[0,0,0,0]} maxBarSize={32} isAnimationActive={false} />
+                    <Bar dataKey="leave" name={t('On Leave')} stackId="a" fill="#F59E0B" maxBarSize={32} isAnimationActive={false} />
+                    <Bar dataKey="absent" name={t('Absent')} stackId="a" fill="#EF4444" radius={[4,4,0,0]} maxBarSize={32} isAnimationActive={false} />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[240px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><Clock className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No attendance data available')}</p>
                 </div>
+              )}
+              <div className="flex items-center gap-4 mt-3 justify-center">
+                {[{color:'#10B981',label:t('Present')},{color:'#F59E0B',label:t('On Leave')},{color:'#EF4444',label:t('Absent')}].map(l => (
+                  <div key={l.label} className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: l.color }} />
+                    <span className="text-xs text-muted-foreground">{l.label}</span>
+                  </div>
+                ))}
               </div>
             </CardContent>
-          </Card>
+          </Card>}
 
-          {/* Quick Actions */}
-          <Card className="border-none shadow-sm h-full flex flex-col">
-            <CardHeader className="border-b-0 pb-4">
-              <CardTitle className="text-base font-semibold text-zinc-800 dark:text-zinc-200 flex items-center gap-2">
-                <Layers className="w-5 h-5 text-zinc-700 dark:text-zinc-300" />
-                Quick Actions
-              </CardTitle>
+          {/* Leave Overview by Type */}
+          {hasPermission(perms, 'manage-leave-applications') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Leave Overview')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Applications this month by status')}</p>
+                </div>
+                <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-900/20 dark:text-amber-400">
+                  {charts.leaveOverview.reduce((s, m) => s + m.value, 0)} {t('total')}
+                </span>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              {charts.leaveOverview.some(l => l.value > 0) ? (
+                <div className="flex items-center gap-4">
+                  <ResponsiveContainer width="50%" height={200}>
+                    <PieChart>
+                      <Pie data={charts.leaveOverview} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={4}>
+                        {charts.leaveOverview.map((entry, i) => (
+                          <Cell key={i} fill={entry.color} stroke="none" />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex-1 space-y-3">
+                    {charts.leaveOverview.map((s, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                          <span className="text-xs text-muted-foreground">{t(s.name)}</span>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                          <span className="text-xs font-bold">{s.value}</span>
+                          <span className="text-[10px] text-muted-foreground">
+                            {charts.leaveOverview.reduce((sum, l) => sum + l.value, 0) > 0
+                              ? `${Math.round((s.value / charts.leaveOverview.reduce((sum, l) => sum + l.value, 0)) * 100)}%`
+                              : '0%'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[200px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><Calendar className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No leave data available')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>}
+
+        </div>
+
+        {/* ── Recent Activities ── */}
+        <div className={`grid gap-4 lg:grid-cols-2 ${fadeUp(300)}`}>
+
+          {/* Recent Leave Applications */}
+          {hasPermission(perms, 'manage-leave-applications') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Recent Leave Applications')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Latest leave requests from employees')}</p>
+                </div>
+                <Link href={route('hr.leave-applications.index')} className="flex items-center gap-1 text-xs text-primary font-medium shrink-0 hover:gap-1.5 transition-all duration-150">
+                  {t('View all')} <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
             </CardHeader>
             <CardContent className="p-0">
-              <div className="max-h-[350px] overflow-y-auto px-5 pb-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                <div className="flex flex-col gap-3">
-                  {[
-                    { label: 'Add New Employee', icon: UserPlus },
-                    { label: 'Mark Attendance', icon: Clock },
-                    { label: 'Apply for Leave', icon: Calendar },
-                    { label: 'Process Payroll', icon: CreditCard },
-                    { label: 'Create Promotion', icon: TrendingUp },
-                    { label: 'Create Resignation', icon: TrendingDown },
-                    { label: 'Create Holiday', icon: Calendar },
-                    { label: 'Create Warning', icon: AlertTriangle }
-                  ].map((action, i) => (
-                    <div 
-                      key={i} 
-                      className="flex items-center gap-4 p-3 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-900/50 cursor-pointer transition-colors"
-                    >
-                      <action.icon className="w-4 h-4 text-zinc-700 dark:text-zinc-300 ml-1" />
-                      <span className="text-sm font-medium text-zinc-800 dark:text-zinc-200">{action.label}</span>
+              {recentActivities.leaves.length > 0 ? (
+                <div>
+                  {recentActivities.leaves.map((leave: any, i: number) => (
+                    <div key={i} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                      <div className="shrink-0">
+                        {leave.employee?.avatar ?
+                            <img
+                                src={leave.employee?.avatar}
+                                alt={leave.employee?.name}
+                                className="h-10 w-10 rounded-full object-cover"
+                                onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.src = getImagePath('avatars/avatar.png');
+                                }}
+                            />
+                            :<UserInitials name={leave.employee?.name}/>
+                        }
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate leading-tight">{leave.employee?.name || t('Employee')}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {leave.leave_type?.name || t('Leave')} &bull; {leave.start_date ? (window.appSettings?.formatDateTimeSimple(leave.start_date, false) || leave.start_date) : 'N/A'}
+                        </p>
+                      </div>
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset shrink-0 ${getStatusColor(leave.status)}`}>
+                        {t(leave.status.charAt(0).toUpperCase() + leave.status.slice(1))}
+                      </span>
                     </div>
                   ))}
                 </div>
-              </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-40 gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse">
+                    <Calendar className="h-6 w-6 text-muted-foreground/50" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t('No recent leave applications')}</p>
+                </div>
+              )}
             </CardContent>
-          </Card>
-        </div>
+          </Card>}
 
-        {/* Today's celebrations and leave */}
-        <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <Card className="relative flex h-full min-h-[310px] flex-col overflow-hidden rounded-xl border border-pink-200 bg-white shadow-sm dark:border-pink-900/60 dark:bg-zinc-950">
-            <span aria-hidden="true" className="absolute left-[14%] top-4 size-1.5 rounded-full bg-pink-200" />
-            <span aria-hidden="true" className="absolute right-[18%] top-8 size-2 rounded-full bg-fuchsia-100" />
-            <span aria-hidden="true" className="absolute bottom-12 left-[54%] size-2 rotate-45 bg-pink-100" />
-            <CardHeader className="relative border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
+          {/* Recent Candidates */}
+          {hasPermission(perms, 'manage-candidates') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
               <div className="flex items-center justify-between">
                 <div>
-                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Today's Birthdays</CardTitle>
-                  <p className="mt-1 text-xs text-zinc-500">Celebrate with your team</p>
+                  <CardTitle className="text-base font-semibold">{t('Recent Candidates')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Latest applicants in the pipeline')}</p>
                 </div>
-                <div className="rounded-xl bg-pink-100 p-2.5 text-pink-600 dark:bg-pink-950/60 dark:text-pink-300">
-                  <PartyPopper className="size-5" />
-                </div>
+                <Link href={route('hr.recruitment.candidates.index')} className="flex items-center gap-1 text-xs text-primary font-medium shrink-0 hover:gap-1.5 transition-all duration-150">
+                  {t('View all')} <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </CardHeader>
-            <CardContent className="relative flex-1 p-0">
-              <div className="max-h-[330px] overflow-y-auto px-6 py-4">
-                {recentActivities.todayBirthdays?.length ? (
-                  <div className="space-y-2">
-                    {recentActivities.todayBirthdays.map((employee) => (
-                      <div key={employee.id} className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-pink-50 dark:hover:bg-pink-950/20">
-                        <img
-                          src={employee.avatar ? `/storage/media/${employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(employee.name)}&background=fce7f3&color=be185d`}
-                          alt={employee.name}
-                          className="size-11 rounded-full border-2 border-white object-cover shadow-sm dark:border-zinc-800"
-                        />
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{employee.name}</p>
-                          <p className="truncate text-xs text-zinc-500">{employee.designation}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                    <PartyPopper className="mb-3 size-8 text-pink-300" />
-                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No birthdays today</p>
-                    <p className="mt-1 text-xs text-zinc-500">The next celebration is just around the corner.</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="flex h-full min-h-[310px] flex-col overflow-hidden rounded-xl border border-amber-200 bg-white shadow-sm dark:border-amber-900/60 dark:bg-zinc-950">
-            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
-              <div className="flex items-center justify-between">
+            <CardContent className="p-0">
+              {recentActivities.candidates.length > 0 ? (
                 <div>
-                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Today's Leave</CardTitle>
-                  <p className="mt-1 text-xs text-zinc-500">Employees on leave today</p>
-                </div>
-                <div className="rounded-xl bg-amber-100 p-2.5 text-amber-600 dark:bg-amber-950/60 dark:text-amber-300">
-                  <Calendar className="size-5" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 p-0">
-              <div className="max-h-[330px] overflow-y-auto px-6 py-4">
-                {recentActivities.todayLeaves?.length ? (
-                  <div className="space-y-2">
-                    {recentActivities.todayLeaves.map((leave) => (
-                      <div key={leave.id} className="flex items-center justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-amber-50 dark:hover:bg-amber-950/20">
-                        <div className="flex min-w-0 items-center gap-3">
-                          <img
-                            src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(leave.employee?.name || 'Employee')}&background=ffedd5&color=c2410c`}
-                            alt={leave.employee?.name || 'Employee'}
-                            className="size-11 rounded-full border-2 border-white object-cover shadow-sm dark:border-zinc-800"
-                          />
-                          <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{leave.employee?.name || 'Employee'}</p>
-                            <p className="truncate text-xs text-zinc-500">{leave.employee?.employee?.designation?.name || 'Team Member'}</p>
-                          </div>
-                        </div>
-                        <Badge variant="outline" className="shrink-0 border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300">
-                          {leave.leave_type?.name || 'Leave'}
-                        </Badge>
+                  {recentActivities.candidates.map((candidate: any, i: number) => (
+                    <div key={i} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                      <div className="shrink-0">
+                        <UserInitials name={`${candidate.first_name} ${candidate.last_name}`} />
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                    <Calendar className="mb-3 size-8 text-amber-300" />
-                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No employees on leave today</p>
-                    <p className="mt-1 text-xs text-zinc-500">Everyone is available today.</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-
-
-        {/* Activity overview matching the reference dashboard */}
-        <div className="mb-5 grid grid-cols-1 gap-5 lg:grid-cols-2">
-          <ActivityCard title="Recent Leave Applications" subtitle="Latest leave requests from employees" href={route('hr.leave-applications.index')}>
-            <div className="max-h-[390px] overflow-y-auto">
-              {dashboardData.recentLeaveApplications?.length ? dashboardData.recentLeaveApplications.map((leave) => (
-                <div key={leave.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <img src={leave.employee?.avatar ? `/storage/media/${leave.employee.avatar}` : `https://ui-avatars.com/api/?name=${encodeURIComponent(leave.employee?.name || 'Employee')}&background=e5e7eb&color=374151`} alt={leave.employee?.name || 'Employee'} className="size-11 rounded-full object-cover" />
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{leave.employee?.name || 'Employee'}</p>
-                      <p className="truncate text-xs text-zinc-500">{leave.leave_type?.name || 'Leave'} • {format(new Date(leave.start_date), 'yyyy-MM-dd')}</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate leading-tight">{candidate.first_name} {candidate.last_name}</p>
+                        <p className="text-xs text-muted-foreground truncate mt-0.5">
+                          {candidate.job?.title || t('Job')} &bull; {candidate.application_date
+                            ? (window.appSettings?.formatDateTimeSimple(candidate.application_date, false) || candidate.application_date)
+                            : candidate.created_at
+                              ? (window.appSettings?.formatDateTimeSimple(candidate.created_at, false) || candidate.created_at)
+                              : 'N/A'}
+                        </p>
+                      </div>
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset shrink-0 ${getStatusColor(candidate.status)}`}>
+                        {candidate.status}
+                      </span>
                     </div>
-                  </div>
-                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium capitalize ${leave.status === 'approved' ? 'border-green-200 bg-green-50 text-green-700' : leave.status === 'rejected' ? 'border-red-200 bg-red-50 text-red-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>{leave.status}</span>
+                  ))}
                 </div>
-              )) : <div className="py-16 text-center text-sm text-zinc-500">No recent leave applications</div>}
-            </div>
-          </ActivityCard>
-
-          <ActivityCard title="Recent Candidates" subtitle="Latest applicants in the pipeline" href={route('hr.recruitment.candidates.index')}>
-            <div className="max-h-[390px] overflow-y-auto">
-              {recentActivities.candidates?.length ? recentActivities.candidates.map((candidate, index) => {
-                const name = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
-                const colors = ['border-amber-300 bg-amber-50 text-amber-700', 'border-lime-300 bg-lime-50 text-lime-700', 'border-blue-300 bg-blue-50 text-blue-700'];
-                return <div key={candidate.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
-                  <div className="flex min-w-0 items-center gap-3">
-                    <div className={`flex size-11 shrink-0 items-center justify-center rounded-full border text-sm font-semibold ${colors[index % colors.length]}`}>{name.split(' ').map((part) => part[0]).slice(0, 2).join('').toUpperCase()}</div>
-                    <div className="min-w-0"><p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{name}</p><p className="truncate text-xs text-zinc-500">{candidate.job?.title || candidate.current_position || 'Applicant'} • {candidate.application_date ? format(new Date(candidate.application_date), 'yyyy-MM-dd') : 'Recently applied'}</p></div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-40 gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse">
+                    <UserPlus className="h-6 w-6 text-muted-foreground/50" />
                   </div>
-                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium ${candidate.status === 'New' ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-orange-200 bg-orange-50 text-orange-700'}`}>{candidate.status || 'New'}</span>
-                </div>;
-              }) : <div className="py-16 text-center text-sm text-zinc-500">No recent candidates</div>}
-            </div>
-          </ActivityCard>
+                  <p className="text-sm text-muted-foreground">{t('No recent candidates')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>}
 
-          <ActivityCard title="Recent Announcements" subtitle="Latest company announcements" href={route('hr.announcements.index')}>
-            <div className="max-h-[390px] overflow-y-auto">
-              {recentActivities.announcements?.length ? recentActivities.announcements.map((announcement) => (
-                <div key={announcement.id} className="flex items-center gap-3 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600"><Bell className="size-5" /></div>
-                  <div className="min-w-0">
-                    <div className="flex min-w-0 items-center gap-2">
-                      <p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{announcement.title}</p>
-                      {announcement.is_high_priority && (
-                        <span className="shrink-0 rounded-full border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">Urgent</span>
-                      )}
+          {/* Recent Announcements */}
+          {hasPermission(perms, 'manage-announcements') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Recent Announcements')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Latest company announcements')}</p>
+                </div>
+                <Link href={route('hr.announcements.index')} className="flex items-center gap-1 text-xs text-primary font-medium shrink-0 hover:gap-1.5 transition-all duration-150">
+                  {t('View all')} <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              {recentActivities.announcements.length > 0 ? (
+                <div>
+                  {recentActivities.announcements.map((announcement: any, i: number) => (
+                    <div key={i} className="flex items-start gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                      <div className="rounded-xl bg-blue-100 dark:bg-blue-900/50 p-2 shrink-0 mt-0.5">
+                        <Bell className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <p className="text-sm font-semibold truncate leading-tight">{announcement.title}</p>
+                          {announcement.is_high_priority && (
+                            <span className="shrink-0 inline-flex items-center rounded-full bg-red-50 px-1.5 py-0.5 text-[10px] font-medium text-red-700 ring-1 ring-inset ring-red-600/20">{t('Urgent')}</span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {announcement.category} &bull; {announcement.created_at ? (window.appSettings?.formatDateTimeSimple(announcement.created_at, false) || announcement.created_at) : 'N/A'}
+                        </p>
+                      </div>
                     </div>
-                    <p className="truncate text-xs text-zinc-500">{announcement.category || 'Company News'} • {format(new Date(announcement.created_at), 'yyyy-MM-dd')}</p>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-40 gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse">
+                    <Bell className="h-6 w-6 text-muted-foreground/50" />
                   </div>
+                  <p className="text-sm text-muted-foreground">{t('No recent announcements')}</p>
                 </div>
-              )) : <div className="py-16 text-center text-sm text-zinc-500">No recent announcements</div>}
-            </div>
-          </ActivityCard>
+              )}
+            </CardContent>
+          </Card>}
 
-          <ActivityCard title="Upcoming Meetings" subtitle="Scheduled meetings from today onwards" href={route('meetings.meetings.index')}>
-            <div className="max-h-[390px] overflow-y-auto">
-              {recentActivities.meetings?.length ? recentActivities.meetings.map((meeting) => (
-                <div key={meeting.id} className="flex items-center justify-between gap-4 border-b border-zinc-100 px-6 py-4 last:border-0 dark:border-zinc-800">
-                  <div className="flex min-w-0 items-center gap-3"><div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet-100 text-violet-600"><Users className="size-5" /></div><div className="min-w-0"><p className="truncate text-sm font-semibold text-zinc-950 dark:text-zinc-50">{meeting.title}</p><p className="truncate text-xs text-zinc-500">{format(new Date(meeting.meeting_date), 'yyyy-MM-dd')} • {meeting.start_time || 'Time pending'}{meeting.end_time ? ` - ${meeting.end_time}` : ''}</p></div></div>
-                  <span className={`rounded-lg border px-2.5 py-1 text-xs font-medium capitalize ${meeting.status === 'completed' ? 'border-green-200 bg-green-50 text-green-700' : 'border-blue-200 bg-blue-50 text-blue-700'}`}>{meeting.status || 'Scheduled'}</span>
+          {/* Upcoming Meetings */}
+          {hasPermission(perms, 'manage-meetings') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Upcoming Meetings')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Scheduled meetings from today onwards')}</p>
                 </div>
-              )) : <div className="py-16 text-center text-sm text-zinc-500">No upcoming meetings</div>}
-            </div>
-          </ActivityCard>
+                <Link href={route('meetings.meetings.index')} className="flex items-center gap-1 text-xs text-primary font-medium shrink-0 hover:gap-1.5 transition-all duration-150">
+                  {t('View all')} <ChevronRight className="h-3.5 w-3.5" />
+                </Link>
+              </div>
+            </CardHeader>
+            <CardContent className="p-0 max-h-[320px] overflow-auto">
+              {recentActivities.meetings.length > 0 ? (
+                <div>
+                  {recentActivities.meetings.map((meeting: any, i: number) => (
+                    <div key={i} className="flex items-center gap-3 px-5 py-3.5 hover:bg-muted/50 dark:hover:bg-slate-800/60 transition-colors duration-150">
+                      <div className="rounded-xl bg-violet-100 dark:bg-violet-900/50 p-2 shrink-0">
+                        <Users className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate leading-tight">{meeting.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {(() => {
+                            if (!meeting.meeting_date) return t('No date set');
+                            const dateStr = window.appSettings?.formatDateTimeSimple(meeting.meeting_date, false) || meeting.meeting_date;
+                            const timeStr = meeting.start_time && meeting.end_time ? ` • ${meeting.start_time} - ${meeting.end_time}` : '';
+                            return dateStr + timeStr;
+                          })()}
+                        </p>
+                      </div>
+                      <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset shrink-0 ${getStatusColor(meeting.status)}`}>
+                        {t(meeting.status)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-40 gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse">
+                    <Users className="h-6 w-6 text-muted-foreground/50" />
+                  </div>
+                  <p className="text-sm text-muted-foreground">{t('No upcoming meetings')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>}
+
         </div>
 
-        {/* Superseded activity layout retained only as source history */}
-        <div className="hidden">
-          <Card className="flex min-h-[300px] flex-col overflow-hidden rounded-xl border border-blue-200 bg-white shadow-sm dark:border-blue-900/60 dark:bg-zinc-950">
-            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Recent Candidates</CardTitle>
-                  <p className="mt-1 text-xs text-zinc-500">Latest recruitment applications</p>
-                </div>
-                <div className="rounded-xl bg-blue-100 p-2.5 text-blue-600 dark:bg-blue-950/60 dark:text-blue-300">
-                  <UserPlus className="size-5" />
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1 p-0">
-              <div className="max-h-[320px] overflow-y-auto px-6 py-4">
-                {recentActivities.candidates?.length ? (
-                  <div className="space-y-2">
-                    {recentActivities.candidates.map((candidate) => {
-                      const candidateName = `${candidate.first_name || ''} ${candidate.last_name || ''}`.trim() || 'Candidate';
-                      return (
-                        <div key={candidate.id} className="flex items-center justify-between gap-4 rounded-lg p-2 transition-colors hover:bg-blue-50 dark:hover:bg-blue-950/20">
-                          <div className="flex min-w-0 items-center gap-3">
-                            <img
-                              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(candidateName)}&background=dbeafe&color=1d4ed8`}
-                              alt={candidateName}
-                              className="size-11 rounded-full object-cover"
-                            />
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{candidateName}</p>
-                              <p className="truncate text-xs text-zinc-500">{candidate.job?.title || candidate.current_position || 'General application'}</p>
-                            </div>
-                          </div>
-                          <Badge variant="outline" className="shrink-0 border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/40 dark:text-blue-300">
-                            {candidate.status || 'New'}
-                          </Badge>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                    <UserPlus className="mb-3 size-8 text-blue-300" />
-                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No recent candidates</p>
-                    <p className="mt-1 text-xs text-zinc-500">New applications will appear here.</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        {/* ── Charts : Hiring Trend ── */}
+        <div className={`grid gap-4 lg:grid-cols-1 ${fadeUp(350)}`}>
 
-          <Card className="flex min-h-[300px] flex-col overflow-hidden rounded-xl border border-violet-200 bg-white shadow-sm dark:border-violet-900/60 dark:bg-zinc-950">
-            <CardHeader className="border-b border-zinc-100 px-6 py-5 dark:border-zinc-800">
-              <div className="flex items-center justify-between">
+          {/* Hiring Trend */}
+          {hasPermission(perms, 'manage-employees') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
                 <div>
-                  <CardTitle className="text-base font-semibold text-zinc-900 dark:text-zinc-100">Upcoming Meetings</CardTitle>
-                  <p className="mt-1 text-xs text-zinc-500">Your team's upcoming schedule</p>
+                  <CardTitle className="text-base font-semibold">{t('Hiring Trend')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('New hires per month')} - {selectedHiringYear}</p>
                 </div>
-                <div className="rounded-xl bg-violet-100 p-2.5 text-violet-600 dark:bg-violet-950/60 dark:text-violet-300">
-                  <Clock className="size-5" />
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium bg-orange-50 text-orange-700 ring-1 ring-inset ring-orange-600/20 dark:bg-orange-900/20 dark:text-orange-400 dark:ring-orange-500/30">
+                    {charts.hiringTrend.reduce((s, m) => s + m.hires, 0)} {t('total')}
+                  </span>
+                  <Select value={String(selectedHiringYear)} onValueChange={(v) => handleHiringYearChange(Number(v))}>
+                    <SelectTrigger className="h-7 w-24 text-xs focus:ring-0 focus:ring-offset-0">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableYears.map((yr) => (
+                        <SelectItem key={yr} value={String(yr)} className="text-xs">{yr}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="flex-1 p-0">
-              <div className="max-h-[320px] overflow-y-auto px-6 py-4">
-                {recentActivities.meetings?.length ? (
-                  <div className="space-y-2">
-                    {recentActivities.meetings.map((meeting) => (
-                      <div key={meeting.id} className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-violet-50 dark:hover:bg-violet-950/20">
-                        <div className="flex size-11 shrink-0 flex-col items-center justify-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950/60 dark:text-violet-300">
-                          <span className="text-[10px] font-medium uppercase">{format(new Date(meeting.meeting_date), 'MMM')}</span>
-                          <span className="text-sm font-bold leading-none">{format(new Date(meeting.meeting_date), 'dd')}</span>
+            <CardContent className="p-4 pt-5">
+              {charts.hiringTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={charts.hiringTrend} margin={{ top: 20, right: 8, left: 0, bottom: 0 }} accessibilityLayer={false}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={primaryColor} strokeOpacity={0.15} vertical={false} />
+                    <XAxis dataKey="short" tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={{ stroke: primaryColor, strokeOpacity: 0.3 }} tickLine={{ stroke: primaryColor, strokeOpacity: 0.2 }} />
+                    <YAxis tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={{ stroke: primaryColor, strokeOpacity: 0.3 }} tickLine={{ stroke: primaryColor, strokeOpacity: 0.2 }} allowDecimals={false} width={32} />
+                    <Tooltip
+                      contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }}
+                      formatter={(v: number) => [v, t('Hires')]}
+                      labelFormatter={(label, payload) => payload?.[0]?.payload?.month ?? label}
+                    />
+                    <Bar dataKey="hires" radius={[4, 4, 0, 0]} maxBarSize={30} isAnimationActive={false}>
+                      <LabelList dataKey="hires" position="top" style={{ fontSize: 11, fill: primaryColor, fontWeight: 600 }} formatter={(v: number) => v > 0 ? v : ''} />
+                      {charts.hiringTrend.map((_, i) => (
+                        <Cell key={i} fill={primaryColor} fillOpacity={0.7} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[300px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><TrendingUp className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No hiring data available')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>}
+
+        </div>
+
+        {/* ── Charts : Department Distribution + Candidate Pipeline ── */}
+        <div className={`grid gap-4 lg:grid-cols-1 ${fadeUp(400)}`}>
+          {/* Payroll Trend */}
+          {hasPermission(perms, 'manage-payroll-runs') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Payroll Trend')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Monthly net pay')} - {selectedPayrollYear}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium bg-teal-50 text-teal-700 ring-1 ring-inset ring-teal-600/20 dark:bg-teal-900/20 dark:text-teal-400">
+                    {formatCurrency(charts.payrollTrend.reduce((s, m) => s + m.netPay, 0))}
+                  </span>
+                  <Select value={String(selectedPayrollYear)} onValueChange={(v) => handlePayrollYearChange(Number(v))}>
+                    <SelectTrigger className="h-7 w-[80px] text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableYears.map((yr) => (
+                        <SelectItem key={yr} value={String(yr)} className="text-xs">{yr}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-4 pt-5">
+              {charts.payrollTrend.length > 0 ? (
+                <ResponsiveContainer width="100%" height={240}>
+                  <AreaChart data={charts.payrollTrend} margin={{ top: 4, right: 8, left: 0, bottom: 0 }} accessibilityLayer={false}>
+                    <defs>
+                      <linearGradient id="payrollGrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor={primaryColor} stopOpacity={0.25} />
+                        <stop offset="95%" stopColor={primaryColor} stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke={primaryColor} strokeOpacity={0.12} vertical={false} />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={{ stroke: primaryColor, strokeOpacity: 0.3 }} tickLine={false} />
+                    <YAxis tick={{ fontSize: 11, fill: 'currentColor' }} className="text-muted-foreground" axisLine={{ stroke: primaryColor, strokeOpacity: 0.3 }} tickLine={false} tickFormatter={(v) => formatCurrency(v)} width={72} />
+                    <Tooltip
+                      contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }}
+                      formatter={(v: number) => [formatCurrency(v), t('Net Pay')]}
+                    />
+                    <Area type="monotone" dataKey="netPay" stroke={primaryColor} strokeWidth={2} fill="url(#payrollGrad)" dot={{ r: 3, fill: primaryColor, strokeWidth: 0 }} activeDot={{ r: 5, fill: primaryColor, strokeWidth: 0 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[240px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><DollarSign className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No payroll data available')}</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>}
+
+        </div>
+
+        {/* ── Charts Row 4: Payroll Trend + Asset Status ── */}
+        <div className={`grid gap-4 lg:grid-cols-2 ${fadeUp(500)}`}>
+
+          {/* Asset Status */}
+          {hasPermission(perms, 'manage-assets') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Asset Status')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Distribution by current status')}</p>
+                </div>
+                <div className="rounded-xl bg-cyan-100 dark:bg-cyan-900/40 p-2">
+                  <Package className="h-4 w-4 text-cyan-600 dark:text-cyan-400" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              {charts.assetStatusStats.length > 0 ? (
+                <div className="flex items-center gap-4">
+                  <ResponsiveContainer width="50%" height={200}>
+                    <PieChart>
+                      <Pie data={charts.assetStatusStats} cx="50%" cy="50%" innerRadius={50} outerRadius={80} dataKey="value" paddingAngle={3}>
+                        {charts.assetStatusStats.map((entry, i) => (
+                          <Cell key={i} fill={entry.color} stroke="none" />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex-1 space-y-2.5">
+                    {charts.assetStatusStats.map((s, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                          <span className="text-xs text-muted-foreground truncate">{s.name}</span>
                         </div>
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold text-zinc-900 dark:text-zinc-100">{meeting.title}</p>
-                          <p className="truncate text-xs text-zinc-500">
-                            {meeting.start_time && meeting.end_time ? `${meeting.start_time} – ${meeting.end_time}` : meeting.start_time || 'Time to be confirmed'}
-                          </p>
-                        </div>
+                        <span className="text-xs font-semibold shrink-0">{s.value}</span>
                       </div>
                     ))}
                   </div>
-                ) : (
-                  <div className="flex min-h-44 flex-col items-center justify-center text-center">
-                    <Clock className="mb-3 size-8 text-violet-300" />
-                    <p className="text-sm font-medium text-zinc-700 dark:text-zinc-300">No upcoming meetings</p>
-                    <p className="mt-1 text-xs text-zinc-500">Scheduled meetings will appear here.</p>
-                  </div>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[200px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><Package className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No asset data available')}</p>
+                </div>
+              )}
             </CardContent>
-          </Card>
-        </div>
+          </Card>}
 
-        {/* Calendar and Leaves Row */}
-        <div className="mt-5 grid grid-cols-1 gap-5">
-          {/* Calendar */}
-          <div>
-            <Card className="border border-zinc-100 shadow-sm h-full flex flex-col bg-white rounded-lg overflow-hidden">
-              <CardHeader className="border-b-0 pb-2 pt-4">
-                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
-                  Events & Holidays Calendar
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-4">
-                <style dangerouslySetInnerHTML={{__html: `
-                  .fc .fc-toolbar-title { font-size: 1.125rem; font-weight: 600; color: #18181b; }
-                  .fc .fc-button-primary { background-color: #22c55e !important; border-color: #22c55e !important; }
-                  .fc .fc-button-primary:hover { background-color: #16a34a !important; border-color: #16a34a !important; }
-                  .fc .fc-button-primary:not(:disabled).fc-button-active, .fc .fc-button-primary:not(:disabled):active { background-color: #15803d !important; border-color: #15803d !important; }
-                  .fc-today-button { background-color: #64748b !important; border-color: #64748b !important; text-transform: capitalize; }
-                  .fc-today-button:hover { background-color: #475569 !important; border-color: #475569 !important; }
-                  .fc-today-button:disabled { background-color: #94a3b8 !important; border-color: #94a3b8 !important; opacity: 1 !important;}
-                  .fc th { padding: 10px 0 !important; color: #52525b; font-weight: 500; font-size: 0.875rem; border-color: #f4f4f5 !important; }
-                  .fc td, .fc th { border-color: #f4f4f5 !important; }
-                  .fc .fc-daygrid-day-number { color: #52525b; font-size: 0.875rem; font-weight: 500; padding: 8px !important; }
-                  .fc .fc-day-today { background-color: #f8fafc !important; }
-                  .fc-event { border: none !important; border-radius: 4px; padding: 2px 4px; font-size: 0.75rem; font-weight: 500; cursor: pointer; }
-                  .fc-theme-standard td, .fc-theme-standard th { border: 1px solid #e4e4e7 !important; }
-                `}} />
-                <FullCalendar
-                  plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-                  initialView="dayGridMonth"
-                  headerToolbar={{
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
-                  }}
-                  events={recentActivities.calendarEvents || []}
-                  height={550}
-                />
-              </CardContent>
-            </Card>
-          </div>
 
-          {/* Leaves and Announcements */}
-          <div className="hidden">
-            {/* Recent Leave Applications */}
-            <Card className="border border-zinc-100 shadow-sm bg-white rounded-lg flex-1">
-              <CardHeader className="border-b border-zinc-100 pb-3">
-                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-zinc-800" strokeWidth={2} />
-                  Recent Leave Applications
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="max-h-[300px] overflow-y-auto px-5 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  <div className="flex flex-col gap-3">
-                    {dashboardData.recentLeaveApplications && dashboardData.recentLeaveApplications.length > 0 ? (
-                      dashboardData.recentLeaveApplications.map((leave, index) => (
-                        <div key={index} className="flex flex-col p-4 border border-zinc-200 rounded-lg shadow-sm hover:shadow-md transition-shadow relative overflow-hidden bg-white">
-                       
-                          
-                          <div className="flex justify-between items-start">
-                            <div className="flex items-start gap-3">
-                              <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                                leave.status === 'approved' ? 'bg-green-100 text-green-600' : 
-                                leave.status === 'rejected' ? 'bg-red-100 text-red-600' : 
-                                'bg-amber-100 text-amber-600'
-                              }`}>
-                                <Calendar className="w-4 h-4" />
-                              </div>
-                              <div>
-                                <h6 className="text-sm font-medium">{leave.employee?.name} - {leave.leave_type?.name}</h6>
-                                <p className="text-zinc-500 text-xs mt-1">
-                                  {format(new Date(leave.start_date), 'yyyy-MM-dd')}
-                                  {leave.start_date !== leave.end_date && ` - ${format(new Date(leave.end_date), 'yyyy-MM-dd')}`} 
-                                  <span className="ml-1 text-zinc-400">({leave.total_days} {leave.total_days === 1 ? 'day' : 'days'})</span>
-                                </p>
-                              </div>
-                            </div>
-                            <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                              leave.status === 'approved' ? 'bg-green-100 text-green-700' : 
-                              leave.status === 'rejected' ? 'bg-red-100 text-red-700' : 
-                              'bg-amber-100 text-amber-700'
-                            }`}>
-                              {leave.status.charAt(0).toUpperCase() + leave.status.slice(1)}
-                            </span>
-                          </div>
+          {/* Candidate Pipeline */}
+          {hasPermission(perms, 'manage-candidates') && <Card className="theme-border-soft border shadow-sm dark:bg-slate-900 overflow-hidden">
+            <CardHeader className="pb-3 pt-5 px-5 border-b">
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="text-base font-semibold">{t('Candidate Pipeline')}</CardTitle>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('Candidates by status')}</p>
+                </div>
+                <div className="rounded-xl bg-blue-100 dark:bg-blue-900/40 p-2">
+                  <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="p-5">
+              {charts.candidateStatusStats.length > 0 ? (
+                <div className="flex items-center gap-4">
+                  <ResponsiveContainer width="50%" height={200}>
+                    <PieChart>
+                      <Pie data={charts.candidateStatusStats} cx="50%" cy="50%" outerRadius={80} dataKey="value" paddingAngle={3}>
+                        {charts.candidateStatusStats.map((entry, i) => (
+                          <Cell key={i} fill={entry.color} stroke="none" />
+                        ))}
+                      </Pie>
+                      <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: `1px solid ${primaryColor}30`, backgroundColor: 'rgba(255,255,255,0.7)', color: primaryColor }} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="flex-1 space-y-2">
+                    {charts.candidateStatusStats.map((s, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 min-w-0">
+                          <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                          <span className="text-xs text-muted-foreground truncate">{s.name}</span>
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-6 text-zinc-500 text-sm">No recent leave applications</div>
-                    )}
+                        <span className="text-xs font-semibold shrink-0">{s.value}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Announcements */}
-            <Card className="border border-zinc-100 shadow-sm bg-white rounded-lg flex-1">
-              <CardHeader className="border-b border-zinc-100 pb-3">
-                <CardTitle className="text-base font-semibold text-zinc-900 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-zinc-800"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>
-                  Recent Announcements
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="max-h-[230px] overflow-y-auto px-5 pb-5 pt-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                  <div className="flex flex-col gap-4">
-                    {recentActivities.announcements && recentActivities.announcements.length > 0 ? (
-                      recentActivities.announcements.slice(0,3).map((announcement, index) => (
-                        <div key={index} className="flex gap-3">
-                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                          </div>
-                          <div>
-                            <h6 className="font-semibold text-zinc-800 text-sm">{announcement.title}</h6>
-                            <p className="text-zinc-500 text-xs mt-1 line-clamp-2">{announcement.description}</p>
-                            <p className="text-zinc-400 text-xs mt-1">{format(new Date(announcement.created_at), 'yyyy-MM-dd')}</p>
-                          </div>
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-6 text-zinc-500 text-sm">No announcements</div>
-                    )}
-                  </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center h-[200px] gap-3">
+                  <div className="rounded-full bg-muted p-4 animate-pulse"><BarChart3 className="h-6 w-6 text-muted-foreground/50" /></div>
+                  <p className="text-sm text-muted-foreground">{t('No candidate data available')}</p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              )}
+            </CardContent>
+          </Card>}
+
         </div>
+
       </div>
     </PageTemplate>
   );

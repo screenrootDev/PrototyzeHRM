@@ -172,7 +172,7 @@ class DepartmentController extends Controller
                                 $q->where('department_id', $departmentId);
                             })->count();
                         if ($employeeCount > 0) {
-                            return response()->json(['message' => __('Cannot delete department with assigned employees')], 400);
+                            return redirect()->back()->with('error', __('Cannot delete department with assigned employees'));
                         }
                     }
                     $department->delete();

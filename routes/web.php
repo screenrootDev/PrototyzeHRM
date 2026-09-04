@@ -315,6 +315,11 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::get('hr/employees/{userId}/documents/{documentId}/download', [EmployeeController::class, 'downloadDocument'])->middleware('permission:view-employees')->name('hr.employees.documents.download');
         });
 
+        Route::middleware('permission:manage-organization-chart')->group(function () {
+            Route::get('hr/organization-chart', [EmployeeController::class, 'organizationChart'])
+                ->name('hr.organization-chart.index');
+        });
+
         // Award Type Routes
         Route::middleware('permission:manage-award-types')->group(function () {
             Route::get('hr/award-types', [AwardTypeController::class, 'index'])->name('hr.award-types.index');

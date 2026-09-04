@@ -48,6 +48,8 @@ import {
   Coins,
   Fingerprint,
   IndianRupee,
+  Search,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -58,6 +60,7 @@ import {
 import { Button } from "@/components/ui/button";
 import AppLogo from "./app-logo";
 import { useEffect, useState, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import { hasPermission } from "@/utils/authorization";
 import { toast } from "@/components/custom-toast";
@@ -83,6 +86,7 @@ import {
 } from "@animateicons/react/lucide";
 
 export function AppSidebar() {
+  const { t } = useTranslation();
   const { auth, globalSettings, companySlug, active_modules = [] } = usePage().props as any;
   const userRole = auth.user?.type || auth.user?.role;
   const permissions = auth?.permissions || [];
@@ -211,6 +215,24 @@ export function AppSidebar() {
       ],
     });
 
+    // Workforce Management — aligned with the HRMSASS navigation structure.
+    if (hasPermission(permissions, "manage-employees")) {
+      items.push({
+        title: "Employees",
+        href: route("hr.employees.index"),
+        icon: () => <UsersIcon size={16} isAnimated={true} />,
+        group: "Workforce Management",
+      });
+    }
+
+    if (hasPermission(permissions, "manage-organization-chart")) {
+      items.push({
+        title: "Organization Chart",
+        href: route("hr.organization-chart.index"),
+        icon: Building2,
+        group: "Workforce Management",
+      });
+    }
 
     // Staff section - only show if user has any staff-related permissions
     const staffChildren = [];
@@ -230,7 +252,7 @@ export function AppSidebar() {
       items.push({
         title: "Staff",
         icon: () => <UsersIcon size={16} isAnimated={true} />,
-        group: "Workforce Management",
+        group: "System Control",
         children: staffChildren,
       });
     }
@@ -260,17 +282,17 @@ export function AppSidebar() {
       });
     }
 
-    if (hasPermission(permissions, "manage-document-types")) {
+    if (hasPermission(permissions, "manage-holidays")) {
       hrChildren.push({
-        title: "Document Types",
-        href: route("hr.document-types.index"),
+        title: "Holidays",
+        href: route("hr.holidays.index"),
       });
     }
 
-    if (hasPermission(permissions, "manage-employees")) {
+    if (hasPermission(permissions, "manage-announcements")) {
       hrChildren.push({
-        title: "Employees",
-        href: route("hr.employees.index"),
+        title: "Announcements",
+        href: route("hr.announcements.index"),
       });
     }
 
@@ -278,6 +300,13 @@ export function AppSidebar() {
       hrChildren.push({
         title: "Award Types",
         href: route("hr.award-types.index"),
+      });
+    }
+
+    if (hasPermission(permissions, "manage-document-types")) {
+      hrChildren.push({
+        title: "Document Types",
+        href: route("hr.document-types.index"),
       });
     }
 
@@ -389,20 +418,6 @@ export function AppSidebar() {
       });
     }
 
-    if (hasPermission(permissions, "manage-holidays")) {
-      hrChildren.push({
-        title: "Holidays",
-        href: route("hr.holidays.index"),
-      });
-    }
-
-    if (hasPermission(permissions, "manage-announcements")) {
-      hrChildren.push({
-        title: "Announcements",
-        href: route("hr.announcements.index"),
-      });
-    }
-
     // Asset Management submenu
     const assetChildren = [];
 
@@ -481,12 +496,17 @@ export function AppSidebar() {
       });
     }
 
-    if (hrChildren.length > 0) {
+    const organizationStructureItems = new Set([
+      "Branches", "Departments", "Designations", "Holidays", "Announcements", "Award Types", "Document Types",
+    ]);
+    const organizationStructureChildren = hrChildren.filter((item) => organizationStructureItems.has(item.title));
+
+    if (organizationStructureChildren.length > 0) {
       items.push({
-        title: "HR Management",
-        icon: () => <HouseIcon size={16} isAnimated={true} />,
+        title: "Organization Structure",
+        icon: Building2,
         group: "Workforce Management",
-        children: hrChildren,
+        children: organizationStructureChildren,
       });
     }
 
@@ -979,6 +999,7 @@ export function AppSidebar() {
   const { variant, collapsible, style } = useSidebarSettings();
   const { logoLight, logoDark, favicon, updateBrandSettings } = useBrand();
   const [sidebarStyle, setSidebarStyle] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     // Apply styles based on sidebar style
@@ -995,7 +1016,18 @@ export function AppSidebar() {
     }
   }, [style]);
 
-  const filteredNavItems = mainNavItems;
+  const filteredNavItems = searchQuery.trim()
+    ? mainNavItems.reduce<NavItem[]>((items, item) => {
+        const query = searchQuery.toLowerCase();
+        if (item.title.toLowerCase().includes(query)) {
+          items.push(item);
+        } else if (item.children) {
+          const children = item.children.filter((child) => child.title.toLowerCase().includes(query));
+          if (children.length) items.push({ ...item, children, defaultOpen: true });
+        }
+        return items;
+      }, [])
+    : mainNavItems;
 
   // Get the first available menu item's href for logo link
   const getFirstAvailableHref = () => {
@@ -1082,6 +1114,28 @@ export function AppSidebar() {
         </div>
 
         {/* Business Switcher removed */}
+        <div className="group-data-[collapsible=icon]:hidden px-2 pb-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder={t("Search menu...")}
+              className="w-full rounded-md border border-gray-300 bg-gray-50 py-1.5 pl-8 pr-7 text-sm text-gray-700 outline-none transition-all placeholder:text-gray-400 focus:border-primary focus:ring-1 focus:ring-primary dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery("")}
+                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                aria-label={t("Clear search")}
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
       </SidebarHeader>
 
       <SidebarContent>

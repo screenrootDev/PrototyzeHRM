@@ -220,7 +220,7 @@ export default function Designations() {
 
   const breadcrumbs = [
     { title: 'Dashboard', href: route('dashboard') },
-    { title: 'HR Management', href: route('hr.designations.index') },
+    { title: 'Organization Structure', href: route('hr.designations.index') },
     { title: 'Designations' }
   ];
 

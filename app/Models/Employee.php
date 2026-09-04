@@ -20,6 +20,7 @@ class Employee extends Model
         'branch_id',
         'department_id',
         'designation_id',
+        'manager_id',
         'shift_id',
         'attendance_policy_id',
         'date_of_joining',
@@ -66,6 +67,11 @@ class Employee extends Model
     public function designation()
     {
         return $this->belongsTo(Designation::class);
+    }
+
+    public function manager()
+    {
+        return $this->belongsTo(User::class, 'manager_id');
     }
 
     /**

@@ -18,7 +18,7 @@ import { getImagePath } from '@/utils/helpers';
 
 export default function EmployeeCreate() {
   
-  const { branches, departments, designations, documentTypes, shifts, attendancePolicies, generatedEmployeeId } = usePage().props as any;
+  const { branches, departments, designations, documentTypes, shifts, attendancePolicies, managers = [], generatedEmployeeId } = usePage().props as any;
 
   // State
   const [formData, setFormData] = useState<Record<string, any>>({
@@ -32,6 +32,7 @@ export default function EmployeeCreate() {
     branch_id: '',
     department_id: '',
     designation_id: '',
+    manager_id: '',
     shift_id: '',
     attendance_policy_id: '',
     date_of_joining: '',
@@ -553,6 +554,27 @@ export default function EmployeeCreate() {
                   </SelectContent>
                 </Select>
                 {errors.designation_id && <p className="text-red-500 text-xs">{errors.designation_id}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="manager_id">{'Reporting Manager'}</Label>
+                <Select
+                  value={formData.manager_id || '__none__'}
+                  onValueChange={(value) => handleChange('manager_id', value === '__none__' ? '' : value)}
+                >
+                  <SelectTrigger className={errors.manager_id ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Reports directly to company" />
+                  </SelectTrigger>
+                  <SelectContent searchable={true}>
+                    <SelectItem value="__none__">Reports directly to company</SelectItem>
+                    {managers.map((manager: any) => (
+                      <SelectItem key={manager.id} value={manager.id.toString()}>
+                        {manager.name}{manager.designation ? ` — ${manager.designation}` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.manager_id && <p className="text-red-500 text-xs">{errors.manager_id}</p>}
               </div>
 
               <div className="space-y-2">

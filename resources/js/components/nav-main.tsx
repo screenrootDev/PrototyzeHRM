@@ -235,24 +235,22 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                             tooltip={{ children: item.title }}
                             onClick={() => toggleExpand(item.title)}
                             className={cn(
-                                "transition-all duration-300 h-10 group/item relative overflow-hidden",
-                                isChildActive(item.children)
-                                    ? "bg-blue-500/5 text-blue-500 font-bold"
-                                    : "hover:bg-accent/50"
+                                "cursor-pointer group/item",
+                                isChildActive(item.children) && "text-primary"
                             )}
                         >
                             <div className={`flex items-center gap-2 w-full ${effectivePosition === 'right' ? 'justify-end text-right' : 'justify-start text-left'}`}>
                                 {effectivePosition === 'right' ? (
                                     <>
                                         <span>{state !== "collapsed" ? item.title : ""}</span>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
                                         {state !== "collapsed" && (
                                             expandedItems[item.title] ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />
                                         )}
                                     </>
                                 ) : (
                                     <>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isChildActive(item.children) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
                                         <div className="flex items-center gap-1">
                                             {state !== "collapsed" && <span>{item.title}</span>}
                                             {state !== "collapsed" && item.badge && (
@@ -280,10 +278,8 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                         isActive={isActive(item.href, item.exact)}
                         tooltip={{ children: item.title }}
                         className={cn(
-                            "transition-all duration-300 h-10 group/item relative overflow-hidden",
-                            isActive(item.href, item.exact)
-                                ? "bg-blue-500/10 text-blue-500 font-bold shadow-[inset_4px_0_12px_rgba(59,130,246,0.05)]"
-                                : "hover:bg-accent/50"
+                            "cursor-pointer group/item",
+                            isActive(item.href, item.exact) && "text-primary"
                         )}
                     >
                         {item.target === '_blank' ? (
@@ -296,12 +292,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                 {effectivePosition === 'right' ? (
                                     <>
                                         {state !== "collapsed" && <span>{item.title}</span>}
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
                                     </>
                                 ) : (
                                     <>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500 shadow-blue-500/20")} />}
-                                        {state !== "collapsed" && <span className="font-medium">{item.title}</span>}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
+                                        {state !== "collapsed" && <span>{item.title}</span>}
                                     </>
                                 )}
                             </a>
@@ -315,12 +311,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
                                 {effectivePosition === 'right' ? (
                                     <>
                                         {state !== "collapsed" && <span>{item.title}</span>}
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
                                     </>
                                 ) : (
                                     <>
-                                        {item.icon && <item.icon className={cn("h-4 w-4 transition-transform group-hover/item:scale-110", isActive(item.href, item.exact) && "text-blue-500")} />}
-                                        {state !== "collapsed" && <span className="font-medium">{item.title}</span>}
+                                        {item.icon && <item.icon className="h-4 w-4" />}
+                                        {state !== "collapsed" && <span>{item.title}</span>}
                                     </>
                                 )}
                             </Link>
@@ -334,12 +330,12 @@ export function NavMain({ items = [], position }: { items: NavItem[]; position: 
     return (
         <div className="px-1.5 py-0">
             {groupedSections.map((section, sectionIdx) => (
-                <SidebarGroup key={sectionIdx} className="px-0 py-0 mb-0">
+            <SidebarGroup key={sectionIdx} className={cn("px-1.5 py-0", sectionIdx > 0 && "mt-3")}>
                     {section.groupLabel && state !== "collapsed" && (
                         <SidebarGroupLabel
                             className={cn(
-                                "flex w-full mt-1.5 mb-0 px-2",
-                                "text-[14px] font-bold capitalize tracking-wide text-gray-500 dark:text-gray-400 leading-none",
+                                "flex w-full px-2 pt-2 pb-1.5",
+                                "text-[13px] font-bold capitalize tracking-wide text-gray-500 dark:text-gray-400 leading-none",
                                 effectivePosition === 'right' ? 'justify-end' : 'justify-start'
                             )}
                         >

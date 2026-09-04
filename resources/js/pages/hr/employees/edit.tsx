@@ -19,7 +19,7 @@ import { getImagePath } from '@/utils/helpers';
 
 export default function EmployeeEdit() {
   
-  const { employee, branches, departments, designations, documentTypes, shifts, attendancePolicies } = usePage().props as any;
+  const { employee, branches, departments, designations, documentTypes, shifts, attendancePolicies, managers = [] } = usePage().props as any;
 
   // State
   const [activeTab, setActiveTab] = useState('personal');
@@ -35,6 +35,7 @@ export default function EmployeeEdit() {
     branch_id: employee.employee?.branch_id ? employee.employee.branch_id.toString() : '',
     department_id: employee.employee?.department_id ? employee.employee.department_id.toString() : '',
     designation_id: employee.employee?.designation_id ? employee.employee.designation_id.toString() : '',
+    manager_id: employee.employee?.manager_id ? employee.employee.manager_id.toString() : '',
     shift_id: employee.employee?.shift_id ? employee.employee.shift_id.toString() : '',
     attendance_policy_id: employee.employee?.attendance_policy_id ? employee.employee.attendance_policy_id.toString() : '',
     date_of_joining: employee.employee?.date_of_joining || '',
@@ -503,6 +504,27 @@ export default function EmployeeEdit() {
                   </SelectContent>
                 </Select>
                 {errors.designation_id && <p className="text-red-500 text-xs">{errors.designation_id}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="manager_id">{'Reporting Manager'}</Label>
+                <Select
+                  value={formData.manager_id || '__none__'}
+                  onValueChange={(value) => handleChange('manager_id', value === '__none__' ? '' : value)}
+                >
+                  <SelectTrigger className={errors.manager_id ? 'border-red-500' : ''}>
+                    <SelectValue placeholder="Reports directly to company" />
+                  </SelectTrigger>
+                  <SelectContent searchable={true}>
+                    <SelectItem value="__none__">Reports directly to company</SelectItem>
+                    {managers.map((manager: any) => (
+                      <SelectItem key={manager.id} value={manager.id.toString()}>
+                        {manager.name}{manager.designation ? ` — ${manager.designation}` : ''}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {errors.manager_id && <p className="text-red-500 text-xs">{errors.manager_id}</p>}
               </div>
 
               <div className="space-y-2">

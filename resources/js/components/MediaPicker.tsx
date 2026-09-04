@@ -46,8 +46,20 @@ export default function MediaPicker({
   const safeValue = value || "";
 
   // Process the image URL for preview
-  const getDisplayUrl = (url: string) => {
+  const getDisplayUrl = (url: any) => {
     if (!url) return "";
+
+    // Check if it's not a string (e.g. File object)
+    if (typeof url !== "string") {
+      try {
+        if (url instanceof File || url instanceof Blob) {
+          return URL.createObjectURL(url);
+        }
+      } catch (e) {
+        // Ignored
+      }
+      return "";
+    }
 
     // If it's already a full URL, use it as is
     if (url.startsWith("http")) {
@@ -62,7 +74,9 @@ export default function MediaPicker({
     return getImagePath(url);
   };
 
-  const imageUrls = safeValue ? [getDisplayUrl(safeValue)] : [];
+  const imageUrls = Array.isArray(safeValue)
+    ? safeValue.map(getDisplayUrl).filter(Boolean)
+    : safeValue ? [getDisplayUrl(safeValue)] : [];
 
   const getFileIcon = (url: string) => {
     if (!url) return null;

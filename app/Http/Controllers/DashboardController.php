@@ -3,22 +3,28 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\Asset;
 use App\Models\AttendanceRecord;
 use App\Models\Branch;
 use App\Models\Candidate;
 use App\Models\Department;
-use App\Models\Designation;
 use App\Models\Employee;
+use App\Models\EmployeeContract;
+use App\Models\EmployeeTraining;
+use App\Models\Holiday;
 use App\Models\JobPosting;
 use App\Models\LeaveApplication;
 use App\Models\LeaveType;
 use App\Models\Meeting;
-use App\Models\Holiday;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use App\Models\Coupon;
+use App\Models\PayrollRun;
+use App\Models\Plan;
+use App\Models\PlanOrder;
+use App\Models\PlanRequest;
+use App\Models\Shift;
 use App\Models\User;
-
+use App\Models\Warning;
+use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -26,8 +32,8 @@ class DashboardController extends Controller
     {
         $user = auth()->user();
 
-        // Super admin, company, and employee always get dashboard
-        if ($user->type === 'superadmin' || $user->type === 'super admin' || $user->type === 'company' || $user->type === 'employee') {
+        // Super admin always gets dashboard
+        if ($user->type === 'superadmin' || $user->type === 'super admin') {
             return $this->renderDashboard();
         }
 
@@ -54,6 +60,8 @@ class DashboardController extends Controller
             ['route' => 'users.index', 'permission' => 'manage-users'],
             ['route' => 'roles.index', 'permission' => 'manage-roles'],
 
+            ['route' => 'plans.index', 'permission' => 'manage-plans'],
+            ['route' => 'referral.index', 'permission' => 'manage-referral'],
             ['route' => 'settings.index', 'permission' => 'manage-settings'],
         ];
 
@@ -66,6 +74,7 @@ class DashboardController extends Controller
 
         // If no permissions found, logout user
         auth()->logout();
+
         return redirect()->route('login')->with('error', __('No access permissions found.'));
     }
 
@@ -82,315 +91,142 @@ class DashboardController extends Controller
 
     private function renderSuperAdminDashboard()
     {
-        // Get organizational statistics
-        $totalEmployees = User::where('type', 'employee')->count();
-        $totalUsers = User::count();
+        $revenueYear = (int) request('revenueYear', now()->year);
+        $companiesYear = (int) request('companiesYear', now()->year);
 
-        // On Leave Today
-        $onLeaveToday = LeaveApplication::where('status', 'approved')
-            ->whereDate('start_date', '<=', today())
-            ->whereDate('end_date', '>=', today())
-            ->count();
-
-        // Present Today (Attendance)
-        $presentToday = AttendanceRecord::whereDate('date', today())
-            ->where('status', 'present')
-            ->count();
-
-        // Absent Today (Total - Present - On Leave)
-        $absentToday = max(0, $totalEmployees - $presentToday - $onLeaveToday);
-
-        // Total Companies
+        // Get system-wide statistics
         $totalCompanies = User::where('type', 'company')->count();
+        $totalActivePlanCompanies = User::where('type', 'company')->where('plan_is_active', '1')->count();
+        $totalUsers = User::where('type', '!=', 'superadmin')->where('type', '!=', 'super admin')->count();
+        $totalRevenue = PlanOrder::where('status', 'approved')->sum('final_price') ?? 0;
+        $activePlans = Plan::where('is_plan_enable', 'on')->count();
+        $pendingRequests = PlanRequest::where('status', 'pending')->count();
+        $activeCoupons = Coupon::where('status', true)->count();
 
-        // Storage Usage
-        $totalSpace = disk_total_space(base_path());
-        $freeSpace = disk_free_space(base_path());
-        $usedSpace = $totalSpace - $freeSpace;
-        $storageUsedFormatted = $this->formatBytes($usedSpace);
-        $storagePercentage = round(($usedSpace / $totalSpace) * 100, 1);
-
-        // Combined Recent Activity
-        $recentHires = Employee::with(['user', 'designation'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($emp) {
-                return [
-                    'id' => 'hire_' . $emp->id,
-                    'name' => $emp->user->name ?? 'New Employee',
-                    'type' => 'hire',
-                    'description' => "Joined as " . ($emp->designation->name ?? 'Team Member'),
-                    'timestamp' => $emp->created_at->diffForHumans(),
-                    'raw_time' => $emp->created_at
+        // Monthly revenue for all 12 months of selected year
+        if (isDemo()) {
+            $demoRevenue = [4200, 5800, 3900, 7100, 6400, 8900, 7600, 9200, 8100, 10500, 9800, 12400];
+            $monthlyRevenue = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $monthlyRevenue[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $revenueYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $revenueYear)),
+                    'revenue' => (float) $demoRevenue[$i - 1],
                 ];
-            });
-
-        $recentLeaves = LeaveApplication::with(['employee', 'leaveType'])
-            ->where('status', 'approved')
-            ->orderBy('updated_at', 'desc')
-            ->take(3)
-            ->get()
-            ->map(function ($leave) {
-                return [
-                    'id' => 'leave_' . $leave->id,
-                    'name' => $leave->employee->name ?? 'Employee',
-                    'type' => 'leave',
-                    'description' => "Leave approved: " . ($leave->leaveType->title ?? 'General'),
-                    'timestamp' => $leave->updated_at->diffForHumans(),
-                    'raw_time' => $leave->updated_at
-                ];
-            });
-
-        $recentAnnouncements = Announcement::orderBy('created_at', 'desc')
-            ->take(2)
-            ->get()
-            ->map(function ($ann) {
-                return [
-                    'id' => 'ann_' . $ann->id,
-                    'name' => 'Announcement',
-                    'type' => 'announcement',
-                    'description' => $ann->title,
-                    'timestamp' => $ann->created_at->diffForHumans(),
-                    'raw_time' => $ann->created_at
-                ];
-            });
-
-        $recentActivity = $recentHires->concat($recentLeaves)->concat($recentAnnouncements)
-            ->sortByDesc('raw_time')
-            ->take(10)
-            ->values();
-
-        $companyDistribution = \App\Models\User::where('type', 'company')
-            ->leftJoin('employees', 'users.id', '=', 'employees.created_by')
-            ->select('users.name', \DB::raw('count(employees.id) as count'))
-            ->groupBy('users.id', 'users.name')
-            ->orderBy('count', 'desc')
-            ->get();
-
-        // Helpdesk Tickets Logic
-        $recentTickets = \App\Models\HelpdeskTicket::with(['creator', 'category'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get()
-            ->map(function ($ticket) {
-                return [
-                    'id' => $ticket->id,
-                    'ticket_id' => $ticket->ticket_id,
-                    'title' => $ticket->title,
-                    'status' => $ticket->status,
-                    'priority' => $ticket->priority,
-                    'category' => $ticket->category->name ?? 'General',
-                    'category_color' => $ticket->category->color ?? '#3b82f6',
-                    'creator' => $ticket->creator->name ?? 'Unknown',
-                    'created_at' => $ticket->created_at->diffForHumans(),
-                ];
-            });
-
-        $weeklyPendingTickets = \App\Models\HelpdeskTicket::with(['creator', 'category'])
-            ->whereIn('status', ['open', 'in_progress'])
-            ->orderBy('created_at', 'asc')
-            ->take(5)
-            ->get()
-            ->map(function ($ticket) {
-                return [
-                    'id' => $ticket->id,
-                    'ticket_id' => $ticket->ticket_id,
-                    'title' => $ticket->title,
-                    'status' => $ticket->status,
-                    'priority' => $ticket->priority,
-                    'category' => $ticket->category->name ?? 'General',
-                    'category_color' => $ticket->category->color ?? '#3b82f6',
-                    'creator' => $ticket->creator->name ?? 'Unknown',
-                    'created_at' => $ticket->created_at->diffForHumans(),
-                    'last_reply_at' => $ticket->updated_at->diffForHumans(),
-                    'days_pending' => $ticket->created_at->diffInDays(now()) + ($ticket->created_at->diffInHours(now()) / 24),
-                ];
-            });
-
-        $ticketChartData = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
-            $created = \App\Models\HelpdeskTicket::whereMonth('created_at', $month->month)
-                ->whereYear('created_at', $month->year)
-                ->count();
-            $resolved = \App\Models\HelpdeskTicket::whereMonth('resolved_at', $month->month)
-                ->whereYear('resolved_at', $month->year)
-                ->count();
-            $ticketChartData[] = [
-                'month' => $month->format('M'),
-                'created' => $created,
-                'resolved' => $resolved
-            ];
-        }
-
-        $dashboardData = [
-            'stats' => [
-                'totalEmployees' => $totalEmployees,
-                'onLeaveToday' => $onLeaveToday,
-                'absentToday' => $absentToday,
-                'totalUsers' => $totalUsers,
-                'totalCompanies' => $totalCompanies,
-                'storageUsage' => [
-                    'used' => $storageUsedFormatted,
-                    'percentage' => $storagePercentage
-                ],
-                'systemStatus' => 'healthy'
-            ],
-            'companyDistribution' => $companyDistribution,
-            'recentActivity' => $recentActivity,
-            'upcomingEvents' => $this->getUpcomingEvents(),
-            'recentTickets' => $recentTickets,
-            'weeklyPendingTickets' => $weeklyPendingTickets,
-            'ticketChartData' => $ticketChartData,
-        ];
-
-        return Inertia::render('superadmin/dashboard', [
-            'dashboardData' => $dashboardData
-        ]);
-    }
-
-    private function getUpcomingEvents($companyUserIds = null)
-    {
-        $events = [];
-        $today = now();
-        $next7Days = now()->addDays(7);
-
-        // Birthdays (matching month and day)
-        $birthdays = Employee::with('user')
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })
-            ->whereRaw("DATE_FORMAT(date_of_birth, '%m-%d') BETWEEN ? AND ?", [
-                $today->format('m-d'),
-                $next7Days->format('m-d')
-            ])
-            ->get();
-
-        foreach ($birthdays as $emp) {
-            $events[] = [
-                'id' => 'bday_' . $emp->id,
-                'type' => 'birthday',
-                'name' => $emp->user->name ?? 'Employee',
-                'date' => Carbon::parse($emp->date_of_birth)->format('M d'),
-                'isToday' => Carbon::parse($emp->date_of_birth)->format('m-d') === $today->format('m-d')
-            ];
-        }
-
-        // Anniversaries (matching month and day, excluding current year hires)
-        $anniversaries = Employee::with('user')
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })
-            ->whereRaw("DATE_FORMAT(date_of_joining, '%m-%d') BETWEEN ? AND ?", [
-                $today->format('m-d'),
-                $next7Days->format('m-d')
-            ])
-            ->whereYear('date_of_joining', '<', $today->year)
-            ->get();
-
-        foreach ($anniversaries as $emp) {
-            $events[] = [
-                'id' => 'anniv_' . $emp->id,
-                'type' => 'anniversary',
-                'name' => $emp->user->name ?? 'Employee',
-                'date' => Carbon::parse($emp->date_of_joining)->format('M d'),
-                'isToday' => Carbon::parse($emp->date_of_joining)->format('m-d') === $today->format('m-d')
-            ];
-        }
-
-        // Holidays
-        $holidays = Holiday::whereBetween('start_date', [$today->toDateString(), $next7Days->toDateString()])
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })->get();
-        foreach ($holidays as $holiday) {
-            $events[] = [
-                'id' => 'hday_' . $holiday->id,
-                'type' => 'holiday',
-                'name' => $holiday->name,
-                'date' => Carbon::parse($holiday->start_date)->format('M d'),
-                'isToday' => Carbon::parse($holiday->start_date)->isToday()
-            ];
-        }
-
-        return collect($events)->sortBy('date')->values()->all();
-    }
-
-    private function getCalendarEvents($companyUserIds = null)
-    {
-        $events = [];
-        $startOfMonth = now()->startOfMonth()->subDays(7);
-        $endOfMonth = now()->endOfMonth()->addDays(7);
-
-        // Fetch Holidays
-        $holidays = \App\Models\Holiday::whereBetween('start_date', [$startOfMonth, $endOfMonth])
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })->get();
-            
-        foreach ($holidays as $holiday) {
-            $events[] = [
-                'id' => 'hol_' . $holiday->id,
-                'title' => $holiday->name,
-                'start' => $holiday->start_date,
-                'end' => $holiday->end_date ?? $holiday->start_date,
-                'backgroundColor' => '#22c55e', // green
-                'borderColor' => '#22c55e',
-                'allDay' => true
-            ];
-        }
-
-        // Fetch Meetings
-        $meetings = \App\Models\Meeting::whereBetween('meeting_date', [$startOfMonth, $endOfMonth])
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })->get();
-
-        foreach ($meetings as $meeting) {
-            $events[] = [
-                'id' => 'meet_' . $meeting->id,
-                'title' => $meeting->title,
-                'start' => $meeting->meeting_date . 'T' . $meeting->start_time,
-                'end' => $meeting->meeting_date . 'T' . $meeting->end_time,
-                'backgroundColor' => '#8b5cf6', // purple
-                'borderColor' => '#8b5cf6',
-                'allDay' => false
-            ];
-        }
-
-        // Birthdays
-        $birthdays = \App\Models\Employee::with('user')
-            ->when($companyUserIds, function($query) use ($companyUserIds) {
-                return $query->whereIn('created_by', $companyUserIds);
-            })->get();
-            
-        foreach ($birthdays as $emp) {
-            if ($emp->date_of_birth) {
-                $dob = \Carbon\Carbon::parse($emp->date_of_birth);
-                $bdayThisYear = \Carbon\Carbon::create(now()->year, $dob->month, $dob->day);
-                $events[] = [
-                    'id' => 'bday_' . $emp->id,
-                    'title' => ($emp->user->name ?? 'Staff') . ' Birthday',
-                    'start' => $bdayThisYear->format('Y-m-d'),
-                    'backgroundColor' => '#ef4444', // red
-                    'borderColor' => '#ef4444',
-                    'allDay' => true
+            }
+        } else {
+            $monthlyRevenue = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $revenue = PlanOrder::where('status', 'approved')
+                    ->whereMonth('processed_at', $i)
+                    ->whereYear('processed_at', $revenueYear)
+                    ->sum('final_price') ?? 0;
+                $monthlyRevenue[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $revenueYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $revenueYear)),
+                    'revenue' => (float) $revenue,
                 ];
             }
         }
 
-        return $events;
-    }
+        // Monthly companies registered for selected year
+        if (isDemo()) {
+            $demoCompanies = [3, 5, 4, 7, 6, 9, 8, 11, 7, 13, 10, 15];
+            $monthlyCompanies = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $monthlyCompanies[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $companiesYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $companiesYear)),
+                    'count' => $demoCompanies[$i - 1],
+                ];
+            }
+        } else {
+            $monthlyCompanies = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $count = User::where('type', 'company')
+                    ->whereMonth('created_at', $i)
+                    ->whereYear('created_at', $companiesYear)
+                    ->count();
+                $monthlyCompanies[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $companiesYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $companiesYear)),
+                    'count' => $count,
+                ];
+            }
+        }
 
-    private function formatBytes($bytes, $precision = 2)
-    {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
-        $bytes = max($bytes, 0);
-        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
-        $pow = min($pow, count($units) - 1);
-        $bytes /= pow(1024, $pow);
-        return round($bytes, $precision) . ' ' . $units[$pow];
+        $firstCompanyYear = User::where('type', 'company')->min('created_at')
+            ? (int) date('Y', strtotime(User::where('type', 'company')->min('created_at')))
+            : now()->year;
+        $availableCompanyYears = range(now()->year, $firstCompanyYear);
+
+        // Calculate monthly growth
+        $monthlyGrowth = 0;
+
+        if (IsDemo()) {
+            $monthlyGrowth = 55;
+        } else {
+            $currentMonthCompanies = User::where('type', 'company')
+                ->whereMonth('created_at', now()->month)
+                ->whereYear('created_at', now()->year)
+                ->count();
+            $previousMonthCompanies = User::where('type', 'company')
+                ->whereMonth('created_at', now()->subMonth()->month)
+                ->whereYear('created_at', now()->subMonth()->year)
+                ->count();
+            $monthlyGrowth = $previousMonthCompanies > 0
+                ? round((($currentMonthCompanies - $previousMonthCompanies) / $previousMonthCompanies) * 100, 1)
+                : ($currentMonthCompanies > 0 ? 100 : 0);
+        }
+
+        $availableYears = range(now()->year + 2, now()->year - 4);
+
+        $dashboardData = [
+            'stats' => [
+                'totalCompanies' => $totalCompanies,
+                'totalActivePlanCompanies' => $totalActivePlanCompanies,
+                'totalUsers' => $totalUsers,
+                'totalRevenue' => $totalRevenue,
+                'activePlans' => $activePlans,
+                'pendingRequests' => $pendingRequests,
+                'monthlyGrowth' => $monthlyGrowth,
+                'activeCoupons' => $activeCoupons,
+            ],
+            'recentActivity' => User::where('type', 'company')
+                ->orderBy('created_at', 'desc')
+                ->take(5)
+                ->get(['id', 'name', 'email', 'avatar', 'created_at'])
+                ->map(function ($company) {
+                    return [
+                        'id' => $company->id,
+                        'name' => $company->name,
+                        'email' => $company->email,
+                        'avatar' => $this->resolveAvatarUrl($company->getRawOriginal('avatar')),
+                        'registered_at' => $company->created_at->diffForHumans(),
+                        'status' => 'active',
+                    ];
+                }),
+            'monthlyRevenue' => $monthlyRevenue,
+            'revenueYear' => $revenueYear,
+            'availableYears' => $availableYears,
+            'monthlyCompanies' => $monthlyCompanies,
+            'availableCompanyYears' => $availableCompanyYears,
+            'topPlans' => Plan::withCount('users')
+                ->orderBy('users_count', 'desc')
+                ->take(3)
+                ->get()
+                ->map(function ($plan) {
+                    return [
+                        'name' => $plan->name,
+                        'subscribers' => $plan->users_count,
+                        'revenue' => $plan->users_count * $plan->price,
+                    ];
+                }),
+        ];
+
+        return Inertia::render('superadmin/dashboard', props: [
+            'dashboardData' => $dashboardData,
+        ]);
     }
 
     private function renderCompanyDashboard()
@@ -402,6 +238,10 @@ class DashboardController extends Controller
             return $this->renderEmployeeDashboard();
         }
 
+        $hiringYear = (int) request('hiringYear', now()->year);
+        $growthYear = (int) request('growthYear', now()->year);
+        $payrollYear = (int) request('payrollYear', now()->year);
+
         $companyUserIds = $this->getCompanyUserIds();
 
         // Core HR Statistics
@@ -410,76 +250,218 @@ class DashboardController extends Controller
         $totalDepartments = Department::whereIn('created_by', $companyUserIds)->count();
 
         // Monthly Statistics
-        $newEmployeesThisMonth = Employee::whereIn('created_by', $companyUserIds)
-            ->whereMonth('created_at', now()->month)->count();
-        $jobPostsThisMonth = JobPosting::whereIn('created_by', $companyUserIds)
-            ->whereMonth('created_at', now()->month)->count();
-        $candidatesThisMonth = Candidate::whereIn('created_by', $companyUserIds)
-            ->whereMonth('created_at', now()->month)->count();
+        if (isDemo()) {
+            $newEmployeesThisMonth = Employee::whereIn('created_by', $companyUserIds)->count();
+            $jobPostsThisMonth = JobPosting::whereIn('created_by', $companyUserIds)->count();
+            $candidatesThisMonth = Candidate::whereIn('created_by', $companyUserIds)->count();
+        } else {
+            $newEmployeesThisMonth = Employee::whereIn('created_by', $companyUserIds)
+                ->whereMonth('created_at', now()->month)->count();
+            $jobPostsThisMonth = JobPosting::whereIn('created_by', $companyUserIds)
+                ->whereMonth('created_at', now()->month)->count();
+            $candidatesThisMonth = Candidate::whereIn('created_by', $companyUserIds)
+                ->whereMonth('created_at', now()->month)->count();
+        }
+
+        // Today's Birthdays
+        if (isDemo()) {
+            $todayBirthdays = Employee::whereIn('created_by', $companyUserIds)
+                ->with('user', 'designation')
+                ->limit(6)
+                ->get()
+                ->map(function ($emp) {
+                    $avatar = $emp->user->getRawOriginal('avatar');
+                    return [
+                        'id'         => $emp->id,
+                        'name'       => $emp->user->name,
+                        'designation' => $emp->designation?->name ?? '',
+                        'avatar'     => $this->resolveAvatarUrl($avatar),
+                    ];
+                })->values();
+        } else {
+            $todayBirthdays = Employee::whereIn('created_by', $companyUserIds)
+                ->with('user', 'designation')
+                ->whereMonth('date_of_birth', today()->month)
+                ->whereDay('date_of_birth', today()->day)
+                ->get()
+                ->map(function ($emp) {
+                    $avatar = $emp->user->getRawOriginal('avatar');
+                    return [
+                        'id'         => $emp->id,
+                        'name'       => $emp->user->name,
+                        'designation' => $emp->designation?->name ?? '',
+                        'avatar'     => $this->resolveAvatarUrl($avatar),
+                    ];
+                })->values();
+        }
+
+        // Today's On Leave
+        if (isDemo()) {
+            $todayOnLeaveList = LeaveApplication::whereIn('created_by', $companyUserIds)
+                ->with(['employee.employee.designation', 'leaveType'])
+                ->where('status', 'approved')
+                ->limit(7)
+                ->get()
+                ->map(function ($leave) {
+                    $emp = $leave->employee;
+                    $avatar = $emp?->getRawOriginal('avatar');
+                    return [
+                        'id'         => $emp?->id,
+                        'name'       => $emp?->name ?? '',
+                        'designation' => $emp?->employee?->designation?->name ?? '',
+                        'leaveType'  => $leave->leaveType?->name ?? '',
+                        'avatar'     => $this->resolveAvatarUrl($avatar),
+                    ];
+                })->values();
+        } else {
+            $todayOnLeaveList = LeaveApplication::whereIn('created_by', $companyUserIds)
+                ->with(['employee.employee.designation', 'leaveType'])
+                ->where('status', 'approved')
+                ->whereDate('start_date', '<=', today())
+                ->whereDate('end_date', '>=', today())
+                ->get()
+                ->map(function ($leave) {
+                    $emp = $leave->employee;
+                    $avatar = $emp?->getRawOriginal('avatar');
+                    return [
+                        'id'         => $emp?->id,
+                        'name'       => $emp?->name ?? '',
+                        'designation' => $emp?->employee?->designation?->name ?? '',
+                        'leaveType'  => $leave->leaveType?->name ?? '',
+                        'avatar'     => $this->resolveAvatarUrl($avatar),
+                    ];
+                })->values();
+        }
 
         // Attendance Statistics
-        $presentToday = AttendanceRecord::whereIn('created_by', $companyUserIds)
-            ->whereDate('date', today())->where('status', 'present')->count();
-
-        $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
+        if (isDemo()) {
+            $presentToday = 45;
+            $attendanceRate = 85.5;
+        } else {
+            $presentToday = AttendanceRecord::whereIn('created_by', $companyUserIds)
+                ->whereDate('date', today())->where('status', 'present')->count();
+            $attendanceRate = $totalEmployees > 0 ? round(($presentToday / $totalEmployees) * 100, 1) : 0;
+        }
 
         // Leave Statistics
         $pendingLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
             ->where('status', 'pending')->count();
 
-
         $onLeaveToday = LeaveApplication::whereIn('created_by', $companyUserIds)
             ->where('status', 'approved');
 
-        if (config('app.is_demo') == true) {
-            $onLeaveToday = $onLeaveToday->count();
-        } else {
-            $onLeaveToday = $onLeaveToday->whereDate('start_date', '<=', today())
-                ->whereDate('end_date', '>=', today())->count();
-        }
+        $onLeaveToday = $onLeaveToday->whereDate('start_date', '<=', today())
+            ->whereDate('end_date', '>=', today())->count();
 
         // Recruitment Statistics
         $activeJobPostings = JobPosting::whereIn('created_by', $companyUserIds)
             ->where('status', 'Published')->count();
         $totalCandidates = Candidate::whereIn('created_by', $companyUserIds)->count();
 
-        // Designation Distribution for Chart
-        $predefinedColors = ['#4F46E5', '#0075BD', '#F59E0B', '#EF4444', '#3B82F6', '#D946EF'];
+        // Payroll Statistics
+        if (isDemo()) {
+            $totalPayrollThisMonth = 125000;
+            $payrollRunsThisMonth = 3;
+        } else {
+            $totalPayrollThisMonth = PayrollRun::whereIn('created_by', $companyUserIds)
+                ->where('status', 'completed')
+                ->whereMonth('pay_date', now()->month)
+                ->whereYear('pay_date', now()->year)
+                ->sum('total_net_pay') ?? 0;
+            $payrollRunsThisMonth = PayrollRun::whereIn('created_by', $companyUserIds)
+                ->whereMonth('created_at', now()->month)->count();
+        }
 
-        $designationStats = Designation::whereIn('created_by', $companyUserIds)
+        // Asset Statistics
+        if (isDemo()) {
+            $totalAssets = 48;
+            $assignedAssets = 32;
+        } else {
+            $totalAssets = Asset::whereIn('created_by', $companyUserIds)->count();
+            $assignedAssets = Asset::whereIn('created_by', $companyUserIds)->where('status', 'assigned')->count();
+        }
+
+        // Warning & Discipline Statistics
+        $pendingWarnings = Warning::whereIn('created_by', $companyUserIds)
+            ->whereIn('status', ['draft', 'issued'])->count();
+
+        // Upcoming Holidays
+        $upcomingHolidays = Holiday::whereIn('created_by', $companyUserIds)
+            ->where('start_date', '>=', today())
+            ->where('start_date', '<=', today()->addDays(30))
+            ->count();
+
+        // Active Contracts
+        $activeContracts = EmployeeContract::whereIn('created_by', $companyUserIds)
+            ->where('status', 'Active')->count();
+        $expiringContracts = EmployeeContract::whereIn('created_by', $companyUserIds)
+            ->where('status', 'Active')
+            ->where('end_date', '<=', today()->addDays(30))
+            ->whereNotNull('end_date')
+            ->count();
+
+        // Training Statistics
+        if (isDemo()) {
+            $activeTrainings = 12;
+            $completedTrainings = 28;
+        } else {
+            $activeTrainings = EmployeeTraining::whereIn('created_by', $companyUserIds)
+                ->whereIn('status', ['assigned', 'in_progress'])->count();
+            $completedTrainings = EmployeeTraining::whereIn('created_by', $companyUserIds)
+                ->where('status', 'completed')->count();
+        }
+
+        // Department Distribution for Chart
+        // $predefinedColors = ['#4F46E5', '#10b77f', '#F59E0B', '#EF4444', '#3B82F6', '#D946EF'];
+        $predefinedColors = ['#0EA5E9', '#14B8A6', '#6366F1', '#0D9488', '#7C3AED', '#0369A1'];
+
+        $departmentStats = Department::whereIn('created_by', $companyUserIds)
             ->withCount('employees')
-            ->with('department')
+            ->with('branch')
             ->orderBy('employees_count', 'desc')
             ->when(config('app.is_demo') == true, function ($query) {
                 return $query->take(6);
             })
             ->get()
-            ->map(function ($desig, $index) use ($predefinedColors) {
-                $displayName = $desig->name;
-                if ($desig->department) {
-                    $displayName .= ' (' . $desig->department->name . ')';
-                }
+            ->map(function ($dept, $index) use ($predefinedColors) {
+                $displayName = $dept->name . ' (' . $dept->branch->name . ')';
+
                 return [
                     'name' => $displayName,
-                    'value' => $desig->employees_count,
-                    'color' => $predefinedColors[$index % count($predefinedColors)]
+                    'value' => $dept->employees_count,
+                    'color' => config('app.is_demo') == true
+                        ? ($predefinedColors[$index] ?? '#' . substr(md5($displayName), 0, 6))
+                        : '#' . substr(md5($displayName), 0, 6),
                 ];
             });
 
-
-        // Monthly Hiring Trend for Chart (last 6 months)
-        $hiringTrend = [];
-        for ($i = 5; $i >= 0; $i--) {
-            $month = now()->subMonths($i);
-            $count = Employee::whereIn('created_by', $companyUserIds)
-                ->whereMonth('created_at', $month->month)
-                ->whereYear('created_at', $month->year)
-                ->count();
-            $hiringTrend[] = [
-                'month' => $month->format('M Y'),
-                'hires' => $count
-            ];
+        // Monthly Hiring Trend for Chart (all 12 months of selected year)
+        if (isDemo()) {
+            $demoHires = [8, 12, 15, 10, 18, 14, 20, 16, 22, 19, 25, 21];
+            $hiringTrend = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $hiringTrend[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $hiringYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $hiringYear)),
+                    'hires' => $demoHires[$i - 1],
+                ];
+            }
+        } else {
+            $hiringTrend = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $count = Employee::whereIn('created_by', $companyUserIds)
+                    ->whereMonth('created_at', $i)
+                    ->whereYear('created_at', $hiringYear)
+                    ->count();
+                $hiringTrend[] = [
+                    'month' => date('F Y', mktime(0, 0, 0, $i, 1, $hiringYear)),
+                    'short' => date('M', mktime(0, 0, 0, $i, 1, $hiringYear)),
+                    'hires' => $count,
+                ];
+            }
         }
+
+        $availableYears = range(now()->year + 2, now()->year - 4);
 
         // Candidate Status Distribution for Chart
         $candidateStatusStats = Candidate::whereIn('created_by', $companyUserIds)
@@ -488,20 +470,20 @@ class DashboardController extends Controller
             ->get()
             ->map(function ($item) {
                 $colors = [
-                    'New' => '#3B82F6',
-                    'Screening' => '#06B6D4',
-                    'Interview' => '#6366F1',
-                    'Offer' => '#F59E0B',
-                    'Hired' => '#0075BD',
-                    'Rejected' => '#EF4444'
+                    'New'        => '#0EA5E9',
+                    'Screening'  => '#F59E0B',
+                    'Interview'  => '#8B5CF6',
+                    'Offer'      => '#14B8A6',
+                    'Hired'      => '#10B981',
+                    'Rejected'   => '#EF4444',
                 ];
+
                 return [
                     'name' => $item->status,
                     'value' => $item->count,
-                    'color' => $colors[$item->status] ?? '#6b7280'
+                    'color' => $colors[$item->status] ?? '#6b7280',
                 ];
             });
-
 
         // Leave Types for Chart
         $leaveTypesStats = LeaveType::whereIn('created_by', $companyUserIds)
@@ -510,11 +492,11 @@ class DashboardController extends Controller
                 return [
                     'name' => $leaveType->name,
                     'value' => $leaveType->max_days_per_year,
-                    'color' => $leaveType->color ?: '#' . substr(md5($leaveType->name), 0, 6)
+                    'color' => $leaveType->color ?: '#' . substr(md5($leaveType->name), 0, 6),
                 ];
             });
 
-        // Employee Growth Chart (Monthly for current year)
+        // Employee Growth Chart
         if (isDemo()) {
             $employeeGrowthChart = [
                 ['month' => 'January', 'employees' => 15],
@@ -528,7 +510,7 @@ class DashboardController extends Controller
                 ['month' => 'September', 'employees' => 42],
                 ['month' => 'October', 'employees' => 45],
                 ['month' => 'November', 'employees' => 48],
-                ['month' => 'December', 'employees' => 52]
+                ['month' => 'December', 'employees' => 52],
             ];
         } else {
             $employeeGrowthChart = [];
@@ -536,59 +518,128 @@ class DashboardController extends Controller
                 $count = User::where('type', 'employee')
                     ->whereIn('created_by', $companyUserIds)
                     ->whereMonth('created_at', $month)
-                    ->whereYear('created_at', now()->year)
+                    ->whereYear('created_at', $growthYear)
                     ->count();
                 $employeeGrowthChart[] = [
                     'month' => date('F', mktime(0, 0, 0, $month, 1)),
-                    'employees' => $count
+                    'employees' => $count,
                 ];
             }
         }
 
-        // Recent Activities
-        $recentLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with('employee');
-            
-        if ($user->type === 'employee') {
-            $recentLeaves = $recentLeaves->whereIn('status', ['approved', 'absent'])->get();
+        // Leave Status Overview (current month — approved / pending / rejected totals)
+        $leaveBase = LeaveApplication::whereIn('created_by', $companyUserIds)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year);
+        if (isDemo()) {
+            $leaveOverview = [
+                ['name' => 'Approved', 'value' => 42, 'color' => '#10B981'],
+                ['name' => 'Pending',  'value' => 18, 'color' => '#F59E0B'],
+                ['name' => 'Rejected', 'value' => 8,  'color' => '#EF4444'],
+            ];
         } else {
-            $recentLeaves = $recentLeaves->whereIn('status', ['approved', 'absent'])
-                ->orderBy('created_at', 'desc')
-                ->take(5)
-                ->get();
+            $leaveOverview = [
+                ['name' => 'Approved', 'value' => (clone $leaveBase)->where('status', 'approved')->count(), 'color' => '#10B981'],
+                ['name' => 'Pending',  'value' => (clone $leaveBase)->where('status', 'pending')->count(),  'color' => '#F59E0B'],
+                ['name' => 'Rejected', 'value' => (clone $leaveBase)->where('status', 'rejected')->count(), 'color' => '#EF4444'],
+            ];
         }
 
-        // Recent Leave Applications (All statuses)
-        $recentLeaveApplications = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with(['employee.employee.designation', 'leaveType'])
-            ->orderBy('created_at', 'desc')
+        // Attendance last 7 days
+        if (isDemo()) {
+            $attendanceWeekly = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $day = now()->subDays($i);
+                $attendanceWeekly[] = [
+                    'day'     => $day->format('D'),
+                    'present' => rand(38, 50),
+                    'absent'  => rand(2, 8),
+                    'leave'   => rand(1, 6),
+                ];
+            }
+        } else {
+            $attendanceWeekly = [];
+            for ($i = 6; $i >= 0; $i--) {
+                $day = now()->subDays($i);
+                $base = AttendanceRecord::whereIn('created_by', $companyUserIds)->whereDate('date', $day->toDateString());
+                $attendanceWeekly[] = [
+                    'day'     => $day->format('D'),
+                    'present' => (clone $base)->where('status', 'present')->count(),
+                    'absent'  => (clone $base)->where('status', 'absent')->count(),
+                    'leave'   => (clone $base)->where('status', 'on_leave')->count(),
+                ];
+            }
+        }
+
+        // Monthly Payroll Trend
+        if (isDemo()) {
+            $demoPayroll = [95000, 98000, 102000, 99000, 105000, 108000, 112000, 110000, 115000, 118000, 122000, 125000];
+            $payrollTrend = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $payrollTrend[] = [
+                    'month'   => date('M', mktime(0, 0, 0, $i, 1)),
+                    'netPay'  => $demoPayroll[$i - 1],
+                ];
+            }
+        } else {
+            $payrollTrend = [];
+            for ($i = 1; $i <= 12; $i++) {
+                $net = PayrollRun::whereIn('created_by', $companyUserIds)
+                    ->where('status', 'completed')
+                    ->whereMonth('pay_date', $i)
+                    ->whereYear('pay_date', $payrollYear)
+                    ->sum('total_net_pay') ?? 0;
+                $payrollTrend[] = [
+                    'month'  => date('M', mktime(0, 0, 0, $i, 1)),
+                    'netPay' => (float) $net,
+                ];
+            }
+        }
+
+        // Asset Status Distribution
+        if (isDemo()) {
+            $assetStatusStats = [
+                ['name' => 'Available',    'value' => 16, 'color' => '#10B981'],
+                ['name' => 'Assigned',     'value' => 32, 'color' => '#3B82F6'],
+                ['name' => 'Maintenance',  'value' => 5,  'color' => '#F59E0B'],
+                ['name' => 'Disposed',     'value' => 3,  'color' => '#EF4444'],
+            ];
+        } else {
+            $statusColors = [
+                'available'         => '#10B981',
+                'assigned'          => '#3B82F6',
+                'under_maintenance' => '#F59E0B',
+                'disposed'          => '#EF4444',
+            ];
+            $assetStatusStats = Asset::whereIn('created_by', $companyUserIds)
+                ->selectRaw('status, COUNT(*) as count')
+                ->groupBy('status')
+                ->get()
+                ->map(fn($r) => [
+                    'name'  => ucfirst(str_replace('_', ' ', $r->status)),
+                    'value' => $r->count,
+                    'color' => $statusColors[$r->status] ?? '#6b7280',
+                ]);
+        }
+
+        $recentLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
+            ->with(['employee', 'leaveType'])
+            ->whereIn('status', ['approved', 'absent'])
+            ->orderByDesc('created_at')
             ->take(5)
             ->get();
+
+        $recentLeaves->transform(function ($leave) {
+            $avatar = $leave->employee->getRawOriginal('avatar');
+            $leave->employee->avatar = $this->resolveAvatarUrl($avatar);
+            return $leave;
+        });
 
         $recentCandidates = Candidate::whereIn('created_by', $companyUserIds)
             ->with(['job'])
             ->orderBy('created_at', 'desc')
             ->take(5)
             ->get();
-            
-        $pendingLeavesList = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->where('status', 'pending')
-            ->with(['employee', 'leaveType'])
-            ->orderBy('created_at', 'desc')
-            ->take(5)
-            ->get();
-            
-        $onboardingStatus = [
-            ['name' => 'Alice Johnson', 'role' => 'Software Engineer', 'progress' => 80],
-            ['name' => 'Bob Smith', 'role' => 'Marketing Specialist', 'progress' => 45],
-            ['name' => 'Charlie Brown', 'role' => 'Sales Representative', 'progress' => 100]
-        ];
-
-        $todoList = [
-            ['id' => 1, 'task' => 'Review Payroll for May', 'completed' => false],
-            ['id' => 2, 'task' => 'Schedule interview with John Doe', 'completed' => true],
-            ['id' => 3, 'task' => 'Approve pending leave requests', 'completed' => false]
-        ];
 
         // Recent Announcements
         $recentAnnouncements = Announcement::whereIn('created_by', $companyUserIds)
@@ -597,88 +648,72 @@ class DashboardController extends Controller
             ->get();
 
         // Upcoming Meetings
-        $recentMeetings = Meeting::whereIn('created_by', $companyUserIds)
-            ->whereDate('meeting_date', '>=', today())
-            ->orderBy('meeting_date')
-            ->orderBy('start_time')
-            ->take(5)
-            ->get();
-
-        // Today's Leaves
-        $todayLeaves = LeaveApplication::whereIn('created_by', $companyUserIds)
-            ->with(['employee.employee.designation', 'leaveType'])
-            ->where('status', 'approved')
-            ->whereDate('start_date', '<=', today())
-            ->whereDate('end_date', '>=', today())
-            ->get();
-
-        // Employees celebrating their birthday today
-        $todayBirthdays = Employee::whereIn('created_by', $companyUserIds)
-            ->with(['user', 'designation'])
-            ->whereMonth('date_of_birth', today()->month)
-            ->whereDay('date_of_birth', today()->day)
-            ->get()
-            ->map(function ($employee) {
-                return [
-                    'id' => $employee->id,
-                    'name' => $employee->user?->name ?? 'Employee',
-                    'avatar' => $employee->user?->avatar,
-                    'designation' => $employee->designation?->name ?? 'Team Member',
-                ];
-            })
-            ->values();
-
-        // Missing Attendance Today
-        $missingAttendance = AttendanceRecord::whereIn('created_by', $companyUserIds)
-            ->with(['employee.employee'])
-            ->whereDate('date', today())
-            ->where(function($q) {
-                $q->where('status', 'absent')->orWhere('is_absent', true);
-            })
-            ->get();
+        $recentMeetings = Meeting::whereIn('created_by', $companyUserIds);
+        if (isDemo()) {
+            $recentMeetings =  $recentMeetings
+                ->orderBy('meeting_date', 'asc')
+                ->take(5)
+                ->get();
+        } else {
+            $recentMeetings =  $recentMeetings
+                ->where('meeting_date', '>=', today())
+                ->orderBy('meeting_date', 'asc')
+                ->get();
+        }
 
         $dashboardData = [
             'stats' => [
-                'totalEmployees' => $totalEmployees,
-                'totalBranches' => $totalBranches,
-                'totalDepartments' => $totalDepartments,
+                'totalEmployees'       => $totalEmployees,
+                'totalBranches'        => $totalBranches,
+                'totalDepartments'     => $totalDepartments,
                 'newEmployeesThisMonth' => $newEmployeesThisMonth,
-                'jobPostsThisMonth' => $jobPostsThisMonth,
-                'candidatesThisMonth' => $candidatesThisMonth,
-                'attendanceRate' => $attendanceRate,
-                'presentToday' => $presentToday,
-                'pendingLeaves' => $pendingLeaves,
-                'onLeaveToday' => $onLeaveToday,
-                'activeJobPostings' => $activeJobPostings,
-                'totalCandidates' => $totalCandidates
+                'jobPostsThisMonth'    => $jobPostsThisMonth,
+                'candidatesThisMonth'  => $candidatesThisMonth,
+                'attendanceRate'       => $attendanceRate,
+                'presentToday'         => $presentToday,
+                'pendingLeaves'        => $pendingLeaves,
+                'onLeaveToday'         => $onLeaveToday,
+                'activeJobPostings'    => $activeJobPostings,
+                'totalCandidates'      => $totalCandidates,
+                'totalPayrollThisMonth' => $totalPayrollThisMonth,
+                'payrollRunsThisMonth' => $payrollRunsThisMonth,
+                'totalAssets'          => $totalAssets,
+                'assignedAssets'       => $assignedAssets,
+                'pendingWarnings'      => $pendingWarnings,
+                'upcomingHolidays'     => $upcomingHolidays,
+                'activeContracts'      => $activeContracts,
+                'expiringContracts'    => $expiringContracts,
+                'activeTrainings'      => $activeTrainings,
+                'completedTrainings'   => $completedTrainings,
             ],
             'charts' => [
-                'designationStats' => $designationStats,
-                'hiringTrend' => $hiringTrend,
+                'departmentStats'    => $departmentStats,
+                'hiringTrend'        => $hiringTrend,
+                'hiringYear'         => $hiringYear,
+                'availableYears'     => $availableYears,
+                'growthYear'          => $growthYear,
+                'payrollYear'         => $payrollYear,
                 'candidateStatusStats' => $candidateStatusStats,
-                'leaveTypesStats' => $leaveTypesStats,
-                'employeeGrowthChart' => $employeeGrowthChart
+                'leaveTypesStats'    => $leaveTypesStats,
+                'employeeGrowthChart' => $employeeGrowthChart,
+                'leaveOverview'      => $leaveOverview,
+                'attendanceWeekly'   => $attendanceWeekly,
+                'payrollTrend'       => $payrollTrend,
+                'assetStatusStats'   => $assetStatusStats,
             ],
             'recentActivities' => [
                 'leaves' => $recentLeaves,
                 'candidates' => $recentCandidates,
                 'announcements' => $recentAnnouncements,
                 'meetings' => $recentMeetings,
-                'pendingLeavesList' => $pendingLeavesList,
-                'todayLeaves' => $todayLeaves,
-                'todayBirthdays' => $todayBirthdays,
-                'missingAttendance' => $missingAttendance
             ],
-            'upcomingEvents' => $this->getUpcomingEvents($companyUserIds),
-            'calendarEvents' => $this->getCalendarEvents($companyUserIds),
-            'recentLeaveApplications' => $recentLeaveApplications,
-            'onboardingStatus' => $onboardingStatus,
-            'todoList' => $todoList,
-            'userType' => $user->type
+            'todayBirthdays' => $todayBirthdays,
+            'todayOnLeave' => $todayOnLeaveList,
+            'userType' => $user->type,
         ];
 
         return Inertia::render('dashboard', [
-            'dashboardData' => $dashboardData
+            'dashboardData' => $dashboardData,
         ]);
     }
 
@@ -693,18 +728,18 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
-        // Recent Meetings - get meetings where user is organizer
+        // Upcoming Meetings - get meetings where user is organizer
         $recentMeetings = \App\Models\Meeting::with('attendees')
             ->whereIn('created_by', $companyUserIds)
             ->where('organizer_id', $user->id)
-            ->orderBy('created_at', 'desc')
+            ->where('meeting_date', '>=', today())
+            ->orderBy('meeting_date', 'asc')
             ->get();
 
         // Get meetings where user is attendee
         $meetingAttendee = \App\Models\MeetingAttendee::with('meeting')
             ->where('user_id', $user->id)
             ->get();
-
 
         // Extract meetings from attendee records
         $attendeeMeetings = $meetingAttendee->pluck(value: 'meeting')->filter();
@@ -715,7 +750,7 @@ class DashboardController extends Controller
             ->filter(function ($meeting) {
                 return $meeting->meeting_date >= today();
             })
-            ->sortByDesc('created_at')
+            ->sortBy('meeting_date')
             ->values();
 
         // Employee Stats
@@ -733,19 +768,19 @@ class DashboardController extends Controller
             ->get(['id', 'name']);
 
         // Get today's attendance for the employee
-        $todayAttendance = \App\Models\AttendanceRecord::where('employee_id', $user->id)
+        $todayAttendance = AttendanceRecord::where('employee_id', $user->id)
             ->where('date', \Carbon\Carbon::today())
             ->first();
 
         // Get employee's assigned shift
         $employeeShift = null;
-        $employee = \App\Models\Employee::where('user_id', $user->id)->first();
+        $employee = Employee::where('user_id', $user->id)->first();
         if ($employee && $employee->shift_id) {
-            $employeeShift = \App\Models\Shift::find($employee->shift_id);
+            $employeeShift = Shift::find($employee->shift_id);
         }
 
         // Auto clock out previous days like yesterday and alll thing if not clocked out
-        $previousAttendance = \App\Models\AttendanceRecord::where('employee_id', $user->id)
+        $previousAttendance = AttendanceRecord::where('employee_id', $user->id)
             ->where('date', '<', \Carbon\Carbon::today())
             ->whereNotNull('clock_in')
             ->whereNull('clock_out')
@@ -753,7 +788,7 @@ class DashboardController extends Controller
 
         foreach ($previousAttendance as $record) {
             $recordDate = \Carbon\Carbon::parse($record->date);
-            $shift = \App\Models\Shift::find($record->shift_id) ?? $employeeShift;
+            $shift = Shift::find($record->shift_id) ?? $employeeShift;
 
             if ($shift) {
                 $record->update([
@@ -767,42 +802,43 @@ class DashboardController extends Controller
         }
 
         // Auto clock out if shift end time has passed for today
-        if ($todayAttendance && $todayAttendance->clock_in && !$todayAttendance->clock_out && $employeeShift) {
-            $now = \Carbon\Carbon::now();
-            $shiftEndTime = \Carbon\Carbon::today()->setTimeFromTimeString($employeeShift->end_time);
+        // if ($todayAttendance && $todayAttendance->clock_in && !$todayAttendance->clock_out && $employeeShift) {
+        //     $now = \Carbon\Carbon::now();
+        //     $shiftEndTime = \Carbon\Carbon::today()->setTimeFromTimeString($employeeShift->end_time);
 
-            if ($now->greaterThan($shiftEndTime)) {
-                $todayAttendance->update([
-                    'clock_out' => $employeeShift->end_time,
-                ]);
+        //     if ($now->greaterThan($shiftEndTime)) {
+        //         $todayAttendance->update([
+        //             'clock_out' => $employeeShift->end_time,
+        //         ]);
 
-                if (method_exists($todayAttendance, 'processAttendance')) {
-                    $todayAttendance->processAttendance();
-                }
+        //         if (method_exists($todayAttendance, 'processAttendance')) {
+        //             $todayAttendance->processAttendance();
+        //         }
 
-                $todayAttendance = $todayAttendance->fresh();
-            }
-        }
+        //         $todayAttendance = $todayAttendance->fresh();
+        //     }
+        // }
 
         $dashboardData = [
             'stats' => [
                 'totalAwards' => $totalAwards,
                 'totalWarnings' => $totalWarnings,
-                'totalComplaints' => $totalComplaints
+                'totalComplaints' => $totalComplaints,
             ],
             'recentActivities' => [
                 'announcements' => $recentAnnouncements,
-                'meetings' => $recentMeetings
+                'meetings' => $recentMeetings,
             ],
             'shifts' => $shifts,
             'attendancePolicies' => $attendancePolicies,
             'todayAttendance' => $todayAttendance,
             'currentTime' => \Carbon\Carbon::now()->format('H:i:s'),
             'employeeShift' => $employeeShift,
-            'userType' => $user->type
+            'userType' => $user->type,
         ];
+
         return Inertia::render('employee-dashboard', [
-            'dashboardData' => $dashboardData
+            'dashboardData' => $dashboardData,
         ]);
     }
 
@@ -821,6 +857,28 @@ class DashboardController extends Controller
     //     }
     // }
 
+    /**
+     * Convert a stored avatar value into a URL compatible with this app.
+     * Returning null lets the dashboard render its initials fallback.
+     */
+    private function resolveAvatarUrl(?string $avatar): ?string
+    {
+        if (!$avatar) {
+            return null;
+        }
+
+        if (filter_var($avatar, FILTER_VALIDATE_URL)) {
+            return $avatar;
+        }
+
+        $path = ltrim($avatar, '/');
+
+        if (str_starts_with($path, 'storage/media/')) {
+            return url($path);
+        }
+
+        return url('storage/media/' . $path);
+    }
 
     private function getCompanyUserIds()
     {
@@ -830,16 +888,20 @@ class DashboardController extends Controller
             if ($companyId) {
                 $allUsers = getAllCompanyUsers($companyId);
                 $allUsers[] = $companyId; // Include company itself
+
                 return array_unique($allUsers);
             }
+
             return [];
         } else {
             $companyId = getCompanyId($user->id);
             if ($companyId) {
                 $allUsers = getAllCompanyUsers($companyId);
                 $allUsers[] = $companyId; // Include company itself
+
                 return array_unique($allUsers);
             }
+
             return [];
         }
     }

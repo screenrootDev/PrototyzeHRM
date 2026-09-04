@@ -167,7 +167,7 @@ export function CrudTable({
               ? action.href(row)
               : action.href.replace(':id', row.id);
 
-            if (action.animated) {
+            if (action.animated !== false) {
               return (
                 <AnimatedTableActionButton 
                   key={index}
@@ -202,7 +202,7 @@ export function CrudTable({
             );
           }
 
-          if (action.animated) {
+          if (action.animated !== false) {
             return (
               <AnimatedTableActionButton 
                 key={index}
@@ -322,16 +322,15 @@ export function CrudTable({
   return (
     <div className="border-collapse dark:bg-gray-900">
       <Table>
-        <TableHeader className="sticky top-0 z-30">
-          <TableRow className="bg-gray-50 dark:bg-gray-800 border-b">
-            {showRowNumber && <TableHead className="sticky left-0 z-20 w-[48px] min-w-[48px] max-w-[48px] bg-gray-50 py-2.5 font-semibold dark:bg-gray-800">#</TableHead>}
-            {columns.map((column, i) => (
+        <TableHeader>
+          <TableRow className="bg-[#F0F0F1] dark:bg-gray-800 border-b hover:!bg-[#F0F0F1] dark:hover:!bg-gray-800">
+            {showRowNumber && <TableHead className="w-12 py-2.5 font-semibold">#</TableHead>}
+            {columns.map((column) => (
               <TableHead
                 key={column.key}
                 className={cn(
-                  "py-2.5 text-sm font-semibold",
+                  "py-2.5 font-semibold text-left",
                   column.sortable && "cursor-pointer select-none",
-                  i === 0 && showRowNumber && "sticky left-[48px] z-20 bg-gray-50 dark:bg-gray-800 border-r-2 border-gray-200 dark:border-gray-700",
                   column.className
                 )}
                 onClick={() => handleSort(column)}
@@ -342,20 +341,19 @@ export function CrudTable({
                 </div>
               </TableHead>
             ))}
-            {showActions && hasAnyActionPermission && <TableHead className="w-24 py-2.5 text-right font-semibold">{'Actions'}</TableHead>}
+            {showActions && hasAnyActionPermission && <TableHead className="w-24 py-2.5 text-center font-semibold">{'Actions'}</TableHead>}
           </TableRow>
         </TableHeader>
         <TableBody>
           {data.length > 0 ? (
             data.map((row, index) => (
-              <TableRow key={row.id || index} className="group hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
-                {showRowNumber && <TableCell className="sticky left-0 z-10 bg-white py-2.5 font-medium transition-colors group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-700">{from + index}</TableCell>}
-                {columns.map((col, i) => (
+              <TableRow key={row.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
+                {showRowNumber && <TableCell className="font-medium py-2.5">{from + index}</TableCell>}
+                {columns.map((col) => (
                   <TableCell
                     key={col.key}
                     className={cn(
-                      "py-2.5",
-                      i === 0 && showRowNumber && "sticky left-[48px] z-10 bg-white dark:bg-gray-900 group-hover:bg-gray-50 dark:group-hover:bg-gray-700 transition-colors border-r-2 border-gray-200 dark:border-gray-700",
+                      "py-2.5 text-left",
                       col.className
                     )}
                   >

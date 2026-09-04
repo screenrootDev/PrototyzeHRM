@@ -118,6 +118,8 @@ class RoleSeeder extends Seeder
             'create-employees',
             'edit-employees',
             'delete-employees',
+            'import-employee',
+            'export-employee',
 
             // Employee lifecycle
             'manage-award-types',
@@ -679,6 +681,11 @@ class RoleSeeder extends Seeder
 
             // career page
             'manage-career-page',
+
+            // Organization Chart
+            'manage-organization-chart',
+            'manage-any-organization-chart',
+            'manage-own-organization-chart',
         ];
 
         // Add SaaS-specific permissions

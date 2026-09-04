@@ -181,6 +181,8 @@ class PermissionSeeder extends Seeder
             ['name' => 'create-employees', 'module' => 'employees', 'label' => 'Create Employees', 'description' => 'Can create employees'],
             ['name' => 'edit-employees', 'module' => 'employees', 'label' => 'Edit Employees', 'description' => 'Can edit employees'],
             ['name' => 'delete-employees', 'module' => 'employees', 'label' => 'Delete Employees', 'description' => 'Can delete employees'],
+            ['name' => 'import-employee', 'module' => 'employees', 'label' => 'Import Employees', 'description' => 'Can import employees'],
+            ['name' => 'export-employee', 'module' => 'employees', 'label' => 'Export Employees', 'description' => 'Can export employees'],
 
             // Award Type management
             ['name' => 'manage-award-types', 'module' => 'award_types', 'label' => 'Manage Award Types', 'description' => 'Can manage award types'],
@@ -869,6 +871,11 @@ class PermissionSeeder extends Seeder
 
             // Manage Career Page
             ['name' => 'manage-career-page', 'module' => 'career', 'label' => 'Manage Career Page', 'description' => 'Manage Career Page'],
+
+            // Organization Chart
+            ['name' => 'manage-organization-chart', 'module' => 'organization_chart', 'label' => 'Manage Organization Chart', 'description' => 'Can manage organization chart'],
+            ['name' => 'manage-any-organization-chart', 'module' => 'organization_chart', 'label' => 'Manage All Organization Chart', 'description' => 'Can view organization chart for all employees'],
+            ['name' => 'manage-own-organization-chart', 'module' => 'organization_chart', 'label' => 'Manage Own Organization Chart', 'description' => 'Can view own organization chart only'],
 
         ];
 

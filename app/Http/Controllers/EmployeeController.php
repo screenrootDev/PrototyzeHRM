@@ -51,6 +51,18 @@ class EmployeeController extends Controller
                 'contract' => (clone $statsQuery)->whereHas('employee', fn ($q) => $q->where('employment_type', 'Contract'))->count(),
             ];
 
+            // These drive the status tabs in the employee list.  They deliberately
+            // use the unfiltered base query so the tabs always describe the full
+            // employee population, just as the reference UI does.
+            $statusCountsQuery = clone $query;
+            $statusCounts = [
+                'all' => (clone $statusCountsQuery)->count(),
+                'active' => (clone $statusCountsQuery)->whereHas('employee', fn ($q) => $q->where('employee_status', 'active'))->count(),
+                'inactive' => (clone $statusCountsQuery)->whereHas('employee', fn ($q) => $q->where('employee_status', 'inactive'))->count(),
+                'probation' => (clone $statusCountsQuery)->whereHas('employee', fn ($q) => $q->where('employee_status', 'probation'))->count(),
+                'terminated' => (clone $statusCountsQuery)->whereHas('employee', fn ($q) => $q->where('employee_status', 'terminated'))->count(),
+            ];
+
             // Handle search
             if ($request->has('search') && !empty($request->search)) {
                 $query->where(function ($q) use ($request) {
@@ -64,28 +76,28 @@ class EmployeeController extends Controller
             }
 
             // Handle department filter
-            if ($request->has('department') && !empty($request->department) && $request->department !== 'all') {
+            if ($request->has('department') && !empty($request->department) && !in_array($request->department, ['all', '_empty_'], true)) {
                 $query->whereHas('employee', function ($q) use ($request) {
                     $q->where('department_id', $request->department);
                 });
             }
 
             // Handle branch filter
-            if ($request->has('branch') && !empty($request->branch) && $request->branch !== 'all') {
+            if ($request->has('branch') && !empty($request->branch) && !in_array($request->branch, ['all', '_empty_'], true)) {
                 $query->whereHas('employee', function ($q) use ($request) {
                     $q->where('branch_id', $request->branch);
                 });
             }
 
             // Handle designation filter
-            if ($request->has('designation') && !empty($request->designation) && $request->designation !== 'all') {
+            if ($request->has('designation') && !empty($request->designation) && !in_array($request->designation, ['all', '_empty_'], true)) {
                 $query->whereHas('employee', function ($q) use ($request) {
                     $q->where('designation_id', $request->designation);
                 });
             }
 
             // Handle status filter
-            if ($request->has('status') && !empty($request->status) && $request->status !== 'all') {
+            if ($request->has('status') && !empty($request->status) && !in_array($request->status, ['all', '_empty_'], true)) {
                 $query->whereHas('employee', function ($q) use ($request) {
                     $q->where('employee_status', $request->status);
                 });
@@ -114,6 +126,12 @@ class EmployeeController extends Controller
             }
 
             $employees = $query->paginate($request->per_page ?? 10);
+            $employees->getCollection()->each(function (User $user) {
+                $user->setAttribute(
+                    'avatar',
+                    $this->organizationAvatarUrl($user->getRawOriginal('avatar'))
+                );
+            });
 
             // Get branches, departments, and designations for filters
             $branches = Branch::whereIn('created_by', getCompanyAndUsersId())
@@ -146,6 +164,8 @@ class EmployeeController extends Controller
                 'departments' => $departments,
                 'designations' => $designations,
                 'stats' => $stats,
+                'statusCounts' => $statusCounts,
+                'hasSampleFile' => false,
                 'filters' => $request->all(['search', 'department', 'branch', 'designation', 'status', 'employment_type', 'sort_field', 'sort_direction', 'per_page']),
             ]);
         } else {
@@ -337,6 +357,8 @@ class EmployeeController extends Controller
                 ->where('status', 'active')
                 ->get(['id', 'name']);
 
+            $managers = $this->availableManagers();
+
             return Inertia::render('hr/employees/create', [
                 'branches' => $branches,
                 'departments' => $departments,
@@ -344,6 +366,7 @@ class EmployeeController extends Controller
                 'documentTypes' => $documentTypes,
                 'shifts' => $shifts,
                 'attendancePolicies' => $attendancePolicies,
+                'managers' => $managers,
                 'generatedEmployeeId' => Employee::generateEmployeeId(),
             ]);
         } else {
@@ -375,6 +398,7 @@ class EmployeeController extends Controller
                     'branch_id' => 'required|exists:branches,id',
                     'department_id' => 'required|exists:departments,id',
                     'designation_id' => 'required|exists:designations,id',
+                    'manager_id' => ['nullable', 'integer', Rule::in($this->availableManagerIds())],
                     'date_of_joining' => 'required|date',
                     'employment_type' => 'required|string|max:50',
                     'employee_status' => 'required|string|max:50',
@@ -448,6 +472,7 @@ class EmployeeController extends Controller
                 $employee->branch_id = $request->branch_id;
                 $employee->department_id = $request->department_id;
                 $employee->designation_id = $request->designation_id;
+                $employee->manager_id = $request->filled('manager_id') ? (int) $request->manager_id : null;
                 $employee->date_of_joining = $request->date_of_joining;
                 $employee->employment_type = $request->employment_type;
                 $employee->employee_status = $request->employee_status;
@@ -578,6 +603,8 @@ class EmployeeController extends Controller
                 ->where('status', 'active')
                 ->get(['id', 'name']);
 
+            $managers = $this->availableManagers($employee->user_id);
+
             return Inertia::render('hr/employees/edit', [
                 'employee' => $user,
                 'branches' => $branches,
@@ -586,6 +613,7 @@ class EmployeeController extends Controller
                 'documentTypes' => $documentTypes,
                 'shifts' => $shifts,
                 'attendancePolicies' => $attendancePolicies,
+                'managers' => $managers,
             ]);
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
@@ -622,6 +650,16 @@ class EmployeeController extends Controller
                     'branch_id' => 'required|exists:branches,id',
                     'department_id' => 'required|exists:departments,id',
                     'designation_id' => 'required|exists:designations,id',
+                    'manager_id' => [
+                        'nullable',
+                        'integer',
+                        Rule::in($this->availableManagerIds($employee->user_id)),
+                        function (string $attribute, mixed $value, \Closure $fail) use ($employee) {
+                            if ($value && $this->wouldCreateReportingCycle($employee->user_id, (int) $value)) {
+                                $fail(__('This reporting manager would create a circular hierarchy.'));
+                            }
+                        },
+                    ],
                     'date_of_joining' => 'required|date',
                     'employment_type' => 'required|string|max:50',
                     'employee_status' => 'required|string|max:50',
@@ -686,6 +724,7 @@ class EmployeeController extends Controller
                 $employee->branch_id = $request->branch_id;
                 $employee->department_id = $request->department_id;
                 $employee->designation_id = $request->designation_id;
+                $employee->manager_id = $request->filled('manager_id') ? (int) $request->manager_id : null;
                 $employee->date_of_joining = $request->date_of_joining;
                 $employee->employment_type = $request->employment_type;
                 $employee->employee_status = $request->employee_status;
@@ -855,6 +894,196 @@ class EmployeeController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', __('Failed to delete document'));
         }
+    }
+
+    public function organizationChart()
+    {
+        if (!Auth::user()->hasPermissionTo('manage-organization-chart')) {
+            return redirect()->back()->with('error', __('Permission Denied.'));
+        }
+
+        $companyUserId = getCompanyId(Auth::id());
+        $companyUser = User::find($companyUserId);
+        $authUser = Auth::user();
+
+        $allMembers = User::with(['employee.department', 'employee.designation', 'employee.branch', 'employee.manager'])
+            ->where('type', 'employee')
+            ->whereNotNull('name')
+            ->where('name', '!=', '')
+            ->where(function ($query) {
+                $query->whereDoesntHave('employee')
+                    ->orWhereHas('employee', fn ($employeeQuery) => $employeeQuery
+                        ->whereIn('employee_status', ['active', 'inactive', 'probation']));
+            })
+            ->whereIn('created_by', getCompanyAndUsersId())
+            ->get();
+
+        $allMapped = $this->mapOrganizationUsers($allMembers, $companyUserId);
+
+        if ($authUser->hasPermissionTo('manage-any-organization-chart')) {
+            $mapped = $allMapped;
+        } elseif ($authUser->hasPermissionTo('manage-own-organization-chart')) {
+            $descendantIds = $this->collectOrganizationDescendantIds($allMapped, $authUser->id);
+            $descendantIds[] = $authUser->id;
+            $ancestorIds = $this->collectOrganizationAncestorIds($allMapped, $authUser->id, $companyUserId);
+            $visibleIds = array_unique(array_merge($descendantIds, $ancestorIds));
+            $mapped = array_values(array_filter(
+                $allMapped,
+                fn ($user) => in_array($user['id'], $visibleIds, true)
+            ));
+        } else {
+            return redirect()->back()->with('error', __('Permission Denied.'));
+        }
+
+        $root = [
+            'id' => $companyUser?->id ?? 0,
+            'name' => $companyUser?->name ?? 'Company',
+            'email' => $companyUser?->email ?? '',
+            'avatar' => $this->organizationAvatarUrl($companyUser?->getRawOriginal('avatar')),
+            'created_by' => null,
+            'department' => null,
+            'designation' => 'Company',
+            'branch' => null,
+            'employee_id' => null,
+            'status' => 'active',
+            'children' => $this->buildOrganizationTree($mapped, $companyUser?->id ?? 0),
+        ];
+
+        return Inertia::render('hr/organization-chart/index', [
+            'chartData' => $root,
+            'totalCount' => count($mapped),
+        ]);
+    }
+
+    private function buildOrganizationTree(array $employees, int $parentId): array
+    {
+        $children = [];
+
+        foreach ($employees as $employee) {
+            if ((int) $employee['created_by'] === $parentId) {
+                $employee['children'] = $this->buildOrganizationTree($employees, $employee['id']);
+                $children[] = $employee;
+            }
+        }
+
+        return $children;
+    }
+
+    private function mapOrganizationUsers($members, ?int $companyUserId = null): array
+    {
+        $mapped = $members->map(function ($user) use ($companyUserId) {
+            return [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->type,
+                'avatar' => $this->organizationAvatarUrl($user->getRawOriginal('avatar')),
+                'created_by' => $user->employee?->manager_id ?? $companyUserId,
+                'department' => $user->employee?->department?->name,
+                'designation' => $user->employee?->designation?->name ?? ucfirst($user->type),
+                'branch' => $user->employee?->branch?->name,
+                'employee_id' => $user->employee?->employee_id,
+                'status' => $user->employee?->employee_status ?? ($user->status ?? 'active'),
+                'children' => [],
+            ];
+        })->values()->toArray();
+
+        return $mapped;
+    }
+
+    private function availableManagers(?int $excludeUserId = null)
+    {
+        return User::query()
+            ->with('employee.designation')
+            ->where('type', 'employee')
+            ->whereIn('created_by', getCompanyAndUsersId())
+            ->when($excludeUserId, fn ($query) => $query->where('id', '!=', $excludeUserId))
+            ->whereHas('employee', fn ($query) => $query->whereIn('employee_status', ['active', 'inactive', 'probation']))
+            ->orderBy('name')
+            ->get()
+            ->map(fn (User $user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'designation' => $user->employee?->designation?->name,
+            ]);
+    }
+
+    private function availableManagerIds(?int $excludeUserId = null): array
+    {
+        return $this->availableManagers($excludeUserId)->pluck('id')->all();
+    }
+
+    private function wouldCreateReportingCycle(int $employeeUserId, int $managerUserId): bool
+    {
+        $visited = [];
+        $currentId = $managerUserId;
+
+        while ($currentId) {
+            if ($currentId === $employeeUserId || isset($visited[$currentId])) {
+                return true;
+            }
+
+            $visited[$currentId] = true;
+            $currentId = (int) (Employee::where('user_id', $currentId)->value('manager_id') ?? 0);
+        }
+
+        return false;
+    }
+
+    private function collectOrganizationDescendantIds(array $allUsers, int $parentId): array
+    {
+        $ids = [];
+
+        foreach ($allUsers as $user) {
+            if ((int) $user['created_by'] === $parentId) {
+                $ids[] = $user['id'];
+                $ids = array_merge($ids, $this->collectOrganizationDescendantIds($allUsers, $user['id']));
+            }
+        }
+
+        return $ids;
+    }
+
+    private function collectOrganizationAncestorIds(array $allUsers, int $userId, int $companyUserId): array
+    {
+        $ids = [];
+        $lookup = collect($allUsers)->keyBy('id');
+        $current = $lookup->get($userId);
+
+        while ($current && (int) $current['created_by'] !== $companyUserId && isset($lookup[(int) $current['created_by']])) {
+            $parentId = (int) $current['created_by'];
+            $ids[] = $parentId;
+            $current = $lookup->get($parentId);
+        }
+
+        return $ids;
+    }
+
+    private function organizationAvatarUrl(?string $avatar): ?string
+    {
+        if (!$avatar) {
+            return null;
+        }
+
+        if (filter_var($avatar, FILTER_VALIDATE_URL)) {
+            return $avatar;
+        }
+
+        $path = ltrim($avatar, '/');
+
+        if (str_starts_with($path, 'storage/')) {
+            return url($path);
+        }
+
+        if (Storage::disk('public')->exists($path)) {
+            return url('storage/' . $path);
+        }
+
+        if (Storage::disk('public')->exists('media/' . $path)) {
+            return url('storage/media/' . $path);
+        }
+
+        return url('storage/media/' . $path);
     }
 
     /**
