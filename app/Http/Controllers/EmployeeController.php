@@ -499,6 +499,8 @@ class EmployeeController extends Controller
                     throw new \Exception('Failed to save employee data');
                 }
 
+                $this->syncLeaveApproverRole($user, (int) $request->designation_id);
+
                 // Handle document uploads
                 if ($request->has('documents') && is_array($request->documents)) {
                     foreach ($request->documents as $document) {
@@ -746,6 +748,8 @@ class EmployeeController extends Controller
                 $employee->base_salary = $request->salary;
 
                 $employee->save();
+
+                $this->syncLeaveApproverRole($user, (int) $request->designation_id);
 
                 // Handle document uploads
                 if ($request->has('documents') && is_array($request->documents)) {
@@ -1006,6 +1010,46 @@ class EmployeeController extends Controller
                 'name' => $user->name,
                 'designation' => $user->employee?->designation?->name,
             ]);
+    }
+
+    private function syncLeaveApproverRole(User $user, ?int $designationId): void
+    {
+        $designation = $designationId ? Designation::find($designationId) : null;
+        $roleName = match (strtolower(trim($designation?->name ?? ''))) {
+            'project manager' => 'project-manager',
+            'team lead' => 'team-lead',
+            default => null,
+        };
+
+        $companyId = getCompanyId(Auth::id());
+        $approverRoles = \App\Models\Role::query()
+            ->where('created_by', $companyId)
+            ->whereIn('name', ['project-manager', 'team-lead'])
+            ->get();
+
+        foreach ($approverRoles as $role) {
+            if ($user->hasRole($role)) {
+                $user->removeRole($role);
+            }
+        }
+
+        if ($roleName && ($role = $approverRoles->firstWhere('name', $roleName))) {
+            $user->assignRole($role);
+        }
+
+        $leaveApprovalPermissions = [
+            'manage-leave-applications',
+            'manage-any-leave-applications',
+            'view-leave-applications',
+            'approve-leave-applications',
+            'reject-leave-applications',
+        ];
+
+        $user->revokePermissionTo($leaveApprovalPermissions);
+
+        if ($roleName) {
+            $user->givePermissionTo($leaveApprovalPermissions);
+        }
     }
 
     private function availableManagerIds(?int $excludeUserId = null): array
