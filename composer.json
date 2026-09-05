@@ -27,6 +27,7 @@
         "mollie/mollie-api-php": "^3.1",
         "openai-php/client": "^0.14.0",
         "paytabscom/laravel_paytabs": "^1.9",
+        "phpoffice/phpspreadsheet": "^5.5",
         "phpoffice/phpword": "^1.4",
         "pusher/pusher-php-server": "*",
         "rachidlaasri/laravel-installer": "^4.1",

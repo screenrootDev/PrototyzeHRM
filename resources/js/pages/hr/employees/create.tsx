@@ -25,6 +25,7 @@ export default function EmployeeCreate() {
     name: '',
     biometric_emp_id: '',
     email: '',
+    freedcamp_user_id: '',
     password: '',
     phone: '',
     date_of_birth: '',
@@ -65,7 +66,7 @@ export default function EmployeeCreate() {
   const steps = ['Personal', 'Employment', 'Contact', 'Banking', 'Documents'];
 
   const requiredFieldsByStep: Record<number, string[]> = {
-    1: ['name', 'biometric_emp_id', 'email', 'password', 'phone', 'date_of_birth', 'gender', 'profile_image'],
+    1: ['name', 'biometric_emp_id', 'freedcamp_user_id', 'email', 'password', 'phone', 'date_of_birth', 'gender', 'profile_image'],
     2: ['branch_id', 'department_id', 'designation_id', 'date_of_joining', 'employment_type', 'employee_status'],
     3: ['address_line_1', 'address_line_2', 'city', 'state', 'country', 'postal_code', 'emergency_contact_name', 'emergency_contact_relationship', 'emergency_contact_number'],
     4: ['bank_name', 'account_holder_name', 'account_number', 'bank_identifier_code', 'bank_branch', 'salary'],
@@ -377,6 +378,19 @@ export default function EmployeeCreate() {
               </div>
 
               <div className="order-6 space-y-2">
+                <Label htmlFor="freedcamp_user_id">{'Freedcamp User ID'}</Label>
+                <Input
+                  id="freedcamp_user_id"
+                  value={formData.freedcamp_user_id || ''}
+                  onChange={(e) => handleChange('freedcamp_user_id', e.target.value)}
+                  placeholder="e.g. 2157421"
+                  className={errors.freedcamp_user_id ? 'border-red-500' : ''}
+                />
+                <p className="text-sm text-muted-foreground">{'Used to map this employee to Freedcamp time entries.'}</p>
+                {errors.freedcamp_user_id && <p className="text-red-500 text-xs">{errors.freedcamp_user_id}</p>}
+              </div>
+
+              <div className="order-7 space-y-2">
                 <Label htmlFor="email" required>{'Email'}</Label>
                 <Input
                   id="email"
@@ -389,7 +403,7 @@ export default function EmployeeCreate() {
                 {errors.email && <p className="text-red-500 text-xs">{errors.email}</p>}
               </div>
 
-              <div className="order-7 space-y-2">
+              <div className="order-8 space-y-2">
                 <Label htmlFor="password" required>{'Password'}</Label>
                 <Input
                   id="password"
@@ -402,7 +416,7 @@ export default function EmployeeCreate() {
                 {errors.password && <p className="text-red-500 text-xs">{errors.password}</p>}
               </div>
 
-              <div className="order-8 space-y-2">
+              <div className="order-9 space-y-2">
                 <Label htmlFor="phone" required>{'Phone Number'}</Label>
                 <Input
                   id="phone"

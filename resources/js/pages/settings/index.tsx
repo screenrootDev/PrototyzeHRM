@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import * as React from 'react';
 import { useEffect, useRef, useState } from 'react';
-import { Settings as SettingsIcon, Building, DollarSign, Users, RefreshCw, Palette, BookOpen, Award, FileText, Mail, Bell, Link2, CreditCard, Calendar, HardDrive, Shield, Bot, Cookie, Search, Webhook, Wallet, Clock, Fingerprint, Network } from 'lucide-react';
+import { Settings as SettingsIcon, Building, DollarSign, Users, RefreshCw, Palette, BookOpen, Award, FileText, Mail, Bell, Link2, CreditCard, Calendar, HardDrive, Shield, Bot, Cookie, Search, Webhook, Wallet, Clock, Fingerprint, Network, ListTodo } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import SystemSettings from './components/system-settings';
 import { usePage } from '@inertiajs/react';
@@ -24,6 +24,7 @@ import WebhookSettings from './components/webhook-settings';
 import GoogleCalendarSettings from './components/google-calendar-settings';
 import WorkingDaysSettings from './components/working-days-settings';
 import ZektoSettings from './components/zekto-settings';
+import FreedcampSettings from './components/freedcamp-settings';
 import IpRestrictionSettings from './components/ip-restriction-settings';
 import { Toaster } from '@/components/ui/toaster';
 
@@ -34,7 +35,7 @@ export default function Settings() {
   
   const { position } = useLayout();
 
-  const { systemSettings = {}, cacheSize = '0.00', timezones = {}, dateFormats = {}, timeFormats = {}, paymentSettings = {}, webhooks = [], auth = {}, globalSettings = {}, zektoSettings = {} } = usePage().props as any;
+  const { systemSettings = {}, cacheSize = '0.00', timezones = {}, dateFormats = {}, timeFormats = {}, paymentSettings = {}, webhooks = [], auth = {}, globalSettings = {}, zektoSettings = {}, freedcampSettings = {} } = usePage().props as any;
   const isSaas = globalSettings?.is_saas;
   const [activeSection, setActiveSection] = useState('system-settings');
 
@@ -76,6 +77,12 @@ export default function Settings() {
       href: '#zekto-settings',
       icon: <Fingerprint className="h-4 w-4 mr-2" />,
       permission: 'manage-biomatric-attedance-settings'
+    },
+    {
+      title: 'Freedcamp Settings',
+      href: '#freedcamp-settings',
+      icon: <ListTodo className="h-4 w-4 mr-2" />,
+      permission: 'manage-settings'
     },
     {
       title: 'Storage Settings',
@@ -154,7 +161,7 @@ export default function Settings() {
     // For company users, show different settings based on SaaS mode
     if (auth.user && auth.user.type === 'company') {
       // In non-SaaS mode, allow additional settings
-      const allowedPermissions = ['manage-ai-agent', 'manage-system-settings', 'manage-email-settings', 'manage-currency-settings', 'manage-brand-settings', 'manage-webhook-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings', 'settings'];
+      const allowedPermissions = ['manage-ai-agent', 'manage-system-settings', 'manage-email-settings', 'manage-currency-settings', 'manage-brand-settings', 'manage-webhook-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings', 'manage-settings', 'settings'];
       if (!isSaas) {
         allowedPermissions.push('manage-storage-settings', 'manage-recaptcha-settings', 'manage-chatgpt-settings', 'manage-cookie-settings', 'manage-seo-settings', 'manage-cache-settings', 'manage-working-days-settings', 'manage-biomatric-attedance-settings', 'manage-ip-restriction-settings');
       }
@@ -182,6 +189,7 @@ export default function Settings() {
   const googleCalendarSettingsRef = useRef<HTMLDivElement>(null);
   const googleWalletSettingsRef = useRef<HTMLDivElement>(null);
   const zektoSettingsRef = useRef<HTMLDivElement>(null);
+  const freedcampSettingsRef = useRef<HTMLDivElement>(null);
   const ipRestrictionSettingsRef = useRef<HTMLDivElement>(null);
 
 
@@ -347,6 +355,13 @@ export default function Settings() {
             </section>
           )}
 
+
+          {/* Freedcamp Settings Section */}
+          {auth.user?.type === 'company' && auth.permissions?.includes('manage-settings') && (
+            <section id="freedcamp-settings" ref={freedcampSettingsRef} className="mb-8">
+              <FreedcampSettings settings={freedcampSettings} />
+            </section>
+          )}
 
           {/* Storage Settings Section */}
           {(auth.permissions?.includes('manage-settings') && (auth.user?.type === 'superadmin' || (auth.user?.type === 'company' && !isSaas))) && (

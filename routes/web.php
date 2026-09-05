@@ -985,6 +985,11 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
         // Time Entries routes
         Route::middleware('permission:manage-time-entries')->group(function () {
             Route::get('hr/time-entries', [\App\Http\Controllers\TimeEntryController::class, 'index'])->name('hr.time-entries.index');
+            Route::get('hr/time-entries/export', [\App\Http\Controllers\TimeEntryController::class, 'export'])->name('hr.time-entries.export');
+            Route::get('hr/time-entries/download-template', [\App\Http\Controllers\TimeEntryController::class, 'downloadTemplate'])->name('hr.time-entries.download.template');
+            Route::post('hr/time-entries/parse', [\App\Http\Controllers\TimeEntryController::class, 'parseFile'])->name('hr.time-entries.parse');
+            Route::post('hr/time-entries/import', [\App\Http\Controllers\TimeEntryController::class, 'fileImport'])->name('hr.time-entries.import');
+            Route::post('hr/time-entries/sync-freedcamp', [\App\Http\Controllers\TimeEntryController::class, 'syncFreedcamp'])->name('hr.time-entries.sync-freedcamp');
             Route::post('hr/time-entries', [\App\Http\Controllers\TimeEntryController::class, 'store'])->middleware('permission:create-time-entries')->name('hr.time-entries.store');
             Route::put('hr/time-entries/{timeEntry}', [\App\Http\Controllers\TimeEntryController::class, 'update'])->middleware('permission:edit-time-entries')->name('hr.time-entries.update');
             Route::delete('hr/time-entries/{timeEntry}', [\App\Http\Controllers\TimeEntryController::class, 'destroy'])->middleware('permission:delete-time-entries')->name('hr.time-entries.destroy');

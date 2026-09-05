@@ -385,6 +385,7 @@ class EmployeeController extends Controller
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string|max:255',
                     'biometric_emp_id' => 'nullable|string|max:255|unique:employees,biometric_emp_id',
+                    'freedcamp_user_id' => 'nullable|string|max:255|unique:employees,freedcamp_user_id',
                     'email' => 'required|email|max:255|unique:users,email',
                     'password' => 'required|string|min:8',
                     'phone' => 'required|string|max:20',
@@ -466,6 +467,7 @@ class EmployeeController extends Controller
                 $employee->user_id = $user->id;
                 $employee->employee_id = Employee::generateEmployeeId();
                 $employee->biometric_emp_id = $request->biometric_emp_id;
+                $employee->freedcamp_user_id = $request->freedcamp_user_id;
                 $employee->phone = $request->phone;
                 $employee->date_of_birth = $request->date_of_birth;
                 $employee->gender = $request->gender;
@@ -639,6 +641,7 @@ class EmployeeController extends Controller
                 $validator = Validator::make($request->all(), [
                     'name' => 'required|string|max:255',
                     'biometric_emp_id' => 'nullable|string|max:255|unique:employees,biometric_emp_id,' . $employee->id,
+                    'freedcamp_user_id' => 'nullable|string|max:255|unique:employees,freedcamp_user_id,' . $employee->id,
                     'email' => 'required|email|max:255|unique:users,email,' . $employee->user_id,
                     'password' => 'nullable|string|min:8',
                     'phone' => 'required|string|max:20',
@@ -718,6 +721,7 @@ class EmployeeController extends Controller
                 // Update Employee model object
                 // Keep existing auto-generated employee_id, don't regenerate on update
                 $employee->biometric_emp_id = $request->biometric_emp_id;
+                $employee->freedcamp_user_id = $request->freedcamp_user_id;
                 $employee->shift_id = $request->shift_id;
                 $employee->attendance_policy_id = $request->attendance_policy_id;
                 $employee->phone = $request->phone;

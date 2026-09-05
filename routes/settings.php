@@ -1,16 +1,14 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FreedcampSettingsController;
+use App\Http\Controllers\Settings\EmailSettingController;
 use App\Http\Controllers\Settings\PasswordController;
 use App\Http\Controllers\Settings\ProfileController;
-use App\Http\Controllers\Settings\EmailSettingController;
 use App\Http\Controllers\Settings\SettingsController;
 use App\Http\Controllers\Settings\SystemSettingsController;
-
-
+use App\Http\Controllers\Settings\WebhookController;
 use App\Http\Controllers\Settings\WorkingDaysSettingController;
-use Inertia\Inertia;
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Settings Routes
@@ -20,12 +18,9 @@ use Inertia\Inertia;
 |
 */
 
-
-
-use App\Http\Controllers\Settings\WebhookController;
+use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {
-
 
     // Profile settings page with profile and password sections
     Route::get('profile', function () {
@@ -56,14 +51,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('settings/brand', [SystemSettingsController::class, 'updateBrand'])->name('settings.brand.update');
     Route::post('settings/storage', [SystemSettingsController::class, 'updateStorage'])->name('settings.storage.update');
     Route::post('settings/recaptcha', [SystemSettingsController::class, 'updateRecaptcha'])->name('settings.recaptcha.update');
-        Route::post('settings/ai-agent', [SystemSettingsController::class, 'updateAIAgentSettings'])->name('settings.ai-agent.update');
+    Route::post('settings/ai-agent', [SystemSettingsController::class, 'updateAIAgentSettings'])->name('settings.ai-agent.update');
     Route::get('settings/ai-agent/providers', [SystemSettingsController::class, 'getAIAgentProviders'])->name('settings.ai-agent.providers');
-Route::post('settings/chatgpt', [SystemSettingsController::class, 'updateChatgpt'])->name('settings.chatgpt.update');
+    Route::post('settings/chatgpt', [SystemSettingsController::class, 'updateChatgpt'])->name('settings.chatgpt.update');
     Route::post('settings/cookie', [SystemSettingsController::class, 'updateCookie'])->name('settings.cookie.update');
     Route::post('settings/seo', [SystemSettingsController::class, 'updateSeo'])->name('settings.seo.update');
     Route::post('settings/cache/clear', [SystemSettingsController::class, 'clearCache'])->name('settings.cache.clear');
-
-
 
     // Working Days Settings routes
     Route::get('settings/working-days/get', [WorkingDaysSettingController::class, 'getWorkingDaysSettings'])->name('settings.working-days.get');
@@ -89,5 +82,10 @@ Route::post('settings/chatgpt', [SystemSettingsController::class, 'updateChatgpt
     Route::middleware('permission:manage-biomatric-attedance-settings')->group(function () {
         Route::post('settings/zekto/update', [\App\Http\Controllers\ZektoSettingsController::class, 'update'])->name('settings.zekto.update');
         Route::post('settings/zekto/generate-token', [\App\Http\Controllers\ZektoSettingsController::class, 'generateToken'])->name('settings.zekto.generate-token');
+    });
+
+    Route::middleware('permission:manage-settings')->group(function () {
+        Route::post('settings/freedcamp/update', [FreedcampSettingsController::class, 'update'])->name('settings.freedcamp.update');
+        Route::post('settings/freedcamp/test', [FreedcampSettingsController::class, 'test'])->name('settings.freedcamp.test');
     });
 });

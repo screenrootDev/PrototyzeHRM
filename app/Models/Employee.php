@@ -13,6 +13,7 @@ class Employee extends Model
         'user_id',
         'employee_id',
         'biometric_emp_id',
+        'freedcamp_user_id',
         'employee_code',
         'phone',
         'date_of_birth',

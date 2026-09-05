@@ -28,6 +28,7 @@ export default function EmployeeEdit() {
     employee_id: employee.employee?.employee_id || '',
     biometric_emp_id: employee.employee?.biometric_emp_id || '',
     email: employee.email || '',
+    freedcamp_user_id: employee.employee?.freedcamp_user_id || '',
     password: '',
     phone: employee.employee?.phone || '',
     date_of_birth: employee.employee?.date_of_birth || '',
@@ -328,6 +329,19 @@ export default function EmployeeEdit() {
                 />
                 <p className="text-sm text-muted-foreground">{'This ID will be used to map employee with biometric device.'}</p>
                 {errors.biometric_emp_id && <p className="text-red-500 text-xs">{errors.biometric_emp_id}</p>}
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="freedcamp_user_id">{'Freedcamp User ID'}</Label>
+                <Input
+                  id="freedcamp_user_id"
+                  value={formData.freedcamp_user_id || ''}
+                  onChange={(e) => handleChange('freedcamp_user_id', e.target.value)}
+                  placeholder="e.g. 2157421"
+                  className={errors.freedcamp_user_id ? 'border-red-500' : ''}
+                />
+                <p className="text-sm text-muted-foreground">{'Used to map this employee to Freedcamp time entries.'}</p>
+                {errors.freedcamp_user_id && <p className="text-red-500 text-xs">{errors.freedcamp_user_id}</p>}
               </div>
 
               <div className="space-y-2">

@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 
 class TimeEntry extends BaseModel
 {
@@ -19,11 +18,13 @@ class TimeEntry extends BaseModel
         'manager_comments',
         'approved_by',
         'approved_at',
-        'created_by'
+        'created_by',
+        'source',
+        'external_id',
     ];
 
     protected $casts = [
-        'date' => 'date',
+        'date' => 'date:Y-m-d',
         'hours' => 'decimal:2',
         'approved_at' => 'datetime',
     ];
