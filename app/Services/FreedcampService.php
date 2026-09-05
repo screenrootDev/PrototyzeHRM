@@ -42,6 +42,55 @@ class FreedcampService
         return $times;
     }
 
+    /** @return array<string, array<string, mixed>> */
+    public function taskDetails(array $taskIds): array
+    {
+        $tasks = [];
+        $taskIds = array_values(array_unique(array_filter(array_map('strval', $taskIds))));
+
+        foreach (array_chunk($taskIds, 10) as $taskIdGroup) {
+            foreach ($this->getTaskDetails($taskIdGroup) as $response) {
+                if (! $response->successful() || $response->json('msg') !== 'OK') {
+                    continue;
+                }
+
+                $data = $response->json('data', []);
+                $task = collect($data['tasks'] ?? [])->first();
+
+                if (filled($task['id'] ?? null)) {
+                    $tasks[(string) $task['id']] = $task;
+                }
+            }
+        }
+
+        return $tasks;
+    }
+
+    /** @return array<string, Response> */
+    private function getTaskDetails(array $taskIds): array
+    {
+        $apiKey = $this->decryptSetting('freedcamp_api_key');
+        $secretKey = $this->decryptSetting('freedcamp_secret_key');
+
+        if (blank($apiKey) || blank($secretKey)) {
+            throw new \RuntimeException(__('Freedcamp API credentials are not configured.'));
+        }
+
+        $timestamp = time();
+        $authQuery = [
+            'timestamp' => $timestamp,
+            'hash' => hash_hmac('sha1', $apiKey.$timestamp, $secretKey),
+        ];
+
+        return Http::pool(fn (Pool $pool) => collect($taskIds)->mapWithKeys(fn (string $taskId) => [
+            $taskId => $pool->as($taskId)
+                ->acceptJson()
+                ->withHeaders(['X-API-KEY' => $apiKey])
+                ->timeout(15)
+                ->get(self::BASE_URL.'/tasks/'.$taskId, $authQuery),
+        ])->all());
+    }
+
     /** @return array<string, Response> */
     private function getTimesPages(array $query, array $offsets): array
     {

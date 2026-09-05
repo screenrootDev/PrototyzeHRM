@@ -21,12 +21,14 @@ class TimeEntry extends BaseModel
         'created_by',
         'source',
         'external_id',
+        'external_data',
     ];
 
     protected $casts = [
         'date' => 'date:Y-m-d',
         'hours' => 'decimal:2',
         'approved_at' => 'datetime',
+        'external_data' => 'array',
     ];
 
     /**

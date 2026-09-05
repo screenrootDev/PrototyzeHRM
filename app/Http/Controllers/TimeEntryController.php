@@ -487,6 +487,12 @@ class TimeEntryController extends Controller
 
             $workspace = $this->freedcamp->workspace();
             $freedcampTimes = $this->freedcamp->times($dateFrom, $dateTo);
+            $linkedTaskIds = collect($freedcampTimes)
+                ->filter(fn (array $time) => (string) ($time['link_app_id'] ?? '') === '2'
+                    && filled($time['link_item_id'] ?? null))
+                ->pluck('link_item_id')
+                ->all();
+            $taskDetails = collect($this->freedcamp->taskDetails($linkedTaskIds));
 
             $freedcampUsers = collect($workspace['users'] ?? [])->keyBy(fn ($user) => (string) ($user['user_id'] ?? $user['id'] ?? ''));
             $projects = collect($workspace['projects'] ?? [])->mapWithKeys(fn ($project) => [
@@ -550,6 +556,7 @@ class TimeEntryController extends Controller
                 $email = strtolower(trim((string) ($freedcampUser['email'] ?? '')));
                 $employee = $employeesByFreedcampId->get($freedcampUserId)
                     ?? $employeesByEmail->get($email);
+                $task = $taskDetails->get((string) ($time['link_item_id'] ?? ''));
 
                 if (! $employee || empty($time['id']) || empty($time['date_ts'])) {
                     $skipped++;
@@ -566,9 +573,18 @@ class TimeEntryController extends Controller
                         ->setTimezone(getSetting('defaultTimezone', config('app.timezone', 'UTC')))
                         ->toDateString(),
                     'hours' => round(((int) ($time['minutes_count'] ?? 0)) / 60, 2),
-                    'description' => ($time['description'] ?? '') ?: __('Freedcamp time entry'),
+                    'description' => ($time['description'] ?? '')
+                        ?: ($task['title'] ?? null)
+                        ?: __('Freedcamp time entry'),
                     'project' => $projects->get((string) ($time['project_id'] ?? '')),
                     'status' => (int) ($time['status'] ?? 0) === 1 ? 'approved' : 'pending',
+                    'external_data' => $task ? json_encode([
+                        'task_id' => (string) ($task['id'] ?? ''),
+                        'title' => $task['title'] ?? null,
+                        'list' => $task['task_group_name'] ?? $task['list_title'] ?? null,
+                        'status' => $task['status_title'] ?? null,
+                        'url' => $task['url'] ?? null,
+                    ]) : null,
                     'created_at' => $timestamp,
                     'updated_at' => $timestamp,
                 ];
@@ -579,7 +595,7 @@ class TimeEntryController extends Controller
                 TimeEntry::upsert(
                     $chunk,
                     ['created_by', 'source', 'external_id'],
-                    ['employee_id', 'date', 'hours', 'description', 'project', 'status', 'updated_at'],
+                    ['employee_id', 'date', 'hours', 'description', 'project', 'status', 'external_data', 'updated_at'],
                 );
             }
 

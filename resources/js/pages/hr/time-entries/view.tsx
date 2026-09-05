@@ -1,6 +1,6 @@
 import { DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
-import { Clock, User, Calendar, Briefcase, FileText, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
+import { Clock, User, Calendar, Briefcase, FileText, CheckCircle, XCircle, AlertCircle, ExternalLink } from 'lucide-react';
 
 interface ViewProps {
     record: any;
@@ -101,6 +101,25 @@ export default function View({ record }: ViewProps) {
                     </label>
                     <p className="mt-1 text-sm font-medium text-gray-900">{record.description || '-'}</p>
                 </div>
+
+                {record.external_data?.task_id && (
+                    <div className="rounded-lg border bg-gray-50 p-4 dark:bg-gray-800/40">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                            <p className="text-sm font-semibold text-gray-900 dark:text-gray-100">{t('Freedcamp Task Details')}</p>
+                            {record.external_data.url && (
+                                <a href={record.external_data.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline">
+                                    {t('Open Task')} <ExternalLink className="h-3.5 w-3.5" />
+                                </a>
+                            )}
+                        </div>
+                        <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
+                            <div><span className="text-gray-500">{t('Task')}:</span> <span className="font-medium">{record.external_data.title || '-'}</span></div>
+                            <div><span className="text-gray-500">{t('Task ID')}:</span> <span className="font-medium">{record.external_data.task_id}</span></div>
+                            <div><span className="text-gray-500">{t('List')}:</span> <span className="font-medium">{record.external_data.list || '-'}</span></div>
+                            <div><span className="text-gray-500">{t('Task Status')}:</span> <span className="font-medium">{record.external_data.status || '-'}</span></div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Manager Comments */}
                 {record.manager_comments && record.status !== 'pending' && (
