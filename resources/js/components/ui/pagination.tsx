@@ -4,6 +4,7 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { router } from '@inertiajs/react';
 
 
 interface PaginationProps {
@@ -32,10 +33,28 @@ export function Pagination({
   onPageChange,
   className = '',
   perPage,
-  perPageOptions = [10, 25, 50],
+  perPageOptions = [10, 25, 50, 100],
   onPerPageChange,
 }: PaginationProps) {
-  
+  const queryPerPage = typeof window !== 'undefined'
+    ? new URLSearchParams(window.location.search).get('per_page')
+    : null;
+  const resolvedPerPage = String(perPage ?? queryPerPage ?? 10);
+
+  const handlePerPageChange = (value: string) => {
+    if (onPerPageChange) {
+      onPerPageChange(value);
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('per_page', value);
+    url.searchParams.set('page', '1');
+    router.get(`${url.pathname}?${url.searchParams.toString()}`, {}, {
+      preserveState: true,
+      preserveScroll: true,
+    });
+  };
 
   const handlePageChange = (url: string) => {
     if (onPageChange) {
@@ -57,21 +76,19 @@ export function Pagination({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        {perPage !== undefined && onPerPageChange && (
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground dark:text-gray-300">Rows per page:</span>
-            <Select value={String(perPage)} onValueChange={onPerPageChange}>
-              <SelectTrigger className="h-8 w-16">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {perPageOptions.map((option) => (
-                  <SelectItem key={String(option)} value={String(option)}>{option}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-muted-foreground dark:text-gray-300">Rows per page:</span>
+          <Select value={resolvedPerPage} onValueChange={handlePerPageChange}>
+            <SelectTrigger className="h-8 w-20">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {perPageOptions.map((option) => (
+                <SelectItem key={String(option)} value={String(option)}>{option}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
         <div className="flex gap-1">
         {links && links.length > 0 ? (
           links.map((link: any, i: number) => {

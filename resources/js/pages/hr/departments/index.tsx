@@ -228,6 +228,10 @@ export default function Departments() {
     { title: 'Departments' }
   ];
 
+  const hasDescriptions = (departments?.data || []).some(
+    (department: any) => typeof department.description === 'string' && department.description.trim() !== ''
+  );
+
   // Define table columns
   const columns = [
     {
@@ -242,13 +246,11 @@ export default function Departments() {
         return row.branch?.name || '-';
       }
     },
-    {
+    ...(hasDescriptions ? [{
       key: 'description',
       label: 'Description',
-      render: (value: string) => {
-        return value || '-';
-      }
-    },
+      render: (value: string) => value
+    }] : []),
     {
       key: 'status',
       label: 'Status',

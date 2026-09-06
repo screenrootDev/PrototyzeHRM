@@ -224,6 +224,10 @@ export default function Designations() {
     { title: 'Designations' }
   ];
 
+  const hasDescriptions = (designations?.data || []).some(
+    (designation: any) => typeof designation.description === 'string' && designation.description.trim() !== ''
+  );
+
   // Define table columns
   const columns = [
     { 
@@ -231,11 +235,11 @@ export default function Designations() {
       label: 'Name', 
       sortable: true
     },
-    { 
-      key: 'description', 
+    ...(hasDescriptions ? [{
+      key: 'description',
       label: 'Description',
-      render: (value: string) => value || '-'
-    },
+      render: (value: string) => value
+    }] : []),
     { 
       key: 'department', 
       label: 'Department',

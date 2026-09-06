@@ -12,9 +12,12 @@ import { toast } from '@/components/custom-toast';
 import { Pagination } from '@/components/ui/pagination';
 import { SearchAndFilterBar } from '@/components/ui/search-and-filter-bar';
 import { Plus, Calendar, FileText, Download } from 'lucide-react';
-import { format, differenceInDays, addDays } from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+
+const EMPTY_FILTER = '_empty_';
+const parseFilterDate = (value?: string) => value ? new Date(`${value}T00:00:00`) : undefined;
+const serializeFilterDate = (value?: Date) => value ? format(value, 'yyyy-MM-dd') : undefined;
 
 export default function Holidays() {
   
@@ -23,12 +26,11 @@ export default function Holidays() {
   
   // State
   const [searchTerm, setSearchTerm] = useState(pageFilters.search || '');
-  const [selectedCategory, setSelectedCategory] = useState(pageFilters.category || '');
-  const [selectedBranch, setSelectedBranch] = useState(pageFilters.branch_id || '');
+  const [selectedCategory, setSelectedCategory] = useState(pageFilters.category || EMPTY_FILTER);
+  const [selectedBranch, setSelectedBranch] = useState(pageFilters.branch_id?.toString() || EMPTY_FILTER);
   const [selectedYear, setSelectedYear] = useState(pageFilters.year || new Date().getFullYear().toString());
-  const [dateFrom, setDateFrom] = useState(pageFilters.date_from || '');
-  const [dateTo, setDateTo] = useState(pageFilters.date_to || '');
-  const [showFilters, setShowFilters] = useState(false);
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(parseFilterDate(pageFilters.date_from));
+  const [dateTo, setDateTo] = useState<Date | undefined>(parseFilterDate(pageFilters.date_to));
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
@@ -36,21 +38,21 @@ export default function Holidays() {
   
   // Check if any filters are active
   const hasActiveFilters = () => {
-    return selectedCategory !== '' || 
-           selectedBranch !== '' ||
+    return selectedCategory !== EMPTY_FILTER ||
+           selectedBranch !== EMPTY_FILTER ||
            selectedYear !== new Date().getFullYear().toString() ||
-           dateFrom !== '' || 
-           dateTo !== '' || 
+           dateFrom !== undefined ||
+           dateTo !== undefined ||
            searchTerm !== '';
   };
   
   // Count active filters
   const activeFilterCount = () => {
-    return (selectedCategory !== '' ? 1 : 0) + 
-           (selectedBranch !== '' ? 1 : 0) +
+    return (selectedCategory !== EMPTY_FILTER ? 1 : 0) +
+           (selectedBranch !== EMPTY_FILTER ? 1 : 0) +
            (selectedYear !== new Date().getFullYear().toString() ? 1 : 0) +
-           (dateFrom !== '' ? 1 : 0) + 
-           (dateTo !== '' ? 1 : 0) + 
+           (dateFrom !== undefined ? 1 : 0) +
+           (dateTo !== undefined ? 1 : 0) +
            (searchTerm !== '' ? 1 : 0);
   };
   
@@ -63,11 +65,11 @@ export default function Holidays() {
     router.get(route('hr.holidays.index'), { 
       page: 1,
       search: searchTerm || undefined,
-      category: selectedCategory || undefined,
-      branch_id: selectedBranch || undefined,
+      category: selectedCategory === EMPTY_FILTER ? undefined : selectedCategory,
+      branch_id: selectedBranch === EMPTY_FILTER ? undefined : selectedBranch,
       year: selectedYear || undefined,
-      date_from: dateFrom || undefined,
-      date_to: dateTo || undefined,
+      date_from: serializeFilterDate(dateFrom),
+      date_to: serializeFilterDate(dateTo),
       per_page: pageFilters.per_page
     }, { preserveState: true, preserveScroll: true });
   };
@@ -80,11 +82,11 @@ export default function Holidays() {
       sort_direction: direction, 
       page: 1,
       search: searchTerm || undefined,
-      category: selectedCategory || undefined,
-      branch_id: selectedBranch || undefined,
+      category: selectedCategory === EMPTY_FILTER ? undefined : selectedCategory,
+      branch_id: selectedBranch === EMPTY_FILTER ? undefined : selectedBranch,
       year: selectedYear || undefined,
-      date_from: dateFrom || undefined,
-      date_to: dateTo || undefined,
+      date_from: serializeFilterDate(dateFrom),
+      date_to: serializeFilterDate(dateTo),
       per_page: pageFilters.per_page
     }, { preserveState: true, preserveScroll: true });
   };
@@ -187,12 +189,11 @@ export default function Holidays() {
   
   const handleResetFilters = () => {
     setSearchTerm('');
-    setSelectedCategory('');
-    setSelectedBranch('');
+    setSelectedCategory(EMPTY_FILTER);
+    setSelectedBranch(EMPTY_FILTER);
     setSelectedYear(new Date().getFullYear().toString());
-    setDateFrom('');
-    setDateTo('');
-    setShowFilters(false);
+    setDateFrom(undefined);
+    setDateTo(undefined);
     
     router.get(route('hr.holidays.index'), {
       page: 1,
@@ -206,8 +207,8 @@ export default function Holidays() {
       method: 'get',
       data: {
         year: selectedYear || new Date().getFullYear().toString(),
-        category: selectedCategory || undefined,
-        branch_id: selectedBranch || undefined
+        category: selectedCategory === EMPTY_FILTER ? undefined : selectedCategory,
+        branch_id: selectedBranch === EMPTY_FILTER ? undefined : selectedBranch
       }
     });
   };
@@ -215,8 +216,8 @@ export default function Holidays() {
   const handleExportPdf = () => {
     const params = new URLSearchParams({
       year: selectedYear || new Date().getFullYear().toString(),
-      ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedBranch && { branch_id: selectedBranch })
+      ...(selectedCategory !== EMPTY_FILTER && { category: selectedCategory }),
+      ...(selectedBranch !== EMPTY_FILTER && { branch_id: selectedBranch })
     });
     
     window.open(`${route('hr.holidays.export.pdf')}?${params.toString()}`, '_blank');
@@ -225,15 +226,15 @@ export default function Holidays() {
   const handleExportIcal = () => {
     const params = new URLSearchParams({
       year: selectedYear || new Date().getFullYear().toString(),
-      ...(selectedCategory && { category: selectedCategory }),
-      ...(selectedBranch && { branch_id: selectedBranch })
+      ...(selectedCategory !== EMPTY_FILTER && { category: selectedCategory }),
+      ...(selectedBranch !== EMPTY_FILTER && { branch_id: selectedBranch })
     });
     
     window.open(`${route('hr.holidays.export.ical')}?${params.toString()}`, '_blank');
   };
 
   // Define page actions
-  const pageActions = [];
+  const pageActions: any[] = [];
   
   // Add the "View Calendar" button
   pageActions.push({
@@ -313,11 +314,12 @@ export default function Holidays() {
           'regional': 'bg-amber-50 text-amber-700 ring-amber-600/20'
         };
         
-        const categoryClass = categoryClasses[value] || 'bg-gray-50 text-gray-700 ring-gray-600/20';
+        const safeValue = String(value || 'uncategorized');
+        const categoryClass = categoryClasses[safeValue] || 'bg-gray-50 text-gray-700 ring-gray-600/20';
         
         return (
           <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${categoryClass}`}>
-            {value.charAt(0).toUpperCase() + value.slice(1)}
+            {safeValue.charAt(0).toUpperCase() + safeValue.slice(1)}
           </span>
         );
       }
@@ -418,7 +420,7 @@ export default function Holidays() {
 
   // Prepare category options for filter
   const categoryOptions = [
-    { value: '', label: 'All Categories' },
+    { value: EMPTY_FILTER, label: 'All Categories' },
     ...(categories || []).map((category: string) => ({
       value: category,
       label: category.charAt(0).toUpperCase() + category.slice(1)
@@ -427,7 +429,7 @@ export default function Holidays() {
 
   // Prepare branch options for filter
   const branchOptions = [
-    { value: '', label: 'All Branches' },
+    { value: EMPTY_FILTER, label: 'All Branches' },
     ...(branches || []).map((branch: any) => ({
       value: branch.id.toString(),
       label: branch.name
@@ -504,25 +506,9 @@ export default function Holidays() {
               onChange: setDateTo
             }
           ]}
-          showFilters={showFilters}
-          setShowFilters={setShowFilters}
           hasActiveFilters={hasActiveFilters}
           activeFilterCount={activeFilterCount}
           onResetFilters={handleResetFilters}
-          onApplyFilters={applyFilters}
-          currentPerPage={pageFilters.per_page?.toString() || "10"}
-          onPerPageChange={(value) => {
-            router.get(route('hr.holidays.index'), { 
-              page: 1, 
-              per_page: parseInt(value),
-              search: searchTerm || undefined,
-              category: selectedCategory || undefined,
-              branch_id: selectedBranch || undefined,
-              year: selectedYear || undefined,
-              date_from: dateFrom || undefined,
-              date_to: dateTo || undefined
-            }, { preserveState: true, preserveScroll: true });
-          }}
         />
       </div>
 
@@ -540,7 +526,6 @@ export default function Holidays() {
           permissions={permissions}
           entityPermissions={{
             view: 'view-holidays',
-            create: 'create-holidays',
             edit: 'edit-holidays',
             delete: 'delete-holidays'
           }}
@@ -610,7 +595,7 @@ export default function Holidays() {
               label: 'Applicable Branches', 
               type: 'multi-select',
               required: true,
-              options: branchOptions.filter(opt => opt.value !== '')
+              options: branchOptions.filter(opt => opt.value !== EMPTY_FILTER)
             }
           ],
           modalSize: 'lg'
