@@ -4,7 +4,7 @@ import { PageTemplate } from '@/components/page-template';
 import { usePage, router } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Plus, Eye, Edit, Trash2, Lock, Unlock, Key, FileDown, FileUp, Calendar, LayoutGrid, CheckCircle2, XCircle, Clock, UserX } from 'lucide-react';
+import { Plus, Eye, Edit, Trash2, Lock, Unlock, Key, FileDown, FileUp, LayoutGrid, CheckCircle2, XCircle, Clock, UserX } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { hasPermission } from '@/utils/authorization';
 import { CrudTable } from '@/components/CrudTable';
@@ -33,6 +33,8 @@ export default function Employees() {
   const [selectedStatus, setSelectedStatus] = useState(pageFilters.status || '_empty_');
   const [showFilters, setShowFilters] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<Array<number | string>>([]);
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [currentItem, setCurrentItem] = useState<any>(null);
@@ -130,6 +132,7 @@ export default function Employees() {
         } else if (page.props.flash.error) {
           toast.error(t(page.props.flash.error));
         }
+        moveBackIfCurrentPageIsEmpty(page);
       },
       onError: (errors) => {
         if (!globalSettings?.is_demo) {
@@ -142,6 +145,43 @@ export default function Employees() {
         }
       }
     });
+  };
+
+  const handleBulkDeleteConfirm = () => {
+    if (selectedEmployeeIds.length === 0) return;
+
+    if (!globalSettings?.is_demo) {
+      toast.loading(t('Deleting selected employees...'));
+    }
+
+    router.delete(route('hr.employees.bulk-destroy'), {
+      data: { ids: selectedEmployeeIds },
+      preserveScroll: true,
+      onSuccess: (page) => {
+        setIsBulkDeleteModalOpen(false);
+        setSelectedEmployeeIds([]);
+        if (!globalSettings?.is_demo) toast.dismiss();
+        if (page.props.flash.success) {
+          toast.success(t(page.props.flash.success));
+        } else if (page.props.flash.error) {
+          toast.error(t(page.props.flash.error));
+        }
+        moveBackIfCurrentPageIsEmpty(page);
+      },
+      onError: (errors) => {
+        if (!globalSettings?.is_demo) toast.dismiss();
+        toast.error(`${t('Failed to delete selected employees')}: ${Object.values(errors).join(', ')}`);
+      },
+    });
+  };
+
+  const moveBackIfCurrentPageIsEmpty = (page: any) => {
+    const result = page.props.employees;
+    if (result?.data?.length === 0 && result.current_page > 1) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', String(result.current_page - 1));
+      router.get(url.toString(), {}, { preserveState: true, preserveScroll: true });
+    }
   };
 
   const handleToggleStatus = (employee: any) => {
@@ -218,6 +258,21 @@ export default function Employees() {
       per_page: pageFilters.per_page,
       sort_field: pageFilters.sort_field || undefined,
       sort_direction: pageFilters.sort_direction || undefined
+    }, { preserveState: true, preserveScroll: true });
+  };
+
+  const handlePerPageChange = (value: string) => {
+    router.get(route('hr.employees.index'), {
+      page: 1,
+      per_page: parseInt(value, 10),
+      search: searchTerm || undefined,
+      department: selectedDepartment !== '_empty_' ? selectedDepartment : undefined,
+      branch: selectedBranch !== '_empty_' ? selectedBranch : undefined,
+      designation: selectedDesignation !== '_empty_' ? selectedDesignation : undefined,
+      status: selectedStatus !== '_empty_' ? selectedStatus : undefined,
+      sort_field: pageFilters.sort_field || undefined,
+      sort_direction: pageFilters.sort_direction || undefined,
+      view: activeView,
     }, { preserveState: true, preserveScroll: true });
   };
 
@@ -472,6 +527,10 @@ export default function Employees() {
     setPageInitialState(false);
   }, [selectedStatus, selectedBranch, selectedDepartment, selectedDesignation]);
 
+  useEffect(() => {
+    setSelectedEmployeeIds([]);
+  }, [employees?.current_page]);
+
 
   return (
     <PageTemplate
@@ -544,6 +603,17 @@ export default function Employees() {
       {/* Content section */}
       {activeView === 'list' ? (
         <div className="bg-white dark:bg-gray-900 rounded-lg shadow overflow-hidden">
+          {hasPermission(permissions, 'delete-employees') && selectedEmployeeIds.length > 0 && (
+            <div className="flex items-center justify-between gap-3 border-b bg-muted/30 px-4 py-3">
+              <span className="text-sm font-medium">
+                {selectedEmployeeIds.length} {t(selectedEmployeeIds.length === 1 ? 'employee selected' : 'employees selected')}
+              </span>
+              <Button variant="destructive" size="sm" onClick={() => setIsBulkDeleteModalOpen(true)}>
+                <Trash2 className="mr-2 h-4 w-4" />
+                {t('Delete Selected')}
+              </Button>
+            </div>
+          )}
           <CrudTable
             columns={columns}
             actions={actions}
@@ -560,6 +630,9 @@ export default function Employees() {
               edit: 'edit-employees',
               delete: 'delete-employees'
             }}
+            selectable={hasPermission(permissions, 'delete-employees')}
+            selectedRows={selectedEmployeeIds}
+            onSelectionChange={setSelectedEmployeeIds}
           />
 
           {/* Pagination section */}
@@ -569,21 +642,9 @@ export default function Employees() {
             total={employees?.total || 0}
             links={employees?.links}
             entityName={t("employees")}
-            currentPerPage={pageFilters.per_page?.toString() || "10"}
-            onPerPageChange={(value) => {
-              router.get(route('hr.employees.index'), {
-                page: 1,
-                per_page: parseInt(value),
-                search: searchTerm || undefined,
-                department: selectedDepartment !== '_empty_' ? selectedDepartment : undefined,
-                branch: selectedBranch !== '_empty_' ? selectedBranch : undefined,
-                designation: selectedDesignation !== '_empty_' ? selectedDesignation : undefined,
-                status: selectedStatus !== '_empty_' ? selectedStatus : undefined,
-                sort_field: pageFilters.sort_field || undefined,
-                sort_direction: pageFilters.sort_direction || undefined,
-                view: activeView
-              }, { preserveState: true, preserveScroll: true });
-            }}
+            perPage={pageFilters.per_page?.toString() || "10"}
+            perPageOptions={[10, 25, 50, 100]}
+            onPerPageChange={handlePerPageChange}
             onPageChange={handlePageChange}
           />
         </div>
@@ -634,7 +695,7 @@ export default function Employees() {
                     {/* Divider */}
                     <div className="border-t border-gray-200 dark:border-gray-700 my-3" />
 
-                    {/* Middle: Employee Id / Branch / Dept / Designation */}
+                    {/* Middle: Employee Id / Branch / Dept / Designation / Joining Date */}
                     <div className="space-y-1 mb-3 px-4">
                       <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
                         <span className="font-medium text-gray-600 dark:text-gray-300">{t('Employee Id')}: </span>
@@ -652,24 +713,26 @@ export default function Employees() {
                         <span className="font-medium text-gray-600 dark:text-gray-300">{t('Designation')}: </span>
                         {employee.employee?.designation?.name || '-'}
                       </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        <span className="font-medium text-gray-600 dark:text-gray-300">{t('Joining Date')}: </span>
+                        {employee.employee?.date_of_joining
+                          ? window.appSettings?.formatDateTimeSimple(employee.employee.date_of_joining, false)
+                          : '-'}
+                      </p>
                     </div>
 
                     {/* Divider */}
                     <div className="border-t border-gray-200 dark:border-gray-700 my-3" />
 
-                    {/* Bottom: Actions + Status badge */}
-                    <div className="flex items-center justify-between px-4">
-                      <div className="flex items-center gap-2 whitespace-nowrap overflow-hidden text-ellipsis text-gray-500 text-sm">
-                        {employee.created_at && <Calendar className="h-4 w-4" />}
-                        <span>{window.appSettings?.formatDateTimeSimple(employee.created_at, false) || '-'}</span>
-                      </div>
+                    {/* Bottom: Actions */}
+                    <div className="flex items-center justify-center px-4">
                       <div className="flex items-center gap-1">
                         {hasPermission(permissions, 'view-employees') && (
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => handleAction('view', employee)}
-                                className="h-8 w-8 p-0 text-gray-500">
-                                <Eye className="h-4 w-4" />
+                                className="h-9 w-9 p-0 text-gray-900 hover:text-gray-900 dark:text-gray-100">
+                                <Eye className="h-5 w-5" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('View')}</TooltipContent>
@@ -679,8 +742,8 @@ export default function Employees() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => handleAction('edit', employee)}
-                                className="h-8 w-8 p-0 text-gray-500">
-                                <Edit className="h-4 w-4" />
+                                className="h-9 w-9 p-0 text-amber-500 hover:text-amber-600">
+                                <Edit className="h-5 w-5" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('Edit')}</TooltipContent>
@@ -690,8 +753,8 @@ export default function Employees() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => handleAction('change-password', employee)}
-                                className="h-8 w-8 p-0 text-gray-500">
-                                <Key className="h-4 w-4" />
+                                className="h-9 w-9 p-0 text-green-500 hover:text-green-600">
+                                <Key className="h-5 w-5" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('Change Password')}</TooltipContent>
@@ -701,8 +764,8 @@ export default function Employees() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => handleAction('toggle-status', employee)}
-                                className="h-8 w-8 p-0 text-gray-500">
-                                {employee.status === 'active' ? <Lock className="h-4 w-4" /> : <Unlock className="h-4 w-4" />}
+                                className="h-9 w-9 p-0 text-amber-500 hover:text-amber-600">
+                                {employee.status === 'active' ? <Lock className="h-5 w-5" /> : <Unlock className="h-5 w-5" />}
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{employee.status === 'active' ? t('Deactivate') : t('Activate')}</TooltipContent>
@@ -712,8 +775,8 @@ export default function Employees() {
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button variant="ghost" size="sm" onClick={() => handleAction('delete', employee)}
-                                className="h-8 w-8 p-0 text-gray-500">
-                                <Trash2 className="h-4 w-4" />
+                                className="h-9 w-9 p-0 text-red-500 hover:text-red-600">
+                                <Trash2 className="h-5 w-5" />
                               </Button>
                             </TooltipTrigger>
                             <TooltipContent>{t('Delete')}</TooltipContent>
@@ -735,6 +798,9 @@ export default function Employees() {
               total={employees?.total || 0}
               links={employees?.links}
               entityName={t("employees")}
+              perPage={pageFilters.per_page?.toString() || "10"}
+              perPageOptions={[10, 25, 50, 100]}
+              onPerPageChange={handlePerPageChange}
               onPageChange={handlePageChange}
             />
           </div>
@@ -748,6 +814,14 @@ export default function Employees() {
         onConfirm={handleDeleteConfirm}
         itemName={currentItem?.name || ''}
         entityName="employee"
+      />
+
+      <CrudDeleteModal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        onConfirm={handleBulkDeleteConfirm}
+        itemName={`${selectedEmployeeIds.length} ${t(selectedEmployeeIds.length === 1 ? 'selected employee' : 'selected employees')}`}
+        entityName="employees"
       />
 
       {/* Change Password Modal */}

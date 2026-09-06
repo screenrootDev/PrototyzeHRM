@@ -125,7 +125,12 @@ class EmployeeController extends Controller
                 $query->orderBy('created_at', 'desc');
             }
 
-            $employees = $query->paginate($request->per_page ?? 10);
+            $perPage = (int) $request->input('per_page', 10);
+            if (!in_array($perPage, [10, 25, 50, 100], true)) {
+                $perPage = 10;
+            }
+
+            $employees = $query->paginate($perPage)->withQueryString();
             $employees->getCollection()->each(function (User $user) {
                 $user->setAttribute(
                     'avatar',
@@ -166,7 +171,13 @@ class EmployeeController extends Controller
                 'stats' => $stats,
                 'statusCounts' => $statusCounts,
                 'hasSampleFile' => false,
-                'filters' => $request->all(['search', 'department', 'branch', 'designation', 'status', 'employment_type', 'sort_field', 'sort_direction', 'per_page']),
+                'filters' => array_merge(
+                    $request->only(['search', 'department', 'branch', 'designation', 'status', 'employment_type', 'sort_field', 'sort_direction']),
+                    [
+                        'per_page' => $perPage,
+                        'view' => in_array($request->input('view'), ['list', 'grid'], true) ? $request->input('view') : 'list',
+                    ]
+                ),
             ]);
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
@@ -807,12 +818,62 @@ class EmployeeController extends Controller
                 }
                 $user->delete();
 
-                return redirect()->route('hr.employees.index')->with('success', __('Employee deleted successfully'));
+                // Return to the current listing URL so pagination, filters, sorting,
+                // page size, and the selected view are preserved after deletion.
+                return redirect()->back()->with('success', __('Employee deleted successfully'));
             } catch (\Exception $e) {
                 return redirect()->back()->with('error', __('Failed to delete employee: :message', ['message' => $e->getMessage()]));
             }
         } else {
             return redirect()->back()->with('error', __('Permission Denied.'));
+        }
+    }
+
+    /**
+     * Remove multiple employees selected from the employee list.
+     */
+    public function bulkDestroy(Request $request)
+    {
+        if (!Auth::user()->can('delete-employees')) {
+            return redirect()->back()->with('error', __('Permission Denied.'));
+        }
+
+        $validated = $request->validate([
+            'ids' => ['required', 'array', 'min:1', 'max:100'],
+            'ids.*' => ['required', 'integer', 'distinct'],
+        ]);
+
+        $users = User::with('employee')
+            ->whereIn('id', $validated['ids'])
+            ->whereIn('created_by', getCompanyAndUsersId())
+            ->where('type', 'employee')
+            ->get();
+
+        if ($users->count() !== count($validated['ids'])) {
+            return redirect()->back()->with('error', __('One or more selected employees were not found or cannot be deleted.'));
+        }
+
+        try {
+            DB::transaction(function () use ($users) {
+                foreach ($users as $user) {
+                    if (!$user->employee) {
+                        throw new \RuntimeException(__('Employee record not found for :name.', ['name' => $user->name]));
+                    }
+
+                    EmployeeDocument::where('employee_id', $user->employee->id)->delete();
+                    $user->employee->delete();
+
+                    if ($user->avatar) {
+                        Storage::disk('public')->delete($user->avatar);
+                    }
+
+                    $user->delete();
+                }
+            });
+
+            return redirect()->back()->with('success', __(':count employees deleted successfully', ['count' => $users->count()]));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', __('Failed to delete employees: :message', ['message' => $e->getMessage()]));
         }
     }
 

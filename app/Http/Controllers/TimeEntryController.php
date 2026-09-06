@@ -121,6 +121,11 @@ class TimeEntryController extends Controller
 
             $workingDaysJson = settings()['working_days'] ?? '[1,2,3,4,5]';
             $workingDays = json_decode($workingDaysJson, true) ?? [1, 2, 3, 4, 5];
+            $perPage = (int) $request->input('per_page', 10);
+            if (!in_array($perPage, [10, 25, 50, 100], true)) {
+                $perPage = 10;
+            }
+            $page = max(1, (int) $request->input('page', 1));
 
             return Inertia::render('hr/time-entries/index', [
                 'timeEntries' => $timeEntries,
@@ -128,7 +133,10 @@ class TimeEntryController extends Controller
                 'projects' => $projects,
                 'statusCounts' => $statusCounts,
                 'hasSampleFile' => file_exists(storage_path('uploads/sample/sample-time-entry.xlsx')),
-                'filters' => $request->all(['search', 'employee_id', 'status', 'project', 'date_from', 'date_to', 'week_start', 'week_end', 'sort_field', 'sort_direction']),
+                'filters' => array_merge(
+                    $request->only(['search', 'employee_id', 'status', 'project', 'date_from', 'date_to', 'week_start', 'week_end', 'sort_field', 'sort_direction']),
+                    ['page' => $page, 'per_page' => $perPage]
+                ),
                 'workingDays' => $workingDays,
                 'freedcampConfigured' => filled(getSetting('freedcamp_api_key')) && filled(getSetting('freedcamp_secret_key')),
             ]);

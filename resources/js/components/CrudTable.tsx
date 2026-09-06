@@ -23,6 +23,7 @@ import { hasPermission } from '@/utils/authorization';
 import { TableColumn, TableAction } from '@/types/crud';
 import { Link } from '@inertiajs/react';
 import React, { useRef } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const AnimatedTableActionButton = ({ iconName, label, onClick, className, href, openInNewTab }: any) => {
   const iconRef = useRef<any>(null);
@@ -84,6 +85,9 @@ interface CrudTableProps {
   showActions?: boolean;
   showRowNumber?: boolean;
   emptyState?: React.ReactNode;
+  selectable?: boolean;
+  selectedRows?: Array<number | string>;
+  onSelectionChange?: (selectedRows: Array<number | string>) => void;
 }
 
 export function CrudTable({
@@ -101,7 +105,25 @@ export function CrudTable({
   showActions = true,
   showRowNumber = true,
   emptyState,
+  selectable = false,
+  selectedRows = [],
+  onSelectionChange,
 }: CrudTableProps) {
+  const rowIds = data.map((row) => row.id).filter((id) => id !== undefined && id !== null);
+  const allRowsSelected = rowIds.length > 0 && rowIds.every((id) => selectedRows.includes(id));
+  const someRowsSelected = rowIds.some((id) => selectedRows.includes(id)) && !allRowsSelected;
+
+  const toggleAllRows = (checked: boolean) => {
+    onSelectionChange?.(checked ? rowIds : []);
+  };
+
+  const toggleRow = (rowId: number | string, checked: boolean) => {
+    onSelectionChange?.(
+      checked
+        ? Array.from(new Set([...selectedRows, rowId]))
+        : selectedRows.filter((id) => id !== rowId)
+    );
+  };
   
   const renderSortIcon = (column: TableColumn) => {
     if (!column.sortable) return null;
@@ -324,6 +346,15 @@ export function CrudTable({
       <Table>
         <TableHeader>
           <TableRow className="bg-[#F0F0F1] dark:bg-gray-800 border-b hover:!bg-[#F0F0F1] dark:hover:!bg-gray-800">
+            {selectable && (
+              <TableHead className="w-12 py-2.5 text-center">
+                <Checkbox
+                  checked={allRowsSelected ? true : someRowsSelected ? 'indeterminate' : false}
+                  onCheckedChange={(checked) => toggleAllRows(checked === true)}
+                  aria-label="Select all rows on this page"
+                />
+              </TableHead>
+            )}
             {showRowNumber && <TableHead className="w-12 py-2.5 font-semibold">#</TableHead>}
             {columns.map((column) => (
               <TableHead
@@ -348,6 +379,15 @@ export function CrudTable({
           {data.length > 0 ? (
             data.map((row, index) => (
               <TableRow key={row.id || index} className="hover:bg-gray-50 dark:hover:bg-gray-700 dark:bg-gray-900 border-b">
+                {selectable && (
+                  <TableCell className="py-2.5 text-center">
+                    <Checkbox
+                      checked={selectedRows.includes(row.id)}
+                      onCheckedChange={(checked) => toggleRow(row.id, checked === true)}
+                      aria-label={`Select ${row.name || 'row'}`}
+                    />
+                  </TableCell>
+                )}
                 {showRowNumber && <TableCell className="font-medium py-2.5">{from + index}</TableCell>}
                 {columns.map((col) => (
                   <TableCell
@@ -372,7 +412,7 @@ export function CrudTable({
                 {"No results found."}
               </TableCell> */}
               <TableCell
-                colSpan={columns.length + (showActions && hasAnyActionPermission ? 1 : 0) + (showRowNumber ? 1 : 0)}
+                colSpan={columns.length + (showActions && hasAnyActionPermission ? 1 : 0) + (showRowNumber ? 1 : 0) + (selectable ? 1 : 0)}
                 className="text-muted-foreground h-24 text-center dark:text-gray-400 p-0"
               >
                 {emptyState ? emptyState : 'No results found.'}

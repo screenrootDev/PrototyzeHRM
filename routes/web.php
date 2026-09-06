@@ -306,6 +306,7 @@ Route::middleware(['auth', 'verified', 'setting'])->group(function () {
             Route::get('hr/employees/{employee}', [EmployeeController::class, 'show'])->middleware('permission:view-employees')->name('hr.employees.show');
             Route::get('hr/employees/{employee}/edit', [EmployeeController::class, 'edit'])->middleware('permission:edit-employees')->name('hr.employees.edit');
             Route::put('hr/employees/{employee}', [EmployeeController::class, 'update'])->middleware('permission:edit-employees')->name('hr.employees.update');
+            Route::delete('hr/employees-bulk', [EmployeeController::class, 'bulkDestroy'])->middleware('permission:delete-employees')->name('hr.employees.bulk-destroy');
             Route::delete('hr/employees/{employee}', [EmployeeController::class, 'destroy'])->middleware('permission:delete-employees')->name('hr.employees.destroy');
             Route::put('hr/employees/{employee}/toggle-status', [EmployeeController::class, 'toggleStatus'])->middleware('permission:edit-employees')->name('hr.employees.toggle-status');
             Route::put('hr/employees/{employee}/change-password', [EmployeeController::class, 'changePassword'])->middleware('permission:edit-employees')->name('hr.employees.change-password');

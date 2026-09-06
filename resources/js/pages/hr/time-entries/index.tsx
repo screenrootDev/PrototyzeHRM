@@ -13,6 +13,7 @@ import { ImportModal } from '@/components/ImportModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 import { Button } from '@/components/ui/button';
+import { Pagination } from '@/components/ui/pagination';
 import { useInitials } from '@/hooks/use-initials';
 import {
     TableCell,
@@ -105,6 +106,8 @@ export default function TimeEntries() {
       week_end: formatDate(newWeekEnd),
       sort_field: pageFilters.sort_field || undefined,
       sort_direction: pageFilters.sort_direction || undefined,
+      page: 1,
+      per_page: pageFilters.per_page || 10,
     }, { preserveState: true, preserveScroll: true });
   };
 
@@ -172,7 +175,35 @@ export default function TimeEntries() {
       week_end: formatDate(weekEnd),
       sort_field: pageFilters.sort_field || undefined,
       sort_direction: pageFilters.sort_direction || undefined,
+      page: 1,
+      per_page: pageFilters.per_page || 10,
     }, { preserveState: true, preserveScroll: true });
+  };
+
+  const navigateToEmployeePage = (page: number, perPage = Number(pageFilters.per_page || 10)) => {
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
+    router.get(route('hr.time-entries.index'), {
+      search: searchTerm || undefined,
+      employee_id: selectedEmployee !== '_empty_' ? selectedEmployee : undefined,
+      status: selectedStatus !== '_empty_' ? selectedStatus : undefined,
+      date_from: dateFrom ? dateFrom.toISOString().split('T')[0] : undefined,
+      date_to: dateTo ? dateTo.toISOString().split('T')[0] : undefined,
+      week_start: formatDate(weekStart),
+      week_end: formatDate(weekEnd),
+      sort_field: pageFilters.sort_field || undefined,
+      sort_direction: pageFilters.sort_direction || undefined,
+      page,
+      per_page: perPage,
+    }, { preserveState: true, preserveScroll: true });
+  };
+
+  const handleEmployeePageChange = (url: string) => {
+    const page = Number(new URL(url, window.location.href).searchParams.get('page') || 1);
+    navigateToEmployeePage(page);
+  };
+
+  const handleEmployeePerPageChange = (value: string) => {
+    navigateToEmployeePage(1, Number(value));
   };
 
   const handleResetFilters = () => router.get(route('hr.time-entries.index'));
@@ -362,6 +393,13 @@ export default function TimeEntries() {
     return filtered;
   }, [employees, employeeMap, timeEntries, searchTerm, selectedEmployee, selectedStatus, dateFrom, dateTo]);
 
+  const employeePerPage = Number(pageFilters.per_page || 10);
+  const employeeLastPage = Math.max(1, Math.ceil(allEmployees.length / employeePerPage));
+  const employeeCurrentPage = Math.min(Number(pageFilters.page || 1), employeeLastPage);
+  const employeeFrom = allEmployees.length === 0 ? 0 : ((employeeCurrentPage - 1) * employeePerPage) + 1;
+  const employeeTo = Math.min(employeeCurrentPage * employeePerPage, allEmployees.length);
+  const paginatedEmployees = allEmployees.slice(employeeFrom === 0 ? 0 : employeeFrom - 1, employeeTo);
+
 return (
     <PageTemplate
       title={t('Timesheet')}
@@ -492,14 +530,14 @@ return (
             </TableHeader>
 
             <tbody className="[&_tr:last-child]:border-0">
-              {allEmployees.length === 0 ? (
+              {paginatedEmployees.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={9} className="text-center py-16 text-gray-400 dark:text-gray-500">
                     {t('No employees found.')}
                   </TableCell>
                 </TableRow>
               ) : (
-                allEmployees.map((emp: any, idx: number) => {
+                paginatedEmployees.map((emp: any, idx: number) => {
                   const empId = emp?.id?.toString();
                   const empEntries = entriesByEmpDate[empId] || {};
                   let weekTotal = 0;
@@ -668,6 +706,21 @@ return (
               )}
             </tbody>
           </table>
+      </div>
+
+      <div className="mb-4 overflow-hidden rounded-lg border bg-white shadow dark:bg-gray-900">
+        <Pagination
+          from={employeeFrom}
+          to={employeeTo}
+          total={allEmployees.length}
+          currentPage={employeeCurrentPage}
+          lastPage={employeeLastPage}
+          entityName={t('employees')}
+          perPage={employeePerPage}
+          perPageOptions={[10, 25, 50, 100]}
+          onPerPageChange={handleEmployeePerPageChange}
+          onPageChange={handleEmployeePageChange}
+        />
       </div>
 
       {/* Day Entries Modal */}
